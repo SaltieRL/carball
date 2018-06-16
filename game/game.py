@@ -20,17 +20,17 @@ class Game:
                 self.replay = json.load(f)
         else:
             self.replay = loaded_json
-        self.replay_data = self.replay['Frames']
+        self.replay_data = self.replay['content']['body']['frames']
 
         # set properties
-        self.properties = self.replay['Properties']
-        self.replay_id = self.replay['Properties']['Id']
-        self.map = self.replay['Properties']['MapName']
-        self.name = self.replay['Properties'].get('ReplayName', None)
-        self.id = self.replay['Properties']["Id"]
-        self.datetime = datetime.strptime(self.replay['Properties']['Date'], '%Y-%m-%d %H-%M-%S')
+        self.properties = self.replay['header']['body']['properties']['value']
+        self.replay_id = self.properties['Id']
+        self.map = self.properties['MapName']
+        self.name = self.properties.get('ReplayName', None)
+        self.id = self.properties["Id"]
+        self.datetime = datetime.strptime(self.properties['Date']['value']['str'], '%Y-%m-%d %H-%M-%S')
         # print(self.datetime)
-        self.replay_version = self.replay['Properties']['ReplayVersion']
+        self.replay_version = self.properties['ReplayVersion']
 
         self.teams = []
         self.players = self.create_players()
@@ -52,36 +52,22 @@ class Game:
 
     def create_players(self):
         players = []
-        for player_stats in self.replay["Properties"].get("PlayerStats", {}):
-            player = Player().parse_player_stats(player_stats)
+        for player_stats in self.properties["PlayerStats"]["value"]["array"]:
+            player = Player().parse_player_stats(player_stats["value"])
             players.append(player)
         return players
 
     def get_goals(self):
-        goals = self.properties["Goals"]
+        goals = [g['value'] for g in self.properties["Goals"]["value"]["array"]]
+
         number_of_goals = len(goals)
-
-        # find frame where time > time
-        goal_number = 0
-        frame_number = 0
-        for frame in self.replay_data:
-            frame_time = frame["Time"]
-            # print(goal_number, number_of_goals)
-            if frame_time > goals[goal_number]["Time"]:
-                goals[goal_number]["FrameNumber"] = frame_number
-                goal_number += 1
-                if goal_number == number_of_goals:
-                    break
-            frame_number += 1
-
         if self.verbose:
             print('Found goals:', goals)
-
-        goals = []
-        for goal_dict in self.properties["Goals"]:
+        goals_list = []
+        for goal_dict in goals:
             goal = Goal(goal_dict, self)
-            goals.append(goal)
-        return goals
+            goals_list.append(goal)
+        return goals_list
 
     def parse_replay(self):
         """
@@ -143,8 +129,8 @@ class Game:
             # if frame_number > last_goal_frame_number:
             #     break
 
-            _f_time = frame["Time"]
-            _f_delta = frame["Delta"]
+            _f_time = frame["time"]
+            _f_delta = frame["delta"]
             # print(frame_number, _f_time)
 
             # remove deleted actors
@@ -378,7 +364,23 @@ class Game:
                                     "TAGame.CarComponent_TA:Active",
                                     actor_data.get("TAGame.CarComponent_TA:ReplicatedActive", False))
                                 player_ball_data[player_actor_id][frame_number]['dodge_active'] = dodge_is_active
-
+                    elif actor_data["ClassName"] == "TAGame.VehiclePickup_Boost_TA":
+                        # print(actor_id, actor_data, frame_number, frame["Time"])
+                        if "TAGame.VehiclePickup_TA:ReplicatedPickupData" in actor_data and \
+                                actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]["ActorId"] != -1:
+                            car_actor_id = actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]["ActorId"]
+                            if car_actor_id in car_player_ids:
+                                player_actor_id = car_player_ids[car_actor_id]
+                                # print(actor_id, player_dicts[player_actor_id]["name"])
+                                if frame_number in player_ball_data[player_actor_id]:
+                                    player_ball_data[player_actor_id][frame_number]['boost_collect'] = True
+                                # set to false after acknowledging it's turned True
+                                # it does not turn back false immediately although boost is only collected once.
+                                # but now using actorid!=-1 instead of unknown1 check
+                                # as unknowns can become true even when actorid is -1
+                                actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]["Unknown1"] = False
+                                actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]["Unknown2"] = False
+                                actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]["ActorId"] = -1
                 for player_actor_id in player_dicts:
                     actor_data = current_actors[player_actor_id]
                     if frame_number in player_ball_data[player_actor_id]:
