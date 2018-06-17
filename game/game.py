@@ -488,12 +488,12 @@ class Game:
                 'frame_number': _demo_data['frame_number'],
                 'attacker': player_actor_id_player_dict[_demo_data['attacker_player_id']],
                 'victim': player_actor_id_player_dict[_demo_data['victim_player_id']],
-                'attacker_vel': (_demo_data["AttackerVelocity"]["X"],
-                                 _demo_data["AttackerVelocity"]["Y"],
-                                 _demo_data["AttackerVelocity"]["Z"],),
-                'victim_vel': (_demo_data["VictimVelocity"]["X"],
-                               _demo_data["VictimVelocity"]["Y"],
-                               _demo_data["VictimVelocity"]["Z"],),
+                'attacker_vel': (_demo_data["attacker_velocity"]["x"],
+                                 _demo_data["attacker_velocity"]["y"],
+                                 _demo_data["attacker_velocity"]["z"],),
+                'victim_vel': (_demo_data["victim_velocity"]["x"],
+                               _demo_data["victim_velocity"]["y"],
+                               _demo_data["victim_velocity"]["z"],),
             }
             self.demos.append(demo)
 
