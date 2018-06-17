@@ -1,10 +1,12 @@
 import json
-import pandas as pd
 from datetime import datetime
-from game.team import Team
-from game.player import Player
-from game.goal import Goal
+
+import pandas as pd
+
 from game.actor_parsing import BallActor, CarActor
+from game.goal import Goal
+from game.player import Player
+from game.team import Team
 
 BOOST_PER_SECOND = 80  # boost used per second out of 255
 
@@ -30,7 +32,7 @@ class Game:
         self.id = self.properties["Id"]
         self.datetime = datetime.strptime(self.properties['Date']['value']['str'], '%Y-%m-%d %H-%M-%S')
         # print(self.datetime)
-        self.replay_version = self.properties['ReplayVersion']
+        self.replay_version = self.properties['ReplayVersion']['value']['int']
 
         self.teams = []
         self.players = self.create_players()
@@ -68,6 +70,18 @@ class Game:
             goal = Goal(goal_dict, self)
             goals_list.append(goal)
         return goals_list
+
+    @staticmethod
+    def find_actual_value(dicti):
+        types = ['int', 'boolean', 'string']
+        if 'flagged_int' in dicti:
+            return dicti['flagged_int']['int']
+        for t in types:
+            if t in dicti:
+                return dicti[t]
+        else:
+            return dicti
+
 
     def parse_replay(self):
         """
@@ -109,7 +123,7 @@ class Game:
 
         current_actor_ids = []
         current_actors = {}  # id:actor_update
-
+        current_actor_types = []
         # stores car_actor_ids to collect data for at each frame
         current_car_ids_to_collect = []
 
@@ -124,7 +138,7 @@ class Game:
         demos_data = []  # frame_number: demolish_data
 
         # loop through frames
-        for frame in frames:
+        for i, frame in enumerate(frames):
             # # don't bother after last goal
             # if frame_number > last_goal_frame_number:
             #     break
@@ -132,9 +146,20 @@ class Game:
             _f_time = frame["time"]
             _f_delta = frame["delta"]
             # print(frame_number, _f_time)
-
+            DeletedActorIds = []
+            ActorUpdates = []
+            ActorSpawns = []
+            for replication in frame['replications']:
+                category = list(replication['value'].keys())[0]
+                if category == 'destroyed':
+                    DeletedActorIds.append(replication)
+                elif category == 'updated':
+                    ActorUpdates.append(replication)
+                elif category == 'spawned':
+                    ActorSpawns.append(replication)
             # remove deleted actors
-            for deleted_actor_id in frame["DeletedActorIds"]:
+            for deleted_actor in DeletedActorIds:
+                deleted_actor_id = deleted_actor['actor_id']['value']
                 current_actor_ids.remove(deleted_actor_id)
                 current_actors.pop(deleted_actor_id)
                 if deleted_actor_id in car_player_ids:
@@ -146,17 +171,29 @@ class Game:
                         player_car_ids.pop(player_actor_id)
                     except KeyError:
                         pass
-            # apply actor updates
-            for actor_update in frame["ActorUpdates"]:
-                actor_id = actor_update["Id"]
 
+            for actor_spawn in ActorSpawns:
+                actor_id = actor_spawn['actor_id']['value']
+                current_actor_ids.append(actor_id)
+                current_actors[actor_id] = {
+                    'TypeName': actor_spawn['value']['spawned']['object_name'],
+                    'ClassName': actor_spawn['value']['spawned']['class_name'],
+                    'Name': actor_spawn['value']['spawned']['name'],
+                    'Id': actor_id
+                }
+            # apply actor updates
+            for actor_update in ActorUpdates:
+                actor_id = actor_update['actor_id']['value']
+                update_type = list(actor_update['value'].keys())[0]
+                actual_update = {v['name']: self.find_actual_value(v['value']) for v in actor_update['value']['updated']}
+                # TODO: process each subtype to a single value
                 # add if new actor
                 if actor_id not in current_actor_ids:
                     current_actor_ids.append(actor_id)
-                    current_actors[actor_id] = actor_update
+                    current_actors[actor_id] = actual_update
                 else:
                     # update stuff in current_actors
-                    for _k, _v in actor_update.items():
+                    for _k, _v in actual_update.items():
                         current_actors[actor_id][_k] = _v
 
             # find players and ball
@@ -202,8 +239,8 @@ class Game:
             if _f_delta != 0:
                 # frame stuff
                 frame_data = {
-                    'time': frame["Time"],
-                    'delta': frame["Delta"],
+                    'time': frame["time"],
+                    'delta': frame["delta"],
                 }
                 if soccar_game_event_actor_id is None:
                     # set soccar_game_event_actor_id
@@ -221,10 +258,9 @@ class Game:
                 # car and player stuff
                 for actor_id, actor_data in current_actors.items():
                     if actor_data["TypeName"] == "Archetypes.Car.Car_Default" and \
-                            "Engine.Pawn:PlayerReplicationInfo" in actor_data and \
-                            "ActorId" in actor_data["Engine.Pawn:PlayerReplicationInfo"]:
+                            "Engine.Pawn:PlayerReplicationInfo" in actor_data:
                         player_actor_id = actor_data[
-                            "Engine.Pawn:PlayerReplicationInfo"]["ActorId"]
+                            "Engine.Pawn:PlayerReplicationInfo"]
                         # assign car player links
                         player_car_ids[player_actor_id] = actor_id
                         car_player_ids[actor_id] = player_actor_id
@@ -249,10 +285,10 @@ class Game:
                         # get demo data
                         if "TAGame.Car_TA:ReplicatedDemolish" in actor_data:
 
-                            demo_data = actor_data["TAGame.Car_TA:ReplicatedDemolish"]
+                            demo_data = actor_data["TAGame.Car_TA:ReplicatedDemolish"]['demolish']
                             # add attacker and victim player ids
-                            attacker_car_id = demo_data["AttackerActorId"]
-                            victim_car_id = demo_data["VictimActorId"]
+                            attacker_car_id = demo_data["attacker_actor_id"]
+                            victim_car_id = demo_data["victim_actor_id"]
                             if attacker_car_id != -1 and victim_car_id != -1:
                                 # Filter out weird stuff where it's not a demo
                                 # frame 1 of 0732D41D4AF83D610AE2A988ACBC977A (rlcs season 4 eu)
@@ -279,10 +315,10 @@ class Game:
                     if actor_data["TypeName"] == "TAGame.Default__CameraSettingsActor_TA" and \
                             "TAGame.CameraSettingsActor_TA:PRI" in actor_data:
                         try:
-                            player_actor_id = actor_data["TAGame.CameraSettingsActor_TA:PRI"][1]
+                            player_actor_id = actor_data["TAGame.CameraSettingsActor_TA:PRI"]
                         except KeyError:
                             # older version (RLCS S4)
-                            player_actor_id = actor_data["TAGame.CameraSettingsActor_TA:PRI"]["ActorId"]
+                            player_actor_id = actor_data["TAGame.CameraSettingsActor_TA:PRI"]
                         # add camera settings
                         if player_actor_id not in cameras_data and \
                                 "TAGame.CameraSettingsActor_TA:ProfileSettings" in actor_data:
@@ -299,8 +335,6 @@ class Game:
                         car_actor_id = actor_data.get(
                             "TAGame.CarComponent_TA:Vehicle", None)
                         if car_actor_id is not None:
-                            car_actor_id = car_actor_id["ActorId"]
-
                             if car_actor_id in current_car_ids_to_collect:
                                 player_actor_id = car_player_ids[car_actor_id]
                                 # boost_is_active = actor_data.get(
@@ -328,7 +362,6 @@ class Game:
                         car_actor_id = actor_data.get(
                             "TAGame.CarComponent_TA:Vehicle", None)
                         if car_actor_id is not None:
-                            car_actor_id = car_actor_id["ActorId"]
                             if car_actor_id in current_car_ids_to_collect:
                                 player_actor_id = car_player_ids[car_actor_id]
                                 # jump_is_active = actor_data.get(
@@ -341,7 +374,6 @@ class Game:
                         car_actor_id = actor_data.get(
                             "TAGame.CarComponent_TA:Vehicle", None)
                         if car_actor_id is not None:
-                            car_actor_id = car_actor_id["ActorId"]
                             if car_actor_id in current_car_ids_to_collect:
                                 player_actor_id = car_player_ids[car_actor_id]
                                 # double_jump_is_active = actor_data.get(
@@ -355,7 +387,6 @@ class Game:
                         car_actor_id = actor_data.get(
                             "TAGame.CarComponent_TA:Vehicle", None)
                         if car_actor_id is not None:
-                            car_actor_id = car_actor_id["ActorId"]
                             if car_actor_id in current_car_ids_to_collect:
                                 player_actor_id = car_player_ids[car_actor_id]
                                 # dodge_is_active = actor_data.get(
@@ -365,10 +396,11 @@ class Game:
                                     actor_data.get("TAGame.CarComponent_TA:ReplicatedActive", False))
                                 player_ball_data[player_actor_id][frame_number]['dodge_active'] = dodge_is_active
                     elif actor_data["ClassName"] == "TAGame.VehiclePickup_Boost_TA":
-                        # print(actor_id, actor_data, frame_number, frame["Time"])
+                        # print(actor_id, actor_data, frame_number, frame["time"])
                         if "TAGame.VehiclePickup_TA:ReplicatedPickupData" in actor_data and \
-                                actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]["ActorId"] != -1:
-                            car_actor_id = actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]["ActorId"]
+                                actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"] != -1 and \
+                                'instigator_id' in actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]['pickup']:
+                            car_actor_id = actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]['pickup']['instigator_id']
                             if car_actor_id in car_player_ids:
                                 player_actor_id = car_player_ids[car_actor_id]
                                 # print(actor_id, player_dicts[player_actor_id]["name"])

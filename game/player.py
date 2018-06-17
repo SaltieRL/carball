@@ -134,18 +134,21 @@ class Player:
         pass
 
     def get_boost(self):
-        collection = {}
+
+        boost_collection_frames = self.data.boost_collect[self.data.boost_collect == True].index.values
+        for boost_collection_frame in boost_collection_frames:
+            position = self.data.loc[boost_collection_frame, 'pos_x':'pos_y']
+            boost_type = boost.get_boost_type_from_position(position)
+            self.data.loc[boost_collection_frame, 'boost_collect'] = boost_type
+
+        collection = {}  # quick and dirty to avoid changing self.boosts. could concatenate from self.data.
         usage = {}
         last_boost_amount = 99999
         for frame_number, data_row in self.data.iterrows():
             boost_amt = data_row.loc['boost']
-            if boost_amt > last_boost_amount:
-                position = data_row.loc['pos_x':'pos_y']
-                boost_type = boost.get_boost_type_from_position(position)
-                # print("%i  \t%i\t%i\t%i" % (boost_type, boost_amt - last_boost_amount, boost_amt, last_boost_amount))
-                collection[frame_number] = boost_type
+            collection[frame_number] = self.data.loc[frame_number, 'boost_collect']
 
-            elif boost_amt < last_boost_amount:
+            if boost_amt < last_boost_amount:
                 usage[frame_number] = last_boost_amount - boost_amt
 
             last_boost_amount = boost_amt
