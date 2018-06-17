@@ -1,18 +1,19 @@
 RBSTATE = "TAGame.RBActor_TA:ReplicatedRBState"
+rbstate = "rigid_body_state"
 
 BALL_DATA_DICT_PAIRS = {
-    'pos_x': (RBSTATE, 'Position', 'X'),
-    'pos_y': (RBSTATE, 'Position', 'Y'),
-    'pos_z': (RBSTATE, 'Position', 'Z'),
-    'rot_x': (RBSTATE, 'Rotation', 'X'),
-    'rot_y': (RBSTATE, 'Rotation', 'Y'),
-    'rot_z': (RBSTATE, 'Rotation', 'Z'),
-    'vel_x': (RBSTATE, 'LinearVelocity', 'X'),
-    'vel_y': (RBSTATE, 'LinearVelocity', 'Y'),
-    'vel_z': (RBSTATE, 'LinearVelocity', 'Z'),
-    'ang_vel_x': (RBSTATE, 'AngularVelocity', 'X'),
-    'ang_vel_y': (RBSTATE, 'AngularVelocity', 'Y'),
-    'ang_vel_z': (RBSTATE, 'AngularVelocity', 'Z'),
+    'pos_x': (RBSTATE, rbstate, 'location', 'x'),
+    'pos_y': (RBSTATE, rbstate, 'location', 'y'),
+    'pos_z': (RBSTATE, rbstate, 'location', 'z'),
+    'rot_x': (RBSTATE, rbstate, 'rotation', 'x'),
+    'rot_y': (RBSTATE, rbstate, 'rotation', 'y'),
+    'rot_z': (RBSTATE, rbstate, 'rotation', 'z'),
+    'vel_x': (RBSTATE, rbstate, 'linear_velocity', 'x'),
+    'vel_y': (RBSTATE, rbstate, 'linear_velocity', 'y'),
+    'vel_z': (RBSTATE, rbstate, 'linear_velocity', 'z'),
+    'ang_vel_x': (RBSTATE, rbstate, 'angular_velocity', 'x'),
+    'ang_vel_y': (RBSTATE, rbstate, 'angular_velocity', 'y'),
+    'ang_vel_z': (RBSTATE, rbstate, 'angular_velocity', 'z'),
     'hit_team_no': ("TAGame.Ball_TA:HitTeamNum",),
 }
 
@@ -22,8 +23,7 @@ class BallActor:
     def get_data_dict(actor_data, version=None):
         RBState = actor_data.get(
             "TAGame.RBActor_TA:ReplicatedRBState", {})
-        ball_is_sleeping = RBState.get('Sleeping', True)
-
+        ball_is_sleeping = RBState.get('sleeping', True)
         data_dict = {}
 
         for _key, _value_keys in BALL_DATA_DICT_PAIRS.items():

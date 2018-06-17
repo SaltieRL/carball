@@ -82,17 +82,17 @@ class Player:
         loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]
         for loadout_name, _loadout in loadout_data.items():
             self.loadout.append({
-                'version': _loadout.get('Version', None),
-                'car': _loadout.get('BodyProductId', None),
-                'skin': _loadout.get('SkinProductId', None),
-                'wheels': _loadout.get('WheelProductId', None),
-                'boost': _loadout.get('BoostProductId', None),
-                'antenna': _loadout.get('AntennaProductId', None),
-                'topper': _loadout.get('HatProductId', None),
-                'engine_audio': _loadout.get('EngineAudioProductId', None),
-                'trail': _loadout.get('TrailProductId', None),
-                'goal_explosion': _loadout.get('GoalExplosionProductId', None),
-                'banner': _loadout.get('BannerProductId', None)
+                'version': _loadout.get('version', None),
+                'car': _loadout.get('body', None),
+                'skin': _loadout.get('decal', None),
+                'wheels': _loadout.get('wheels', None),
+                'boost': _loadout.get('boost', None),
+                'antenna': _loadout.get('antenna', None),
+                'topper': _loadout.get('topper', None),
+                'engine_audio': _loadout.get('engine_audio', None),
+                'trail': _loadout.get('trail', None),
+                'goal_explosion': _loadout.get('goal_explosion', None),
+                'banner': _loadout.get('banner', None)
             })
             # TODO: Support painted stuff (look in ClientLoadoutsOnline)
 

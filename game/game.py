@@ -73,7 +73,7 @@ class Game:
 
     @staticmethod
     def find_actual_value(dicti):
-        types = ['int', 'boolean', 'string']
+        types = ['int', 'boolean', 'string', 'byte']
         if 'flagged_int' in dicti:
             return dicti['flagged_int']['int']
         for t in types:
@@ -270,11 +270,10 @@ class Game:
                         car_is_driving = actor_data.get(
                             "TAGame.Vehicle_TA:bDriving", False)
                         car_is_sleeping = RBState.get(
-                            'Sleeping', True)
-
+                            'sleeping', False)
                         # only collect data if car is driving and not
                         # sleeping
-                        if car_is_driving and not car_is_sleeping:
+                        if not car_is_sleeping:
                             current_car_ids_to_collect.append(actor_id)
                             # print(actor_id, player_actor_id)
 
@@ -331,7 +330,7 @@ class Game:
                             # key error due to frame no not in inputs
                             # ignore as no point knowing
                             pass
-                    elif actor_data["TypeName"] == "Archetypes.CarComponents.CarComponent_Boost":
+                    elif actor_data["TypeName"] == "Archetypes.CarComponents.CarComponent_Boost": # TODO: fix boost
                         car_actor_id = actor_data.get(
                             "TAGame.CarComponent_TA:Vehicle", None)
                         if car_actor_id is not None:
@@ -342,7 +341,7 @@ class Game:
                                 boost_is_active = actor_data.get(
                                     "TAGame.CarComponent_TA:Active",
                                     actor_data.get("TAGame.CarComponent_TA:ReplicatedActive", False))
-                                if boost_is_active:
+                                if boost_is_active and int(boost_is_active) <= 1:
                                     # manually decrease car boost amount (not shown in replay)
                                     # i assume game calculates the decrease itself similarly
                                     boost_amount = max(0,
