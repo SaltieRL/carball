@@ -26,10 +26,12 @@ class Game:
 
         # set properties
         self.properties = self.replay['header']['body']['properties']['value']
-        self.replay_id = self.properties['Id']
-        self.map = self.properties['MapName']
+        self.replay_id = self.find_actual_value(self.properties['Id']['value'])
+        self.map = self.find_actual_value(self.properties['MapName']['value'])
         self.name = self.properties.get('ReplayName', None)
-        self.id = self.properties["Id"]
+        if self.name is not None:
+            self.name = self.find_actual_value(self.name['value'])
+        self.id = self.find_actual_value(self.properties["Id"]['value'])
         self.datetime = datetime.strptime(self.properties['Date']['value']['str'], '%Y-%m-%d %H-%M-%S')
         # print(self.datetime)
         self.replay_version = self.properties['ReplayVersion']['value']['int']
@@ -73,7 +75,7 @@ class Game:
 
     @staticmethod
     def find_actual_value(dicti):
-        types = ['int', 'boolean', 'string', 'byte']
+        types = ['int', 'boolean', 'string', 'byte', 'str']
         if 'flagged_int' in dicti:
             return dicti['flagged_int']['int']
         for t in types:

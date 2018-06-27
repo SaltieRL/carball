@@ -27,4 +27,4 @@ def decompile_replay(path):
 if __name__ == '__main__':
     for p in [f for f in os.listdir('replays/') if os.path.isfile('replays/' + f)]:
         print(p)
-        decompile_replay(p)
+        print (decompile_replay(p))
