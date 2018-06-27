@@ -31,12 +31,13 @@ class Player:
 
     def create_from_actor_data(self, actor_data, teams):
         self.name = actor_data['name']
-        self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]["SteamID64"]
+        actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[0]
+        self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'][actor_type]
         self.score = actor_data["TAGame.PRI_TA:MatchScore"]
-        team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]["ActorId"]
+        team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]
         if team_actor_id == -1:
             # if they leave at the end
-            team_actor_id = actor_data['team']["ActorId"]
+            team_actor_id = actor_data['team']
         for team in teams:
             if team.actor_id == team_actor_id:
                 self.is_orange = team.is_orange

@@ -290,7 +290,7 @@ class Game:
                             # add attacker and victim player ids
                             attacker_car_id = demo_data["attacker_actor_id"]
                             victim_car_id = demo_data["victim_actor_id"]
-                            if attacker_car_id != -1 and victim_car_id != -1:
+                            if attacker_car_id != -1 and victim_car_id != -1 and attacker_car_id < 1e9 and victim_car_id < 1e9:
                                 # Filter out weird stuff where it's not a demo
                                 # frame 1 of 0732D41D4AF83D610AE2A988ACBC977A (rlcs season 4 eu)
                                 attacker_player_id = car_player_ids[attacker_car_id]
