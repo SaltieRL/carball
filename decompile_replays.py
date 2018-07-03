@@ -11,17 +11,20 @@ def decompile_replay(path):
     binaries = [f for f in os.listdir('rattletrap') if not f.endswith('.py')]
     if os.name == 'nt':
         binary = [f for f in binaries if f.endswith('.exe')][0]
-        os.chdir(os.path.dirname(__file__))
-        output_path = f'replays/decompiled/{path.replace("replay", "json")}'
-        if not os.path.isfile(output_path):
-            cmd = [f'rattletrap/{binary}', '-i', f'replays/{path}', '--output',
-                   output_path]
-            print(cmd)
-            subprocess.check_output(cmd)
-        _json = json.load(open(output_path))
-        game = Game(loaded_json=_json)
-        get_controls(game)
-        return game
+    else:
+        binary = [f for f in binaries if 'linux' in f]
+    os.chdir(os.path.dirname(__file__))
+    output_path = 'replays/decompiled/{}'.format(path.replace("replay", "json"))
+    os.makedirs(os.path.dirname(output_path))
+    if not os.path.isfile(output_path):
+        cmd = ['rattletrap/{}'.format(binary[0]), '-i', 'replays/{}'.format(path), '--output',
+               output_path]
+        print(" ".join(cmd))
+        subprocess.check_output(cmd)
+    _json = json.load(open(output_path))
+    game = Game(loaded_json=_json)
+    get_controls(game)
+    return game
 
 
 if __name__ == '__main__':
