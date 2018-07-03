@@ -1,10 +1,15 @@
 import os
+import pickle
 import subprocess
 import json
 
 from game.game import Game
 # from analyser.game_analyser import analyse_game
 from controls.controls import get_controls
+
+OUTPUT_DIR = os.path.join('replays', 'pickled')
+if not os.path.isdir(OUTPUT_DIR):
+    os.makedirs(OUTPUT_DIR)
 
 
 def decompile_replay(path):
@@ -31,4 +36,6 @@ def decompile_replay(path):
 if __name__ == '__main__':
     for p in [f for f in os.listdir('replays/') if os.path.isfile('replays/' + f)]:
         print(p)
-        print (decompile_replay(p))
+        g = decompile_replay(p)
+        with open(os.path.join(OUTPUT_DIR, p, '.pkl'), 'wb') as fo:
+            pickle.dump(g, fo)
