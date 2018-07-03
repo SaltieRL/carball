@@ -15,7 +15,8 @@ def decompile_replay(path):
         binary = [f for f in binaries if 'linux' in f]
     os.chdir(os.path.dirname(__file__))
     output_path = 'replays/decompiled/{}'.format(path.replace("replay", "json"))
-    os.makedirs(os.path.dirname(output_path))
+    if not os.path.isdir(os.path.dirname(output_path)):
+        os.makedirs(os.path.dirname(output_path))
     if not os.path.isfile(output_path):
         cmd = ['rattletrap/{}'.format(binary[0]), '-i', 'replays/{}'.format(path), '--output',
                output_path]
