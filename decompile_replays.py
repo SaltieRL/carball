@@ -37,5 +37,5 @@ if __name__ == '__main__':
     for p in [f for f in os.listdir('replays/') if os.path.isfile('replays/' + f)]:
         print(p)
         g = decompile_replay(p)
-        with open(os.path.join(OUTPUT_DIR, p, '.pkl'), 'wb') as fo:
+        with open(os.path.join(OUTPUT_DIR, p + '.pkl'), 'wb') as fo:
             pickle.dump(g, fo)
