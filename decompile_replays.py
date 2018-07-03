@@ -12,13 +12,13 @@ def decompile_replay(path):
     if os.name == 'nt':
         binary = [f for f in binaries if f.endswith('.exe')][0]
     else:
-        binary = [f for f in binaries if 'linux' in f]
+        binary = [f for f in binaries if 'linux' in f][0]
     os.chdir(os.path.dirname(__file__))
     output_path = 'replays/decompiled/{}'.format(path.replace("replay", "json"))
     if not os.path.isdir(os.path.dirname(output_path)):
         os.makedirs(os.path.dirname(output_path))
     if not os.path.isfile(output_path):
-        cmd = ['rattletrap/{}'.format(binary[0]), '-i', 'replays/{}'.format(path), '--output',
+        cmd = ['rattletrap/{}'.format(binary), '-i', 'replays/{}'.format(path), '--output',
                output_path]
         print(" ".join(cmd))
         subprocess.check_output(cmd)
