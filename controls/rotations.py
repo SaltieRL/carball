@@ -116,12 +116,12 @@ def predict_user_inputs(ang_vels, rotations):
     predicted_inputs = {}
 
     for frame_number, row_data in ang_vels.iterrows():
-        omega_t = row_data['ang_vel_x': 'ang_vel_z'].values
+        omega_t = row_data[['ang_vel_x', 'ang_vel_y', 'ang_vel_z']].values
         try:
-            omega_dt = ang_vels.loc[frame_number + 1, 'ang_vel_x': 'ang_vel_z'].values
+            omega_dt = ang_vels.loc[frame_number + 1, ['ang_vel_x', 'ang_vel_y', 'ang_vel_z']].values
         except KeyError:
             continue
-        rotation = rotations.loc[frame_number, 'rot_x':'rot_z'].values * np.pi
+        rotation = rotations.loc[frame_number, ['rot_x', 'rot_y', 'rot_z']].values * np.pi
         u = find_user_input(omega_t, omega_dt, rotation).flatten()
         # u = u[np.nonzero(u)]
         predicted_inputs[frame_number] = u
