@@ -1,5 +1,7 @@
 import pandas as pd
-import game.boost as boost
+
+from .boost import get_boost_type_from_position
+
 
 class Player:
 
@@ -138,8 +140,8 @@ class Player:
 
         boost_collection_frames = self.data.boost_collect[self.data.boost_collect == True].index.values
         for boost_collection_frame in boost_collection_frames:
-            position = self.data.loc[boost_collection_frame, ['pos_x','pos_y', 'pos_z']]
-            boost_type = boost.get_boost_type_from_position(position)
+            position = self.data.loc[boost_collection_frame, ['pos_x', 'pos_y', 'pos_z']]
+            boost_type = get_boost_type_from_position(position)
             self.data.loc[boost_collection_frame, 'boost_collect'] = boost_type
 
         collection = {}  # quick and dirty to avoid changing self.boosts. could concatenate from self.data.

@@ -1,5 +1,5 @@
 import pandas as pd
-from controls.rotations import predict_user_inputs
+from .rotations import predict_user_inputs
 # RETURNS CONTROLS
 # THROTTLE STEER PITCH YAW ROLL JUMP BOOST HANDBRAKE
 

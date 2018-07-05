@@ -3,10 +3,10 @@ from datetime import datetime
 
 import pandas as pd
 
-from game.actor_parsing import BallActor, CarActor
-from game.goal import Goal
-from game.player import Player
-from game.team import Team
+from .actor_parsing import BallActor, CarActor
+from .goal import Goal
+from .player import Player
+from .team import Team
 
 BOOST_PER_SECOND = 80  # boost used per second out of 255
 
