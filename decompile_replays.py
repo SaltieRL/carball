@@ -12,14 +12,14 @@ if not os.path.isdir(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
 
-def decompile_replay(path):
+def decompile_replay(path, output_path):
     binaries = [f for f in os.listdir('rattletrap') if not f.endswith('.py')]
     if os.name == 'nt':
         binary = [f for f in binaries if f.endswith('.exe')][0]
     else:
         binary = [f for f in binaries if 'linux' in f][0]
     os.chdir(os.path.dirname(__file__))
-    output_path = 'replays/decompiled/{}'.format(path.replace("replay", "json"))
+    output_path = output_path
     if not os.path.isdir(os.path.dirname(output_path)):
         os.makedirs(os.path.dirname(output_path))
     if not os.path.isfile(output_path):
@@ -36,6 +36,7 @@ def decompile_replay(path):
 if __name__ == '__main__':
     for p in [f for f in os.listdir('replays/') if os.path.isfile('replays/' + f)]:
         print(p)
-        g = decompile_replay(p)
+        output = 'replays/decompiled/{}'.format(p.replace("replay", "json"))
+        g = decompile_replay(p, output)
         with open(os.path.join(OUTPUT_DIR, p + '.pkl'), 'wb') as fo:
             pickle.dump(g, fo)
