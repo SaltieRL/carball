@@ -1,6 +1,5 @@
 import numpy as np
 
-
 # BOOST_POSITION_TYPE = {
 #     {'pos_x': 3000, 'pos_y': -4100, 'type': 1},
 #     {'pos_x': -3000, 'pos_y': -4100, 'type': 1},
@@ -30,5 +29,3 @@ def get_boost_type_from_position(position):
         return 1
     else:
         return 0
-
-
