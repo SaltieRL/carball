@@ -24,7 +24,7 @@ def decompile_replay(path, output_path):
     if not os.path.isdir(output_dirs) and output_dirs != '':
         os.makedirs(output_dirs)
     if not os.path.isfile(output_path):
-        cmd = [os.path.join(os.path.join(BASE_DIR, 'rattletrap'), '{}'.format(binary)), '-i', 'replays/{}'.format(path),
+        cmd = [os.path.join(os.path.join(BASE_DIR, 'rattletrap'), '{}'.format(binary)), '-i', path,
                '--output',
                output_path]
         print(" ".join(cmd))
