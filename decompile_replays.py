@@ -7,13 +7,14 @@ from game.game import Game
 # from analyser.game_analyser import analyse_game
 from controls.controls import get_controls
 
+BASE_DIR = os.path.dirname(__file__)
 OUTPUT_DIR = os.path.join('replays', 'pickled')
 if not os.path.isdir(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
 
 def decompile_replay(path, output_path):
-    binaries = [f for f in os.listdir('rattletrap') if not f.endswith('.py')]
+    binaries = [f for f in os.listdir(os.path.join(BASE_DIR, 'rattletrap')) if not f.endswith('.py')]
     if os.name == 'nt':
         binary = [f for f in binaries if f.endswith('.exe')][0]
     else:
@@ -23,7 +24,8 @@ def decompile_replay(path, output_path):
     if not os.path.isdir(os.path.dirname(output_path)):
         os.makedirs(os.path.dirname(output_path))
     if not os.path.isfile(output_path):
-        cmd = ['rattletrap/{}'.format(binary), '-i', 'replays/{}'.format(path), '--output',
+        cmd = [os.path.join(os.path.join(BASE_DIR, 'rattletrap'), '{}'.format(binary)), '-i', 'replays/{}'.format(path),
+               '--output',
                output_path]
         print(" ".join(cmd))
         subprocess.check_output(cmd)
