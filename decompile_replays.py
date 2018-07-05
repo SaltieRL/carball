@@ -20,9 +20,9 @@ def decompile_replay(path, output_path):
     else:
         binary = [f for f in binaries if 'linux' in f][0]
     os.chdir(os.path.dirname(__file__))
-    output_path = output_path
-    if not os.path.isdir(os.path.dirname(output_path)):
-        os.makedirs(os.path.dirname(output_path))
+    output_dirs = os.path.dirname(output_path)
+    if not os.path.isdir(output_dirs) and output_dirs != '':
+        os.makedirs(output_dirs)
     if not os.path.isfile(output_path):
         cmd = [os.path.join(os.path.join(BASE_DIR, 'rattletrap'), '{}'.format(binary)), '-i', 'replays/{}'.format(path),
                '--output',
