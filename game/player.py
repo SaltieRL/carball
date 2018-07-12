@@ -82,7 +82,7 @@ class Player:
         return self
 
     def get_loadout(self, actor_data):
-        loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]
+        loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]["loadouts"]
         for loadout_name, _loadout in loadout_data.items():
             self.loadout.append({
                 'version': _loadout.get('version', None),
