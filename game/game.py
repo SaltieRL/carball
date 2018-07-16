@@ -27,7 +27,7 @@ class Game:
         # set properties
         self.properties = self.replay['header']['body']['properties']['value']
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
-        self.map = self.find_actual_value(self.properties['MapName']['value'])
+        self.map = self.find_actual_value(self.properties['MapName']['value'])['name']
         self.name = self.properties.get('ReplayName', None)
         if self.name is not None:
             self.name = self.find_actual_value(self.name['value'])
@@ -466,7 +466,7 @@ class Game:
 
             player.parse_data(all_data['player_ball_data'][_player_actor_id])
             # camera_settings might not exist (see 0AF8AC734890E6D3995B829E474F9924)
-            player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}))
+            player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}).get('cam_settings', {}))
 
             for team in self.teams:
                 if player.is_orange == team.is_orange:
