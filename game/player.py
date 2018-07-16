@@ -65,13 +65,13 @@ class Player:
         return self
 
     def get_camera_settings(self, camera_data):
-        self.camera_settings['field_of_view'] = camera_data.get('FieldOfView', None)
-        self.camera_settings['height'] = camera_data.get('Height', None)
-        self.camera_settings['pitch'] = camera_data.get('Pitch', None)
-        self.camera_settings['distance'] = camera_data.get('Distance', None)
-        self.camera_settings['stiffness'] = camera_data.get('Stiffness', None)
-        self.camera_settings['swivel_speed'] = camera_data.get('SwivelSpeed', None)
-        self.camera_settings['transition_speed'] = camera_data.get('TransitionSpeed', None)
+        self.camera_settings['field_of_view'] = camera_data.get('fov', None)
+        self.camera_settings['height'] = camera_data.get('height', None)
+        self.camera_settings['pitch'] = camera_data.get('angle', None)
+        self.camera_settings['distance'] = camera_data.get('distance', None)
+        self.camera_settings['stiffness'] = camera_data.get('stiffness', None)
+        self.camera_settings['swivel_speed'] = camera_data.get('swivel_speed', None)
+        self.camera_settings['transition_speed'] = camera_data.get('transition_speed', None)
 
     def parse_actor_data(self, actor_data):
         self.get_loadout(actor_data)

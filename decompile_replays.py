@@ -9,8 +9,6 @@ from controls.controls import get_controls
 
 BASE_DIR = os.path.dirname(__file__)
 OUTPUT_DIR = os.path.join('replays', 'pickled')
-if not os.path.isdir(OUTPUT_DIR):
-    os.makedirs(OUTPUT_DIR)
 
 
 def decompile_replay(path, output_path):
@@ -36,6 +34,9 @@ def decompile_replay(path, output_path):
 
 
 if __name__ == '__main__':
+    if not os.path.isdir(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
     for filename in [f for f in os.listdir('replays/') if os.path.isfile('replays/' + f)]:
         filepath = 'replays/' + filename
         print(filepath)
