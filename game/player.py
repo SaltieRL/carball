@@ -143,22 +143,3 @@ class Player:
             position = self.data.loc[boost_collection_frame, ['pos_x', 'pos_y', 'pos_z']]
             boost_type = get_boost_type_from_position(position)
             self.data.loc[boost_collection_frame, 'boost_collect'] = boost_type
-
-        collection = {}  # quick and dirty to avoid changing self.boosts. could concatenate from self.data.
-        usage = {}
-        last_boost_amount = 99999
-        for frame_number, data_row in self.data.iterrows():
-            boost_amt = data_row.loc['boost']
-            collection[frame_number] = self.data.loc[frame_number, 'boost_collect']
-
-            if boost_amt < last_boost_amount:
-                usage[frame_number] = last_boost_amount - boost_amt
-
-            last_boost_amount = boost_amt
-
-        self.boosts = pd.DataFrame.from_dict({
-            'collection': collection,
-            'usage': usage
-        }, orient='columns')
-
-        pass

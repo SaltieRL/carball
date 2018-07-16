@@ -21,9 +21,8 @@ BALL_DATA_DICT_PAIRS = {
 class BallActor:
     @staticmethod
     def get_data_dict(actor_data, version=None):
-        RBState = actor_data.get(
-            "TAGame.RBActor_TA:ReplicatedRBState", {})
-        ball_is_sleeping = RBState.get('sleeping', True)
+        is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
+
         data_dict = {}
 
         for _key, _value_keys in BALL_DATA_DICT_PAIRS.items():
@@ -33,6 +32,8 @@ class BallActor:
                 if _value is None:
                     break
             data_dict[_key] = _value
+
+        # TODO: Fix rot_x, y, z: currently {'limit: 65536, 'value': x}.
 
         if version is not None and version >= 7:
             correction_dict = {'pos_x': 100, 'pos_y': 100, 'pos_z': 100,
@@ -46,6 +47,11 @@ class BallActor:
                     continue
         return data_dict
 
+
+# these are parsed such that the max values are as follow:
+# pos_x: 3088, pos_y: 5424, pos_z: 1826
+# mag(vel) = 23000
+# mag(ang_vel) = 5500
 
 CAR_DATA_DICT_PAIRS = {
     'pos_x': (RBSTATE, rbstate, 'location', 'x'),
@@ -69,9 +75,7 @@ CAR_DATA_DICT_PAIRS = {
 class CarActor:
     @staticmethod
     def get_data_dict(actor_data, version=None):
-        RBState = actor_data.get(
-            "TAGame.RBActor_TA:ReplicatedRBState", {})
-        ball_is_sleeping = RBState.get('Sleeping', True)
+        is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
 
         data_dict = {}
 

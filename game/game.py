@@ -205,6 +205,7 @@ class Game:
                     player_dict = {
                         'name': actor_data["Engine.PlayerReplicationInfo:PlayerName"],
                         'team': actor_data["Engine.PlayerReplicationInfo:Team"],
+
                         # 'steam_id': actor_data["Engine.PlayerReplicationInfo:UniqueId"]["SteamID64"],
                         # 'player_id': actor_data["Engine.PlayerReplicationInfo:PlayerID"]
                     }
@@ -227,12 +228,13 @@ class Game:
                 #     player_ball_data['ball'] = {}
 
             # stop data collection after goal
+            REPLICATED_RB_STATE_KEY = "TAGame.RBActor_TA:ReplicatedRBState"
             try:
                 if frame_number > self.goals[current_goal_number].frame_number:
                     # set all players to sleeping after goal
                     for car_actor_id in car_player_ids:
                         current_actors[car_actor_id][
-                            "TAGame.RBActor_TA:ReplicatedRBState"]['Sleeping'] = True
+                            REPLICATED_RB_STATE_KEY]['Sleeping'] = True
                     current_goal_number += 1
             except IndexError:
                 # after last goal.
@@ -268,13 +270,11 @@ class Game:
                         car_player_ids[actor_id] = player_actor_id
 
                         RBState = actor_data.get(
-                            "TAGame.RBActor_TA:ReplicatedRBState", {})
-                        car_is_driving = actor_data.get(
-                            "TAGame.Vehicle_TA:bDriving", False)
-                        car_is_sleeping = RBState.get(
-                            'sleeping', False)
-                        # only collect data if car is driving and not
-                        # sleeping
+                            REPLICATED_RB_STATE_KEY, {})
+                        # bDriving is missing?! TODO: Investigate bDriving in RBState
+                        # car_is_driving = RBState.get("rigid_body_state", {}).get("TAGame.Vehicle_TA:bDriving", False)
+                        car_is_sleeping = RBState.get("rigid_body_state", {}).get('sleeping', True)
+                        # only collect data if car is driving and not sleeping
                         if not car_is_sleeping:
                             current_car_ids_to_collect.append(actor_id)
                             # print(actor_id, player_actor_id)
@@ -307,19 +307,17 @@ class Game:
 
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Default":
                         RBState = actor_data.get(
-                            "TAGame.RBActor_TA:ReplicatedRBState", {})
+                            REPLICATED_RB_STATE_KEY, {})
                         # ball_is_sleeping = RBState.get('Sleeping', True)
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
 
                 for actor_id, actor_data in current_actors.items():
+                    COMPONENT_ACTIVE_KEY = "TAGame.CarComponent_TA:Active"
+                    COMPONENT_REPLICATED_ACTIVE_KEY = "TAGame.CarComponent_TA:ReplicatedActive"
                     if actor_data["TypeName"] == "TAGame.Default__CameraSettingsActor_TA" and \
                             "TAGame.CameraSettingsActor_TA:PRI" in actor_data:
-                        try:
-                            player_actor_id = actor_data["TAGame.CameraSettingsActor_TA:PRI"]
-                        except KeyError:
-                            # older version (RLCS S4)
-                            player_actor_id = actor_data["TAGame.CameraSettingsActor_TA:PRI"]
+                        player_actor_id = actor_data["TAGame.CameraSettingsActor_TA:PRI"]  # may need to try another key
                         # add camera settings
                         if player_actor_id not in cameras_data and \
                                 "TAGame.CameraSettingsActor_TA:ProfileSettings" in actor_data:
@@ -329,30 +327,28 @@ class Game:
                         try:
                             player_ball_data[player_actor_id][frame_number]['ball_cam'] = ball_cam
                         except KeyError:
-                            # key error due to frame no not in inputs
+                            # key error due to frame_number not in inputs
                             # ignore as no point knowing
                             pass
-                    elif actor_data["TypeName"] == "Archetypes.CarComponents.CarComponent_Boost": # TODO: fix boost
+                    elif actor_data["TypeName"] == "Archetypes.CarComponents.CarComponent_Boost":
                         car_actor_id = actor_data.get(
                             "TAGame.CarComponent_TA:Vehicle", None)
                         if car_actor_id is not None:
                             if car_actor_id in current_car_ids_to_collect:
                                 player_actor_id = car_player_ids[car_actor_id]
-                                # boost_is_active = actor_data.get(
-                                #     "TAGame.CarComponent_TA:Active", False)
-                                boost_is_active = actor_data.get(
-                                    "TAGame.CarComponent_TA:Active",
-                                    actor_data.get("TAGame.CarComponent_TA:ReplicatedActive", False))
-                                if boost_is_active and int(boost_is_active) <= 1:
+                                boost_is_active_random_int = actor_data.get(
+                                    COMPONENT_ACTIVE_KEY,
+                                    actor_data.get(COMPONENT_REPLICATED_ACTIVE_KEY, False))
+                                # boost_is_active when random_int is odd?!
+                                boost_is_active = (boost_is_active_random_int % 2 == 1)
+                                if boost_is_active:
                                     # manually decrease car boost amount (not shown in replay)
                                     # i assume game calculates the decrease itself similarly
                                     boost_amount = max(0,
-                                                       actor_data[
-                                                           "TAGame.CarComponent_Boost_TA:ReplicatedBoostAmount"] -
+                                                       actor_data.get(
+                                                           "TAGame.CarComponent_Boost_TA:ReplicatedBoostAmount", 0) -
                                                        _f_delta * BOOST_PER_SECOND)
                                     actor_data["TAGame.CarComponent_Boost_TA:ReplicatedBoostAmount"] = boost_amount
-                                    # actor_data["TAGame.CarComponent_Boost_TA:ReplicatedBoostAmount"] -= int(
-                                    #     _f_delta * BOOST_PER_SECOND)
                                 else:
                                     boost_amount = actor_data.get("TAGame.CarComponent_Boost_TA:ReplicatedBoostAmount",
                                                                   None)
@@ -365,11 +361,9 @@ class Game:
                         if car_actor_id is not None:
                             if car_actor_id in current_car_ids_to_collect:
                                 player_actor_id = car_player_ids[car_actor_id]
-                                # jump_is_active = actor_data.get(
-                                #     "TAGame.CarComponent_TA:Active", False)
                                 jump_is_active = actor_data.get(
-                                    "TAGame.CarComponent_TA:Active",
-                                    actor_data.get("TAGame.CarComponent_TA:ReplicatedActive", False))
+                                    COMPONENT_ACTIVE_KEY,
+                                    actor_data.get(COMPONENT_REPLICATED_ACTIVE_KEY, False))
                                 player_ball_data[player_actor_id][frame_number]['jump_active'] = jump_is_active
                     elif actor_data["TypeName"] == "Archetypes.CarComponents.CarComponent_DoubleJump":
                         car_actor_id = actor_data.get(
@@ -377,11 +371,9 @@ class Game:
                         if car_actor_id is not None:
                             if car_actor_id in current_car_ids_to_collect:
                                 player_actor_id = car_player_ids[car_actor_id]
-                                # double_jump_is_active = actor_data.get(
-                                #     "TAGame.CarComponent_TA:Active", False)
                                 double_jump_is_active = actor_data.get(
-                                    "TAGame.CarComponent_TA:Active",
-                                    actor_data.get("TAGame.CarComponent_TA:ReplicatedActive", False))
+                                    COMPONENT_ACTIVE_KEY,
+                                    actor_data.get(COMPONENT_REPLICATED_ACTIVE_KEY, False))
                                 player_ball_data[player_actor_id][frame_number][
                                     'double_jump_active'] = double_jump_is_active
                     elif actor_data["TypeName"] == "Archetypes.CarComponents.CarComponent_Dodge":
@@ -390,30 +382,27 @@ class Game:
                         if car_actor_id is not None:
                             if car_actor_id in current_car_ids_to_collect:
                                 player_actor_id = car_player_ids[car_actor_id]
-                                # dodge_is_active = actor_data.get(
-                                #     "TAGame.CarComponent_TA:Active", False)
                                 dodge_is_active = actor_data.get(
-                                    "TAGame.CarComponent_TA:Active",
-                                    actor_data.get("TAGame.CarComponent_TA:ReplicatedActive", False))
+                                    COMPONENT_ACTIVE_KEY,
+                                    actor_data.get(COMPONENT_REPLICATED_ACTIVE_KEY, False))
                                 player_ball_data[player_actor_id][frame_number]['dodge_active'] = dodge_is_active
                     elif actor_data["ClassName"] == "TAGame.VehiclePickup_Boost_TA":
                         # print(actor_id, actor_data, frame_number, frame["time"])
-                        if "TAGame.VehiclePickup_TA:ReplicatedPickupData" in actor_data and \
-                                actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"] != -1 and \
-                                'instigator_id' in actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]['pickup']:
-                            car_actor_id = actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]['pickup']['instigator_id']
+                        REPLICATED_PICKUP_KEY = "TAGame.VehiclePickup_TA:ReplicatedPickupData"
+                        if REPLICATED_PICKUP_KEY in actor_data and \
+                                actor_data[REPLICATED_PICKUP_KEY] != -1 and \
+                                'instigator_id' in actor_data[REPLICATED_PICKUP_KEY]['pickup']:
+                            car_actor_id = actor_data[REPLICATED_PICKUP_KEY]['pickup']['instigator_id']
                             if car_actor_id in car_player_ids:
                                 player_actor_id = car_player_ids[car_actor_id]
                                 # print(actor_id, player_dicts[player_actor_id]["name"])
                                 if frame_number in player_ball_data[player_actor_id]:
                                     player_ball_data[player_actor_id][frame_number]['boost_collect'] = True
+                                    # TODO: Investigate and fix random imaginary boost collects
                                 # set to false after acknowledging it's turned True
                                 # it does not turn back false immediately although boost is only collected once.
-                                # but now using actorid!=-1 instead of unknown1 check
-                                # as unknowns can become true even when actorid is -1
-                                actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]["Unknown1"] = False
-                                actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]["Unknown2"] = False
-                                actor_data["TAGame.VehiclePickup_TA:ReplicatedPickupData"]["ActorId"] = -1
+                                # using actor_id!=-1
+                                actor_data[REPLICATED_PICKUP_KEY]['pickup']["instigator_id"] = -1
                 for player_actor_id in player_dicts:
                     actor_data = current_actors[player_actor_id]
                     if frame_number in player_ball_data[player_actor_id]:
@@ -448,6 +437,10 @@ class Game:
         # PLAYERS
         player_actor_id_player_dict = {}  # player_actor_id: Player
         for _player_actor_id, _player_data in all_data['player_dicts'].items():
+            if "TAGame.PRI_TA:MatchScore" not in _player_data:
+                print("Ignoring player %s as player has no MatchScore." % _player_data['name'])
+                continue
+
             found_player = False
             for player in self.players:
                 # if player leaves early, won't be created (as not found in metadata's player_stats)

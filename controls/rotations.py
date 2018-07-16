@@ -117,6 +117,7 @@ def import_data(file_index=None):
 def predict_user_inputs(ang_vels, rotations):
     predicted_inputs = {}
 
+    # TODO: Optimise by vectorising.
     for frame_number, row_data in ang_vels.iterrows():
         omega_t = row_data[['ang_vel_x', 'ang_vel_y', 'ang_vel_z']].values
         try:
@@ -132,9 +133,6 @@ def predict_user_inputs(ang_vels, rotations):
     predicted_df.columns = ['predicted_input_roll', 'predicted_input_pitch', 'predicted_input_yaw']
     # print(predicted_df)
     return predicted_df
-    data = pd.concat((data, predicted_df), axis=1)
-
-    return data
 
 
 def predict_omega_dt(file_index=None):
