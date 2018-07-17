@@ -327,8 +327,8 @@ class Hit:
 
             # hit distance
             if next_hit:
-                displacement = next_hit.ball_data.loc['pos_x':'pos_z'].values - hit.ball_data.loc[
-                                                                                'pos_x':'pos_z'].values
+                displacement = next_hit.ball_data[['pos_x', 'pos_y', 'pos_z']].values - hit.ball_data[
+                                                                                ['pos_x', 'pos_y','pos_z']].values
                 hit.analytics['distance'] = np.sqrt(np.square(displacement).sum())
             elif hit.analytics['goal']:
 
@@ -387,7 +387,7 @@ class Hit:
         _goal_x = min(max(self.ball_data['pos_x'], GOAL_X / 2), -GOAL_X / 2)
         _goal_y = -MAP_Y / 2 if self.player.is_orange else MAP_Y / 2
 
-        displacement = self.ball_data['pos_x':'pos_y'].values - (_goal_x, _goal_y)
+        displacement = self.ball_data[['pos_x', 'pos_y']].values - (_goal_x, _goal_y)
         distance = np.sqrt(np.square(displacement).sum())
 
         return distance
