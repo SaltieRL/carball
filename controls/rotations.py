@@ -59,8 +59,6 @@ def find_user_input(omega_t, omega_dt, rotation, dt=FRAME_DT):
     tau = (omega_dt - omega_t) / dt
     u = np.dot(T_inv, np.dot(Theta.T, tau) - np.dot(D, np.dot(Theta.T, omega_t)))
 
-    u = np.clip(u, -1, 1)
-
     """
     r * t_r + d_r * omega_r = tau_r
     p * t_p + d_p * omega_p * (1 - abs(p)) = tau_p
@@ -72,9 +70,7 @@ def find_user_input(omega_t, omega_dt, rotation, dt=FRAME_DT):
     """
 
     u = np.clip(u, -1, 1)
-
     return u
-
 
 def find_omega_dt(omega_t, rotation, user_input, dt=FRAME_DT):
     """
@@ -118,13 +114,15 @@ def predict_user_inputs(ang_vels, rotations):
     predicted_inputs = {}
 
     # TODO: Optimise by vectorising.
+    ang_vel_columns = ['ang_vel_x', 'ang_vel_y', 'ang_vel_z']
+    rotation_columns = ['rot_x', 'rot_y', 'rot_z']
     for frame_number, row_data in ang_vels.iterrows():
-        omega_t = row_data[['ang_vel_x', 'ang_vel_y', 'ang_vel_z']].values
+        omega_t = row_data[ang_vel_columns].values
         try:
-            omega_dt = ang_vels.loc[frame_number + 1, ['ang_vel_x', 'ang_vel_y', 'ang_vel_z']].values
+            omega_dt = ang_vels.loc[frame_number + 1, ang_vel_columns].values
         except KeyError:
             continue
-        rotation = rotations.loc[frame_number, ['rot_x', 'rot_y', 'rot_z']].values * np.pi
+        rotation = rotations.loc[frame_number, rotation_columns].values * np.pi
         u = find_user_input(omega_t, omega_dt, rotation).flatten()
         # u = u[np.nonzero(u)]
         predicted_inputs[frame_number] = u
@@ -132,6 +130,18 @@ def predict_user_inputs(ang_vels, rotations):
     predicted_df = pd.DataFrame.from_dict(predicted_inputs, orient='index')
     predicted_df.columns = ['predicted_input_roll', 'predicted_input_pitch', 'predicted_input_yaw']
     # print(predicted_df)
+
+    # vectorised method
+    # TODO: ACTUALLY VECTORISE.
+    # omega_t = ang_vels.loc[:, ang_vel_columns].rename(
+    #     columns={'ang_vel_x': 'omega_t_x', 'ang_vel_y': 'omega_t_y', 'ang_vel_z': 'omega_t_z'}
+    # )
+    # omega_dt = ang_vels.loc[:, ang_vel_columns].shift(1).rename(
+    #     columns={'ang_vel_x': 'omega_dt_x', 'ang_vel_y': 'omega_dt_y', 'ang_vel_z': 'omega_dt_z'}
+    # )
+    # rotation = rotations.loc[:, rotation_columns] * np.pi
+    # dataframe = pd.concat([omega_t, omega_dt, rotation], axis=1)
+    # predicted_df_2 = dataframe[:5].apply(df_apply_find_user_input, axis=1, reduce=False)
     return predicted_df
 
 
@@ -161,7 +171,3 @@ def predict_omega_dt(file_index=None):
     data = pd.concat((data, predicted_df), axis=1)
 
     return data
-
-
-
-

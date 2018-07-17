@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 from .bounce import bounce
 
+
 BALL_RADIUS = 91.25
 SIDE_WALL_DISTANCE = 4096
 BACK_WALL_DISTANCE = 5140
@@ -236,7 +237,7 @@ class Ball:
 
         if collided:
             state = (v, self.sim_vars['ang_vel'])
-            new_state = bounce.bounce(state, normal_vector)
+            new_state = bounce(state, normal_vector)
             v, self.sim_vars['ang_vel'] = new_state
             x_v[3:] = v
 

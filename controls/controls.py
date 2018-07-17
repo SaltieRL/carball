@@ -16,7 +16,7 @@ def get_controls(game):
         frames_not_on_ground = player.data.loc[:, 'pos_z'][player.data.loc[:, 'pos_z'] > 18].index.values
         # print(frames_not_on_ground)
         predicted_inputs = predict_user_inputs(player.data.loc[frames_not_on_ground, ['ang_vel_x', 'ang_vel_y', 'ang_vel_z']] / 1000,
-                                               player.data.loc[frames_not_on_ground, ['rot_x', 'ang_vel_y', 'rot_z']])
+                                               player.data.loc[frames_not_on_ground, ['rot_x', 'rot_y', 'rot_z']])
         # print(predicted_inputs)
         pitch = predicted_inputs.loc[:, 'predicted_input_pitch']
         yaw = predicted_inputs.loc[:, 'predicted_input_yaw']

@@ -4,7 +4,7 @@ import subprocess
 import json
 
 from game.game import Game
-# from analyser.game_analyser import analyse_game
+from analyser.game_analyser import analyse_game
 from controls.controls import get_controls
 
 BASE_DIR = os.path.dirname(__file__)
@@ -30,6 +30,7 @@ def decompile_replay(path, output_path):
     _json = json.load(open(output_path))
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
+    analyse_game(game)
     return game
 
 
