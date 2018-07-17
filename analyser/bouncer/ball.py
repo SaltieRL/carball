@@ -44,10 +44,10 @@ class Ball:
     def __init__(self, ball_data, is_orange):
         self.is_orange = is_orange
         self.ball_data = ball_data
-        self.sim_vars = {'position': ball_data.loc['pos_x': 'pos_z'].values,
-                         'velocity': ball_data.loc['vel_x': 'vel_z'].values / 10,
-                         'rotation': ball_data.loc['rot_x': 'rot_z'].values,
-                         'ang_vel': ball_data.loc['ang_vel_x': 'ang_vel_z'].values / 1000,
+        self.sim_vars = {'position': ball_data[['pos_x', 'pos_y', 'pos_z']].values,
+                         'velocity': ball_data[['vel_x', 'vel_y', 'vel_z']].values / 10,
+                         'rotation': ball_data[['rot_x', 'rot_y', 'rot_z']].values,
+                         'ang_vel': ball_data[['ang_vel_x', 'ang_vel_y', 'ang_vel_z']].values / 1000,
                          }
 
         self.is_shot = False
