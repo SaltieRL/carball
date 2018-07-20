@@ -3,9 +3,15 @@ import pickle
 import subprocess
 import json
 
-from game.game import Game
-from analyser.game_analyser import analyse_game
-from controls.controls import get_controls
+try:
+    from .game.game import Game
+    from .analyser.game_analyser import analyse_game
+    from .controls.controls import get_controls
+except:
+    from game.game import Game
+    from analyser.game_analyser import analyse_game
+    from controls.controls import get_controls
+
 
 BASE_DIR = os.path.dirname(__file__)
 OUTPUT_DIR = os.path.join('replays', 'pickled')
