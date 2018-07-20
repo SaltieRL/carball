@@ -74,7 +74,10 @@ class Hit:
             closest_player_distance = 999999
             collision_distances = {}
             for player in team.players:
-                player_hitbox = get_hitbox(player.loadout[player.is_orange]['car'])
+                if len(player.loadout) == 1:
+                    player_hitbox = get_hitbox(player.loadout[0]['car'])
+                else:
+                    player_hitbox = get_hitbox(player.loadout[player.is_orange]['car'])
 
                 player_position = player.data.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
                 ball_position = game.ball.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]

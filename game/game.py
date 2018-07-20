@@ -37,7 +37,9 @@ class Game:
             # print(self.datetime)
         except ValueError:
             self.datetime = datetime.strptime(self.properties['Date']['value']['str'], '%Y-%m-%d:%H-%M')
-        self.replay_version = self.properties['ReplayVersion']['value']['int']
+        self.replay_version = self.properties.get('ReplayVersion', None)
+        if self.replay_version is not None:
+            self.replay_version = self.replay_version['value']['int']
 
         self.teams = []
         self.players = self.create_players()
@@ -183,7 +185,7 @@ class Game:
                 current_actors[actor_id] = {
                     'TypeName': actor_spawn['value']['spawned']['object_name'],
                     'ClassName': actor_spawn['value']['spawned']['class_name'],
-                    'Name': actor_spawn['value']['spawned']['name'],
+                    'Name': actor_spawn['value']['spawned'].get('name', None),
                     'Id': actor_id
                 }
             # apply actor updates
@@ -407,7 +409,9 @@ class Game:
                                 # using actor_id!=-1
                                 actor_data[REPLICATED_PICKUP_KEY]['pickup']["instigator_id"] = -1
                 for player_actor_id in player_dicts:
-                    actor_data = current_actors[player_actor_id]
+                    actor_data = current_actors.get(player_actor_id, None)
+                    if actor_data is None:
+                        continue
                     if frame_number in player_ball_data[player_actor_id]:
                         player_ball_data[player_actor_id][frame_number]['ping'] = actor_data.get(
                             "Engine.PlayerReplicationInfo:Ping", None)

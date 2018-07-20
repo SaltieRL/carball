@@ -33,8 +33,11 @@ class Player:
 
     def create_from_actor_data(self, actor_data, teams):
         self.name = actor_data['name']
-        actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[0]
-        self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'][actor_type]
+        if 'Engine.PlayerReplicationInfo:bBot' in actor_data and actor_data['Engine.PlayerReplicationInfo:bBot']:
+            self.online_id = 0  # this is a bot
+        else:
+            actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[0]
+            self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'][actor_type]
         self.score = actor_data["TAGame.PRI_TA:MatchScore"]
         team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]
         if team_actor_id == -1:
@@ -82,7 +85,10 @@ class Player:
         return self
 
     def get_loadout(self, actor_data):
-        loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]["loadouts"]
+        if "TAGame.PRI_TA:ClientLoadouts" in actor_data:  # new version (2 loadouts)
+            loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]["loadouts"]
+        else:
+            loadout_data = {'0': actor_data["TAGame.PRI_TA:ClientLoadout"]["loadout"]}
         for loadout_name, _loadout in loadout_data.items():
             self.loadout.append({
                 'version': _loadout.get('version', None),
