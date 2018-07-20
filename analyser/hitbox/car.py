@@ -28,7 +28,11 @@ xl.set_index('Item ID', inplace=True)
 
 
 def get_hitbox(car_item_id):
-    car_hitbox = xl.loc[car_item_id, ['Length', 'Width', 'Height', 'Offset', 'Elevation']].values
+    try:
+        car_hitbox = xl.loc[car_item_id, ['Length', 'Width', 'Height', 'Offset', 'Elevation']].values
+    except KeyError:
+        print("Cannot find car body id: %s. Falling back onto Octane." % car_item_id)
+        car_hitbox = xl.loc[23, ['Length', 'Width', 'Height', 'Offset', 'Elevation']].values
     car_length, car_width, car_height, car_offset, car_elevation = car_hitbox
     car_x_lims = (-car_length / 2 + car_offset, car_length / 2 + car_offset)
     car_y_lims = (-car_width / 2, car_width / 2)
