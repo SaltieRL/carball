@@ -32,8 +32,11 @@ class Game:
         if self.name is not None:
             self.name = self.find_actual_value(self.name['value'])
         self.id = self.find_actual_value(self.properties["Id"]['value'])
-        self.datetime = datetime.strptime(self.properties['Date']['value']['str'], '%Y-%m-%d %H-%M-%S')
-        # print(self.datetime)
+        try:
+            self.datetime = datetime.strptime(self.properties['Date']['value']['str'], '%Y-%m-%d %H-%M-%S')
+            # print(self.datetime)
+        except ValueError:
+            self.datetime = datetime.strptime(self.properties['Date']['value']['str'], '%Y-%m-%d:%H-%M')
         self.replay_version = self.properties['ReplayVersion']['value']['int']
 
         self.teams = []
