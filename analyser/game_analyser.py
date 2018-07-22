@@ -1,6 +1,7 @@
-from .hit import Hit
-
 import pandas as pd
+
+from analyser.stats.stats import add_stats
+from .hit import Hit
 
 
 def analyse_game(game):
@@ -22,6 +23,9 @@ def analyse_game(game):
 
     # HITS
     Hit.add_analytics_attributes(game)
+
+    # STATS
+    add_stats(game)
 
 
 def get_kickoff_frames(game):
