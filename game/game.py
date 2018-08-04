@@ -51,6 +51,7 @@ class Game:
         self.ball = None
         self.demos = None
         self.parse_all_data(self.all_data)
+        self.data_frame = self.create_data_df()
 
     def __repr__(self):
         team_0_name = self.teams[0].name
@@ -88,7 +89,6 @@ class Game:
                 return dicti[t]
         else:
             return dicti
-
 
     def parse_replay(self):
         """
@@ -192,7 +192,8 @@ class Game:
             for actor_update in ActorUpdates:
                 actor_id = actor_update['actor_id']['value']
                 update_type = list(actor_update['value'].keys())[0]
-                actual_update = {v['name']: self.find_actual_value(v['value']) for v in actor_update['value']['updated']}
+                actual_update = {v['name']: self.find_actual_value(v['value']) for v in
+                                 actor_update['value']['updated']}
                 # TODO: process each subtype to a single value
                 # add if new actor
                 if actor_id not in current_actor_ids:
@@ -502,3 +503,8 @@ class Game:
         del self.replay_data
         del self.replay
         del self.all_data
+
+    def create_data_df(self):
+        data_dict = {player.name: player.data for player in self.players}
+        data_dict['ball'] = self.ball
+        return pd.concat(data_dict, axis=1)
