@@ -80,7 +80,6 @@ class Game:
         for player_stats in self.properties["PlayerStats"]["value"]["array"]:
             player = Player().parse_player_stats(player_stats["value"])
             players.append(player)
-            logger.info('Create Player: %s' % player)
         return players
 
     def get_goals(self):
