@@ -1,6 +1,10 @@
+import logging
+
 import pandas as pd
 
 from .boost import get_boost_type_from_position
+
+logger = logging.getLogger(__name__)
 
 
 class Player:
@@ -24,6 +28,8 @@ class Player:
         self.data = None
         self.boosts = None
         self.demos = None
+
+        logger.info('Create Player: %s' % self)
 
     def __repr__(self):
         if self.team:
@@ -75,6 +81,10 @@ class Player:
         self.camera_settings['stiffness'] = camera_data.get('stiffness', None)
         self.camera_settings['swivel_speed'] = camera_data.get('swivel_speed', None)
         self.camera_settings['transition_speed'] = camera_data.get('transition_speed', None)
+
+        for key, value in self.camera_settings.items():
+            if value is None:
+                logger.warning('Could not find ' + key + ' in camera settings for ' + self.name)
 
     def parse_actor_data(self, actor_data):
         self.get_loadout(actor_data)

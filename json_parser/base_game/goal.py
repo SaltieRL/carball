@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class Goal:
 
     def __init__(self, goal_dict, game):
@@ -7,6 +12,7 @@ class Goal:
 
         self.player = self.get_player(game)
         self.frame_number = goal_dict["frame"]["value"]["int"]
+        logger.info('Created Goal: %s' % self)
 
     def __repr__(self):
         return "Goal by %s on frame %s" % (self.player.name, self.frame_number)

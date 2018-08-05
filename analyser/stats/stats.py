@@ -1,8 +1,7 @@
 import pandas as pd
 
-from .tendencies.tendencies import TendenciesStat
 from .possession import PossessionStat
-from game.game import Game
+from json_parser.base_game.game import Game
 
 
 def add_stats(game: Game):

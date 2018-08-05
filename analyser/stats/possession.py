@@ -1,9 +1,9 @@
 import pandas as pd
 from typing import Dict
 
-from game.game import Game
-from game.player import Player
-from game.team import Team
+from json_parser.base_game.game import Game
+from json_parser.base_game.player import Player
+from json_parser.base_game.team import Team
 
 
 class PossessionStat:

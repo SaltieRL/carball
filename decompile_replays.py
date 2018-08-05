@@ -4,11 +4,11 @@ import subprocess
 import json
 
 try:
-    from .game.game import Game
+    from json_parser.base_game.game import Game
     from .analyser.game_analyser import analyse_game
     from .controls.controls import get_controls
 except:
-    from game.game import Game
+    from json_parser.base_game.game import Game
     from analyser.game_analyser import analyse_game
     from controls.controls import get_controls
 

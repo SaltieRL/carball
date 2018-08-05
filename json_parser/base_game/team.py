@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class Team:
 
     def __init__(self):
@@ -5,6 +10,7 @@ class Team:
         self.name = None
         self.score = None
         self.players = set()
+        logger.info('Created Team: %s' % self)
 
     def __repr__(self):
         if self.is_orange is not None:
