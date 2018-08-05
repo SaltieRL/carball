@@ -2,14 +2,14 @@ import logging
 
 import pandas as pd
 
-from .boost import get_boost_type_from_position
+from .boost import get_if_full_boost_position
 
 logger = logging.getLogger(__name__)
 
 
 class Player:
 
-    def __init__(self, player_stats_dict=None, actor_data=None):
+    def __init__(self):
         self.name = None
         self.online_id = None
         self.team = None  # using team class. set later.
@@ -19,6 +19,7 @@ class Player:
         self.assists = None
         self.saves = None
         self.shots = None
+        self.is_bot = None
 
         self.frame_data = {}
 
@@ -29,7 +30,9 @@ class Player:
         self.boosts = None
         self.demos = None
 
-        logger.info('Create Player: %s' % self)
+        self.title = None
+        self.total_xp = None
+        self.steering_sensitivity = None
 
     def __repr__(self):
         if self.team:
@@ -59,6 +62,8 @@ class Player:
         self.saves = actor_data.get("TAGame.PRI_TA:MatchSaves", None)
         self.shots = actor_data.get("TAGame.PRI_TA:MatchShots", None)
         self.parse_actor_data(actor_data)
+
+        logger.info('Created Player from actor_data: %s' % self)
         return self
 
     def parse_player_stats(self, player_stats):
@@ -71,6 +76,8 @@ class Player:
         self.saves = player_stats["Saves"]["value"]["int"]
         self.shots = player_stats["Shots"]["value"]["int"]
         self.is_bot = bool(player_stats["bBot"]["value"]["bool"])
+
+        logger.info('Created Player from stats: %s' % self)
         return self
 
     def get_camera_settings(self, camera_data):
@@ -85,8 +92,16 @@ class Player:
         for key, value in self.camera_settings.items():
             if value is None:
                 logger.warning('Could not find ' + key + ' in camera settings for ' + self.name)
+        logger.info('Camera settings for %s: %s' % (self.name, self.camera_settings))
 
     def parse_actor_data(self, actor_data):
+        """
+        Adds stuff not found in PlayerStats metadata.
+        PlayerStats is a better source of truth - as actor_data might not have been updated (e.g. for last assist)
+
+        :param actor_data:
+        :return:
+        """
         self.get_loadout(actor_data)
 
         self.title = actor_data.get('TAGame.PRI_TA:Title', None)
@@ -114,6 +129,7 @@ class Player:
                 'banner': _loadout.get('banner', None)
             })
             # TODO: Support painted stuff (look in ClientLoadoutsOnline)
+        logger.info('Loadout for %s: %s' % (self.name, self.loadout))
 
     def parse_data(self, _dict):
         """
@@ -150,12 +166,10 @@ class Player:
         """
         self.data = pd.DataFrame.from_dict(_dict, orient='index')
         self.get_boost()
-        pass
 
     def get_boost(self):
-
-        boost_collection_frames = self.data.boost_collect[self.data.boost_collect == True].index.values
+        boost_collection_frames = self.data.boost_collect[self.data.boost_collect is True].index.values
         for boost_collection_frame in boost_collection_frames:
             position = self.data.loc[boost_collection_frame, ['pos_x', 'pos_y', 'pos_z']]
-            boost_type = get_boost_type_from_position(position)
+            boost_type = get_if_full_boost_position(position)
             self.data.loc[boost_collection_frame, 'boost_collect'] = boost_type

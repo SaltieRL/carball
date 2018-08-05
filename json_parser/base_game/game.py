@@ -80,13 +80,14 @@ class Game:
         for player_stats in self.properties["PlayerStats"]["value"]["array"]:
             player = Player().parse_player_stats(player_stats["value"])
             players.append(player)
+            logger.info('Create Player: %s' % player)
         return players
 
     def get_goals(self):
         goals = [g['value'] for g in self.properties["Goals"]["value"]["array"]]
 
         logger.info('Found %s goals.' % len(goals))
-        logger.debug('Goals:' + goals)
+        logger.debug('Goals: %s' % goals)
 
         goals_list = []
         for goal_dict in goals:
@@ -188,8 +189,6 @@ class Game:
                 current_actors.pop(deleted_actor_id)
                 if deleted_actor_id in car_player_ids:
                     player_actor_id = car_player_ids[deleted_actor_id]
-                    if len(car_player_ids) != len(player_car_ids):
-                        x = 1
                     car_player_ids.pop(deleted_actor_id)
                     try:
                         player_car_ids.pop(player_actor_id)
@@ -208,7 +207,7 @@ class Game:
             # apply actor updates
             for actor_update in ActorUpdates:
                 actor_id = actor_update['actor_id']['value']
-                update_type = list(actor_update['value'].keys())[0]
+                # update_type = list(actor_update['value'].keys())[0]
                 actual_update = {v['name']: self.find_actual_value(v['value']) for v in
                                  actor_update['value']['updated']}
                 # TODO: process each subtype to a single value
@@ -223,8 +222,8 @@ class Game:
 
             # find players and ball
             for actor_id, actor_data in current_actors.items():
-                if actor_data[
-                    "TypeName"] == "TAGame.Default__PRI_TA" and "Engine.PlayerReplicationInfo:Team" in actor_data:
+                if actor_data["TypeName"] == "TAGame.Default__PRI_TA" \
+                        and "Engine.PlayerReplicationInfo:Team" in actor_data:
                     player_dict = {
                         'name': actor_data["Engine.PlayerReplicationInfo:PlayerName"],
                         'team': actor_data["Engine.PlayerReplicationInfo:Team"],
@@ -311,7 +310,8 @@ class Game:
                             # add attacker and victim player ids
                             attacker_car_id = demo_data["attacker_actor_id"]
                             victim_car_id = demo_data["victim_actor_id"]
-                            if attacker_car_id != -1 and victim_car_id != -1 and attacker_car_id < 1e9 and victim_car_id < 1e9:
+                            if attacker_car_id != -1 and victim_car_id != -1 and \
+                                    attacker_car_id < 1e9 and victim_car_id < 1e9:
                                 # Filter out weird stuff where it's not a demo
                                 # frame 1 of 0732D41D4AF83D610AE2A988ACBC977A (rlcs season 4 eu)
                                 attacker_player_id = car_player_ids[attacker_car_id]
@@ -329,8 +329,7 @@ class Game:
                                 actor_data.pop("TAGame.Car_TA:ReplicatedDemolish")
 
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Default":
-                        RBState = actor_data.get(
-                            REPLICATED_RB_STATE_KEY, {})
+                        # RBState = actor_data.get(REPLICATED_RB_STATE_KEY, {})
                         # ball_is_sleeping = RBState.get('Sleeping', True)
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
@@ -459,8 +458,7 @@ class Game:
         # TEAMS
         self.teams = []
         for team_id, team_data in all_data['team_dicts'].items():
-            team = Team()
-            team.parse_team_data(team_data)
+            team = Team().parse_team_data(team_data)
             self.teams.append(team)
 
         # PLAYERS

@@ -21,6 +21,3 @@ class Goal:
         for player in game.players:
             if player.name == self.player_name:
                 return player
-
-    def get_frame_number(self, game):
-        pass
