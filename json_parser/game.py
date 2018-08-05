@@ -234,7 +234,7 @@ class Game:
                         # add new player
                         player_dicts[actor_id] = player_dict
 
-                        logger.debug('Found player: %s (id: %s)' % (player_dict['name'], actor_id))
+                        logger.debug('Found player actor: %s (id: %s)' % (player_dict['name'], actor_id))
                         player_ball_data[actor_id] = {}
                     else:
                         # update player_dicts
@@ -244,8 +244,6 @@ class Game:
                     team_dicts[actor_id] = actor_data
                     team_dicts[actor_id]['colour'] = 'blue' if actor_data[
                                                                    "TypeName"] == "Archetypes.Teams.Team0" else 'orange'
-                # elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Default":
-                #     player_ball_data['ball'] = {}
 
             # stop data collection after goal
             REPLICATED_RB_STATE_KEY = "TAGame.RBActor_TA:ReplicatedRBState"

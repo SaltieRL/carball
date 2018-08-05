@@ -4,11 +4,11 @@ import subprocess
 import json
 
 try:
-    from json_parser.base_game.game import Game
+    from json_parser.game import Game
     from .analyser.game_analyser import analyse_game
     from .controls.controls import get_controls
 except:
-    from json_parser.base_game.game import Game
+    from json_parser.game import Game
     from analyser.game_analyser import analyse_game
     from controls.controls import get_controls
 
@@ -42,7 +42,10 @@ def decompile_replay(path, output_path):
 
 if __name__ == '__main__':
     import logging
+
     logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger(__name__)
+
     if not os.path.isdir(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 

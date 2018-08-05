@@ -1,7 +1,7 @@
 import pandas as pd
 
 from .possession import PossessionStat
-from json_parser.base_game.game import Game
+from json_parser.game import Game
 
 
 def add_stats(game: Game):

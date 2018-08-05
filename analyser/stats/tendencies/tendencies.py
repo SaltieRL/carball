@@ -1,7 +1,7 @@
 from typing import Dict
 
-from json_parser.base_game.game import Game
-from json_parser.base_game.player import Player
+from json_parser.game import Game
+from json_parser.player import Player
 from .player_tendencies import PlayerTendencies
 
 
