@@ -9,9 +9,9 @@ def analyse_game(game):
     Hit.add_hits_to_game(game)
 
     # GOALS
-    goal_kickoff_frames = get_kickoff_frames(game)
+    game.kickoff_frames = get_kickoff_frames(game)
     for goal_index, goal in enumerate(game.goals):
-        goal_kickoff_frame = goal_kickoff_frames[goal_index]
+        goal_kickoff_frame = game.kickoff_frames[goal_index]
         goal_number = goal_index + 1
         goal.kickoff_frame = goal_kickoff_frame
         goal.goal_number = goal_number

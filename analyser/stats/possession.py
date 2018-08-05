@@ -15,7 +15,7 @@ class PossessionStat:
     def get_possession(cls, game: Game) -> 'PossessionStat':
         team_possessions = cls.get_team_possessions(game)
         player_possessions = cls.get_player_possessions(game)
-        return PossessionStat(team_possessions, player_possessions)
+        return cls(team_possessions, player_possessions)
 
     @staticmethod
     def get_team_possessions(game: Game) -> Dict[Team, float]:
