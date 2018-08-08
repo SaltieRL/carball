@@ -45,7 +45,7 @@ class Game:
         date_string = self.properties['Date']['value']['str']
         for date_format in DATETIME_FORMATS:
             try:
-                self.data_frame = datetime.strptime(date_string, date_format)
+                self.datetime = datetime.strptime(date_string, date_format)
                 break
             except ValueError:
                 pass
