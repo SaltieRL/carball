@@ -4,6 +4,7 @@ from json_parser.game import Game
 from .metadata.ApiGame import ApiGame
 from .saltie_hit import SaltieHit
 from ..hit_detection.base_hit import BaseHit
+from ..stats.stats import get_stats
 
 
 class SaltieGame:
@@ -23,7 +24,7 @@ class SaltieGame:
         self.hits = BaseHit.get_hits_from_game(game)
         self.saltie_hits = SaltieHit.get_saltie_hits_from_game(self)
 
-        self.stats = self.get_stats()
+        self.stats = get_stats(game)
 
     @staticmethod
     def get_kickoff_frames(game):
@@ -36,6 +37,3 @@ class SaltieGame:
                                             ~(ball_hit_dataframe['last_frame_ball_has_been_hit'])]
 
         return kickoff_frames.index.values
-
-    def get_stats(self):
-        pass
