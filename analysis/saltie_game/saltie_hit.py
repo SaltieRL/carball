@@ -1,12 +1,13 @@
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
 
 import numpy as np
 
-from .saltie_game import SaltieGame
 from ..hit_detection.base_hit import BaseHit
 from ..simulator.ball_simulator import BallSimulator
 from ..simulator.map_constants import *
 
+if TYPE_CHECKING:
+    from .saltie_game import SaltieGame
 
 class SaltieHit:
 
@@ -45,7 +46,7 @@ class SaltieHit:
         return distance
 
     @staticmethod
-    def get_saltie_hits_from_game(saltie_game: SaltieGame):
+    def get_saltie_hits_from_game(saltie_game: 'SaltieGame'):
         hit_analytics_dict: Dict[int, SaltieHit] = {}
         for hit in saltie_game.hits.values():
             saltie_hit = SaltieHit(hit)
@@ -59,9 +60,9 @@ class SaltieHit:
             last_goalscorer_saltie_hit = None
             for hit_frame_number in hit_frame_numbers:
                 saltie_hit = hit_analytics_dict[hit_frame_number]
-                if not goal_kickoff_frame <= saltie_hit.hit.frame_number <= goal.frame_number:
+                if not goal_kickoff_frame <= saltie_hit.hit.frame_number <= goal.frame:
                     continue
-                if saltie_hit.hit.player is goal.player:
+                if saltie_hit.hit.player.name == goal.playerName:
                     last_goalscorer_saltie_hit = saltie_hit
 
             if last_goalscorer_saltie_hit is None:
@@ -149,5 +150,5 @@ class SaltieHit:
                 print('Goal is not shot: %s' % hit)
 
 
-def get_goal_number(frame_number: int, saltie_game: SaltieGame) -> int:
-    return saltie_game.data_frame.loc[frame_number, 'goal_number']
+def get_goal_number(frame_number: int, saltie_game: 'SaltieGame') -> int:
+    return saltie_game.data_frame.loc[frame_number, ('goal_number', '')]

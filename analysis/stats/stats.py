@@ -1,10 +1,12 @@
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
 
 import pandas as pd
 
-from ..saltie_game.saltie_game import SaltieGame
 from .possession.possession import PossessionStat
 from json_parser.game import Game
+
+if TYPE_CHECKING:
+    from ..saltie_game.saltie_game import SaltieGame
 
 
 def get_stats(game: Game) -> Dict:
@@ -15,7 +17,7 @@ def get_stats(game: Game) -> Dict:
     }
 
 
-def get_goal_frame_data(game: SaltieGame, include_post_last_goal=True) -> pd.DataFrame:
+def get_goal_frame_data(game: 'SaltieGame', include_post_last_goal=True) -> pd.DataFrame:
     """
     Adds .goal_data_frame attribute to game.
     Modified version of game.data_frame that does not include frames before kickoff/after goals
