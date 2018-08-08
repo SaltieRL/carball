@@ -2,10 +2,10 @@ from typing import Dict
 
 import numpy as np
 
-from analysis.hit_detection.base_hit import BaseHit
-from analysis.saltie_game.saltie_game import SaltieGame
-from analysis.simulator.ballsimulator import BallSimulator
-from analysis.simulator.map_constants import *
+from .saltie_game import SaltieGame
+from ..hit_detection.base_hit import BaseHit
+from ..simulator.ball_simulator import BallSimulator
+from ..simulator.map_constants import *
 
 
 class SaltieHit:

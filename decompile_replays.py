@@ -1,17 +1,16 @@
+import json
 import os
 import pickle
 import subprocess
-import json
+
+from analysis.saltie_game.saltie_game import SaltieGame
 
 try:
     from json_parser.game import Game
-    from .analyser.game_analyser import analyse_game
     from .controls.controls import get_controls
 except:
     from json_parser.game import Game
-    from analyser.game_analyser import analyse_game
     from controls.controls import get_controls
-
 
 BASE_DIR = os.path.dirname(__file__)
 OUTPUT_DIR = os.path.join('replays', 'pickled')
@@ -36,8 +35,8 @@ def decompile_replay(path, output_path):
     _json = json.load(open(output_path))
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
-    analyse_game(game)
-    return game
+
+    return SaltieGame(game)
 
 
 if __name__ == '__main__':
