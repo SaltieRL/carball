@@ -12,7 +12,7 @@ def get_stats(saltie_game: 'SaltieGame') -> Dict:
     # TODO: Get Tendencies working.
     return {
         # 'tendencies': TendenciesStat.get_tendencies(game),
-        'posession': PossessionStat.get_possession(saltie_game)
+        'possession': PossessionStat.get_possession(saltie_game)
     }
 
 
