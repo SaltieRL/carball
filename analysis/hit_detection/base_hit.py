@@ -35,8 +35,6 @@ class BaseHit:
             except KeyError:
                 i += 1
 
-        game.hits[frame_number] = self
-
     def __repr__(self):
         return 'Hit by %s on frame %s at distance %i' % (self.player, self.frame_number, self.collision_distance)
 

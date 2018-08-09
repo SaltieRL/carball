@@ -3,17 +3,16 @@ from typing import Dict, TYPE_CHECKING
 import pandas as pd
 
 from .possession.possession import PossessionStat
-from json_parser.game import Game
 
 if TYPE_CHECKING:
     from ..saltie_game.saltie_game import SaltieGame
 
 
-def get_stats(game: Game) -> Dict:
+def get_stats(saltie_game: 'SaltieGame') -> Dict:
     # TODO: Get Tendencies working.
     return {
         # 'tendencies': TendenciesStat.get_tendencies(game),
-        'posession': PossessionStat.get_possession(game)
+        'posession': PossessionStat.get_possession(saltie_game)
     }
 
 

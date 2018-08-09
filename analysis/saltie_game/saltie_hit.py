@@ -102,19 +102,18 @@ class SaltieHit:
             if next_saltie_hit:
                 displacement = next_saltie_hit.hit.ball_data[['pos_x', 'pos_y', 'pos_z']].values - \
                                saltie_hit.hit.ball_data[['pos_x', 'pos_y', 'pos_z']].values
-                hit_analytics_dict[hit]['distance'] = np.sqrt(np.square(displacement).sum())
-            elif hit_analytics_dict[hit]['goal']:
-
-                hit_analytics_dict[hit]['distance'] = 0
+                saltie_hit.distance = np.sqrt(np.square(displacement).sum())
+            elif saltie_hit.goal:
+                saltie_hit.distance = 0
 
             if next_saltie_hit:
-                if hit.player is next_saltie_hit.player:
-                    if not hit_analytics_dict[hit]['dribble_continuation']:
-                        hit_analytics_dict[hit]['dribble'] = True
-                        hit_analytics_dict[next_saltie_hit]['dribble_continuation'] = True
-                elif hit.player.is_orange == next_saltie_hit.player.is_orange:
-                    hit_analytics_dict[hit]['pass_'] = True
-                    hit_analytics_dict[next_saltie_hit]['passed'] = True
+                if saltie_hit.hit.player is next_saltie_hit.hit.player:
+                    if not saltie_hit.dribble_continuation:
+                        saltie_hit.dribble = True
+                        next_saltie_hit.dribble_continuation = True
+                elif saltie_hit.hit.player.is_orange == next_saltie_hit.hit.player.is_orange:
+                    saltie_hit.pass_ = True
+                    next_saltie_hit.passed = True
 
                     next_player_scores = False
                     next_player_goal_hit = None
@@ -122,33 +121,33 @@ class SaltieHit:
                     while True:
                         try:
                             _next_next_hit_frame_number = hit_frame_numbers[hit_number + i]
-                            _next_next_hit = saltie_game.hits[_next_next_hit_frame_number]
-                            if _next_next_hit.player is not next_saltie_hit.player:
+                            _next_next_saltie_hit = hit_analytics_dict[_next_next_hit_frame_number]
+                            if _next_next_saltie_hit.hit.player is not next_saltie_hit.hit.player:
                                 break
-                            if hit_analytics_dict[_next_next_hit]['goal']:
+                            if _next_next_saltie_hit.goal:
                                 next_player_scores = True
-                                next_player_goal_hit = _next_next_hit
+                                next_player_goal_hit = _next_next_saltie_hit
                                 break
                             i += 1
                         except IndexError:
                             break
 
                     if next_player_scores:
-                        hit_analytics_dict[hit]['assist'] = True
-                        hit_analytics_dict[next_player_goal_hit]['assisted'] = True
-                        print('Found assist (%s) for goal (%s)' % (hit, next_saltie_hit))
+                        saltie_hit.assist = True
+                        next_player_goal_hit.assisted = True
+                        print('Found assist (%s) for goal (%s)' % (saltie_hit.hit, next_saltie_hit.hit))
 
         # find shots
-        for hit in saltie_game.hits.values():
-            ball_sim = BallSimulator(hit.ball_data, hit.player.is_orange)
+        for saltie_hit in hit_analytics_dict.values():
+            ball_sim = BallSimulator(saltie_hit.hit.ball_data, saltie_hit.hit.player.is_orange)
             is_shot = ball_sim.get_is_shot()
             if is_shot:
-                hit_analytics_dict[hit]['shot'] = True
-                if hit_analytics_dict[hit]['goal']:
-                    print('Found shot for goal:', hit)
-            if hit_analytics_dict[hit]['goal'] and not is_shot:
-                print('Goal is not shot: %s' % hit)
+                saltie_hit.shot = True
+                if saltie_hit.goal:
+                    print('Found shot for goal:', saltie_hit.hit)
+            if saltie_hit.goal and not is_shot:
+                print('Goal is not shot: %s' % saltie_hit.hit)
 
 
 def get_goal_number(frame_number: int, saltie_game: 'SaltieGame') -> int:
-    return saltie_game.data_frame.loc[frame_number, ('goal_number', '')]
+    return saltie_game.data_frame.loc[frame_number, 'goal_number']

@@ -66,7 +66,6 @@ class Game:
         self.ball = None
         self.demos = None
         self.parse_all_data(self.all_data)
-        self.data_frame = self.create_data_df()
 
     def __repr__(self):
         team_0_name = self.teams[0].name
@@ -520,7 +519,4 @@ class Game:
         del self.replay
         del self.all_data
 
-    def create_data_df(self):
-        data_dict = {player.name: player.data for player in self.players}
-        data_dict['ball'] = self.ball
-        return pd.concat(data_dict, axis=1)
+

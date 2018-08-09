@@ -1,10 +1,13 @@
-from typing import Dict
+from typing import Dict, TYPE_CHECKING, List, Tuple
 
 import pandas as pd
 
-from json_parser.game import Game
+from analysis.hit_detection.base_hit import BaseHit
 from json_parser.player import Player
 from json_parser.team import Team
+
+if TYPE_CHECKING:
+    from ...saltie_game.saltie_game import SaltieGame
 
 
 class PossessionStat:
@@ -13,53 +16,57 @@ class PossessionStat:
         self.player_possessions = player_possessions
 
     @classmethod
-    def get_possession(cls, game: Game) -> 'PossessionStat':
-        team_possessions = cls.get_team_possessions(game)
-        player_possessions = cls.get_player_possessions(game)
+    def get_possession(cls, saltie_game: 'SaltieGame') -> 'PossessionStat':
+        team_possessions = cls.get_team_possessions(saltie_game)
+        player_possessions = cls.get_player_possessions(saltie_game)
         return cls(team_possessions, player_possessions)
 
     @staticmethod
-    def get_team_possessions(game: Game) -> Dict[Team, float]:
+    def get_team_possessions(saltie_game: 'SaltieGame') -> Dict[Team, float]:
         frame_possession_time_deltas = pd.concat(
             [
-                game.ball.hit_team_no,
-                game.frames.delta
+                saltie_game.data_frame['ball', 'hit_team_no'],
+                saltie_game.data_frame.delta
             ],
             axis=1
         )
+        frame_possession_time_deltas.columns = ['hit_team_no', 'delta']
+
         last_hit_possession = frame_possession_time_deltas.groupby('hit_team_no').sum()
         team_possessions = {
-            team: last_hit_possession.delta.loc[team.is_orange] for team in game.teams
+            int(team.isOrange): last_hit_possession.delta.loc[int(team.isOrange)] for team in saltie_game.api_game.teams
         }
         return team_possessions
 
     @staticmethod
-    def get_player_possessions(game: Game) -> Dict[Player, float]:
+    def get_player_possessions(saltie_game: 'SaltieGame') -> Dict[Player, float]:
         player_possessions = {
-            player: 0 for player in game.players
+            player.name: 0 for team in saltie_game.api_game.teams for player in team.players
         }
         frame_possession_time_deltas = pd.concat(
             [
-                game.ball.hit_team_no,
-                game.frames.delta
+                saltie_game.data_frame['ball', 'hit_team_no'],
+                saltie_game.data_frame.delta
             ],
             axis=1
         )
-        hits = sorted(game.hits.items())
+        frame_possession_time_deltas.columns = ['hit_team_no', 'delta']
+
+        hits: List[Tuple[int, 'BaseHit']] = sorted(saltie_game.hits.items())
         hit_number = 0
         for hit_frame_number, hit in hits:
             try:
                 next_hit_frame_number = hits[hit_number + 1][0]
             except IndexError:
                 # last hit
-                next_hit_frame_number = game.goals[-1].frame_number
+                next_hit_frame_number = saltie_game.api_game.goals[-1].frame
 
             hit_possession_time = frame_possession_time_deltas[
                                       frame_possession_time_deltas.hit_team_no == hit.player.is_orange
                                       ].delta.loc[
                                   hit_frame_number:next_hit_frame_number
                                   ].sum()
-            player_possessions[hit.player] += hit_possession_time
+            player_possessions[hit.player.name] += hit_possession_time
             hit_number += 1
 
         return player_possessions
