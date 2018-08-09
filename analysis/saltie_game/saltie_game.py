@@ -32,13 +32,21 @@ class SaltieGame:
 
     @staticmethod
     def get_kickoff_frames(game):
-        ball_has_been_hit = game.frames.loc[:, 'ball_has_been_hit']
-        last_frame_ball_has_been_hit = ball_has_been_hit.shift(1).rename('last_frame_ball_has_been_hit')
-        ball_hit_dataframe = pd.concat([ball_has_been_hit, last_frame_ball_has_been_hit], axis=1)
-        ball_hit_dataframe.fillna(False, inplace=True)
+        if game.frames.loc[:, 'ball_has_been_hit'].any():
+            ball_has_been_hit = game.frames.loc[:, 'ball_has_been_hit']
+            last_frame_ball_has_been_hit = ball_has_been_hit.shift(1).rename('last_frame_ball_has_been_hit')
+            ball_hit_dataframe = pd.concat([ball_has_been_hit, last_frame_ball_has_been_hit], axis=1)
+            ball_hit_dataframe.fillna(False, inplace=True)
 
-        kickoff_frames = ball_hit_dataframe[(ball_hit_dataframe['ball_has_been_hit']) &
-                                            ~(ball_hit_dataframe['last_frame_ball_has_been_hit'])]
+            kickoff_frames = ball_hit_dataframe[(ball_hit_dataframe['ball_has_been_hit']) &
+                                                ~(ball_hit_dataframe['last_frame_ball_has_been_hit'])]
+        else:
+            print("No ball_has_been_hit?! Is this really old or what.")
+            hit_team_no = game.ball.loc[:, 'hit_team_no']
+            last_hit_team_no = hit_team_no.shift(1).rename('last_hit_team_no')
+            hit_team_no_dataframe = pd.concat([hit_team_no, last_hit_team_no], axis=1)
+            kickoff_frames = hit_team_no_dataframe[~(hit_team_no_dataframe['hit_team_no'].isnull()) &
+                                                   (hit_team_no_dataframe['last_hit_team_no'].isnull())]
 
         return kickoff_frames.index.values
 

@@ -16,7 +16,7 @@ class ApiPlayerLoadout:
     def create_from_player(player):
         try:
             loadout = player.loadout[player.is_orange]
-        except KeyError:
+        except IndexError:
             loadout = player.loadout[0]
 
         return ApiPlayerLoadout(

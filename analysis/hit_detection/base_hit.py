@@ -3,6 +3,7 @@ from typing import List, Dict
 import numpy as np
 import pandas as pd
 
+from json_parser.game import Game
 from .hitbox.car import get_hitbox, get_distance
 
 COLLISION_DISTANCE_HIGH_LIMIT = 500
@@ -10,7 +11,7 @@ COLLISION_DISTANCE_LOW_LIMIT = 250
 
 
 class BaseHit:
-    def __init__(self, game, frame_number=None, player=None, collision_distance=9999):
+    def __init__(self, game: Game, frame_number=None, player=None, collision_distance=9999):
 
         self.frame_number = frame_number
         self.player = player
@@ -39,7 +40,7 @@ class BaseHit:
         return 'Hit by %s on frame %s at distance %i' % (self.player, self.frame_number, self.collision_distance)
 
     @staticmethod
-    def get_hits_from_game(game) -> Dict[int, 'BaseHit']:
+    def get_hits_from_game(game: Game) -> Dict[int, 'BaseHit']:
         team_dict = {}
         all_hits = {}  # frame_number: [{hit_data}, {hit_data}] for hit guesses
         for team in game.teams:
@@ -60,11 +61,14 @@ class BaseHit:
                     player_hitbox = get_hitbox(player.loadout[0]['car'])
                 else:
                     player_hitbox = get_hitbox(player.loadout[player.is_orange]['car'])
+                try:
+                    player_position = player.data.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
+                    ball_position = game.ball.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
+                    ball_displacement = ball_position - player_position
 
-                player_position = player.data.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
-                ball_position = game.ball.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
-                ball_displacement = ball_position - player_position
-                player_rotation = player.data.loc[frame_number, ['rot_x', 'rot_y', 'rot_z']]
+                    player_rotation = player.data.loc[frame_number, ['rot_x', 'rot_y', 'rot_z']]
+                except KeyError:
+                    continue
 
                 joined = pd.concat([player_rotation, ball_displacement])
                 joined.dropna(inplace=True)
@@ -93,7 +97,7 @@ class BaseHit:
         return all_hits
 
     @staticmethod
-    def get_hit_frame_numbers_by_ball_ang_vel(game) -> List[int]:
+    def get_hit_frame_numbers_by_ball_ang_vel(game: Game) -> List[int]:
         ball_ang_vels = game.ball.loc[:, ['ang_vel_x', 'ang_vel_y', 'ang_vel_z']]
         diff_series = ball_ang_vels.fillna(0).diff().any(axis=1)
         indices = diff_series.index[diff_series].tolist()

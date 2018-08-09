@@ -37,7 +37,7 @@ class Game:
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
         self.map = self.find_actual_value(self.properties['MapName']['value'])['name']
         self.name = self.find_actual_value(self.properties.get('ReplayName', {})
-                                           .get('value', None))
+                                           .get('value', {}))
         if self.name is None:
             logger.warning('Replay name not found')
         self.id = self.find_actual_value(self.properties["Id"]['value'])
@@ -270,11 +270,11 @@ class Game:
                             soccar_game_event_actor_id = actor_id
                             break
                 frame_data['seconds_remaining'] = current_actors[soccar_game_event_actor_id].get(
-                    "TAGame.GameEvent_Soccar_TA:SecondsRemaining", 300)
+                    "TAGame.GameEvent_Soccar_TA:SecondsRemaining", None)
                 frame_data['is_overtime'] = current_actors[soccar_game_event_actor_id].get(
-                    "TAGame.GameEvent_Soccar_TA:bOverTime", False)
+                    "TAGame.GameEvent_Soccar_TA:bOverTime", None)
                 frame_data['ball_has_been_hit'] = current_actors[soccar_game_event_actor_id].get(
-                    "TAGame.GameEvent_Soccar_TA:bBallHasBeenHit", False)
+                    "TAGame.GameEvent_Soccar_TA:bBallHasBeenHit", None)
                 frames_data[frame_number] = frame_data
                 # car and player stuff
                 for actor_id, actor_data in current_actors.items():
