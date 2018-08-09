@@ -46,7 +46,7 @@ class SaltieHit:
         return distance
 
     @staticmethod
-    def get_saltie_hits_from_game(saltie_game: 'SaltieGame'):
+    def get_saltie_hits_from_game(saltie_game: 'SaltieGame') -> Dict[int, 'SaltieHit']:
         hit_analytics_dict: Dict[int, SaltieHit] = {}
         for hit in saltie_game.hits.values():
             saltie_hit = SaltieHit(hit)
@@ -147,6 +147,8 @@ class SaltieHit:
                     print('Found shot for goal:', saltie_hit.hit)
             if saltie_hit.goal and not is_shot:
                 print('Goal is not shot: %s' % saltie_hit.hit)
+
+        return hit_analytics_dict
 
 
 def get_goal_number(frame_number: int, saltie_game: 'SaltieGame') -> int:
