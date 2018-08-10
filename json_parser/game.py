@@ -64,6 +64,7 @@ class Game:
 
         self.frames = None
         self.ball = None
+        self.ball_type = None
         self.demos = None
         self.parse_all_data(self.all_data)
 
@@ -271,7 +272,7 @@ class Game:
                 if soccar_game_event_actor_id is None:
                     # set soccar_game_event_actor_id
                     for actor_id, actor_data in current_actors.items():
-                        if actor_data["TypeName"] == "Archetypes.GameEvent.GameEvent_Soccar"\
+                        if actor_data["TypeName"] == "Archetypes.GameEvent.GameEvent_Soccar" \
                                 or "TAGame.GameEvent_Soccar_TA:SecondsRemaining" in actor_data:
                             # TODO: Investigate if there's a less hacky way to detect GameActors with not TypeName
                             soccar_game_event_actor_id = actor_id
@@ -334,8 +335,13 @@ class Game:
                                 actor_data.pop("TAGame.Car_TA:ReplicatedDemolish")
 
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Default":
+                        self.ball_type = 'Default'
                         # RBState = actor_data.get(REPLICATED_RB_STATE_KEY, {})
                         # ball_is_sleeping = RBState.get('Sleeping', True)
+                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
+                        player_ball_data['ball'][frame_number] = data_dict
+                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Basketball":
+                        self.ball_type = 'Basketball'
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
 
@@ -547,5 +553,3 @@ class Game:
         del self.replay_data
         del self.replay
         del self.all_data
-
-

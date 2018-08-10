@@ -141,6 +141,7 @@ class SaltieHit:
                         logger.info('Found assist (%s) for goal (%s)' % (saltie_hit.hit, next_saltie_hit.hit))
 
         # find shots
+        # TODO: Support non-standard maps? Raise warning/don't predict for non-standard maps?
         for saltie_hit in hit_analytics_dict.values():
             ball_sim = BallSimulator(saltie_hit.hit.ball_data, saltie_hit.hit.player.is_orange)
             is_shot = ball_sim.get_is_shot()

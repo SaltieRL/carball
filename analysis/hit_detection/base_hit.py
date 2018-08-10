@@ -82,6 +82,8 @@ class BaseHit:
                         closest_player = player
                         closest_player_distance = collision_distance
 
+            # TODO: Check if this works with ball_type == 'Basketball'
+            # COLLISION_DISTANCE_HIGH_LIMIT probably needs to be increased if Basketball.
             if closest_player_distance < COLLISION_DISTANCE_HIGH_LIMIT:
                 hit_player = closest_player
                 hit_collision_distance = closest_player_distance
