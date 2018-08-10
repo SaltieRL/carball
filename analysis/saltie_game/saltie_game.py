@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 
 from json_parser.game import Game
@@ -6,15 +7,19 @@ from .saltie_hit import SaltieHit
 from ..hit_detection.base_hit import BaseHit
 from ..stats.stats import get_stats
 
+logger = logging.getLogger(__name__)
+
 
 class SaltieGame:
 
     def __init__(self, game: Game):
+        logger.info("Creating SaltieGame from %s" % game)
         self.api_game = ApiGame.create_from_game(game)
-
+        logger.info("Created .apiGame.")
         self.data_frame = self.create_data_df(game)
-
+        logger.info("Created .data_frame")
         self.kickoff_frames = self.get_kickoff_frames(game)
+        logger.info("Created .kickoff_frames")
 
         # FRAMES
         self.data_frame['goal_number'] = None
@@ -25,8 +30,13 @@ class SaltieGame:
         if len(self.kickoff_frames) > len(self.api_game.goals):
             self.data_frame.loc[self.kickoff_frames[-1]:, 'goal_number'] = -1
 
+        logger.info("Assigned goal_number in .data_frame")
+
         self.hits = BaseHit.get_hits_from_game(game)
+        logger.info("Found %s hits." % len(self.hits))
+
         self.saltie_hits = SaltieHit.get_saltie_hits_from_game(self)
+        logger.info("Analysed hits.")
 
         self.stats = get_stats(self)
 
@@ -41,7 +51,7 @@ class SaltieGame:
             kickoff_frames = ball_hit_dataframe[(ball_hit_dataframe['ball_has_been_hit']) &
                                                 ~(ball_hit_dataframe['last_frame_ball_has_been_hit'])]
         else:
-            print("No ball_has_been_hit?! Is this really old or what.")
+            logger.debug("No ball_has_been_hit?! Is this really old or what.")
             hit_team_no = game.ball.loc[:, 'hit_team_no']
             last_hit_team_no = hit_team_no.shift(1).rename('last_hit_team_no')
             hit_team_no_dataframe = pd.concat([hit_team_no, last_hit_team_no], axis=1)

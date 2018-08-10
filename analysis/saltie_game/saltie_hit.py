@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, TYPE_CHECKING
 
 import numpy as np
@@ -8,6 +9,9 @@ from ..simulator.map_constants import *
 
 if TYPE_CHECKING:
     from .saltie_game import SaltieGame
+
+logger = logging.getLogger(__name__)
+
 
 class SaltieHit:
 
@@ -66,11 +70,10 @@ class SaltieHit:
                     last_goalscorer_saltie_hit = saltie_hit
 
             if last_goalscorer_saltie_hit is None:
-                print("Could not find hit for goal: %s" % goal)
+                logger.warning("Could not find hit for goal: %s" % goal)
             else:
                 last_goalscorer_saltie_hit.goal = True
-                # print("Found hit for goal: %s, %s" % (goal.frame_number, goal.hit))
-                # print("Player: %s scored %s goals" % (goal.player.name, goal.player.goals))
+                logger.debug("Found hit for goal on frame %s: %s" % (goal.frame, last_goalscorer_saltie_hit.hit))
 
         # find passes and assists
         for hit_number in range(len(hit_frame_numbers)):
@@ -135,7 +138,7 @@ class SaltieHit:
                     if next_player_scores:
                         saltie_hit.assist = True
                         next_player_goal_hit.assisted = True
-                        print('Found assist (%s) for goal (%s)' % (saltie_hit.hit, next_saltie_hit.hit))
+                        logger.info('Found assist (%s) for goal (%s)' % (saltie_hit.hit, next_saltie_hit.hit))
 
         # find shots
         for saltie_hit in hit_analytics_dict.values():
@@ -144,9 +147,9 @@ class SaltieHit:
             if is_shot:
                 saltie_hit.shot = True
                 if saltie_hit.goal:
-                    print('Found shot for goal:', saltie_hit.hit)
+                    logger.info('Found shot for goal: %s', saltie_hit.hit)
             if saltie_hit.goal and not is_shot:
-                print('Goal is not shot: %s' % saltie_hit.hit)
+                logger.warning('Goal is not shot: %s' % saltie_hit.hit)
 
         return hit_analytics_dict
 

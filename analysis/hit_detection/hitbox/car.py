@@ -1,6 +1,9 @@
+import logging
 import os
 import pandas as pd
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 x = {"21": "Backfire", "22": "Breakout", "23": "Octane", "24": "Paladin", "25": "Road Hog", "26": "Gizmo",
      "28": "X-Devil",
@@ -31,7 +34,7 @@ def get_hitbox(car_item_id):
     try:
         car_hitbox = xl.loc[car_item_id, ['Length', 'Width', 'Height', 'Offset', 'Elevation']].values
     except KeyError:
-        print("Cannot find car body id: %s. Falling back onto Octane." % car_item_id)
+        logger.debug("Cannot find car body id: %s. Falling back onto Octane." % car_item_id)
         car_hitbox = xl.loc[23, ['Length', 'Width', 'Height', 'Offset', 'Elevation']].values
     car_length, car_width, car_height, car_offset, car_elevation = car_hitbox
     car_x_lims = (-car_length / 2 + car_offset, car_length / 2 + car_offset)

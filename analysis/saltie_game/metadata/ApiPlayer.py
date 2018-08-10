@@ -33,9 +33,11 @@ class ApiPlayer:
     def create_from_player(player):
         camera_settings = ApiPlayerCameraSettings.create_from_player(player)
         loadout = ApiPlayerLoadout.create_from_player(player)
+        steamProfile = 'https://steamcommunity.com/profiles/' + player.online_id if isinstance(player.online_id, str) else None
+        # TODO: Add support for detecting xbox player ids.
         return ApiPlayer(_id=player.online_id,
                          name=player.name,
-                         steamProfile='https://steamcommunity.com/profiles/' + player.online_id,
+                         steamProfile=steamProfile,
                          titleId=player.title,
                          matchScore=player.score,
                          matchGoals=player.goals,
