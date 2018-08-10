@@ -67,6 +67,8 @@ class Game:
         self.demos = None
         self.parse_all_data(self.all_data)
 
+        logger.info("Finished parsing %s" % self)
+
     def __repr__(self):
         team_0_name = self.teams[0].name
         team_1_name = self.teams[1].name
@@ -256,6 +258,7 @@ class Game:
             except IndexError:
                 # after last goal.
                 pass
+
             # gather data at this frame
             if _f_delta != 0:
                 # frame stuff
@@ -276,6 +279,7 @@ class Game:
                 frame_data['ball_has_been_hit'] = current_actors[soccar_game_event_actor_id].get(
                     "TAGame.GameEvent_Soccar_TA:bBallHasBeenHit", None)
                 frames_data[frame_number] = frame_data
+
                 # car and player stuff
                 for actor_id, actor_data in current_actors.items():
                     if actor_data["TypeName"] == "Archetypes.Car.Car_Default" and \
@@ -341,7 +345,19 @@ class Game:
                                 "TAGame.CameraSettingsActor_TA:ProfileSettings" in actor_data:
                             cameras_data[player_actor_id] = actor_data["TAGame.CameraSettingsActor_TA:ProfileSettings"]
                         # add ball cam to inputs
-                        ball_cam = actor_data.get("TAGame.CameraSettingsActor_TA:bUsingSecondaryCamera", False)
+                        ball_cam = actor_data.get("TAGame.CameraSettingsActor_TA:bUsingSecondaryCamera", None)
+                        try:
+                            player_ball_data[player_actor_id][frame_number]['ball_cam'] = ball_cam
+                        except KeyError:
+                            # key error due to frame_number not in inputs
+                            # ignore as no point knowing
+                            pass
+                    elif actor_data["TypeName"] == "TAGame.Default__PRI_TA" and \
+                            "TAGame.PRI_TA:CameraSettings" in actor_data:
+                        # oldstyle camera settings
+                        if actor_id not in cameras_data:
+                            cameras_data[actor_id] = actor_data["TAGame.PRI_TA:CameraSettings"]
+                        ball_cam = actor_data.get("TAGame.CameraSettingsActor_TA:bUsingSecondaryCamera", None)
                         try:
                             player_ball_data[player_actor_id][frame_number]['ball_cam'] = ball_cam
                         except KeyError:

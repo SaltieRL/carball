@@ -120,7 +120,7 @@ class Player:
                 'car': _loadout.get('body', None),
                 'skin': _loadout.get('decal', None),
                 'wheels': _loadout.get('wheels', None),
-                'boost': _loadout.get('boost', None),
+                'boost': _loadout.get('boost', _loadout.get('rocket_trail', None)),
                 'antenna': _loadout.get('antenna', None),
                 'topper': _loadout.get('topper', None),
                 'engine_audio': _loadout.get('engine_audio', None),
