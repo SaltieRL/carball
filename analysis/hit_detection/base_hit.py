@@ -99,7 +99,7 @@ class BaseHit:
     @staticmethod
     def get_hit_frame_numbers_by_ball_ang_vel(game: Game) -> List[int]:
         ball_ang_vels = game.ball.loc[:, ['ang_vel_x', 'ang_vel_y', 'ang_vel_z']]
-        diff_series = ball_ang_vels.fillna(0).diff().any(axis=1)
+        diff_series = ball_ang_vels.diff().any(axis=1)
         indices = diff_series.index[diff_series].tolist()
         return indices
 

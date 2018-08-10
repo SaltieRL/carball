@@ -15,7 +15,10 @@ class Goal:
         logger.info('Created Goal: %s' % self)
 
     def __repr__(self):
-        return "Goal by %s on frame %s" % (self.player.name, self.frame_number)
+        if self.player:
+            return "Goal by %s on frame %s" % (self.player.name, self.frame_number)
+        else:
+            return "Goal by unknown player with name %s on frame %s" % (self.player_name, self.frame_number)
 
     def get_player(self, game):
         for player in game.players:

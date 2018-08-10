@@ -163,6 +163,8 @@ class Game:
         cameras_data = {}  # player_actor_id: actor_data
         demos_data = []  # frame_number: demolish_data
 
+        latest_game_actor_data = None
+
         # loop through frames
         for i, frame in enumerate(frames):
             # # don't bother after last goal
@@ -269,8 +271,11 @@ class Game:
                 if soccar_game_event_actor_id is None:
                     # set soccar_game_event_actor_id
                     for actor_id, actor_data in current_actors.items():
-                        if actor_data["TypeName"] == "Archetypes.GameEvent.GameEvent_Soccar":
+                        if actor_data["TypeName"] == "Archetypes.GameEvent.GameEvent_Soccar"\
+                                or "TAGame.GameEvent_Soccar_TA:SecondsRemaining" in actor_data:
+                            # TODO: Investigate if there's a less hacky way to detect GameActors with not TypeName
                             soccar_game_event_actor_id = actor_id
+                            latest_game_actor_data = actor_data
                             break
                 frame_data['seconds_remaining'] = current_actors[soccar_game_event_actor_id].get(
                     "TAGame.GameEvent_Soccar_TA:SecondsRemaining", None)
@@ -455,7 +460,8 @@ class Game:
             'team_dicts': team_dicts,
             'frames_data': frames_data,
             'cameras_data': cameras_data,
-            'demos_data': demos_data
+            'demos_data': demos_data,
+            'latest_game_actor_data': latest_game_actor_data
         }
 
         return all_data
@@ -467,6 +473,8 @@ class Game:
         :param all_data: Dict returned by parse_replay
         :return:
         """
+        self.game_actor_data = all_data['latest_game_actor_data']
+
         # TEAMS
         self.teams = []
         for team_id, team_data in all_data['team_dicts'].items():
@@ -495,6 +503,11 @@ class Game:
                 player = Player().create_from_actor_data(_player_data, self.teams)
                 self.players.append(player)
                 player_actor_id_player_dict[_player_actor_id] = player
+
+                # check if any goals are playerless and belong to this newly-created player
+                for goal in self.goals:
+                    if not goal.player and goal.player_name == player.name:
+                        goal.player = player
 
             player.parse_data(all_data['player_ball_data'][_player_actor_id])
             # camera_settings might not exist (see 0AF8AC734890E6D3995B829E474F9924)
