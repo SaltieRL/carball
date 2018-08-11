@@ -21,7 +21,7 @@ BALL_DATA_DICT_PAIRS = {
 class BallActor:
     @staticmethod
     def get_data_dict(actor_data, version=None):
-        is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
+        # is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
 
         data_dict = {}
 
@@ -75,7 +75,7 @@ CAR_DATA_DICT_PAIRS = {
 class CarActor:
     @staticmethod
     def get_data_dict(actor_data, version=None):
-        is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
+        # is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
 
         data_dict = {}
 

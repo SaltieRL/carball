@@ -1,7 +1,7 @@
 import pandas as pd
 
-from game.game import Game
-from game.player import Player
+from json_parser.game import Game
+from json_parser.player import Player
 
 
 class PlayerTendencies:

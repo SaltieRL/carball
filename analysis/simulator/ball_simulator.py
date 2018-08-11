@@ -35,7 +35,7 @@ SIMULATION_FPS = 120
 SIMULATION_SECONDS = 3
 
 
-class Ball:
+class BallSimulator:
     gravity = 650  # uu/s2
     air_resistance = 0.0305  # % loss per second
     ball_max_speed = 6000
@@ -49,25 +49,24 @@ class Ball:
                          'rotation': ball_data[['rot_x', 'rot_y', 'rot_z']].values,
                          'ang_vel': ball_data[['ang_vel_x', 'ang_vel_y', 'ang_vel_z']].values / 1000,
                          }
-
         self.is_shot = False
 
     def get_is_shot(self):
-        self.sim_data = self.predict_ball_positions()
-        # if not self.is_shot:
-        #     # plt.plot(sim_data)
-        #     print(self.ball_data)
-        #     self.plot_sim_data()
+        """
+        Simulates ball and returns is_shot. is_shot is updated in predict_ball_positions
+        :return:
+        """
+        self.sim_data = self.predict_ball_positions(t=SIMULATION_SECONDS)
         return self.is_shot
 
-    def predict_ball_positions(self):
+    def predict_ball_positions(self, t):
         """
         Returns an array of time and position and velocity up to time=t.
         :param t: Number of seconds to simulate
         :return:
         """
         starting_x_v = np.concatenate((self.sim_vars['position'], self.sim_vars['velocity']))
-        sim_data = self.simulate_time(0, SIMULATION_SECONDS, 1 / SIMULATION_FPS, self.step_dt,
+        sim_data = self.simulate_time(0, t, 1 / SIMULATION_FPS, self.step_dt,
                                       starting_x_v)
         return sim_data
 
@@ -93,11 +92,9 @@ class Ball:
             if self.is_orange:
                 if latest_x_v[1] < -BACK_WALL_DISTANCE:
                     self.is_shot = True
-                    # return
             else:
                 if latest_x_v[1] > BACK_WALL_DISTANCE:
                     self.is_shot = True
-                    # return
 
         t_s = np.array(t_s)
         x_vs = np.array(x_vs)
@@ -262,117 +259,3 @@ class Ball:
         else:
             return False
 
-
-def check_ball_collision(ball_position):
-    ADJUSTED_BALL_RADIUS = BALL_RADIUS + 10
-    collided = False
-    if ball_position[1] > CURVE_Y_3 and ball_position[2] < CURVE_Z_3 and abs(ball_position[0]) > GOAL_X and \
-            (abs(ball_position[1]) - CURVE_Y_3) ** 2 + (ball_position[2] - CURVE_Z_3) ** 2 > (
-            CURVE_RADIUS_3 - ADJUSTED_BALL_RADIUS) ** 2:
-        # print(t, ball_position, normal_vector, surface_vector)
-        # print(t, 'y+ bottom')
-        collided = True
-    elif ball_position[1] < -CURVE_Y_3 and ball_position[2] < CURVE_Z_3 and abs(ball_position[0]) > GOAL_X and \
-            (abs(ball_position[1]) - CURVE_Y_3) ** 2 + (ball_position[2] - CURVE_Z_3) ** 2 > (
-            CURVE_RADIUS_3 - ADJUSTED_BALL_RADIUS) ** 2:
-        # print(t, ball_position, normal_vector, surface_vector)
-        # print(t, 'y- bottom')
-        collided = True
-    # bottom ball_position axis
-    if ball_position[0] > CURVE_X_2 and ball_position[2] < CURVE_Z_2 and \
-            (abs(ball_position[0]) - CURVE_X_2) ** 2 + (ball_position[2] - CURVE_Z_2) ** 2 > (
-            CURVE_RADIUS_2 - ADJUSTED_BALL_RADIUS) ** 2:
-        # print(t, ball_position, normal_vector, surface_vector)
-        # print(t, 'ball_position+ bottom')
-        collided = True
-    elif ball_position[0] < -CURVE_X_2 and ball_position[2] < CURVE_Z_2 and \
-            (abs(ball_position[0]) - CURVE_X_2) ** 2 + (ball_position[2] - CURVE_Z_2) ** 2 > (
-            CURVE_RADIUS_2 - ADJUSTED_BALL_RADIUS) ** 2:
-        # print(t, ball_position, normal_vector, surface_vector)
-        # print(t, 'ball_position- bottom')
-        collided = True
-    # top y axis
-    if ball_position[1] > CURVE_Y_1 and ball_position[2] > CURVE_Z_1 and abs(ball_position[0]) > GOAL_X and \
-            (abs(ball_position[1]) - CURVE_Y_1) ** 2 + (ball_position[2] - CURVE_Z_1) ** 2 > (
-            CURVE_RADIUS_1 - ADJUSTED_BALL_RADIUS) ** 2:
-        # print(t, ball_position, normal_vector, surface_vector)
-        # print(t, 'y+ top')
-        collided = True
-    elif ball_position[1] < -CURVE_Y_1 and ball_position[2] > CURVE_Z_1 and abs(ball_position[0]) > GOAL_X and \
-            (abs(ball_position[1]) - CURVE_Y_1) ** 2 + (ball_position[2] - CURVE_Z_1) ** 2 > (
-            CURVE_RADIUS_1 - ADJUSTED_BALL_RADIUS) ** 2:
-        # print(t, ball_position, normal_vector, surface_vector)
-        # print(t, 'y- top')
-        collided = True
-    # top ball_position axis
-    if ball_position[0] > CURVE_X_1 and ball_position[2] > CURVE_Z_1 and \
-            (abs(ball_position[0]) - CURVE_X_1) ** 2 + (ball_position[2] - CURVE_Z_1) ** 2 > (
-            CURVE_RADIUS_1 - ADJUSTED_BALL_RADIUS) ** 2:
-        # print(t, ball_position, normal_vector, surface_vector)
-        # print(t, 'ball_position+ top')
-        collided = True
-    elif ball_position[0] < -CURVE_X_1 and ball_position[2] > CURVE_Z_1 and \
-            (abs(ball_position[0]) - CURVE_X_1) ** 2 + (ball_position[2] - CURVE_Z_1) ** 2 > (
-            CURVE_RADIUS_1 - ADJUSTED_BALL_RADIUS) ** 2:
-        # print(t, ball_position, normal_vector, surface_vector)
-        # print(t, 'ball_position- top')
-        collided = True
-    if ball_position[2] < ADJUSTED_BALL_RADIUS:
-        # floor
-        collided = True
-    elif ball_position[2] > CEILING_DISTANCE - ADJUSTED_BALL_RADIUS:
-        # ceiling
-        collided = True
-    # sides
-    if ball_position[0] < -SIDE_WALL_DISTANCE + ADJUSTED_BALL_RADIUS:
-        collided = True
-    elif ball_position[0] > SIDE_WALL_DISTANCE - ADJUSTED_BALL_RADIUS:
-        collided = True
-    # back
-    if ball_position[1] < -BACK_WALL_DISTANCE + ADJUSTED_BALL_RADIUS and \
-            ADJUSTED_BALL_RADIUS < ball_position[2] < CEILING_DISTANCE - ADJUSTED_BALL_RADIUS and \
-            (abs(ball_position[0]) > GOAL_X - ADJUSTED_BALL_RADIUS or abs(
-                ball_position[2]) > GOAL_Z - ADJUSTED_BALL_RADIUS):
-        collided = True
-    elif ball_position[1] > BACK_WALL_DISTANCE - ADJUSTED_BALL_RADIUS and \
-            ADJUSTED_BALL_RADIUS < ball_position[2] < CEILING_DISTANCE - ADJUSTED_BALL_RADIUS and \
-            (abs(ball_position[0]) > GOAL_X - ADJUSTED_BALL_RADIUS or abs(
-                ball_position[2]) > GOAL_Z - ADJUSTED_BALL_RADIUS):
-        collided = True
-
-    # corner side
-    if abs(ball_position[0]) + abs(ball_position[1]) + ADJUSTED_BALL_RADIUS > CORNER_WALL_DISTANCE:
-        if ball_position[0] < 0 and ball_position[1] < 0:
-            collided = True
-        elif ball_position[0] < 0 and ball_position[1] > 0:
-            collided = True
-        elif ball_position[0] > 0 and ball_position[1] < 0:
-            collided = True
-        elif ball_position[0] > 0 and ball_position[1] > 0:
-            collided = True
-
-    return collided
-
-
-if __name__ == '__main__':
-    # file_name = "episode_000008.csv"
-    # file_name = "episode_000003.csv"  # y+ bottom ramp
-    # file_name = "episode_000012.csv"  # y+ bottom ramp
-    # file_name = "episode_000010.csv"  # x- bottom
-    # file_name = "episode_000015.csv"  # x- bottom
-    # file_name = "episode_000029.csv"  # x- bottom
-    # file_name = "episode_000035.csv"  # x- bottom
-    # file_path = os.path.join(os.getcwd(), 'data', file_name)
-    # Ball(file_path)
-
-    for file_name in os.listdir(os.path.join(os.getcwd(), 'data')):
-        if file_name.endswith('.csv'):
-            file_path = os.path.join(os.getcwd(), 'data', file_name)
-            # print(file_path)
-            # start_time = time.time()
-            Ball(file_path)
-            # parse_duration = time.time() - start_time
-            # print(parse_duration)
-            # x = input('Press enter to continue...')
-
-    # save_all_for_data()

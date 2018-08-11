@@ -1,17 +1,16 @@
+import json
 import os
 import pickle
 import subprocess
-import json
+
+from analysis.saltie_game.saltie_game import SaltieGame
 
 try:
-    from .game.game import Game
-    from .analyser.game_analyser import analyse_game
+    from json_parser.game import Game
     from .controls.controls import get_controls
 except:
-    from game.game import Game
-    from analyser.game_analyser import analyse_game
+    from json_parser.game import Game
     from controls.controls import get_controls
-
 
 BASE_DIR = os.path.dirname(__file__)
 OUTPUT_DIR = os.path.join('replays', 'pickled')
@@ -33,14 +32,20 @@ def decompile_replay(path, output_path):
                output_path]
         print(" ".join(cmd))
         subprocess.check_output(cmd)
-    _json = json.load(open(output_path))
+    print(output_path)
+    _json = json.load(open(output_path, encoding="utf8"))
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
-    analyse_game(game)
-    return game
+
+    return SaltieGame(game)
 
 
 if __name__ == '__main__':
+    import logging
+
+    logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger(__name__)
+
     if not os.path.isdir(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 

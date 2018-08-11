@@ -11,7 +11,7 @@ FULL_BOOST_POSITIONS = np.array([
 ])
 
 
-def get_boost_type_from_position(position):
+def get_if_full_boost_position(position) -> bool:
     # returns 1 for full boost, 0 for small boost
     if len(position) > 2:
         position = position[0:2]
@@ -19,6 +19,6 @@ def get_boost_type_from_position(position):
     distances_from_boosts = np.sqrt(np.square(FULL_BOOST_POSITIONS - position.values).sum(axis=1, dtype=np.float32))
     allowed_distance_from_boost = 800
     if np.any(distances_from_boosts < allowed_distance_from_boost):
-        return 1
+        return True
     else:
-        return 0
+        return False

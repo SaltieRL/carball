@@ -1,5 +1,7 @@
 import json
+import logging
 from datetime import datetime
+from typing import List
 
 import pandas as pd
 
@@ -8,50 +10,65 @@ from .goal import Goal
 from .player import Player
 from .team import Team
 
+logger = logging.getLogger(__name__)
+
 BOOST_PER_SECOND = 80  # boost used per second out of 255
+DATETIME_FORMATS = [
+    '%Y-%m-%d %H-%M-%S',
+    '%Y-%m-%d:%H-%M'
+]
 
 
 class Game:
 
-    def __init__(self, file_path='', verbose=True, loaded_json=None):
-        self.verbose = verbose
-
+    def __init__(self, file_path='', loaded_json=None):
         self.file_path = file_path
         if loaded_json is None:
             with open(file_path, 'r') as f:
                 self.replay = json.load(f)
         else:
             self.replay = loaded_json
+        logger.debug('Loaded JSON')
+
         self.replay_data = self.replay['content']['body']['frames']
 
         # set properties
         self.properties = self.replay['header']['body']['properties']['value']
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
         self.map = self.find_actual_value(self.properties['MapName']['value'])['name']
-        self.name = self.properties.get('ReplayName', None)
-        if self.name is not None:
-            self.name = self.find_actual_value(self.name['value'])
+        self.name = self.find_actual_value(self.properties.get('ReplayName', {})
+                                           .get('value', {}))
+        if self.name is None:
+            logger.warning('Replay name not found')
         self.id = self.find_actual_value(self.properties["Id"]['value'])
-        try:
-            self.datetime = datetime.strptime(self.properties['Date']['value']['str'], '%Y-%m-%d %H-%M-%S')
-            # print(self.datetime)
-        except ValueError:
-            self.datetime = datetime.strptime(self.properties['Date']['value']['str'], '%Y-%m-%d:%H-%M')
-        self.replay_version = self.properties.get('ReplayVersion', None)
-        if self.replay_version is not None:
-            self.replay_version = self.replay_version['value']['int']
 
-        self.teams = []
-        self.players = self.create_players()
-        self.goals = self.get_goals()
+        date_string = self.properties['Date']['value']['str']
+        for date_format in DATETIME_FORMATS:
+            try:
+                self.datetime = datetime.strptime(date_string, date_format)
+                break
+            except ValueError:
+                pass
+        else:
+            logger.error('Cannot parse date: ' + date_string)
+
+        self.replay_version = self.properties.get('ReplayVersion', {}).get('value', {}).get('int', None)
+        if self.replay_version is None:
+            logger.warning('Replay version not found')
+
+        self.teams: List[Team] = []  # Added in parse_all_data
+        self.players: List[Player] = self.create_players()
+        self.goals: List[Goal] = self.get_goals()
 
         self.all_data = self.parse_replay()
 
         self.frames = None
         self.ball = None
+        self.ball_type = None
         self.demos = None
         self.parse_all_data(self.all_data)
-        self.data_frame = self.create_data_df()
+
+        logger.info("Finished parsing %s" % self)
 
     def __repr__(self):
         team_0_name = self.teams[0].name
@@ -70,9 +87,9 @@ class Game:
     def get_goals(self):
         goals = [g['value'] for g in self.properties["Goals"]["value"]["array"]]
 
-        number_of_goals = len(goals)
-        if self.verbose:
-            print('Found goals:', goals)
+        logger.info('Found %s goals.' % len(goals))
+        logger.debug('Goals: %s' % goals)
+
         goals_list = []
         for goal_dict in goals:
             goal = Goal(goal_dict, self)
@@ -101,12 +118,18 @@ class Game:
             'demos_data': demos_data
         }
 
-        !!! ALL INPUTS AND OUTPUTS NOW IN DATA !!!
         player_ball_data format:
-        {player_actor_id: {
-            'inputs': {frame_number: {pos_x, pos_y ...}, f_no2: {...} ...,}
-            'outputs': [[throttle, steer, 'pitch', yaw, roll, jump, boost, handbrake]]
-        }}
+        {
+        'ball': {frame_number: {pos_x, pos_y ...}, f_no2: {...} ...,}
+        player_actor_id: {
+            frame_number: {
+                pos_x, pos_y ...,
+                throttle, steer, ...,
+                ping, ball_cam
+            },
+            f_no2: {...} ...,
+        }
+
         currently implemented:
             inputs: posx, posy, posz, rotx, roty, rotz, vx, vy, vz, angvx, angy, angvz, boost_amt
             outputs: throttle, steer, handbrake, boost, jump, doublejump, dodge
@@ -126,11 +149,9 @@ class Game:
 
         player_car_ids = {}  # player_actor_id: car_actor_id
         car_player_ids = {}  # car_actor_id: player_actor_id
-        # car_linked_ids = {}  # car_actor_id: {'player', 'jump, doublejump, '}
 
         current_actor_ids = []
         current_actors = {}  # id:actor_update
-        current_actor_types = []
         # stores car_actor_ids to collect data for at each frame
         current_car_ids_to_collect = []
 
@@ -138,11 +159,12 @@ class Game:
         frames_data = {}
         soccar_game_event_actor_id = None
         frame_number = 0
-        last_goal_frame_number = self.goals[-1].frame_number
         current_goal_number = 0
 
         cameras_data = {}  # player_actor_id: actor_data
         demos_data = []  # frame_number: demolish_data
+
+        latest_game_actor_data = None
 
         # loop through frames
         for i, frame in enumerate(frames):
@@ -152,7 +174,6 @@ class Game:
 
             _f_time = frame["time"]
             _f_delta = frame["delta"]
-            # print(frame_number, _f_time)
             DeletedActorIds = []
             ActorUpdates = []
             ActorSpawns = []
@@ -171,8 +192,6 @@ class Game:
                 current_actors.pop(deleted_actor_id)
                 if deleted_actor_id in car_player_ids:
                     player_actor_id = car_player_ids[deleted_actor_id]
-                    if len(car_player_ids) != len(player_car_ids):
-                        x = 1
                     car_player_ids.pop(deleted_actor_id)
                     try:
                         player_car_ids.pop(player_actor_id)
@@ -191,7 +210,7 @@ class Game:
             # apply actor updates
             for actor_update in ActorUpdates:
                 actor_id = actor_update['actor_id']['value']
-                update_type = list(actor_update['value'].keys())[0]
+                # update_type = list(actor_update['value'].keys())[0]
                 actual_update = {v['name']: self.find_actual_value(v['value']) for v in
                                  actor_update['value']['updated']}
                 # TODO: process each subtype to a single value
@@ -206,8 +225,8 @@ class Game:
 
             # find players and ball
             for actor_id, actor_data in current_actors.items():
-                if actor_data[
-                    "TypeName"] == "TAGame.Default__PRI_TA" and "Engine.PlayerReplicationInfo:Team" in actor_data:
+                if actor_data["TypeName"] == "TAGame.Default__PRI_TA" \
+                        and "Engine.PlayerReplicationInfo:Team" in actor_data:
                     player_dict = {
                         'name': actor_data["Engine.PlayerReplicationInfo:PlayerName"],
                         'team': actor_data["Engine.PlayerReplicationInfo:Team"],
@@ -218,9 +237,8 @@ class Game:
                     if actor_id not in player_dicts:
                         # add new player
                         player_dicts[actor_id] = player_dict
-                        if self.verbose:
-                            print('Found player: %s (id: %s)' %
-                                  (player_dict['name'], actor_id))
+
+                        logger.debug('Found player actor: %s (id: %s)' % (player_dict['name'], actor_id))
                         player_ball_data[actor_id] = {}
                     else:
                         # update player_dicts
@@ -230,8 +248,6 @@ class Game:
                     team_dicts[actor_id] = actor_data
                     team_dicts[actor_id]['colour'] = 'blue' if actor_data[
                                                                    "TypeName"] == "Archetypes.Teams.Team0" else 'orange'
-                # elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Default":
-                #     player_ball_data['ball'] = {}
 
             # stop data collection after goal
             REPLICATED_RB_STATE_KEY = "TAGame.RBActor_TA:ReplicatedRBState"
@@ -245,6 +261,7 @@ class Game:
             except IndexError:
                 # after last goal.
                 pass
+
             # gather data at this frame
             if _f_delta != 0:
                 # frame stuff
@@ -255,16 +272,20 @@ class Game:
                 if soccar_game_event_actor_id is None:
                     # set soccar_game_event_actor_id
                     for actor_id, actor_data in current_actors.items():
-                        if actor_data["TypeName"] == "Archetypes.GameEvent.GameEvent_Soccar":
+                        if actor_data["TypeName"] == "Archetypes.GameEvent.GameEvent_Soccar" \
+                                or "TAGame.GameEvent_Soccar_TA:SecondsRemaining" in actor_data:
+                            # TODO: Investigate if there's a less hacky way to detect GameActors with not TypeName
                             soccar_game_event_actor_id = actor_id
+                            latest_game_actor_data = actor_data
                             break
                 frame_data['seconds_remaining'] = current_actors[soccar_game_event_actor_id].get(
-                    "TAGame.GameEvent_Soccar_TA:SecondsRemaining", 300)
+                    "TAGame.GameEvent_Soccar_TA:SecondsRemaining", None)
                 frame_data['is_overtime'] = current_actors[soccar_game_event_actor_id].get(
-                    "TAGame.GameEvent_Soccar_TA:bOverTime", False)
+                    "TAGame.GameEvent_Soccar_TA:bOverTime", None)
                 frame_data['ball_has_been_hit'] = current_actors[soccar_game_event_actor_id].get(
-                    "TAGame.GameEvent_Soccar_TA:bBallHasBeenHit", False)
+                    "TAGame.GameEvent_Soccar_TA:bBallHasBeenHit", None)
                 frames_data[frame_number] = frame_data
+
                 # car and player stuff
                 for actor_id, actor_data in current_actors.items():
                     if actor_data["TypeName"] == "Archetypes.Car.Car_Default" and \
@@ -283,7 +304,6 @@ class Game:
                         # only collect data if car is driving and not sleeping
                         if not car_is_sleeping:
                             current_car_ids_to_collect.append(actor_id)
-                            # print(actor_id, player_actor_id)
 
                             data_dict = CarActor.get_data_dict(actor_data, version=self.replay_version)
                             # save data from here
@@ -296,7 +316,8 @@ class Game:
                             # add attacker and victim player ids
                             attacker_car_id = demo_data["attacker_actor_id"]
                             victim_car_id = demo_data["victim_actor_id"]
-                            if attacker_car_id != -1 and victim_car_id != -1 and attacker_car_id < 1e9 and victim_car_id < 1e9:
+                            if attacker_car_id != -1 and victim_car_id != -1 and \
+                                    attacker_car_id < 1e9 and victim_car_id < 1e9:
                                 # Filter out weird stuff where it's not a demo
                                 # frame 1 of 0732D41D4AF83D610AE2A988ACBC977A (rlcs season 4 eu)
                                 attacker_player_id = car_player_ids[attacker_car_id]
@@ -306,15 +327,21 @@ class Game:
                                 # add frame_number
                                 demo_data['frame_number'] = frame_number
                                 demos_data.append(demo_data)
-                                # print(attacker_player_id, victim_player_id)
-                                # print(player_dicts[attacker_player_id]['name'],
-                                #       player_dicts[victim_player_id]['name'])
+                                logger.debug('ReplicatedDemolish: Att: %s, Def: %s' %
+                                             (attacker_player_id, victim_player_id))
+                                logger.debug('RepDemo Names: Att: %s. Def: %s' %
+                                             (player_dicts[attacker_player_id]['name'],
+                                              player_dicts[victim_player_id]['name']))
                                 actor_data.pop("TAGame.Car_TA:ReplicatedDemolish")
 
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Default":
-                        RBState = actor_data.get(
-                            REPLICATED_RB_STATE_KEY, {})
+                        self.ball_type = 'Default'
+                        # RBState = actor_data.get(REPLICATED_RB_STATE_KEY, {})
                         # ball_is_sleeping = RBState.get('Sleeping', True)
+                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
+                        player_ball_data['ball'][frame_number] = data_dict
+                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Basketball":
+                        self.ball_type = 'Basketball'
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
 
@@ -329,7 +356,19 @@ class Game:
                                 "TAGame.CameraSettingsActor_TA:ProfileSettings" in actor_data:
                             cameras_data[player_actor_id] = actor_data["TAGame.CameraSettingsActor_TA:ProfileSettings"]
                         # add ball cam to inputs
-                        ball_cam = actor_data.get("TAGame.CameraSettingsActor_TA:bUsingSecondaryCamera", False)
+                        ball_cam = actor_data.get("TAGame.CameraSettingsActor_TA:bUsingSecondaryCamera", None)
+                        try:
+                            player_ball_data[player_actor_id][frame_number]['ball_cam'] = ball_cam
+                        except KeyError:
+                            # key error due to frame_number not in inputs
+                            # ignore as no point knowing
+                            pass
+                    elif actor_data["TypeName"] == "TAGame.Default__PRI_TA" and \
+                            "TAGame.PRI_TA:CameraSettings" in actor_data:
+                        # oldstyle camera settings
+                        if actor_id not in cameras_data:
+                            cameras_data[actor_id] = actor_data["TAGame.PRI_TA:CameraSettings"]
+                        ball_cam = actor_data.get("TAGame.CameraSettingsActor_TA:bUsingSecondaryCamera", None)
                         try:
                             player_ball_data[player_actor_id][frame_number]['ball_cam'] = ball_cam
                         except KeyError:
@@ -393,7 +432,6 @@ class Game:
                                     actor_data.get(COMPONENT_REPLICATED_ACTIVE_KEY, False))
                                 player_ball_data[player_actor_id][frame_number]['dodge_active'] = dodge_is_active
                     elif actor_data["ClassName"] == "TAGame.VehiclePickup_Boost_TA":
-                        # print(actor_id, actor_data, frame_number, frame["time"])
                         REPLICATED_PICKUP_KEY = "TAGame.VehiclePickup_TA:ReplicatedPickupData"
                         if REPLICATED_PICKUP_KEY in actor_data and \
                                 actor_data[REPLICATED_PICKUP_KEY] != -1 and \
@@ -401,7 +439,6 @@ class Game:
                             car_actor_id = actor_data[REPLICATED_PICKUP_KEY]['pickup']['instigator_id']
                             if car_actor_id in car_player_ids:
                                 player_actor_id = car_player_ids[car_actor_id]
-                                # print(actor_id, player_dicts[player_actor_id]["name"])
                                 if frame_number in player_ball_data[player_actor_id]:
                                     player_ball_data[player_actor_id][frame_number]['boost_collect'] = True
                                     # TODO: Investigate and fix random imaginary boost collects
@@ -429,24 +466,32 @@ class Game:
             'team_dicts': team_dicts,
             'frames_data': frames_data,
             'cameras_data': cameras_data,
-            'demos_data': demos_data
+            'demos_data': demos_data,
+            'latest_game_actor_data': latest_game_actor_data
         }
 
         return all_data
 
     def parse_all_data(self, all_data):
+        """
+        Finishes parsing after frame-parsing is done.
+        E.g. Adds players not found in MatchStats metadata
+        :param all_data: Dict returned by parse_replay
+        :return:
+        """
+        self.game_actor_data = all_data['latest_game_actor_data']
+
         # TEAMS
         self.teams = []
         for team_id, team_data in all_data['team_dicts'].items():
-            team = Team()
-            team.parse_team_data(team_data)
+            team = Team().parse_team_data(team_data)
             self.teams.append(team)
 
         # PLAYERS
         player_actor_id_player_dict = {}  # player_actor_id: Player
         for _player_actor_id, _player_data in all_data['player_dicts'].items():
             if "TAGame.PRI_TA:MatchScore" not in _player_data:
-                print("Ignoring player %s as player has no MatchScore." % _player_data['name'])
+                logger.info("Ignoring player %s as player has no MatchScore." % _player_data['name'])
                 continue
 
             found_player = False
@@ -464,6 +509,11 @@ class Game:
                 player = Player().create_from_actor_data(_player_data, self.teams)
                 self.players.append(player)
                 player_actor_id_player_dict[_player_actor_id] = player
+
+                # check if any goals are playerless and belong to this newly-created player
+                for goal in self.goals:
+                    if not goal.player and goal.player_name == player.name:
+                        goal.player = player
 
             player.parse_data(all_data['player_ball_data'][_player_actor_id])
             # camera_settings might not exist (see 0AF8AC734890E6D3995B829E474F9924)
@@ -503,8 +553,3 @@ class Game:
         del self.replay_data
         del self.replay
         del self.all_data
-
-    def create_data_df(self):
-        data_dict = {player.name: player.data for player in self.players}
-        data_dict['ball'] = self.ball
-        return pd.concat(data_dict, axis=1)
