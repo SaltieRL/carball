@@ -1,8 +1,5 @@
 import pandas as pd
 
-from json_parser.game import Game
-from json_parser.player import Player
-
 
 class PlayerTendencies:
 
@@ -28,7 +25,7 @@ class PlayerTendencies:
         pass
 
     @staticmethod
-    def get_player_tendencies(player: Player, game: Game):
+    def get_player_tendencies(player, game):
         data_frame_deltas = pd.concat(
             [
                 player.data,
