@@ -26,11 +26,12 @@ class ApiGameScore:
 
 
 class ApiGame:
-    def __init__(self, _map: str = None, version: int = None, time: datetime.datetime = None, frames: int = None,
+    def __init__(self, id: str = None,  map_: str = None, version: int = None, time: datetime.datetime = None, frames: int = None,
                  score: ApiGameScore = None, teams: List[ApiTeam] = None, goals: List[ApiGoal] = None):
-        self.map = _map
+        self.id = id
+        self.map = map_
         self.version = version
-        self.time = time.isoformat()
+        self.time = time
         self.frames = frames
         self.score = score
         self.teams = teams
@@ -39,7 +40,8 @@ class ApiGame:
     @staticmethod
     def create_from_game(game: Game):
         return ApiGame(
-            _map=game.map,
+            id=game.id,
+            map_=game.map,
             version=game.replay_version,
             time=game.datetime,
             frames=game.frames.index.max(),
@@ -49,6 +51,7 @@ class ApiGame:
         )
 
     def to_json(self) -> str:
+        # TODO: Check if this handles ApiGame.time conversion.
         return json.dumps(self, default=lambda o: getattr(o, '__dict__', str(o)))
 
 
