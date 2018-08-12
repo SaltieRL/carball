@@ -1,7 +1,6 @@
 import logging
 import pandas as pd
 
-from json_parser.game import Game
 from .metadata.ApiGame import ApiGame
 from .saltie_hit import SaltieHit
 from ..hit_detection.base_hit import BaseHit
@@ -12,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class SaltieGame:
 
-    def __init__(self, game: Game):
+    def __init__(self, game):
         logger.info("Creating SaltieGame from %s" % game)
         self.api_game = ApiGame.create_from_game(game)
         logger.info("Created .apiGame.")
@@ -61,7 +60,7 @@ class SaltieGame:
         return kickoff_frames.index.values
 
     @staticmethod
-    def create_data_df(game: Game) -> pd.DataFrame:
+    def create_data_df(game) -> pd.DataFrame:
         data_dict = {player.name: player.data for player in game.players}
         data_dict['ball'] = game.ball
         initial_df = pd.concat(data_dict, axis=1)
