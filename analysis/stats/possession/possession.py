@@ -26,7 +26,7 @@ class PossessionStat:
         frame_possession_time_deltas = pd.concat(
             [
                 saltie_game.data_frame['ball', 'hit_team_no'],
-                saltie_game.data_frame.delta
+                saltie_game.data_frame['game', 'delta']
             ],
             axis=1
         )
@@ -46,7 +46,7 @@ class PossessionStat:
         frame_possession_time_deltas = pd.concat(
             [
                 saltie_game.data_frame['ball', 'hit_team_no'],
-                saltie_game.data_frame.delta
+                saltie_game.data_frame['game', 'delta']
             ],
             axis=1
         )
@@ -63,9 +63,7 @@ class PossessionStat:
 
             hit_possession_time = frame_possession_time_deltas[
                                       frame_possession_time_deltas.hit_team_no == hit.player.is_orange
-                                      ].delta.loc[
-                                  hit_frame_number:next_hit_frame_number
-                                  ].sum()
+                                      ].delta.loc[hit_frame_number:next_hit_frame_number].sum()
             player_possessions[hit.player.name] += hit_possession_time
             hit_number += 1
 

@@ -22,13 +22,13 @@ class SaltieGame:
         logger.info("Created .kickoff_frames")
 
         # FRAMES
-        self.data_frame['goal_number'] = None
+        self.data_frame['game', 'goal_number'] = None
         for goal_number, goal in enumerate(game.goals):
-            self.data_frame.loc[self.kickoff_frames[goal_number]: goal.frame_number, 'goal_number'] = goal_number
+            self.data_frame.loc[self.kickoff_frames[goal_number]: goal.frame_number, ('game', 'goal_number')] = goal_number
 
         # Set goal_number of frames that are post-last-goal to -1 (ie non None)
         if len(self.kickoff_frames) > len(self.api_game.goals):
-            self.data_frame.loc[self.kickoff_frames[-1]:, 'goal_number'] = -1
+            self.data_frame.loc[self.kickoff_frames[-1]:, ('game', 'goal_number')] = -1
 
         logger.info("Assigned goal_number in .data_frame")
 
@@ -67,4 +67,11 @@ class SaltieGame:
         initial_df = pd.concat(data_dict, axis=1)
 
         dataframe = pd.concat([initial_df, game.frames], axis=1)
+        cols = []
+        for c in dataframe.columns.values:
+            if isinstance(c, str):
+                cols.append(('game', c))
+            else:
+                cols.append(c)
+        dataframe.columns = pd.MultiIndex.from_tuples(cols)
         return dataframe
