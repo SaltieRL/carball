@@ -2,7 +2,6 @@ import datetime
 import json
 from typing import List
 
-from json_parser.game import Game
 from .ApiGoal import ApiGoal
 from .ApiTeam import ApiTeam
 
@@ -38,7 +37,7 @@ class ApiGame:
         self.goals = goals
 
     @staticmethod
-    def create_from_game(game: Game):
+    def create_from_game(game):
         return ApiGame(
             id=game.id,
             map_=game.map,
