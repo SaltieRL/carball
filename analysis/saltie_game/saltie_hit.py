@@ -156,4 +156,4 @@ class SaltieHit:
 
 
 def get_goal_number(frame_number: int, saltie_game: 'SaltieGame') -> int:
-    return saltie_game.data_frame.loc[frame_number, 'goal_number']
+    return saltie_game.data_frame['game']['goal_number'].loc[frame_number]
