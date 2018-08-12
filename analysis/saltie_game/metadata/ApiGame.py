@@ -26,9 +26,11 @@ class ApiGameScore:
 
 
 class ApiGame:
-    def __init__(self, id: str = None,  map_: str = None, version: int = None, time: datetime.datetime = None, frames: int = None,
+    def __init__(self, id: str = None, name: str = None, map_: str = None, version: int = None,
+                 time: datetime.datetime = None, frames: int = None,
                  score: ApiGameScore = None, teams: List[ApiTeam] = None, goals: List[ApiGoal] = None):
         self.id = id
+        self.name = name
         self.map = map_
         self.version = version
         self.time = time
@@ -41,6 +43,7 @@ class ApiGame:
     def create_from_game(game: Game):
         return ApiGame(
             id=game.id,
+            name=game.name,
             map_=game.map,
             version=game.replay_version,
             time=game.datetime,
