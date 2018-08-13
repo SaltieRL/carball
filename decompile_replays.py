@@ -4,7 +4,7 @@ import pickle
 import subprocess
 import traceback
 
-from analysis.saltie_game.saltie_game import SaltieGame
+from .analysis.saltie_game.saltie_game import SaltieGame
 
 try:
     from json_parser.game import Game
