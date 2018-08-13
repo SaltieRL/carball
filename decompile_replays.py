@@ -40,6 +40,7 @@ def decompile_replay(path, output_path):
 
     return SaltieGame(game)
 
+
 if __name__ == '__main__':
     import logging
 
@@ -59,7 +60,7 @@ if __name__ == '__main__':
             g = decompile_replay(filepath, output)
             with open(os.path.join(OUTPUT_DIR, filename + '.pkl'), 'wb') as fo:
                 pickle.dump(g, fo)
-                success+=1
+                success += 1
         except Exception as e:
             traceback.print_exc()
             failure += 1
