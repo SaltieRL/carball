@@ -2,6 +2,7 @@ import json
 import os
 import pickle
 import subprocess
+import traceback
 
 from analysis.saltie_game.saltie_game import SaltieGame
 
@@ -39,13 +40,14 @@ def decompile_replay(path, output_path):
 
     return SaltieGame(game)
 
-
 if __name__ == '__main__':
     import logging
 
     logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger(__name__)
 
+    success = 0
+    failure = 0
     if not os.path.isdir(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
@@ -53,6 +55,13 @@ if __name__ == '__main__':
         filepath = 'replays/' + filename
         print(filepath)
         output = 'replays/decompiled/{}'.format(filepath.replace(".replay", ".json"))
-        g = decompile_replay(filepath, output)
-        with open(os.path.join(OUTPUT_DIR, filename + '.pkl'), 'wb') as fo:
-            pickle.dump(g, fo)
+        try:
+            g = decompile_replay(filepath, output)
+            with open(os.path.join(OUTPUT_DIR, filename + '.pkl'), 'wb') as fo:
+                pickle.dump(g, fo)
+                success+=1
+        except Exception as e:
+            traceback.print_exc()
+            failure += 1
+    ratio = success / float(success + failure)
+    print('success ratio:', ratio)
