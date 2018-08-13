@@ -2,16 +2,13 @@ from typing import Dict, TYPE_CHECKING, List, Tuple
 
 import pandas as pd
 
-from analysis.hit_detection.base_hit import BaseHit
-from json_parser.player import Player
-from json_parser.team import Team
 
 if TYPE_CHECKING:
     from ...saltie_game.saltie_game import SaltieGame
 
 
 class PossessionStat:
-    def __init__(self, team_possessions: Dict[Team, float], player_possessions: Dict[Player, float]):
+    def __init__(self, team_possessions, player_possessions):
         self.team_possessions = team_possessions
         self.player_possessions = player_possessions
 
@@ -22,7 +19,7 @@ class PossessionStat:
         return cls(team_possessions, player_possessions)
 
     @staticmethod
-    def get_team_possessions(saltie_game: 'SaltieGame') -> Dict[Team, float]:
+    def get_team_possessions(saltie_game: 'SaltieGame'):
         frame_possession_time_deltas = pd.concat(
             [
                 saltie_game.data_frame['ball', 'hit_team_no'],
@@ -39,7 +36,7 @@ class PossessionStat:
         return team_possessions
 
     @staticmethod
-    def get_player_possessions(saltie_game: 'SaltieGame') -> Dict[Player, float]:
+    def get_player_possessions(saltie_game: 'SaltieGame'):
         player_possessions = {
             player.name: 0 for team in saltie_game.api_game.teams for player in team.players
         }
@@ -52,7 +49,7 @@ class PossessionStat:
         )
         frame_possession_time_deltas.columns = ['hit_team_no', 'delta']
 
-        hits: List[Tuple[int, 'BaseHit']] = sorted(saltie_game.hits.items())
+        hits = sorted(saltie_game.hits.items())
         hit_number = 0
         for hit_frame_number, hit in hits:
             try:
