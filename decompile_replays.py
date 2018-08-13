@@ -7,7 +7,7 @@ import traceback
 from .analysis.saltie_game.saltie_game import SaltieGame
 
 try:
-    from json_parser.game import Game
+    from .json_parser.game import Game
     from .controls.controls import get_controls
 except:
     from json_parser.game import Game
