@@ -3,7 +3,6 @@ from typing import List, Dict
 import numpy as np
 import pandas as pd
 
-from json_parser.game import Game
 from .hitbox.car import get_hitbox, get_distance
 
 COLLISION_DISTANCE_HIGH_LIMIT = 500
@@ -40,7 +39,7 @@ class BaseHit:
         return 'Hit by %s on frame %s at distance %i' % (self.player, self.frame_number, self.collision_distance)
 
     @staticmethod
-    def get_hits_from_game(game: Game) -> Dict[int, 'BaseHit']:
+    def get_hits_from_game(game) -> Dict[int, 'BaseHit']:
         team_dict = {}
         all_hits = {}  # frame_number: [{hit_data}, {hit_data}] for hit guesses
         for team in game.teams:
