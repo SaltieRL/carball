@@ -2,7 +2,7 @@ import datetime
 import json
 from typing import List
 
-from json_parser.game import Game
+from ....json_parser.game import Game
 from .ApiGoal import ApiGoal
 from .ApiTeam import ApiTeam
 

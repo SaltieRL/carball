@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 
-from json_parser.game import Game
+from ...json_parser.game import Game
 from .metadata.ApiGame import ApiGame
 from .saltie_hit import SaltieHit
 from ..hit_detection.base_hit import BaseHit
