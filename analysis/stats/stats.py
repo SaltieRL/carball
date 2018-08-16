@@ -2,6 +2,7 @@ from typing import Dict, TYPE_CHECKING
 
 import pandas as pd
 
+from .possession.turnovers import TurnoverStat
 from .possession.possession import PossessionStat
 
 if TYPE_CHECKING:
@@ -12,7 +13,8 @@ def get_stats(saltie_game: 'SaltieGame') -> Dict:
     # TODO: Get Tendencies working.
     return {
         # 'tendencies': TendenciesStat.get_tendencies(game),
-        'possession': PossessionStat.get_possession(saltie_game)
+        'possession': PossessionStat.get_possession(saltie_game),
+        'turnovers': TurnoverStat.get_player_turnovers(saltie_game),
     }
 
 
