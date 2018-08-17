@@ -2,6 +2,7 @@ from typing import Dict, TYPE_CHECKING
 
 import pandas as pd
 
+from .positioning.positioning import PositioningStat
 from .possession.turnovers import TurnoverStat
 from .possession.possession import PossessionStat
 
@@ -15,6 +16,8 @@ def get_stats(saltie_game: 'SaltieGame') -> Dict:
         # 'tendencies': TendenciesStat.get_tendencies(game),
         'possession': PossessionStat.get_possession(saltie_game),
         'turnovers': TurnoverStat.get_player_turnovers(saltie_game),
+        'time_in_half': PositioningStat.get_player_half_percentages(saltie_game),
+        'average_speed': PositioningStat.get_player_speeds(saltie_game),
     }
 
 
