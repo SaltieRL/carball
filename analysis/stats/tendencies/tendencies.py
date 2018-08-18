@@ -9,8 +9,6 @@ if TYPE_CHECKING:
 class TendenciesStat:
     def __init__(self, player_tendencies):
         self.player_tendencies = player_tendencies
-        import pprint
-        pprint.pprint(player_tendencies)
 
     @classmethod
     def get_tendencies(cls, game: 'SaltieGame') -> 'TendenciesStat':
