@@ -12,7 +12,7 @@ class ApiTeam:
         self.name = name
         self.players = players
         self.score = score
-        self.isOrange = isOrange
+        self.is_orange = isOrange
 
     @staticmethod
     def create_teams_from_game(game):

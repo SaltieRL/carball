@@ -9,9 +9,9 @@ from .ApiTeam import ApiTeam
 
 # noinspection PyPep8Naming
 class ApiGameScore:
-    def __init__(self, team0Score: int = None, team1Score: int = None):
-        self.team0Score = team0Score
-        self.team1Score = team1Score
+    def __init__(self, team0score: int = None, team1score: int = None):
+        self.team0score = team0score
+        self.team1score = team1score
 
     @staticmethod
     def create_from_game(game):

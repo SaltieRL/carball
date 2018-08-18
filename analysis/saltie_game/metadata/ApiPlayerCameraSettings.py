@@ -5,10 +5,10 @@ class ApiPlayerCameraSettings:
                  pitch: float = None, swivelSpeed: float = None, fieldOfView: float = None, distance: float = None):
         self.stiffness = stiffness
         self.height = height
-        self.transitionSpeed = transitionSpeed
+        self.transition_speed = transitionSpeed
         self.pitch = pitch
-        self.swivelSpeed = swivelSpeed
-        self.fieldOfView = fieldOfView
+        self.swivel_speed = swivelSpeed
+        self.field_of_view = fieldOfView
         self.distance = distance
 
     @staticmethod

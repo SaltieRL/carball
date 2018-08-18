@@ -6,7 +6,7 @@ class ApiPlayerLoadout:
         self.banner = banner
         self.boost = boost
         self.car = car
-        self.goalExplosion = goalExplosion
+        self.goal_explosion = goalExplosion
         self.skin = skin
         self.trail = trail
         self.wheels = wheels

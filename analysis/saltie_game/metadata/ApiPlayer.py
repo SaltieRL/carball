@@ -6,27 +6,27 @@ from .ApiPlayerLoadout import ApiPlayerLoadout
 class ApiPlayer:
 
     def __init__(self, id_: str = None, name: str = None, steamProfile: str = None,
-                 titleId: int = None,
-                 matchScore: int = None,
-                 matchGoals: int = None,
-                 matchAssists: int = None,
-                 matchSaves: int = None,
-                 matchShots: int = None,
-                 cameraSettings: ApiPlayerCameraSettings = None,
+                 title_id: int = None,
+                 score: int = None,
+                 goals: int = None,
+                 assists: int = None,
+                 saves: int = None,
+                 shots: int = None,
+                 camera_settings: ApiPlayerCameraSettings = None,
                  loadout: ApiPlayerLoadout = None,
-                 isOrange: bool = None
+                 is_orange: bool = None
                  ):
         self.id = id_
         self.name = name
-        self.titleId = titleId
-        self.matchScore = matchScore
-        self.matchGoals = matchGoals
-        self.matchAssists = matchAssists
-        self.matchSaves = matchSaves
-        self.matchShots = matchShots
-        self.cameraSettings = cameraSettings
+        self.title_id = title_id
+        self.score = score
+        self.goals = goals
+        self.assists = assists
+        self.saves = saves
+        self.shots = shots
+        self.camera_settings = camera_settings
         self.loadout = loadout
-        self.isOrange = isOrange
+        self.is_orange = is_orange
 
     @staticmethod
     def create_from_player(player):
@@ -35,13 +35,13 @@ class ApiPlayer:
         # TODO: Add support for detecting xbox player ids.
         return ApiPlayer(id_=player.online_id,
                          name=player.name,
-                         titleId=player.title,
-                         matchScore=player.score,
-                         matchGoals=player.goals,
-                         matchAssists=player.assists,
-                         matchSaves=player.saves,
-                         matchShots=player.shots,
-                         cameraSettings=camera_settings,
+                         title_id=player.title,
+                         score=player.score,
+                         goals=player.goals,
+                         assists=player.assists,
+                         saves=player.saves,
+                         shots=player.shots,
+                         camera_settings=camera_settings,
                          loadout=loadout,
-                         isOrange=player.is_orange
+                         is_orange=player.is_orange
                          )
