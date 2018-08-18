@@ -1,7 +1,6 @@
-from typing import Dict, TYPE_CHECKING, List, Tuple
+from typing import Dict, TYPE_CHECKING
 
 import pandas as pd
-
 
 if TYPE_CHECKING:
     from ...saltie_game.saltie_game import SaltieGame
@@ -19,7 +18,7 @@ class PossessionStat:
         return cls(team_possessions, player_possessions)
 
     @staticmethod
-    def get_team_possessions(saltie_game: 'SaltieGame'):
+    def get_team_possessions(saltie_game: 'SaltieGame') -> Dict[int, float]:
         frame_possession_time_deltas = pd.concat(
             [
                 saltie_game.data_frame['ball', 'hit_team_no'],
@@ -36,8 +35,8 @@ class PossessionStat:
         return team_possessions
 
     @staticmethod
-    def get_player_possessions(saltie_game: 'SaltieGame'):
-        player_possessions = {
+    def get_player_possessions(saltie_game: 'SaltieGame') -> Dict[str, float]:
+        player_possessions: Dict[str, float] = {
             player.name: 0 for team in saltie_game.api_game.teams for player in team.players
         }
         frame_possession_time_deltas = pd.concat(

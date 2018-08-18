@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 import numpy as np
+
 if TYPE_CHECKING:
     from ...saltie_game.saltie_game import SaltieGame
     from ...saltie_game.metadata.ApiPlayer import ApiPlayer
@@ -29,7 +30,7 @@ class PositioningStat:
         p: ApiPlayer
         for p in players:
             pdf = saltie_game.data_frame[p]
-            speed = np.sqrt(pdf.vel_x**2 + pdf.vel_y**2 + pdf.vel_z**2).mean()
+            speed = np.sqrt(pdf.vel_x ** 2 + pdf.vel_y ** 2 + pdf.vel_z ** 2).mean()
             players[p] = speed
 
         return players

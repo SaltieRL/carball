@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from ...hit_detection.base_hit import BaseHit
 
 
-class TurnoverStat:
+class BoostStat:
     def __init__(self, turnovers):
         self.turnovers = turnovers
 

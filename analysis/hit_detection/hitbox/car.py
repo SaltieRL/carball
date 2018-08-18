@@ -45,7 +45,6 @@ def get_hitbox(car_item_id):
 
 def get_distance(position, hit_box):
     """
-
     :param position: location of the ball in the local coordinates of the car
     :param hit_box: hitbox returned by get_hitbox
     :return:

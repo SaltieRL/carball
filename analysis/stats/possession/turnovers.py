@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ...saltie_game.saltie_game import SaltieGame
-    from ...hit_detection.base_hit import BaseHit
 
 
 class TurnoverStat:
