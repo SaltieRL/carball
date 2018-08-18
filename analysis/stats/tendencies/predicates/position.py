@@ -4,11 +4,11 @@ from ....simulator.map_constants import MAP_Y
 
 """
 All functions here assume the car is on the blue team and the game is played on a standard map.
+return: Boolean series that can be used to index the original data_frame to sum deltas with.
 """
 
 
 def get_half_0(player_dataframe: pd.DataFrame, **kwargs):
-    # hopefully returns indices that can be used as boolean indexing.
     return player_dataframe.pos_y < 0
 
 
