@@ -66,7 +66,7 @@ class SaltieHit:
                 saltie_hit = hit_analytics_dict[hit_frame_number]
                 if not goal_kickoff_frame <= saltie_hit.hit.frame_number <= goal.frame:
                     continue
-                if saltie_hit.hit.player.name == goal.playerName:
+                if saltie_hit.hit.player.name == goal.player_name:
                     last_goalscorer_saltie_hit = saltie_hit
 
             if last_goalscorer_saltie_hit is None:
