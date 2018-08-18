@@ -7,7 +7,6 @@ from .ApiGoal import ApiGoal
 from .ApiTeam import ApiTeam
 
 
-# noinspection PyPep8Naming
 class ApiGameScore:
     def __init__(self, team0score: int = None, team1score: int = None):
         self.team0score = team0score

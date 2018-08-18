@@ -1,7 +1,6 @@
-# noinspection PyPep8Naming
 class ApiGoal:
-    def __init__(self, playerName: str = None, frame: int = None):
-        self.player_name = playerName
+    def __init__(self, player_name: str = None, frame: int = None):
+        self.player_name = player_name
         self.frame = frame
 
     @staticmethod

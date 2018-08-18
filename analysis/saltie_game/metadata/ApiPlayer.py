@@ -2,10 +2,9 @@ from .ApiPlayerCameraSettings import ApiPlayerCameraSettings
 from .ApiPlayerLoadout import ApiPlayerLoadout
 
 
-# noinspection PyPep8Naming
 class ApiPlayer:
 
-    def __init__(self, id_: str = None, name: str = None, steamProfile: str = None,
+    def __init__(self, id_: str = None, name: str = None,
                  title_id: int = None,
                  score: int = None,
                  goals: int = None,

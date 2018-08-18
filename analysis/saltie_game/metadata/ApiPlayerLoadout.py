@@ -1,12 +1,11 @@
-# noinspection PyPep8Naming
 class ApiPlayerLoadout:
 
-    def __init__(self, banner: int = None, boost: int = None, car: int = None, goalExplosion: int = None,
+    def __init__(self, banner: int = None, boost: int = None, car: int = None, goal_explosion: int = None,
                  skin: int = None, trail: int = None, version: int = None, wheels: int = None):
         self.banner = banner
         self.boost = boost
         self.car = car
-        self.goal_explosion = goalExplosion
+        self.goal_explosion = goal_explosion
         self.skin = skin
         self.trail = trail
         self.wheels = wheels
@@ -23,7 +22,7 @@ class ApiPlayerLoadout:
             banner=loadout['banner'],
             boost=loadout['boost'],
             car=loadout['car'],
-            goalExplosion=loadout['goal_explosion'],
+            goal_explosion=loadout['goal_explosion'],
             skin=loadout['skin'],
             trail=loadout['trail'],
             version=loadout['version'],

@@ -1,14 +1,13 @@
-# noinspection PyPep8Naming
 class ApiPlayerCameraSettings:
 
-    def __init__(self, stiffness: float = None, height: float = None, transitionSpeed: float = None,
-                 pitch: float = None, swivelSpeed: float = None, fieldOfView: float = None, distance: float = None):
+    def __init__(self, stiffness: float = None, height: float = None, transition_speed: float = None,
+                 pitch: float = None, swivel_speed: float = None, field_of_view: float = None, distance: float = None):
         self.stiffness = stiffness
         self.height = height
-        self.transition_speed = transitionSpeed
+        self.transition_speed = transition_speed
         self.pitch = pitch
-        self.swivel_speed = swivelSpeed
-        self.field_of_view = fieldOfView
+        self.swivel_speed = swivel_speed
+        self.field_of_view = field_of_view
         self.distance = distance
 
     @staticmethod
@@ -17,9 +16,9 @@ class ApiPlayerCameraSettings:
         return ApiPlayerCameraSettings(
             stiffness=player_camera_settings['stiffness'],
             height=player_camera_settings['height'],
-            transitionSpeed=player_camera_settings['transition_speed'],
+            transition_speed=player_camera_settings['transition_speed'],
             pitch=player_camera_settings['pitch'],
-            swivelSpeed=player_camera_settings['swivel_speed'],
-            fieldOfView=player_camera_settings['field_of_view'],
+            swivel_speed=player_camera_settings['swivel_speed'],
+            field_of_view=player_camera_settings['field_of_view'],
             distance=player_camera_settings['distance'],
         )
