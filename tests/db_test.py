@@ -6,6 +6,7 @@ from .. import decompile_replays
 OUTPUT_DIR = os.path.join('..', 'replays', 'pickled')
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+
 class DBTest(unittest.TestCase):
     def setUp(self):
         if not os.path.isdir(OUTPUT_DIR):
