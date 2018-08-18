@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 
 if TYPE_CHECKING:
     from ...saltie_game.saltie_game import SaltieGame
@@ -14,7 +14,10 @@ class TurnoverStat:
 
     @staticmethod
     def get_player_turnovers(saltie_game: 'SaltieGame'):
-        turnovers = {p.name: 0 for p in (saltie_game.api_game.teams[0].players + saltie_game.api_game.teams[1].players)}
+        turnovers: Dict[str, int] = {
+            player.name: 0
+            for team in saltie_game.api_game.teams for player in team.players
+        }
         hits = list(saltie_game.hits.values())
         for i in range(len(hits) - 2):
             if hits[i + 1].player.is_orange != hits[i].player.is_orange:
