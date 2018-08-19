@@ -52,5 +52,5 @@ class BoostStat:
 
     @staticmethod
     def get_player_boost_waste(usage: np.float64, collection: Dict[str, int]) -> float:
-        total_collected = collection['big'] * 100 + collection['small'] * 33
+        total_collected = collection['big'] * 100 + collection['small'] * 12
         return total_collected - usage
