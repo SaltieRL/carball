@@ -11,5 +11,5 @@ message Game {
     optional api.metadata.GameMetadata game_metadata = 1;
     repeated Player players = 2;
     repeated api.stats.Hit hits = 3;
-    optional api.stats.GameStats = 4;
+    optional api.stats.GameStats game_stats = 4;
 }

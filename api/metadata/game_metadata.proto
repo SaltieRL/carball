@@ -1,6 +1,5 @@
 syntax = "proto2";
 
-import "api/player.proto";
 import "api/player_id.proto";
 
 package api.metadata;
