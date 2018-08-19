@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 class PossessionStat:
-    def __init__(self, team_possessions, player_possessions):
+    def __init__(self, team_possessions: Dict[int, float], player_possessions: Dict[str, float]):
         self.team_possessions = team_possessions
         self.player_possessions = player_possessions
 

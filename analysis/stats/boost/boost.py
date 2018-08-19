@@ -1,24 +1,43 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, Dict
+
+import numpy as np
+import pandas as pd
 
 if TYPE_CHECKING:
     from ...saltie_game.saltie_game import SaltieGame
-    from ...hit_detection.base_hit import BaseHit
 
 
 class BoostStat:
-    def __init__(self, turnovers):
-        self.turnovers = turnovers
+    def __init__(self, usage: Dict[str, np.float64], collection: Dict[str, Dict[str, int]]):
+        self.usage = usage
+        self.collection = collection
 
     @classmethod
-    def get_boost(cls, saltie_game: 'SaltieGame'):
-        return cls(TurnoverStat.get_player_boost_usage(saltie_game))
+    def get_boost(cls, saltie_game: 'SaltieGame') -> 'BoostStat':
+        goal_frames = saltie_game.data_frame.game.goal_number.notnull()
+
+        usage: Dict[str, np.float64] = {
+            player.name: cls.get_player_boost_usage(saltie_game.data_frame[player.name][goal_frames])
+            for team in saltie_game.api_game.teams for player in team.players
+        }
+
+        collection: Dict[str, Dict[str, int]] = {
+            player.name: cls.get_player_boost_collection(saltie_game.data_frame[player.name][goal_frames])
+            for team in saltie_game.api_game.teams for player in team.players
+        }
+
+        return cls(usage=usage, collection=collection)
 
     @staticmethod
-    def get_player_boost_usage(saltie_game: 'SaltieGame'):
-        turnovers = {p.name: 0 for p in (saltie_game.api_game.teams[0].players + saltie_game.api_game.teams[1].players)}
-        hits = list(saltie_game.hits.values())  # type: List[BaseHit]
-        for i in range(len(hits) - 2):
-            if hits[i + 1].player.is_orange != hits[i].player.is_orange:
-                if hits[i + 2].player.is_orange != hits[i].player.is_orange:
-                    turnovers[hits[i].player.name] += 1
-        return turnovers
+    def get_player_boost_usage(player_dataframe: pd.DataFrame) -> np.float64:
+        _diff = -player_dataframe.boost.diff()
+        boost_usage = _diff[_diff > 0].sum()
+        return boost_usage
+
+    @staticmethod
+    def get_player_boost_collection(player_dataframe: pd.DataFrame) -> Dict[str, int]:
+        value_counts = player_dataframe.boost_collect.value_counts()
+        return {
+            'big': value_counts[True],
+            'small': value_counts[False]
+        }
