@@ -19,10 +19,12 @@ class PossessionStat:
 
     @staticmethod
     def get_team_possessions(saltie_game: 'SaltieGame') -> Dict[int, float]:
+        goal_frames = saltie_game.data_frame.game.goal_number.notnull()
+        dataframe = saltie_game.data_frame[goal_frames]
         frame_possession_time_deltas = pd.concat(
             [
-                saltie_game.data_frame['ball', 'hit_team_no'],
-                saltie_game.data_frame['game', 'delta']
+                dataframe['ball', 'hit_team_no'],
+                dataframe['game', 'delta']
             ],
             axis=1
         )
@@ -39,10 +41,13 @@ class PossessionStat:
         player_possessions: Dict[str, float] = {
             player.name: 0 for team in saltie_game.api_game.teams for player in team.players
         }
+
+        goal_frames = saltie_game.data_frame.game.goal_number.notnull()
+        dataframe = saltie_game.data_frame[goal_frames]
         frame_possession_time_deltas = pd.concat(
             [
-                saltie_game.data_frame['ball', 'hit_team_no'],
-                saltie_game.data_frame['game', 'delta']
+                dataframe['ball', 'hit_team_no'],
+                dataframe['game', 'delta']
             ],
             axis=1
         )
