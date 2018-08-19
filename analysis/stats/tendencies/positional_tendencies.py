@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
 
 
-class PlayerTendencies:
+class PositionalTendencies:
 
     def __init__(self,
                  height_0: float, height_1: float, height_2: float,
@@ -51,7 +51,7 @@ class PlayerTendencies:
         }
 
     @classmethod
-    def get_player_tendencies(cls, player: 'ApiPlayer', saltie_game: 'SaltieGame') -> 'PlayerTendencies':
+    def get_player_tendencies(cls, player: 'ApiPlayer', saltie_game: 'SaltieGame') -> 'PositionalTendencies':
         player_dataframe = saltie_game.data_frame[player.name]
         ball_dataframe = saltie_game.data_frame['ball']
         dataframes: Dict[str, pd.DataFrame] = {
@@ -78,7 +78,7 @@ class PlayerTendencies:
             attr: cls.get_duration_from_predicate(predicate, saltie_game, dataframes)
             for attr, predicate in map_attributes_to_predicates.items()
         }
-        return PlayerTendencies(**init_params)
+        return PositionalTendencies(**init_params)
 
     @staticmethod
     def get_duration_from_predicate(predicate: Callable, saltie_game: 'SaltieGame',
