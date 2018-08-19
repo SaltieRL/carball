@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package api.metadata;
+
+message CameraSettings {
+    optional int32 id = 1;
+    optional float stiffness = 2;
+    optional float height = 3;
+    optional float transition_speed = 4;
+    optional float pitch = 5;
+    optional float swivel_speed = 6;
+    optional float field_of_view = 7;
+    optional float distance = 8;
+}

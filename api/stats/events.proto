@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package api.stats;
+
+message Hit {
+    optional int32 frame_number = 1;
+    optional int32 player = 2;
+    optional float collision_distance = 3;
+
+    // Derived values
+    optional bool pass_ = 4;
+    optional bool passed = 5;
+    optional bool dribble = 6;
+    optional bool dribble_continuation = 7;
+    optional bool shot = 8;
+    optional bool goal = 9;
+    optional bool assist = 10;
+    optional bool assisted = 11;
+    optional bool save = 12;
+    optional bool distance = 13;
+    optional bool distance_to_goal = 14;
+}
