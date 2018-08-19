@@ -3,6 +3,7 @@ import json
 from typing import List
 
 from ....json_parser.game import Game
+from .ApiDemo import ApiDemo
 from .ApiGoal import ApiGoal
 from .ApiTeam import ApiTeam
 
@@ -11,6 +12,9 @@ class ApiGameScore:
     def __init__(self, team0score: int = None, team1score: int = None):
         self.team0score = team0score
         self.team1score = team1score
+
+    def __str__(self):
+        return '(Blue) %s vs %s (Orange)' % (self.team0score, self.team1score)
 
     @staticmethod
     def create_from_game(game):
@@ -25,9 +29,18 @@ class ApiGameScore:
 
 
 class ApiGame:
-    def __init__(self, id: str = None, name: str = None, map_: str = None, version: int = None,
-                 time: datetime.datetime = None, frames: int = None,
-                 score: ApiGameScore = None, teams: List[ApiTeam] = None, goals: List[ApiGoal] = None):
+    def __init__(self,
+                 id: str = None,
+                 name: str = None,
+                 map_: str = None,
+                 version: int = None,
+                 time: datetime.datetime = None,
+                 frames: int = None,
+                 score: ApiGameScore = None,
+                 teams: List[ApiTeam] = None,
+                 goals: List[ApiGoal] = None,
+                 demos: List[ApiDemo] = None,
+                 ):
         self.id = id
         self.name = name
         self.map = map_
@@ -37,6 +50,7 @@ class ApiGame:
         self.score = score
         self.teams = teams
         self.goals = goals
+        self.demos = demos
 
     @staticmethod
     def create_from_game(game: Game):
@@ -49,7 +63,8 @@ class ApiGame:
             frames=game.frames.index.max(),
             score=ApiGameScore.create_from_game(game),
             teams=ApiTeam.create_teams_from_game(game),
-            goals=ApiGoal.create_goals_from_game(game)
+            goals=ApiGoal.create_goals_from_game(game),
+            demos=ApiDemo.create_demos_from_game(game)
         )
 
     def to_json(self) -> str:

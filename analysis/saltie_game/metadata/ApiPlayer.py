@@ -27,6 +27,10 @@ class ApiPlayer:
         self.loadout = loadout
         self.is_orange = is_orange
 
+    def __str__(self):
+        colour = 'orange' if self.is_orange else 'blue'
+        return 'Player: %s with %s goals (Score: %s) on %s' % (self.name, self.goals, self.score, colour)
+
     @staticmethod
     def create_from_player(player):
         camera_settings = ApiPlayerCameraSettings.create_from_player(player)

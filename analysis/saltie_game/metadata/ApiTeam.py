@@ -13,6 +13,13 @@ class ApiTeam:
         self.score = score
         self.is_orange = is_orange
 
+    def __str__(self):
+        colour = 'orange' if self.is_orange else 'blue'
+        if self.name is not None:
+            return 'Team: %s (Goals: %s) on %s: (%s players)' % (self.name, self.score, colour, len(self.players))
+        else:
+            return 'Team on %s with %s goals: (%s players)' % (colour, self.score, len(self.players))
+
     @staticmethod
     def create_teams_from_game(game):
         teams = []
