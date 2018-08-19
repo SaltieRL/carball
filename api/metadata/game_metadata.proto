@@ -5,8 +5,8 @@ import "api/player_id.proto";
 package api.metadata;
 
 message GameScore {
-    optional int32 team0score = 1;
-    optional int32 team1score = 2;
+    optional int32 team_0_score = 1;
+    optional int32 team_1_score = 2;
 }
 
 message Team {
@@ -35,7 +35,7 @@ message GameMetadata {
     optional int64 time = 5;
     optional int32 frames = 6;
     optional GameScore score = 7;
-    optional Team teams = 8;
-    optional Goal goals = 9;
-    optional Demo demos = 10;
+    repeated Team teams = 8;
+    repeated Goal goals = 9;
+    repeated Demo demos = 10;
 }

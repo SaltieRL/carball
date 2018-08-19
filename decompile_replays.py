@@ -4,14 +4,14 @@ import pickle
 import subprocess
 import traceback
 
-from .analysis.saltie_game.saltie_game import SaltieGame
+from replay_analysis.analysis import SaltieGame
 
 try:
-    from .json_parser.game import Game
-    from .controls.controls import get_controls
+    from replay_analysis.json_parser import Game
+    from replay_analysis.controls.controls import get_controls
 except:
-    from json_parser.game import Game
-    from controls.controls import get_controls
+    from replay_analysis.json_parser import Game
+    from replay_analysis.controls.controls import get_controls
 
 BASE_DIR = os.path.dirname(__file__)
 OUTPUT_DIR = os.path.join('replays', 'pickled')
