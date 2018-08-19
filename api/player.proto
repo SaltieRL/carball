@@ -3,11 +3,12 @@ syntax = "proto2";
 import "api/metadata/player_loadout.proto";
 import "api/metadata/camera_settings.proto";
 import "api/stats/player_stats.proto";
+import "api/player_id.proto";
 
 package api;
 
 message Player {
-    optional int32 id = 1;
+    optional PlayerId id = 1;
     optional string name = 2;
     optional int32 title_id = 3;
     optional int32 score = 4;

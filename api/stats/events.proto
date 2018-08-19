@@ -1,10 +1,12 @@
 syntax = "proto2";
 
+import "api/player_id.proto";
+
 package api.stats;
 
 message Hit {
     optional int32 frame_number = 1;
-    optional int32 player = 2;
+    optional api.PlayerId player = 2;
     optional float collision_distance = 3;
 
     // Derived values
@@ -17,6 +19,6 @@ message Hit {
     optional bool assist = 10;
     optional bool assisted = 11;
     optional bool save = 12;
-    optional bool distance = 13;
-    optional bool distance_to_goal = 14;
+    optional float distance = 13;
+    optional float distance_to_goal = 14;
 }
