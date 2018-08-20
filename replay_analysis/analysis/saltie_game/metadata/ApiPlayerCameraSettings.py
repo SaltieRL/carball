@@ -11,14 +11,15 @@ class ApiPlayerCameraSettings:
         self.distance = distance
 
     @staticmethod
-    def create_from_player(player):
+    def create_from_player(proto_camera, player):
         player_camera_settings = player.camera_settings
-        return ApiPlayerCameraSettings(
-            stiffness=player_camera_settings['stiffness'],
-            height=player_camera_settings['height'],
-            transition_speed=player_camera_settings['transition_speed'],
-            pitch=player_camera_settings['pitch'],
-            swivel_speed=player_camera_settings['swivel_speed'],
-            field_of_view=player_camera_settings['field_of_view'],
-            distance=player_camera_settings['distance'],
-        )
+        if player.camera_settings['stiffness'] is None:
+            return
+
+        proto_camera.stiffness = player_camera_settings['stiffness']
+        proto_camera.height = player_camera_settings['height']
+        proto_camera.transition_speed = player_camera_settings['transition_speed']
+        proto_camera.pitch = player_camera_settings['pitch']
+        proto_camera.swivel_speed = player_camera_settings['swivel_speed']
+        proto_camera.field_of_view = player_camera_settings['field_of_view']
+        proto_camera.distance = player_camera_settings['distance']

@@ -12,19 +12,19 @@ class ApiPlayerLoadout:
         self.version = version
 
     @staticmethod
-    def create_from_player(player):
+    def create_from_player(proto_loadout, player):
         try:
             loadout = player.loadout[player.is_orange]
         except IndexError:
-            loadout = player.loadout[0]
+            return
+        if player.camera_settings['banner'] is None:
+            return
 
-        return ApiPlayerLoadout(
-            banner=loadout['banner'],
-            boost=loadout['boost'],
-            car=loadout['car'],
-            goal_explosion=loadout['goal_explosion'],
-            skin=loadout['skin'],
-            trail=loadout['trail'],
-            version=loadout['version'],
-            wheels=loadout['wheels'],
-        )
+        proto_loadout.banner = loadout['banner']
+        proto_loadout.boost = loadout['boost']
+        proto_loadout.car = loadout['car']
+        proto_loadout.goal_explosion = loadout['goal_explosion']
+        proto_loadout.skin = loadout['skin']
+        proto_loadout.trail = loadout['trail']
+        proto_loadout.version = loadout['version']
+        proto_loadout.wheels = loadout['wheels']
