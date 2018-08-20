@@ -10,9 +10,10 @@ class ApiTeam:
         teams = []
         for team in game.teams:
             proto_team = game_metadata_pb2.Team()
-            proto_team.name = team.name
+            if team.name is not None:
+                proto_team.name = str(team.name)
             for player in team.players:
-                proto_team.player_ids.append(id_creator(player.name))
+                id_creator(proto_team.player_ids.add(), player.name)
             proto_team.is_orange = team.is_orange
             proto_team.score = team.score
         return teams
