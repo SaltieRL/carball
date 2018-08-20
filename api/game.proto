@@ -12,4 +12,6 @@ message Game {
     repeated Player players = 2;
     repeated api.stats.Hit hits = 3;
     optional api.stats.GameStats game_stats = 4;
+    optional bytes kickoff_frames = 5;
+    optional bytes game_frames = 6;
 }

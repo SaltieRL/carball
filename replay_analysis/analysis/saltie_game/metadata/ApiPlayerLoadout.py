@@ -17,7 +17,7 @@ class ApiPlayerLoadout:
             loadout = player.loadout[player.is_orange]
         except IndexError:
             return
-        if player.camera_settings['banner'] is None:
+        if loadout['banner'] is None:
             return
 
         proto_loadout.banner = loadout['banner']
