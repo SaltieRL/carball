@@ -1,5 +1,6 @@
 import time
 from typing import Dict
+import logging
 
 from replay_analysis.analysis.hit_detection.base_hit import BaseHit
 from replay_analysis.analysis.saltie_game.saltie_hit import SaltieHit
@@ -9,8 +10,6 @@ from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame
 from ..json_parser.game import Game
 from ..generated.api import game_pb2
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +75,7 @@ class AnalysisManager:
 
     def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                             data_frames, kickoff_frames):
+        logger.info("Looking for hits.")
         hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator)
         logger.info("Found %s hits." % len(hits))
 

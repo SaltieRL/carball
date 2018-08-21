@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Dict, List
 from bisect import bisect_left
 import numpy as np
@@ -35,7 +36,10 @@ class SaltieHit:
 
         sorted_frames = sorted(hit_analytics_dict)
 
+        start_time = time.time()
         SaltieHit.find_goal_hits(proto_game, kickoff_frames, sorted_frames, hit_analytics_dict)
+        total_time = time.time() - start_time
+        logger.debug('goal time: %s', total_time * 1000)
 
         SaltieHit.find_hit_stats(game, player_map, data_frames, sorted_frames, hit_analytics_dict)
 
@@ -134,7 +138,11 @@ class SaltieHit:
         """
 
         last_passing_hit = None
+        total_stat_time = 0
+        total_next_hit_time = 0
+        total_simulation_time = 0
         for hit_number in range(len(sorted_frames)):
+            start_time = time.time()
             hit_frame_number = sorted_frames[hit_number]
             saltie_hit = hit_analytics_dict[hit_frame_number]
 
@@ -158,6 +166,9 @@ class SaltieHit:
             except IndexError:
                 pass
 
+            next_hit_time = time.time()
+            total_next_hit_time += next_hit_time - start_time
+
             # assist calculation
             if saltie_hit.goal and last_passing_hit is not None:
                 saltie_hit.assisted = True
@@ -171,9 +182,19 @@ class SaltieHit:
             elif saltie_hit.goal:
                 saltie_hit.distance = 0
 
-            SaltieHit.get_shot(game, saltie_hit, player_map)
+            stat_time = time.time()
+            total_stat_time += stat_time - next_hit_time
 
             saltie_hit.distance_to_goal = SaltieHit.get_distance_to_goal(game, saltie_hit, player_map)
+
+            SaltieHit.get_shot(game, saltie_hit, player_map)
+
+            simulation_time = time.time()
+            total_simulation_time = simulation_time - stat_time
+
+        logger.debug('next time: %s', total_next_hit_time * 1000)
+        logger.debug('stat time: %s', total_stat_time * 1000)
+        logger.debug('sim  time: %s', total_simulation_time * 1000)
 
 
 def get_goal_number(frame_number: int, data_frame) -> int:

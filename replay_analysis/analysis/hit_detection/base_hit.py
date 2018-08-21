@@ -1,4 +1,6 @@
+import time
 from typing import List, Dict, Callable
+import logging
 
 import numpy as np
 import pandas as pd
@@ -10,6 +12,8 @@ from .hitbox.car import get_hitbox, get_distance
 
 COLLISION_DISTANCE_HIGH_LIMIT = 500
 COLLISION_DISTANCE_LOW_LIMIT = 250
+
+logger = logging.getLogger(__name__)
 
 
 class BaseHit:
@@ -43,6 +47,7 @@ class BaseHit:
 
     @staticmethod
     def get_hits_from_game(game: Game, proto_game: game_pb2, id_creation: Callable) -> Dict[int, Hit]:
+        start_time = time.time()
         team_dict = {}
         all_hits = {}  # frame_number: [{hit_data}, {hit_data}] for hit guesses
         for team in game.teams:
@@ -101,6 +106,8 @@ class BaseHit:
                 all_hits[frame_number] = hit
                 BaseHit(game, frame_number=frame_number)
 
+        time_diff = time.time() - start_time
+        logger.info('ball hit creation time: %s', time_diff * 1000)
         return all_hits
 
     @staticmethod
