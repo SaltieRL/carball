@@ -24,7 +24,7 @@ class ApiGame:
     @staticmethod
     def create_from_game(proto_game: game_metadata_pb2.GameMetadata, game: Game, id_creator: Callable) -> game_metadata_pb2.GameMetadata:
         proto_game.id = game.id
-        proto_game.name = game.name
+        proto_game.name = str(game.name)
         proto_game.map = game.map
         proto_game.version = game.replay_version
         proto_game.time = int(time.mktime(game.datetime.timetuple())*1e3 + game.datetime.microsecond/1e3)
