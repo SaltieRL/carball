@@ -1,3 +1,4 @@
+import math
 import time
 from typing import List, Dict, Callable
 import logging
@@ -82,8 +83,9 @@ class BaseHit:
             if hit_player is not None:
                 hit = proto_game.hits.add()
                 hit.frame_number = frame_number
-                if not math.isnan(frame_information.game.goal_number):
-                    hit.goal_number = int(frame_information.game.goal_number)
+                goal_number = data_frames.at[frame_number, ('game', 'goal_number')]
+                if not math.isnan(goal_number):
+                    hit.goal_number = int(goal_number)
                 id_creation(hit.player_id, hit_player.name)
                 hit.collision_distance = hit_collision_distance
                 all_hits[frame_number] = hit
