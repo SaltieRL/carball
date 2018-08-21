@@ -17,33 +17,6 @@ logger = logging.getLogger(__name__)
 
 
 class BaseHit:
-    def __init__(self, game, frame_number=None, player=None, collision_distance=9999):
-
-        self.frame_number = frame_number
-        self.player = player
-        self.collision_distance = collision_distance
-
-        if self.player != 'unknown' and self.player is not None:
-            self.player_data = self.player.data.loc[self.frame_number, :]
-
-        self.ball_data = game.ball.loc[self.frame_number, :]
-        i = 10
-        while i < 20:
-            try:
-                self.post_hit_ball_data = game.ball.loc[self.frame_number + i, :]
-                break
-            except KeyError:
-                i += 1
-        i = 10
-        while i < 20:
-            try:
-                self.pre_hit_ball_data = game.ball.loc[self.frame_number - i, :]
-                break
-            except KeyError:
-                i += 1
-
-    def __repr__(self):
-        return 'Hit by %s on frame %s at distance %i' % (self.player, self.frame_number, self.collision_distance)
 
     @staticmethod
     def get_hits_from_game(game: Game, proto_game: game_pb2, id_creation: Callable) -> Dict[int, Hit]:
@@ -104,7 +77,6 @@ class BaseHit:
                 id_creation(hit.player_id, hit_player.name)
                 hit.collision_distance = hit_collision_distance
                 all_hits[frame_number] = hit
-                BaseHit(game, frame_number=frame_number)
 
         time_diff = time.time() - start_time
         logger.info('ball hit creation time: %s', time_diff * 1000)
@@ -116,37 +88,6 @@ class BaseHit:
         diff_series = ball_ang_vels.diff().any(axis=1)
         indices = diff_series.index[diff_series].tolist()
         return indices
-
-    @staticmethod
-    def get_full_ball_data(game: Game, hit: Hit):
-        """
-        Gets ball data based on a frame number.
-        :param game:
-        :param hit:
-        :return: closest frame of ball data before the ball is hit or None, the ball data,
-        The closest frame after the ball is hit if it exists or None.
-        """
-
-        frame_number = hit.frame_number
-        ball_data = BaseHit.get_ball_data(game, hit)
-        post_hit_ball_data = None
-        pre_hit_ball_data = None
-        i = 10
-        while i < 20:
-            try:
-                post_hit_ball_data = game.ball.loc[frame_number + i, :]
-                break
-            except KeyError:
-                i += 1
-        i = 10
-        while i < 20:
-            try:
-                pre_hit_ball_data = game.ball.loc[frame_number - i, :]
-                break
-            except KeyError:
-                i += 1
-
-        return pre_hit_ball_data, ball_data, post_hit_ball_data
 
     @staticmethod
     def get_ball_data(game: Game, hit: Hit):
