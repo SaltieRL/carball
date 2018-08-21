@@ -38,9 +38,9 @@ def decompile_replay(path, output_path):
     _json = json.load(open(output_path, encoding="utf8"))
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
-    analysis = AnalysisManager()
+    analysis = AnalysisManager(game)
 
-    return analysis.create_analysis(game)
+    return analysis.create_analysis()
 
 
 if __name__ == '__main__':

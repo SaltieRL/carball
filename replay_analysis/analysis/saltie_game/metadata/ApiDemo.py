@@ -10,7 +10,7 @@ class ApiDemo:
         demos = []
         for demo in game.demos:
             proto_demo = game_metadata_pb2.Demo()
-            proto_demo.frame = demo['frame_number']
+            proto_demo.frame_number = demo['frame_number']
             id_creator(proto_demo.attacker_id, demo['attacker'].name)
             id_creator(proto_demo.victim_id, demo['victim'].name)
             demos.append(proto_demo)

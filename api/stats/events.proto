@@ -21,4 +21,7 @@ message Hit {
     optional bool save = 12;
     optional float distance = 13;
     optional float distance_to_goal = 14;
+
+    optional int32 previous_hit_frame_number = 15;
+    optional int32 next_hit_frame_number = 16;
 }

@@ -1,3 +1,4 @@
+import time
 from typing import Dict
 
 from replay_analysis.analysis.hit_detection.base_hit import BaseHit
@@ -17,15 +18,22 @@ logger = logging.getLogger(__name__)
 class AnalysisManager:
 
     id_creator = None
+    timer = None
 
-    def create_analysis(self, game: Game):
-        logger.info("Creating SaltieGame from %s" % game)
-        protobuf_game = game_pb2.Game()
+    def __init__(self, game: Game):
+        self.game = game
+        self.protobuf_game = game_pb2.Game()
         self.id_creator = self.create_player_id_function(game)
-        player_map = self.get_game_metadata(game, protobuf_game)
-        data_frames, kickoff_frames = self.get_frames(game, protobuf_game)
-        self.get_extra_stats(game, protobuf_game, player_map, data_frames, kickoff_frames)
-        print(protobuf_game)
+
+    def create_analysis(self):
+        self.start_time()
+        player_map = self.get_game_metadata(self.game, self.protobuf_game)
+        self.log_time("creating metadata")
+        data_frames, kickoff_frames = self.get_frames(self.game, self.protobuf_game)
+        self.log_time("getting frames")
+        self.calculate_hit_stats(self.game, self.protobuf_game, player_map, data_frames, kickoff_frames)
+        self.log_time("calculating hits")
+        # logger.debug(self.protobuf_game)
 
     def get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
 
@@ -66,8 +74,8 @@ class AnalysisManager:
     def write_pandas_to_memeory(self, dataframe):
         return None
 
-    def get_extra_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                        data_frames, kickoff_frames):
+    def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                            data_frames, kickoff_frames):
         hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator)
         logger.info("Found %s hits." % len(hits))
 
@@ -77,3 +85,11 @@ class AnalysisManager:
 
         # self.stats = get_stats(self)
 
+    def start_time(self):
+        self.timer = time.time()
+        logger.info("starting timer")
+
+    def log_time(self, message=""):
+        end = time.time()
+        logger.info("Time taken for %s is %s milliseconds", message, (end - self.timer) * 1000)
+        self.timer = end
