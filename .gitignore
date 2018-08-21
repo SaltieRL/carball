@@ -2,4 +2,4 @@
 *.pyc
 replays/
 venv/
-generated/
+/**/generated/**/*.py
