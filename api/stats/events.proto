@@ -6,7 +6,7 @@ package api.stats;
 
 message Hit {
     optional int32 frame_number = 1;
-    optional api.PlayerId player = 2;
+    optional api.PlayerId player_id = 2;
     optional float collision_distance = 3;
 
     // Derived values

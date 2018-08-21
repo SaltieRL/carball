@@ -1,8 +1,12 @@
 import logging
-from typing import Dict, TYPE_CHECKING
-
+from typing import Dict, TYPE_CHECKING, List
+from bisect import bisect_left
 import numpy as np
 
+from replay_analysis.generated.api import game_pb2
+from replay_analysis.generated.api.player_pb2 import Player
+from replay_analysis.generated.api.stats.events_pb2 import Hit
+from replay_analysis.json_parser.game import Game
 from ..hit_detection.base_hit import BaseHit
 from ..simulator.ball_simulator import BallSimulator
 from ..simulator.map_constants import *
@@ -40,52 +44,40 @@ class SaltieHit:
         self.previous_hit: 'SaltieHit' = None
         self.next_hit: 'SaltieHit' = None
 
-    def get_distance_to_goal(self):
-        _goal_x = min(max(self.hit.ball_data['pos_x'], GOAL_X / 2), -GOAL_X / 2)
-        _goal_y = -MAP_Y / 2 if self.hit.player.is_orange else MAP_Y / 2
+    @staticmethod
+    def get_distance_to_goal(game: Game, hit: Hit, player_map: Dict[str, Player]):
+        ball_data = BaseHit.get_ball_data(game, hit)
+        _goal_x = min(max(ball_data['pos_x'], GOAL_X / 2), -GOAL_X / 2)
+        _goal_y = -MAP_Y / 2 if player_map[hit.player_id.id].is_orange else MAP_Y / 2
 
-        displacement = self.hit.ball_data[['pos_x', 'pos_y']].values - (_goal_x, _goal_y)
+        displacement = ball_data[['pos_x', 'pos_y']].values - (_goal_x, _goal_y)
         distance = np.sqrt(np.square(displacement).sum())
 
         return distance
 
     @staticmethod
-    def get_saltie_hits_from_game(saltie_game: 'SaltieGame') -> Dict[int, 'SaltieHit']:
-        hit_analytics_dict: Dict[int, SaltieHit] = {}
-        for hit in saltie_game.hits.values():
-            saltie_hit = SaltieHit(hit)
-            hit_analytics_dict[saltie_hit.hit.frame_number] = saltie_hit
+    def get_saltie_hits_from_game(game: Game, proto_game: game_pb2.Game, hits: Dict[int, Hit],
+                                  player_map: Dict[str, Player], data_frames, kickoff_frames) -> Dict[int, 'SaltieHit']:
+        hit_analytics_dict: Dict[int, Hit] = {}
+        for hit in hits.values():
+            hit.distance_to_goal = SaltieHit.get_distance_to_goal(game, hit, player_map)
+            hit_analytics_dict[hit.frame_number] = hit
 
         hit_frame_numbers = sorted(hit_analytics_dict)
 
-        # find last hit by goalscorer for each goal frame
-        for goal_number, goal in enumerate(saltie_game.api_game.goals):
-            goal_kickoff_frame = saltie_game.kickoff_frames[goal_number]
-            last_goalscorer_saltie_hit = None
-            for hit_frame_number in hit_frame_numbers:
-                saltie_hit = hit_analytics_dict[hit_frame_number]
-                if not goal_kickoff_frame <= saltie_hit.hit.frame_number <= goal.frame:
-                    continue
-                if saltie_hit.hit.player.name == goal.player_name:
-                    last_goalscorer_saltie_hit = saltie_hit
-
-            if last_goalscorer_saltie_hit is None:
-                logger.warning("Could not find hit for goal: %s" % goal)
-            else:
-                last_goalscorer_saltie_hit.goal = True
-                logger.debug("Found hit for goal on frame %s: %s" % (goal.frame, last_goalscorer_saltie_hit.hit))
+        SaltieHit.find_goal_hits(proto_game, kickoff_frames, hit_frame_numbers, hit_analytics_dict)
 
         # find passes and assists
         for hit_number in range(len(hit_frame_numbers)):
             hit_frame_number = hit_frame_numbers[hit_number]
             saltie_hit = hit_analytics_dict[hit_frame_number]
 
-            saltie_hit_goal_number = get_goal_number(hit_frame_number, saltie_game)
+            saltie_hit_goal_number = get_goal_number(hit_frame_number, proto_game)
             # previous hit
             previous_saltie_hit = None
             try:
                 previous_hit_frame_number = hit_frame_numbers[hit_number - 1]
-                if get_goal_number(previous_hit_frame_number, saltie_game) == saltie_hit_goal_number:
+                if get_goal_number(previous_hit_frame_number, proto_game) == saltie_hit_goal_number:
                     previous_saltie_hit = hit_analytics_dict[previous_hit_frame_number]
                     saltie_hit.previous_hit = previous_saltie_hit
             except IndexError:
@@ -95,7 +87,7 @@ class SaltieHit:
             next_saltie_hit = None
             try:
                 next_hit_frame_number = hit_frame_numbers[hit_number + 1]
-                if get_goal_number(next_hit_frame_number, saltie_game) == saltie_hit_goal_number:
+                if get_goal_number(next_hit_frame_number, proto_game) == saltie_hit_goal_number:
                     next_saltie_hit = hit_analytics_dict[next_hit_frame_number]
                     saltie_hit.next_hit = next_saltie_hit
             except IndexError:
@@ -153,6 +145,31 @@ class SaltieHit:
                 logger.warning('Goal is not shot: %s' % saltie_hit.hit)
 
         return hit_analytics_dict
+
+    @staticmethod
+    def find_goal_hits(proto_game: game_pb2, kickoff_frames, sorted_frames: List[int], hit_analytics_dict: [int, Hit]):
+        total_frames = len(sorted_frames)
+        end_search = 0
+        # find last hit by goalscorer for each goal frame
+        for goal_number, goal in enumerate(proto_game.game_metadata.goals):
+            goal_kickoff_frame = int(kickoff_frames[goal_number])
+            last_goalscorer_saltie_hit = None
+            # Only look for the frames that occur right before the goal.
+            start_search = bisect_left(sorted_frames, goal.frame, 0, total_frames - 1)
+            for frame_index in range(start_search, end_search, -1):
+                frame_number = sorted_frames[frame_index]
+                saltie_hit = hit_analytics_dict[frame_number]
+                if not (goal_kickoff_frame <= saltie_hit.frame_number <= goal.frame):
+                    continue
+                if saltie_hit.player_id.id == goal.player_id.id:
+                    last_goalscorer_saltie_hit = saltie_hit
+                    break
+            end_search = start_search
+            if last_goalscorer_saltie_hit is None:
+                logger.warning("Could not find hit for goal: %s" % goal)
+            else:
+                last_goalscorer_saltie_hit.goal = True
+                logger.debug("Found hit for goal on frame %s: %s" % (goal.frame, last_goalscorer_saltie_hit))
 
 
 def get_goal_number(frame_number: int, saltie_game: 'SaltieGame') -> int:

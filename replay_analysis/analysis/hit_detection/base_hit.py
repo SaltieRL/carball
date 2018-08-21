@@ -1,8 +1,11 @@
-from typing import List, Dict
+from typing import List, Dict, Callable
 
 import numpy as np
 import pandas as pd
 
+from replay_analysis.generated.api import game_pb2
+from replay_analysis.generated.api.stats.events_pb2 import Hit
+from replay_analysis.json_parser.game import Game
 from .hitbox.car import get_hitbox, get_distance
 
 COLLISION_DISTANCE_HIGH_LIMIT = 500
@@ -16,7 +19,7 @@ class BaseHit:
         self.player = player
         self.collision_distance = collision_distance
 
-        if self.player != 'unknown':
+        if self.player != 'unknown' and self.player is not None:
             self.player_data = self.player.data.loc[self.frame_number, :]
 
         self.ball_data = game.ball.loc[self.frame_number, :]
@@ -39,7 +42,7 @@ class BaseHit:
         return 'Hit by %s on frame %s at distance %i' % (self.player, self.frame_number, self.collision_distance)
 
     @staticmethod
-    def get_hits_from_game(game) -> Dict[int, 'BaseHit']:
+    def get_hits_from_game(game: Game, proto_game: game_pb2, id_creation: Callable) -> Dict[int, Hit]:
         team_dict = {}
         all_hits = {}  # frame_number: [{hit_data}, {hit_data}] for hit guesses
         for team in game.teams:
@@ -91,9 +94,12 @@ class BaseHit:
                 hit_collision_distance = 999999
 
             if hit_player is not None:
-                hit = BaseHit(game, frame_number=frame_number, player=hit_player,
-                              collision_distance=hit_collision_distance)
+                hit = proto_game.hits.add()
+                hit.frame_number = frame_number
+                id_creation(hit.player_id, hit_player.name)
+                hit.collision_distance = hit_collision_distance
                 all_hits[frame_number] = hit
+                BaseHit(game, frame_number=frame_number)
 
         return all_hits
 
@@ -103,6 +109,41 @@ class BaseHit:
         diff_series = ball_ang_vels.diff().any(axis=1)
         indices = diff_series.index[diff_series].tolist()
         return indices
+
+    @staticmethod
+    def get_full_ball_data(game: Game, hit: Hit):
+        """
+        Gets ball data based on a frame number.
+        :param game:
+        :param hit:
+        :return: closest frame of ball data before the ball is hit or None, the ball data,
+        The closest frame after the ball is hit if it exists or None.
+        """
+
+        frame_number = hit.frame_number
+        ball_data = BaseHit.get_ball_data(game, hit)
+        post_hit_ball_data = None
+        pre_hit_ball_data = None
+        i = 10
+        while i < 20:
+            try:
+                post_hit_ball_data = game.ball.loc[frame_number + i, :]
+                break
+            except KeyError:
+                i += 1
+        i = 10
+        while i < 20:
+            try:
+                pre_hit_ball_data = game.ball.loc[frame_number - i, :]
+                break
+            except KeyError:
+                i += 1
+
+        return pre_hit_ball_data, ball_data, post_hit_ball_data
+
+    @staticmethod
+    def get_ball_data(game: Game, hit: Hit):
+        return game.ball.loc[hit.frame_number, :]
 
 
 def unrotate_position(relative_position, rotation):
