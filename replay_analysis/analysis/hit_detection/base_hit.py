@@ -19,14 +19,22 @@ logger = logging.getLogger(__name__)
 class BaseHit:
 
     @staticmethod
-    def get_hits_from_game(game: Game, proto_game: game_pb2, id_creation: Callable) -> Dict[int, Hit]:
+    def get_hits_from_game(game: Game, proto_game: game_pb2, id_creation: Callable, data_frames) -> Dict[int, Hit]:
+
         start_time = time.time()
+
         team_dict = {}
         all_hits = {}  # frame_number: [{hit_data}, {hit_data}] for hit guesses
         for team in game.teams:
             team_dict[team.is_orange] = team
 
         hit_frame_numbers = BaseHit.get_hit_frame_numbers_by_ball_ang_vel(game)
+        frame_slice = (slice(None), ['pos_x', 'pos_y', 'pos_z', 'rot_x', 'rot_y', 'rot_z', 'goal_number', 'hit_team_no'])
+        location_slice = ['pos_x', 'pos_y', 'pos_z']
+        rotation_slice = ['rot_x', 'rot_y', 'rot_z']
+
+        hit_creation_time = time.time()
+        logger.info('time to get get frame_numbers: %s', (hit_creation_time - start_time) * 1000)
 
         # find closest player in team to ball for known hits
         for frame_number in hit_frame_numbers:
@@ -74,11 +82,13 @@ class BaseHit:
             if hit_player is not None:
                 hit = proto_game.hits.add()
                 hit.frame_number = frame_number
+                if not math.isnan(frame_information.game.goal_number):
+                    hit.goal_number = int(frame_information.game.goal_number)
                 id_creation(hit.player_id, hit_player.name)
                 hit.collision_distance = hit_collision_distance
                 all_hits[frame_number] = hit
 
-        time_diff = time.time() - start_time
+        time_diff = time.time() - hit_creation_time
         logger.info('ball hit creation time: %s', time_diff * 1000)
         return all_hits
 

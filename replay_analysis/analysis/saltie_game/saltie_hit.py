@@ -146,11 +146,12 @@ class SaltieHit:
             hit_frame_number = sorted_frames[hit_number]
             saltie_hit = hit_analytics_dict[hit_frame_number]
 
-            saltie_hit_goal_number = get_goal_number(hit_frame_number, data_frames)
+            saltie_hit_goal_number = saltie_hit.goal_number
             # previous hit
             try:
                 previous_hit_frame_number = sorted_frames[hit_number - 1]
-                if get_goal_number(previous_hit_frame_number, data_frames) == saltie_hit_goal_number:
+                previous_saltie_hit = hit_analytics_dict[previous_hit_frame_number]
+                if previous_saltie_hit.goal_number == saltie_hit_goal_number:
                     previous_saltie_hit = hit_analytics_dict[previous_hit_frame_number]
                     saltie_hit.previous_hit_frame_number = previous_saltie_hit.frame_number
             except IndexError:
@@ -160,7 +161,8 @@ class SaltieHit:
             next_saltie_hit = None
             try:
                 next_hit_frame_number = sorted_frames[hit_number + 1]
-                if get_goal_number(next_hit_frame_number, data_frames) == saltie_hit_goal_number:
+                next_saltie_hit = hit_analytics_dict[next_hit_frame_number]
+                if next_saltie_hit.goal_number == saltie_hit_goal_number:
                     next_saltie_hit = hit_analytics_dict[next_hit_frame_number]
                     saltie_hit.next_hit_frame_number = next_saltie_hit.frame_number
             except IndexError:
@@ -195,7 +197,3 @@ class SaltieHit:
         logger.debug('next time: %s', total_next_hit_time * 1000)
         logger.debug('stat time: %s', total_stat_time * 1000)
         logger.debug('sim  time: %s', total_simulation_time * 1000)
-
-
-def get_goal_number(frame_number: int, data_frame) -> int:
-    return data_frame['game']['goal_number'].loc[frame_number]

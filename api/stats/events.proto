@@ -16,12 +16,13 @@ message Hit {
     optional bool dribble_continuation = 7;
     optional bool shot = 8;
     optional bool goal = 9;
-    optional bool assist = 10;
-    optional bool assisted = 11;
-    optional bool save = 12;
-    optional float distance = 13;
-    optional float distance_to_goal = 14;
+    optional bool goal_number = 10;
+    optional bool assist = 11;
+    optional bool assisted = 12;
+    optional bool save = 13;
+    optional float distance = 14;
+    optional float distance_to_goal = 15;
 
-    optional int32 previous_hit_frame_number = 15;
-    optional int32 next_hit_frame_number = 16;
+    optional int32 previous_hit_frame_number = 16;
+    optional int32 next_hit_frame_number = 17;
 }

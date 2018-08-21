@@ -76,7 +76,7 @@ class AnalysisManager:
     def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                             data_frames, kickoff_frames):
         logger.info("Looking for hits.")
-        hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator)
+        hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frames)
         logger.info("Found %s hits." % len(hits))
 
         SaltieHit.get_saltie_hits_from_game(game, proto_game, hits, player_map,
