@@ -31,9 +31,12 @@ class PossessionStat:
         frame_possession_time_deltas.columns = ['hit_team_no', 'delta']
 
         last_hit_possession = frame_possession_time_deltas.groupby('hit_team_no').sum()
-        team_possessions = {
-            int(team.is_orange): last_hit_possession.delta.loc[int(team.is_orange)] for team in saltie_game.api_game.teams
-        }
+        try:
+            team_possessions = {
+                int(team.is_orange): last_hit_possession.delta.loc[int(team.is_orange)] for team in saltie_game.api_game.teams
+            }
+        except KeyError:
+            return {}
         return team_possessions
 
     @staticmethod
