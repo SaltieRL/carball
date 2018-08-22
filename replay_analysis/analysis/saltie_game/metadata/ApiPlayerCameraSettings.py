@@ -13,13 +13,18 @@ class ApiPlayerCameraSettings:
     @staticmethod
     def create_from_player(proto_camera, player):
         player_camera_settings = player.camera_settings
-        if player.camera_settings['stiffness'] is None:
-            return
 
-        proto_camera.stiffness = player_camera_settings['stiffness']
-        proto_camera.height = player_camera_settings['height']
-        proto_camera.transition_speed = player_camera_settings['transition_speed']
-        proto_camera.pitch = player_camera_settings['pitch']
-        proto_camera.swivel_speed = player_camera_settings['swivel_speed']
-        proto_camera.field_of_view = player_camera_settings['field_of_view']
-        proto_camera.distance = player_camera_settings['distance']
+        if player.camera_settings['stiffness'] is not None:
+            proto_camera.stiffness = player_camera_settings.get('stiffness', -1)
+        if player.camera_settings['height'] is not None:
+            proto_camera.height = player_camera_settings.get('height', -1)
+        if player.camera_settings['transition_speed'] is not None:
+            proto_camera.transition_speed = player_camera_settings.get('transition_speed', -1)
+        if player.camera_settings['pitch'] is not None:
+            proto_camera.pitch = player_camera_settings.get('pitch', -1)
+        if player.camera_settings['swivel_speed'] is not None:
+            proto_camera.swivel_speed = player_camera_settings.get('swivel_speed', -1)
+        if player.camera_settings['field_of_view'] is not None:
+            proto_camera.field_of_view = player_camera_settings.get('field_of_view', -1)
+        if player.camera_settings['distance'] is not None:
+            proto_camera.distance = player_camera_settings.get('distance', -1)
