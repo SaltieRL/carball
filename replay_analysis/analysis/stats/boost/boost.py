@@ -45,12 +45,18 @@ class BoostStat:
     @staticmethod
     def get_player_boost_collection(player_dataframe: pd.DataFrame) -> Dict[str, int]:
         value_counts = player_dataframe.boost_collect.value_counts()
-        return {
-            'big': value_counts[True],
-            'small': value_counts[False]
-        }
+        try:
+            return {
+                'big': value_counts[True],
+                'small': value_counts[False]
+            }
+        except KeyError:
+            return {}
 
     @staticmethod
     def get_player_boost_waste(usage: np.float64, collection: Dict[str, int]) -> float:
-        total_collected = collection['big'] * 100 + collection['small'] * 12
-        return total_collected - usage
+        try:
+            total_collected = collection['big'] * 100 + collection['small'] * 12
+            return total_collected - usage
+        except KeyError:
+            return 0

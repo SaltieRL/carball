@@ -122,7 +122,7 @@ def predict_user_inputs(ang_vels, rotations):
             omega_dt = ang_vels.loc[frame_number + 1, ang_vel_columns].values
         except KeyError:
             continue
-        rotation = rotations.loc[frame_number, rotation_columns].values * np.pi
+        rotation = rotations.loc[frame_number, rotation_columns].values
         u = find_user_input(omega_t, omega_dt, rotation).flatten()
         # u = u[np.nonzero(u)]
         predicted_inputs[frame_number] = u
