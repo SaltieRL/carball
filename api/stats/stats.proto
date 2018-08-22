@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+package api.stats;
+
+message Possession {
+    optional int32 turnovers = 1;
+    optional double possession_time = 2;
+}

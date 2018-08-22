@@ -1,16 +1,12 @@
-from typing import List, Callable
+from typing import Callable
 
-from ....generated.api.metadata import game_metadata_pb2
 from ....json_parser.game import Game
 
 
 class ApiGoal:
     @staticmethod
-    def create_goals_from_game(game: Game, id_creator: Callable) -> List[game_metadata_pb2.Goal]:
-        goals = []
+    def create_goals_from_game(game: Game, proto_goal_list, id_creator: Callable):
         for goal in game.goals:
-            proto_goal = game_metadata_pb2.Goal()
+            proto_goal = proto_goal_list.add()
             proto_goal.frame_number = goal.frame_number
             id_creator(proto_goal.player_id, goal.player_name)
-            goals.append(proto_goal)
-        return goals

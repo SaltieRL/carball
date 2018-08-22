@@ -30,6 +30,6 @@ class ApiGame:
         proto_game.time = int(time.mktime(game.datetime.timetuple())*1e3 + game.datetime.microsecond/1e3)
         proto_game.frames = game.frames.index.max()
         proto_game.score.CopyFrom(ApiGameScore.create_from_game(game))
-        proto_game.goals.extend(ApiGoal.create_goals_from_game(game, id_creator))
-        proto_game.demos.extend(ApiDemo.create_demos_from_game(game, id_creator))
+        ApiGoal.create_goals_from_game(game, proto_game.goals, id_creator)
+        ApiDemo.create_demos_from_game(game, proto_game.demos, id_creator)
         return id_creator, proto_game

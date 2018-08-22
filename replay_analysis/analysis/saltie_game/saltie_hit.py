@@ -110,7 +110,7 @@ class SaltieHit:
                 last_passing_hit = saltie_hit
 
         for hit_stat in next_hit_stats:
-            hit_stat.calculate_next_stat(game, saltie_hit, next_saltie_hit, player_map)
+            hit_stat.calculate_next_hit_stat(game, saltie_hit, next_saltie_hit, player_map)
 
         return last_passing_hit
 
@@ -147,6 +147,8 @@ class SaltieHit:
         """
 
         next_hit_stats = SaltieHit.get_next_hit_stats()
+        for hit_stat in next_hit_stats:
+            hit_stat.initialize_hit_stat(game, player_map, data_frames)
 
         last_passing_hit = None
         total_stat_time = 0

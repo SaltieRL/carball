@@ -1,26 +1,24 @@
-from typing import Dict, TYPE_CHECKING
+from typing import Dict
 
 import pandas as pd
 
-if TYPE_CHECKING:
-    from ...saltie_game.saltie_game import SaltieGame
+from replay_analysis.analysis.stats.stats import BaseStat, HitStat
+from replay_analysis.generated.api import game_pb2
+from replay_analysis.generated.api.player_pb2 import Player
+from replay_analysis.generated.api.stats.events_pb2 import Hit
+from replay_analysis.generated.api.stats.team_stats_pb2 import TeamStats
+from replay_analysis.json_parser.game import Game
 
 
-class PossessionStat:
-    def __init__(self, team_possessions: Dict[int, float], player_possessions: Dict[str, float]):
-        self.team_possessions = team_possessions
-        self.player_possessions = player_possessions
+class PossessionStat(BaseStat, HitStat):
 
-    @classmethod
-    def get_possession(cls, saltie_game: 'SaltieGame') -> 'PossessionStat':
-        team_possessions = cls.get_team_possessions(saltie_game)
-        player_possessions = cls.get_player_possessions(saltie_game)
-        return cls(team_possessions, player_possessions)
+    frame_possession_time_deltas = None
 
-    @staticmethod
-    def get_team_possessions(saltie_game: 'SaltieGame') -> Dict[int, float]:
-        goal_frames = saltie_game.data_frame.game.goal_number.notnull()
-        dataframe = saltie_game.data_frame[goal_frames]
+    def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game,
+                            proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                            data_frames):
+        goal_frames = data_frames.game.goal_number.notnull()
+        dataframe = data_frames[goal_frames]
         frame_possession_time_deltas = pd.concat(
             [
                 dataframe['ball', 'hit_team_no'],
@@ -31,14 +29,11 @@ class PossessionStat:
         frame_possession_time_deltas.columns = ['hit_team_no', 'delta']
 
         last_hit_possession = frame_possession_time_deltas.groupby('hit_team_no').sum()
-        try:
-            team_possessions = {
-                int(team.is_orange): last_hit_possession.delta.loc[int(team.is_orange)] for team in saltie_game.api_game.teams
-            }
-        except KeyError:
-            return {}
-        return team_possessions
 
+        for index, stat in team_stat_list.items():
+            stat.possession.possession_time = float(last_hit_possession.delta.loc[index])
+
+    """
     @staticmethod
     def get_player_possessions(saltie_game: 'SaltieGame') -> Dict[str, float]:
         player_possessions: Dict[str, float] = {
@@ -72,3 +67,21 @@ class PossessionStat:
             hit_number += 1
 
         return player_possessions
+    """
+
+    def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frames):
+        goal_frames = data_frames.game.goal_number.notnull()
+        dataframe = data_frames[goal_frames]
+        self.frame_possession_time_deltas = pd.concat(
+            [
+                dataframe['ball', 'hit_team_no'],
+                dataframe['game', 'delta']
+            ],
+            axis=1
+        )
+        self.frame_possession_time_deltas.columns = ['hit_team_no', 'delta']
+
+
+    def calculate_next_hit_stat(self, game: Game, saltie_hit: Hit, next_saltie_hit: Hit, player_map: Dict[str, Player]):
+        if saltie_hit.player_id.id == next_saltie_hit.player_id.id:
+            pass

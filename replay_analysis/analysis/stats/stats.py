@@ -4,6 +4,7 @@ from replay_analysis.generated.api import game_pb2
 from replay_analysis.generated.api.player_pb2 import Player
 from replay_analysis.generated.api.stats.events_pb2 import Hit
 from replay_analysis.generated.api.stats.player_stats_pb2 import PlayerStats
+from replay_analysis.generated.api.stats.team_stats_pb2 import TeamStats
 from replay_analysis.json_parser.game import Game
 
 """"
@@ -30,11 +31,14 @@ class BaseStat:
                               player_map: Dict[str, Player], data_frames):
         raise NotImplementedError()
 
-    def calculate_team_stat(self, team_stat_list, game: Game, proto_game: game_pb2.Game,
+    def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game, proto_game: game_pb2.Game,
                             player_map: Dict[str, Player], data_frames):
         raise NotImplementedError()
 
 
 class HitStat:
-    def calculate_next_stat(self, game: Game, saltie_hit: Hit, next_saltie_hit: Hit, player_map: Dict[str, Player]):
+    def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frames):
+        raise NotImplementedError()
+
+    def calculate_next_hit_stat(self, game: Game, saltie_hit: Hit, next_saltie_hit: Hit, player_map: Dict[str, Player]):
         raise NotImplementedError()

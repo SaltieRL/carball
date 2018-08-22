@@ -50,7 +50,7 @@ class AnalysisManager:
         ApiGame.create_from_game(proto_game.game_metadata, game, self.id_creator)
 
         # create team metadata
-        proto_game.teams.extend(ApiTeam.create_teams_from_game(game, self.id_creator))
+        ApiTeam.create_teams_from_game(game, proto_game, self.id_creator)
 
         # create player metadata
         player_map = dict()

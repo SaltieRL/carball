@@ -1,7 +1,9 @@
 syntax = "proto2";
 
+import "api/stats/stats.proto";
+
 package api.stats;
 
 message TeamStats {
-
+    optional api.stats.Possession possession = 1;
 }

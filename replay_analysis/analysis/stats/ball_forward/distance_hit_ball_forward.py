@@ -8,7 +8,10 @@ from replay_analysis.json_parser.game import Game
 
 class DistanceStats(HitStat):
 
-    def calculate_next_stat(self, game: Game, saltie_hit: Hit, next_saltie_hit: Hit, player_map: Dict[str, Player]):
+    def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frames):
+        pass
+
+    def calculate_next_hit_stat(self, game: Game, saltie_hit: Hit, next_saltie_hit: Hit, player_map: Dict[str, Player]):
         player = player_map[saltie_hit.player_id.id]
         hit_distance_y = next_saltie_hit.ball_data.pos_y - saltie_hit.ball_data.pos_y
 

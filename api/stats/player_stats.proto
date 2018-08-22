@@ -1,5 +1,7 @@
 syntax = "proto2";
 
+import "api/stats/stats.proto";
+
 package api.stats;
 
 message Boost {
@@ -17,4 +19,5 @@ message Distance {
 message PlayerStats {
     optional Boost boost = 1;
     optional Distance distance = 2;
+    optional api.stats.Possession possion = 3;
 }
