@@ -1,13 +1,10 @@
-from typing import Dict, TYPE_CHECKING
+from typing import Dict
 
 from replay_analysis.generated.api import game_pb2
 from replay_analysis.generated.api.player_pb2 import Player
+from replay_analysis.generated.api.stats.events_pb2 import Hit
 from replay_analysis.generated.api.stats.player_stats_pb2 import PlayerStats
 from replay_analysis.json_parser.game import Game
-from .distance_hit_ball_forward import get_distance_hit_ball_forward
-from .possession.possession import PossessionStat
-from .possession.turnovers import TurnoverStat
-from .tendencies.tendencies import TendenciesStat
 
 """"
 if TYPE_CHECKING:
@@ -35,4 +32,9 @@ class BaseStat:
 
     def calculate_team_stat(self, team_stat_list, game: Game, proto_game: game_pb2.Game,
                             player_map: Dict[str, Player], data_frames):
+        raise NotImplementedError()
+
+
+class HitStat:
+    def calculate_next_stat(self, game: Game, saltie_hit: Hit, next_saltie_hit: Hit, player_map: Dict[str, Player]):
         raise NotImplementedError()

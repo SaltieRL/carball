@@ -4,25 +4,32 @@ import "api/player_id.proto";
 
 package api.stats;
 
+message BallData {
+    optional float pos_x = 1;
+    optional float pos_y = 2;
+    optional float pos_z = 3;
+}
+
 message Hit {
     optional int32 frame_number = 1;
     optional api.PlayerId player_id = 2;
     optional float collision_distance = 3;
+    optional BallData ball_data = 4;
 
     // Derived values
-    optional bool pass_ = 4;
-    optional bool passed = 5;
-    optional bool dribble = 6;
-    optional bool dribble_continuation = 7;
-    optional bool shot = 8;
-    optional bool goal = 9;
-    optional bool goal_number = 10;
-    optional bool assist = 11;
-    optional bool assisted = 12;
-    optional bool save = 13;
-    optional float distance = 14;
-    optional float distance_to_goal = 15;
+    optional bool pass_ = 5;
+    optional bool passed = 6;
+    optional bool dribble = 7;
+    optional bool dribble_continuation = 8;
+    optional bool shot = 9;
+    optional bool goal = 10;
+    optional bool goal_number = 11;
+    optional bool assist = 12;
+    optional bool assisted = 13;
+    optional bool save = 14;
+    optional float distance = 15;
+    optional float distance_to_goal = 16;
 
-    optional int32 previous_hit_frame_number = 16;
-    optional int32 next_hit_frame_number = 17;
+    optional int32 previous_hit_frame_number = 17;
+    optional int32 next_hit_frame_number = 18;
 }

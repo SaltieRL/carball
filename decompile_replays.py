@@ -39,8 +39,9 @@ def decompile_replay(path, output_path):
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
     analysis = AnalysisManager(game)
+    analysis.create_analysis()
 
-    return analysis.create_analysis()
+    return analysis
 
 
 if __name__ == '__main__':
@@ -59,9 +60,9 @@ if __name__ == '__main__':
         print(filepath)
         output = 'replays/decompiled/{}'.format(filepath.replace(".replay", ".json"))
         try:
-            g = decompile_replay(filepath, output)
-            with open(os.path.join(OUTPUT_DIR, filename + '.pkl'), 'wb') as fo:
-                pickle.dump(g, fo)
+            analysis_manager = decompile_replay(filepath, output)
+            with open(os.path.join(OUTPUT_DIR, filename + '.pts'), 'wb') as fo:
+                analysis_manager.write_out_to_file(fo)
                 success += 1
         except Exception as e:
             traceback.print_exc()

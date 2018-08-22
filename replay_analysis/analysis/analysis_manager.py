@@ -39,8 +39,10 @@ class AnalysisManager:
         self.log_time("calculating hits")
         self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frames)
 
-        # self.store_frames(data_frames)
-        logger.debug(str(self.protobuf_game))
+        # log before we add the dataframes
+        logger.debug(self.protobuf_game)
+
+        self.store_frames(data_frames)
 
     def get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
 
@@ -115,3 +117,5 @@ class AnalysisManager:
     def store_frames(self, data_frames):
         PandasManager.add_pandas(self.protobuf_game, data_frames)
 
+    def write_out_to_file(self, file):
+        file.write(self.protobuf_game.SerializeToString())

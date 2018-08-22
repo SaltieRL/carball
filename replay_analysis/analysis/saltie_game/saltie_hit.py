@@ -4,6 +4,8 @@ from typing import Dict, List
 from bisect import bisect_left
 import numpy as np
 
+from replay_analysis.analysis.stats.ball_forward.distance_hit_ball_forward import DistanceStats
+from replay_analysis.analysis.stats.stats import HitStat
 from replay_analysis.generated.api import game_pb2
 from replay_analysis.generated.api.player_pb2 import Player
 from replay_analysis.generated.api.stats.events_pb2 import Hit
@@ -17,6 +19,10 @@ logger = logging.getLogger(__name__)
 
 
 class SaltieHit:
+
+    @staticmethod
+    def get_next_hit_stats() -> List[HitStat]:
+        return [DistanceStats()]
 
     @staticmethod
     def get_distance_to_goal(game: Game, hit: Hit, player_map: Dict[str, Player]):
@@ -73,7 +79,7 @@ class SaltieHit:
 
     @staticmethod
     def next_hit_stats(game: Game, saltie_hit: Hit, next_saltie_hit: Hit,
-                       player_map: Dict[str, Player], last_passing_hit: Hit):
+                       player_map: Dict[str, Player], last_passing_hit: Hit, next_hit_stats: List[HitStat]):
         """
         finds stats that happen based off of the next hit.
         Passes, dribbles are found here, also candidates for assists.
@@ -102,6 +108,9 @@ class SaltieHit:
                 saltie_hit.pass_ = True
                 next_saltie_hit.passed = True
                 last_passing_hit = saltie_hit
+
+        for hit_stat in next_hit_stats:
+            hit_stat.calculate_next_stat(game, saltie_hit, next_saltie_hit, player_map)
 
         return last_passing_hit
 
@@ -136,6 +145,8 @@ class SaltieHit:
         :param sorted_frames:
         :param hit_analytics_dict:
         """
+
+        next_hit_stats = SaltieHit.get_next_hit_stats()
 
         last_passing_hit = None
         total_stat_time = 0
@@ -180,7 +191,7 @@ class SaltieHit:
             # hit distance
             if next_saltie_hit:
                 last_passing_hit = SaltieHit.next_hit_stats(game, saltie_hit, next_saltie_hit,
-                                                            player_map, last_passing_hit)
+                                                            player_map, last_passing_hit, next_hit_stats)
             elif saltie_hit.goal:
                 saltie_hit.distance = 0
 
@@ -193,6 +204,7 @@ class SaltieHit:
 
             simulation_time = time.time()
             total_simulation_time = simulation_time - stat_time
+
 
         logger.debug('next time: %s', total_next_hit_time * 1000)
         logger.debug('stat time: %s', total_stat_time * 1000)

@@ -88,6 +88,9 @@ class BaseHit:
                     hit.goal_number = int(goal_number)
                 id_creation(hit.player_id, hit_player.name)
                 hit.collision_distance = hit_collision_distance
+                hit.ball_data.pos_x = float(ball_position['pos_x'])
+                hit.ball_data.pos_y = float(ball_position['pos_y'])
+                hit.ball_data.pos_z = float(ball_position['pos_z'])
                 all_hits[frame_number] = hit
 
         time_diff = time.time() - hit_creation_time

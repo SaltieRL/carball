@@ -9,6 +9,12 @@ message Boost {
     optional double waste = 4;
 }
 
+message Distance {
+    optional double forward = 1;
+    optional double backward = 2;
+}
+
 message PlayerStats {
     optional Boost boost = 1;
+    optional Distance distance = 2;
 }
