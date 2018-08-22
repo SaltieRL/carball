@@ -81,7 +81,7 @@ class BaseHit:
                 hit_collision_distance = 999999
 
             if hit_player is not None:
-                hit = proto_game.hits.add()
+                hit = proto_game.game_stats.hits.add()
                 hit.frame_number = frame_number
                 goal_number = data_frames.at[frame_number, ('game', 'goal_number')]
                 if not math.isnan(goal_number):

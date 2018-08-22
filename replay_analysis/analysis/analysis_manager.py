@@ -3,8 +3,12 @@ from typing import Dict
 import logging
 
 from replay_analysis.analysis.hit_detection.base_hit import BaseHit
+from replay_analysis.analysis.saltie_game.metadata.ApiTeam import ApiTeam
 from replay_analysis.analysis.saltie_game.saltie_hit import SaltieHit
+from replay_analysis.analysis.stats.pandas_manager import PandasManager
+from replay_analysis.analysis.stats.stats_manager import StatsManager
 from replay_analysis.generated.api.player_pb2 import Player
+from replay_analysis.generated.api.stats import data_frames_pb2
 from ..analysis.saltie_game.saltie_game import SaltieGame
 from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame
@@ -23,6 +27,7 @@ class AnalysisManager:
         self.game = game
         self.protobuf_game = game_pb2.Game()
         self.id_creator = self.create_player_id_function(game)
+        self.stats_manager = StatsManager()
 
     def create_analysis(self):
         self.start_time()
@@ -32,27 +37,27 @@ class AnalysisManager:
         self.log_time("getting frames")
         self.calculate_hit_stats(self.game, self.protobuf_game, player_map, data_frames, kickoff_frames)
         self.log_time("calculating hits")
+        self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frames, kickoff_frames)
+
+        self.store_frames(data_frames)
         # logger.debug(self.protobuf_game)
 
     def get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
 
+        # create general metadata
         ApiGame.create_from_game(proto_game.game_metadata, game, self.id_creator)
+
+        # create team metadata
+        proto_game.teams.extend(ApiTeam.create_teams_from_game(game, self.id_creator))
+
+        # create player metadata
         player_map = dict()
         for player in game.players:
             player_proto = proto_game.players.add()
             ApiPlayer.create_from_player(player_proto, player, self.id_creator)
             player_map[player.online_id] = player_proto
+
         return player_map
-
-    def create_player_id_function(self, game: Game):
-        name_map = dict()
-        for player in game.players:
-            name_map[player.name] = player.online_id
-
-        def create_name(proto_player_id, name):
-            proto_player_id.id = name_map[name]
-
-        return create_name
 
     def get_frames(self, game: Game, proto_game: game_pb2.Game):
         data_frame = SaltieGame.create_data_df(game)
@@ -70,8 +75,7 @@ class AnalysisManager:
         # proto_game.kickoff_frames = self.write_pandas_to_memeory(kickoff_frames)
         return data_frame, kickoff_frames
 
-    def write_pandas_to_memeory(self, dataframe):
-        return None
+
 
     def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                             data_frames, kickoff_frames):
@@ -93,3 +97,23 @@ class AnalysisManager:
         end = time.time()
         logger.info("Time taken for %s is %s milliseconds", message, (end - self.timer) * 1000)
         self.timer = end
+
+    def create_player_id_function(self, game: Game):
+        name_map = dict()
+        for player in game.players:
+            name_map[player.name] = player.online_id
+
+        def create_name(proto_player_id, name):
+            proto_player_id.id = name_map[name]
+
+        return create_name
+
+    def get_advanced_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                           data_frames, kickoff_frames):
+        self.stats_manager.get_stats(game, proto_game, player_map, data_frames, kickoff_frames)
+
+    def store_frames(self, data_frames):
+        frame_proto = data_frames_pb2.DataFrames()
+        PandasManager.add_pandas(frame_proto, data_frames)
+        self.protobuf_game.Extensions[game_pb2.data_frames] = frame_proto
+

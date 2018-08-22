@@ -1,7 +1,9 @@
 syntax = "proto2";
 
+import "api/stats/events.proto";
 package api.stats;
 
-message GameStats {
 
+message GameStats {
+    repeated api.stats.Hit hits = 1;
 }

@@ -1,15 +1,15 @@
 from typing import List, Callable
 
-from ....generated.api.metadata import game_metadata_pb2
+from replay_analysis.generated.api import team_pb2
 from ....json_parser.game import Game
 
 
 class ApiTeam:
     @staticmethod
-    def create_teams_from_game(game: Game, id_creator: Callable) -> List[game_metadata_pb2.Team]:
+    def create_teams_from_game(game: Game, id_creator: Callable) -> List[team_pb2.Team]:
         teams = []
         for team in game.teams:
-            proto_team = game_metadata_pb2.Team()
+            proto_team = team_pb2.Team()
             if team.name is not None:
                 proto_team.name = str(team.name)
             for player in team.players:
