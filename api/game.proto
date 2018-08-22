@@ -1,7 +1,6 @@
 syntax = "proto2";
 
 import "api/metadata/game_metadata.proto";
-import "api/stats/data_frames.proto";
 import "api/stats/game_stats.proto";
 import "api/player.proto";
 import "api/team.proto";
@@ -15,9 +14,4 @@ message Game {
     optional api.stats.GameStats game_stats = 4;
 
     extensions 100 to 199;
-}
-
-// Put the data frames separately so we can ignore them when we want to load data more quickly.
-extend Game {
-    optional api.stats.DataFrames data_frames = 100;
 }

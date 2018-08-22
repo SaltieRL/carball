@@ -37,10 +37,10 @@ class AnalysisManager:
         self.log_time("getting frames")
         self.calculate_hit_stats(self.game, self.protobuf_game, player_map, data_frames, kickoff_frames)
         self.log_time("calculating hits")
-        self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frames, kickoff_frames)
+        self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frames)
 
-        self.store_frames(data_frames)
-        # logger.debug(self.protobuf_game)
+        # self.store_frames(data_frames)
+        logger.debug(str(self.protobuf_game))
 
     def get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
 
@@ -109,11 +109,9 @@ class AnalysisManager:
         return create_name
 
     def get_advanced_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                           data_frames, kickoff_frames):
-        self.stats_manager.get_stats(game, proto_game, player_map, data_frames, kickoff_frames)
+                           data_frames):
+        self.stats_manager.get_stats(game, proto_game, player_map, data_frames)
 
     def store_frames(self, data_frames):
-        frame_proto = data_frames_pb2.DataFrames()
-        PandasManager.add_pandas(frame_proto, data_frames)
-        self.protobuf_game.Extensions[game_pb2.data_frames] = frame_proto
+        PandasManager.add_pandas(self.protobuf_game, data_frames)
 

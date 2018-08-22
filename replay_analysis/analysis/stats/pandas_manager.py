@@ -1,5 +1,6 @@
 import logging
 
+from replay_analysis.generated.api import game_pb2
 from replay_analysis.generated.api.stats import data_frames_pb2
 
 
@@ -8,16 +9,16 @@ logger = logging.getLogger(__name__)
 
 class PandasManager:
     @staticmethod
-    def add_pandas(proto_data_frame: data_frames_pb2.DataFrames, data_frames):
+    def add_pandas(protobuf_game: game_pb2.Game, data_frames):
         hdf5_bytes = PandasManager.safe_write_pandas_to_memory(data_frames, field_name="game_frames")
         if hdf5_bytes is not None:
-            proto_data_frame.game_frames = hdf5_bytes
+            protobuf_game.Extensions[data_frames_pb2.data_frames] = hdf5_bytes
 
     @staticmethod
-    def get_pandas(proto_data_frame: data_frames_pb2.DataFrames):
+    def get_pandas(protobuf_game: game_pb2.Game):
         game_frames = None
-        if proto_data_frame.HasField("game_frames"):
-            game_frames = PandasManager.safe_read_pandas_to_memory(proto_data_frame.game_frames,
+        if protobuf_game.HasExtension("data_frames"):
+            game_frames = PandasManager.safe_read_pandas_to_memory(protobuf_game.Extensions[data_frames_pb2.data_frames],
                                                                    field_name="game_frames")
         return game_frames
 

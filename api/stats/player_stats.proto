@@ -2,6 +2,13 @@ syntax = "proto2";
 
 package api.stats;
 
-message PlayerStats {
+message Boost {
+    optional double usage = 1;
+    optional int32 num_small_boosts = 2;
+    optional int32 num_large_boosts = 3;
+    optional double waste = 4;
+}
 
+message PlayerStats {
+    optional Boost boost = 1;
 }

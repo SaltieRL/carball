@@ -5,8 +5,6 @@ from ...json_parser.game import Game
 from .metadata.ApiGame import ApiGame
 from .saltie_hit import SaltieHit
 from ..hit_detection.base_hit import BaseHit
-from ..stats.stats import get_stats
-
 logger = logging.getLogger(__name__)
 
 
@@ -40,7 +38,7 @@ class SaltieGame:
         self.saltie_hits = SaltieHit.get_saltie_hits_from_game(self)
         logger.info("Analysed hits.")
 
-        self.stats = get_stats(self)
+        # self.stats = get_stats(self)
 
     @staticmethod
     def get_kickoff_frames(game):

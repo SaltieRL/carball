@@ -3,38 +3,30 @@ from typing import TYPE_CHECKING, Dict
 import numpy as np
 import pandas as pd
 
+from replay_analysis.analysis.stats.stats import BaseStat
+from replay_analysis.generated.api import game_pb2
+from replay_analysis.generated.api.player_pb2 import Player
+from replay_analysis.generated.api.stats.player_stats_pb2 import PlayerStats
+from replay_analysis.json_parser.game import Game
+
 if TYPE_CHECKING:
     from ...saltie_game.saltie_game import SaltieGame
 
 
-class BoostStat:
-    def __init__(self,
-                 usage: Dict[str, np.float64],
-                 collection: Dict[str, Dict[str, int]],
-                 waste: Dict[str, np.float64]):
-        self.usage = usage
-        self.collection = collection
-        self.waste = waste
+class BoostStat(BaseStat):
 
-    @classmethod
-    def get_boost(cls, saltie_game: 'SaltieGame') -> 'BoostStat':
-        goal_frames = saltie_game.data_frame.game.goal_number.notnull()
+    def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
+                              player_map: Dict[str, Player], data_frames):
+        goal_frames = data_frames.game.goal_number.notnull()
 
-        usage: Dict[str, np.float64] = {
-            player.name: cls.get_player_boost_usage(saltie_game.data_frame[player.name][goal_frames])
-            for team in saltie_game.api_game.teams for player in team.players
-        }
-
-        collection: Dict[str, Dict[str, int]] = {
-            player.name: cls.get_player_boost_collection(saltie_game.data_frame[player.name][goal_frames])
-            for team in saltie_game.api_game.teams for player in team.players
-        }
-
-        waste: Dict[str, np.float64] = {
-            player.name: cls.get_player_boost_waste(usage[player.name], collection[player.name])
-            for team in saltie_game.api_game.teams for player in team.players
-        }
-        return cls(usage=usage, collection=collection, waste=waste)
+        for player_key, stats in player_stat_map.items():
+            proto_boost = stats.boost
+            player_name = player_map[player_key].name
+            proto_boost.usage = self.get_player_boost_usage(data_frames[player_name][goal_frames])
+            collection = self.get_player_boost_collection(data_frames[player_name][goal_frames])
+            proto_boost.waste = self.get_player_boost_waste(proto_boost.usage, collection)
+            proto_boost.num_small_boosts = collection['small']
+            proto_boost.num_large_boosts = collection['big']
 
     @staticmethod
     def get_player_boost_usage(player_dataframe: pd.DataFrame) -> np.float64:
@@ -47,8 +39,8 @@ class BoostStat:
         value_counts = player_dataframe.boost_collect.value_counts()
         try:
             return {
-                'big': value_counts[True],
-                'small': value_counts[False]
+                'big': int(value_counts[True]),
+                'small': int(value_counts[False])
             }
         except KeyError:
             return {}
