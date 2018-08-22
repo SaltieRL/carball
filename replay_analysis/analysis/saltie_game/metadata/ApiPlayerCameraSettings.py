@@ -15,16 +15,16 @@ class ApiPlayerCameraSettings:
         player_camera_settings = player.camera_settings
 
         if player.camera_settings['stiffness'] is not None:
-            proto_camera.stiffness = player_camera_settings.get('stiffness', -1)
+            proto_camera.stiffness = player_camera_settings['stiffness']
         if player.camera_settings['height'] is not None:
-            proto_camera.height = player_camera_settings.get('height', -1)
+            proto_camera.height = player_camera_settings['height']
         if player.camera_settings['transition_speed'] is not None:
-            proto_camera.transition_speed = player_camera_settings.get('transition_speed', -1)
+            proto_camera.transition_speed = player_camera_settings['transition_speed']
         if player.camera_settings['pitch'] is not None:
-            proto_camera.pitch = player_camera_settings.get('pitch', -1)
+            proto_camera.pitch = player_camera_settings['pitch']
         if player.camera_settings['swivel_speed'] is not None:
-            proto_camera.swivel_speed = player_camera_settings.get('swivel_speed', -1)
+            proto_camera.swivel_speed = player_camera_settings['swivel_speed']
         if player.camera_settings['field_of_view'] is not None:
-            proto_camera.field_of_view = player_camera_settings.get('field_of_view', -1)
+            proto_camera.field_of_view = player_camera_settings['field_of_view']
         if player.camera_settings['distance'] is not None:
-            proto_camera.distance = player_camera_settings.get('distance', -1)
+            proto_camera.distance = player_camera_settings['distance']
