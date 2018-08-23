@@ -5,6 +5,8 @@ package api.stats;
 message Possession {
     optional double possession_time = 1;
     optional int32 turnovers = 2;
-    optional int32 turnovers_on_your_half = 3;
+    optional int32 turnovers_on_my_half = 3;
     optional int32 turnovers_on_their_half = 4;
+    //  This player was the first hit on a turnover
+    optional int32 won_turnovers = 5;
 }

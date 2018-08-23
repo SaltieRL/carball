@@ -24,7 +24,7 @@ class BoostStat(BaseStat):
             player_name = player_map[player_key].name
             proto_boost.usage = self.get_player_boost_usage(data_frames[player_name][goal_frames])
             collection = self.get_player_boost_collection(data_frames[player_name][goal_frames])
-            proto_boost.waste = self.get_player_boost_waste(proto_boost.usage, collection)
+            proto_boost.wasted_collection = self.get_player_boost_waste(proto_boost.usage, collection)
             proto_boost.num_small_boosts = collection['small']
             proto_boost.num_large_boosts = collection['big']
 

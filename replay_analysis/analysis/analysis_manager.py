@@ -74,10 +74,8 @@ class AnalysisManager:
             data_frame.loc[kickoff_frames[-1]:, ('game', 'goal_number')] = -1
 
         logger.info("Assigned goal_number in .data_frame")
-        # proto_game.kickoff_frames = self.write_pandas_to_memeory(kickoff_frames)
+        # proto_game.kickoff_frames = self.write_pandas_to_memeroy(kickoff_frames)
         return data_frame, kickoff_frames
-
-
 
     def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                             data_frames, kickoff_frames):
@@ -85,8 +83,7 @@ class AnalysisManager:
         hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frames)
         logger.info("Found %s hits." % len(hits))
 
-        SaltieHit.get_saltie_hits_from_game(game, proto_game, hits, player_map,
-                                            data_frames, kickoff_frames)
+        SaltieHit.get_saltie_hits_from_game(game, proto_game, hits, player_map, kickoff_frames)
         logger.info("Analysed hits.")
 
         # self.stats = get_stats(self)
