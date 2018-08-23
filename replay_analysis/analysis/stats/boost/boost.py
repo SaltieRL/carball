@@ -25,8 +25,10 @@ class BoostStat(BaseStat):
             proto_boost.usage = self.get_player_boost_usage(data_frames[player_name][goal_frames])
             collection = self.get_player_boost_collection(data_frames[player_name][goal_frames])
             proto_boost.wasted_collection = self.get_player_boost_waste(proto_boost.usage, collection)
-            proto_boost.num_small_boosts = collection['small']
-            proto_boost.num_large_boosts = collection['big']
+            if 'small' in collection and collection['small'] is not None:
+                proto_boost.num_small_boosts = collection['small']
+            if 'big' in collection and collection['big'] is not None:
+                proto_boost.num_large_boosts = collection['big']
 
     @staticmethod
     def get_player_boost_usage(player_dataframe: pd.DataFrame) -> np.float64:

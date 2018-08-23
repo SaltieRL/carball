@@ -26,7 +26,8 @@ class ApiGame:
         proto_game.id = game.id
         proto_game.name = str(game.name)
         proto_game.map = game.map
-        proto_game.version = game.replay_version
+        if game.replay_version is not None:
+            proto_game.version = game.replay_version
         proto_game.time = int(time.mktime(game.datetime.timetuple())*1e3 + game.datetime.microsecond/1e3)
         proto_game.frames = game.frames.index.max()
         proto_game.score.CopyFrom(ApiGameScore.create_from_game(game))

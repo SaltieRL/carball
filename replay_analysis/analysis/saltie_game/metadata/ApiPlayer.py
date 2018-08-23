@@ -13,14 +13,21 @@ class ApiPlayer:
         ApiPlayerLoadout.create_from_player(proto_player.loadout, player)
 
         id_creator(proto_player.id, player.name)
-        proto_player.name = player.name
+        if player.name is not None:
+            proto_player.name = player.name
         if player.title is not None:
             proto_player.title_id = player.title
-        proto_player.score = player.score
-        proto_player.goals = player.goals
-        proto_player.assists = player.assists
-        proto_player.saves = player.saves
-        proto_player.shots = player.shots
-        proto_player.is_orange = player.is_orange
+        if player.score is not None:
+            proto_player.score = player.score
+        if player.goals is not None:
+            proto_player.goals = player.goals
+        if player.assists is not None:
+            proto_player.assists = player.assists
+        if player.saves is not None:
+            proto_player.saves = player.saves
+        if player.shots is not None:
+            proto_player.shots = player.shots
+        if player.is_orange is not None:
+            proto_player.is_orange = player.is_orange
 
         return proto_player

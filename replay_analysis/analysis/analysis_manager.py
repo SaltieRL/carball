@@ -103,7 +103,7 @@ class AnalysisManager:
             name_map[player.name] = player.online_id
 
         def create_name(proto_player_id, name):
-            proto_player_id.id = name_map[name]
+            proto_player_id.id = str(name_map[name])
 
         return create_name
 
