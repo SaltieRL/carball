@@ -5,13 +5,19 @@ from replay_analysis.analysis.stats.boost.boost import BoostStat
 from replay_analysis.analysis.stats.possession.possession import PossessionStat
 from replay_analysis.analysis.stats.possession.turnovers import TurnoverStat
 from replay_analysis.analysis.stats.stats import BaseStat, HitStat
+from replay_analysis.analysis.stats.tendencies.tendencies import TendenciesStat
 
 
 class StatsList:
+    """
+    Where you add any extra stats you want calculated
+    """
     @staticmethod
     def get_player_stats() -> List[BaseStat]:
         """These are stats that end up being assigned to a specific player"""
-        return [BoostStat()]
+        return [BoostStat(),
+                TendenciesStat()
+                ]
 
     @staticmethod
     def get_team_stats() -> List[BaseStat]:
@@ -26,4 +32,6 @@ class StatsList:
     @staticmethod
     def get_hit_stats() ->List[HitStat]:
         """These are stats that depend on current hit and next hit"""
-        return [DistanceStats(), PossessionStat()]
+        return [DistanceStats(),
+                PossessionStat()
+                ]

@@ -1,29 +1,21 @@
-from typing import TYPE_CHECKING, Dict
+from typing import Dict
 
+from replay_analysis.analysis.stats.stats import BaseStat
+from replay_analysis.generated.api import game_pb2
+from replay_analysis.generated.api.player_pb2 import Player
+from replay_analysis.generated.api.stats.player_stats_pb2 import PlayerStats
+from replay_analysis.json_parser.game import Game
 from .averages import Averages
-from .positional_tendencies import PositionalTendencies as PT
-
-if TYPE_CHECKING:
-    from replay_analysis.analysis import SaltieGame
+from .positional_tendencies import PositionalTendencies
 
 
-class TendenciesStat:
-    def __init__(self,
-                 positional_tendencies: Dict[str, PT],
-                 averages: Dict[str, Averages]
-                 ):
-        self.positional_tendencies = positional_tendencies
-        self.averages = averages
+class TendenciesStat(BaseStat):
+    def __init__(self):
+        self.tendencies = PositionalTendencies()
 
-    @classmethod
-    def get_tendencies(cls, game: 'SaltieGame') -> 'TendenciesStat':
-        positional_tendencies: Dict[str, PT] = {
-            player.name: PT.get_player_tendencies(player, game)
-            for team in game.api_game.teams for player in team.players
-        }
+    def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
+                              player_map: Dict[str, Player], data_frames):
 
-        averages: Dict[str, Averages] = {
-            player.name: Averages.get_averages_for_player(player, game)
-            for team in game.api_game.teams for player in team.players
-        }
-        return cls(positional_tendencies=positional_tendencies, averages=averages)
+        for id, player in player_map.items():
+            self.tendencies.get_player_tendencies(player, data_frames)
+            Averages.get_averages_for_player(player, proto_game, data_frames)

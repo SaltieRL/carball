@@ -29,40 +29,40 @@ class FieldConstants:
     return: Boolean series that can be used to index the original data_frame to sum deltas with.
     """
 
-    def get_neutral_zone(self, position, **kwargs):
-        return self.abs(position.pos_y) < NEUTRAL_ZONE
+    def get_neutral_zone(self, player_data_frame, **kwargs):
+        return self.abs(player_data_frame.pos_y) < NEUTRAL_ZONE
 
-    def get_half_0(self, position, **kwargs):
-        return position.pos_y < 0
+    def get_half_0(self, player_data_frame, **kwargs):
+        return player_data_frame.pos_y < 0
 
-    def get_half_1(self, position, **kwargs):
-        return position.pos_y > 0
+    def get_half_1(self, player_data_frame, **kwargs):
+        return player_data_frame.pos_y > 0
 
-    def get_third_0(self, position, **kwargs):
-        return position.pos_y < -MAP_THIRD
+    def get_third_0(self, player_data_frame, **kwargs):
+        return player_data_frame.pos_y < -MAP_THIRD
 
-    def get_third_1(self, position, **kwargs):
-        return (-MAP_THIRD < position.pos_y) & (position.pos_y < MAP_THIRD)
+    def get_third_1(self, player_data_frame, **kwargs):
+        return (-MAP_THIRD < player_data_frame.pos_y) & (player_data_frame.pos_y < MAP_THIRD)
 
-    def get_third_2(self, position, **kwargs):
-        return position.pos_y > MAP_THIRD
+    def get_third_2(self, player_data_frame, **kwargs):
+        return player_data_frame.pos_y > MAP_THIRD
 
-    def get_height_0(self, position, **kwargs):
-        return position.pos_z < HEIGHT_0_LIM
+    def get_height_0(self, player_data_frame, **kwargs):
+        return player_data_frame.pos_z < HEIGHT_0_LIM
 
-    def get_height_1(self, position, **kwargs):
-        return (HEIGHT_0_LIM < position.pos_z) & (position.pos_z < HEIGHT_1_LIM)
+    def get_height_1(self, player_data_frame, **kwargs):
+        return (HEIGHT_0_LIM < player_data_frame.pos_z) & (player_data_frame.pos_z < HEIGHT_1_LIM)
 
-    def get_height_2(self, position, **kwargs):
-        return position.pos_z > HEIGHT_1_LIM
+    def get_height_2(self, player_data_frame, **kwargs):
+        return player_data_frame.pos_z > HEIGHT_1_LIM
 
-    def get_ball_0(self, position, ball_position):
-        """Ball is closer to goal 0"""
-        return position.pos_y < ball_position.pos_y
+    def get_ball_0(self, player_data_frame, ball_data_frame):
+        """Ball is closer to goal 0 than player"""
+        return player_data_frame.pos_y < ball_data_frame.pos_y
 
-    def get_ball_1(self, position, ball_position):
-        """Ball is closer to goal 1"""
-        return position.pos_y > ball_position.pos_y
+    def get_ball_1(self, player_data_frame, ball_data_frame):
+        """Ball is closer to goal 1 than player"""
+        return player_data_frame.pos_y > ball_data_frame.pos_y
 
     def abs(self, value):
         if value is pd.DataFrame:

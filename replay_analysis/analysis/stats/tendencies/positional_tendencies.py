@@ -1,91 +1,54 @@
-from typing import TYPE_CHECKING, Callable, Dict
+from typing import Callable, Dict
 
+import pandas
 import pandas as pd
 
-from .predicates.position import *
-
-if TYPE_CHECKING:
-    from replay_analysis.analysis import SaltieGame
-    from replay_analysis.analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
+from replay_analysis.analysis.constants.field_constants import FieldConstants
+from replay_analysis.generated.api.player_pb2 import Player
+from replay_analysis.generated.api.stats import stats_pb2
 
 
 class PositionalTendencies:
 
-    def __init__(self,
-                 height_0: float, height_1: float, height_2: float,
-                 half_0: float, half_1: float,
-                 third_0: float, third_1: float, third_2: float,
-                 ball_0: float, ball_1: float,
-                 ):
-        """
-        :param height_0: Time spent on ground
-        :param height_1: Time spent low in air
-        :param height_2: Time spent high in air
-        :param half_0: Time spent in defending half
-        :param half_1: Time spent in attacking half
-        :param third_0: Time spent in defending third
-        :param third_1: Time spent in middle third
-        :param third_2: Time spent in attacking third
-        :param ball_0: Time spent behind ball
-        :param ball_1: Time spent ahead of ball
-        """
-        self.height_0 = height_0
-        self.height_1 = height_1
-        self.height_2 = height_2
-        self.half_0 = half_0
-        self.half_1 = half_1
-        self.third_0 = third_0
-        self.third_1 = third_1
-        self.third_2 = third_2
-        self.ball_0 = ball_0
-        self.ball_1 = ball_1
+    field_constants = FieldConstants()
 
-    def __repr__(self):
-        return str({_k: "{:.2f}".format(_v) for _k, _v in self.__dict__.items()})
-
-    @classmethod
-    def get_player_tendencies_for_game(cls, saltie_game: 'SaltieGame'):
-        return {
-            player.name: cls.get_player_tendencies(player, saltie_game)
-            for team in saltie_game.api_game.teams for player in team.players
+    def __init__(self):
+        self.field_constants = FieldConstants()
+        self.map_attributes_to_predicates = {
+            "height_0": self.field_constants.get_height_0,
+            "height_1": self.field_constants.get_height_1,
+            "height_2": self.field_constants.get_height_2,
+            "half_0": self.field_constants.get_half_0,
+            "half_1": self.field_constants.get_half_1,
+            "third_0": self.field_constants.get_third_0,
+            "third_1": self.field_constants.get_third_1,
+            "third_2": self.field_constants.get_third_2,
+            "ball_0": self.field_constants.get_ball_0,
+            "ball_1": self.field_constants.get_ball_1
         }
 
-    @classmethod
-    def get_player_tendencies(cls, player: 'ApiPlayer', saltie_game: 'SaltieGame') -> 'PositionalTendencies':
-        player_dataframe = saltie_game.data_frame[player.name]
-        ball_dataframe = saltie_game.data_frame['ball']
-        dataframes: Dict[str, pd.DataFrame] = {
-            "player_dataframe": player_dataframe,
-            "ball_dataframe": ball_dataframe
+    def get_player_tendencies(self, player: Player, data_frames: pandas.DataFrame):
+        player_data_frame = data_frames[player.name]
+        ball_data_frame = data_frames['ball']
+        player_ball_dataframes: Dict[str, pd.DataFrame] = {
+            "player_data_frame": player_data_frame,
+            "ball_data_frame": ball_data_frame
         }
         if player.is_orange:
-            dataframes = cls.get_flipped_dataframes(dataframes)
-
-        map_attributes_to_predicates = {
-            "height_0": get_height_0,
-            "height_1": get_height_1,
-            "height_2": get_height_2,
-            "half_0": get_half_0,
-            "half_1": get_half_1,
-            "third_0": get_third_0,
-            "third_1": get_third_1,
-            "third_2": get_third_2,
-            "ball_0": get_ball_0,
-            "ball_1": get_ball_1
-        }
+            player_ball_dataframes = self.get_flipped_dataframes(player_ball_dataframes)
 
         init_params = {
-            attr: cls.get_duration_from_predicate(predicate, saltie_game, dataframes)
-            for attr, predicate in map_attributes_to_predicates.items()
+            attr: self.get_duration_from_predicate(predicate, player_ball_dataframes, data_frames)
+            for attr, predicate in self.map_attributes_to_predicates.items()
         }
-        return PositionalTendencies(**init_params)
+        self.set_tendency_proto(player.stats.positional_tendencies, **init_params)
 
     @staticmethod
-    def get_duration_from_predicate(predicate: Callable, saltie_game: 'SaltieGame',
-                                    dataframes: Dict[str, pd.DataFrame]):
-        boolean_index = predicate(**dataframes)
-        deltas = saltie_game.data_frame.game.delta
-        goal_frames = saltie_game.data_frame.game.goal_number.notnull()
+    def get_duration_from_predicate(predicate: Callable,
+                                    player_ball_dataframes: Dict[str, pd.DataFrame], data_frames: pandas.DataFrame):
+        boolean_index = predicate(**player_ball_dataframes)
+        deltas = data_frames.game.delta
+        goal_frames = data_frames.game.goal_number.notnull()
         return deltas[goal_frames][boolean_index].sum()
 
     @staticmethod
@@ -100,3 +63,33 @@ class PositionalTendencies:
             dataframe.rot_y %= 65536
 
         return new_dataframes
+
+    @staticmethod
+    def set_tendency_proto(proto: stats_pb2.PositionalTendencies, height_0: float, height_1: float, height_2: float,
+                           half_0: float, half_1: float,
+                           third_0: float, third_1: float, third_2: float,
+                           ball_0: float, ball_1: float,
+                           ):
+        """
+        :param proto: What object everything is getting set on
+        :param height_0: Time spent on ground
+        :param height_1: Time spent low in air
+        :param height_2: Time spent high in air
+        :param half_0: Time spent in defending half
+        :param half_1: Time spent in attacking half
+        :param third_0: Time spent in defending third
+        :param third_1: Time spent in middle third
+        :param third_2: Time spent in attacking third
+        :param ball_0: Time spent behind ball
+        :param ball_1: Time spent ahead of ball
+        """
+        proto.time_on_ground = height_0
+        proto.time_low_in_air = height_1
+        proto.time_high_in_air = height_2
+        proto.time_in_defending_half = half_0
+        proto.time_in_attacking_half = half_1
+        proto.time_in_defending_third = third_0
+        proto.time_in_neutral_third = third_1
+        proto.time_in_attacking_third = third_2
+        proto.time_behind_ball = ball_0
+        proto.time_in_front_ball = ball_1

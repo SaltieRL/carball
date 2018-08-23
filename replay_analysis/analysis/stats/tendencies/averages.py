@@ -1,38 +1,31 @@
-from typing import TYPE_CHECKING, List
+from typing import List
 
 import pandas as pd
 
-if TYPE_CHECKING:
-    from ...saltie_game.saltie_hit import SaltieHit
-    from ...saltie_game.saltie_game import SaltieGame
-    from ...saltie_game.metadata.ApiPlayer import ApiPlayer
+from replay_analysis.generated.api import game_pb2
+from replay_analysis.generated.api.player_pb2 import Player
+from replay_analysis.generated.api.stats.events_pb2 import Hit
 
 
 class Averages:
-    def __init__(self,
-                 average_speed: float,
-                 average_hit_distance: float,
-                 ):
-        self.average_speed = average_speed
-        self.average_hit_distance = average_hit_distance
-
-    def __repr__(self):
-        return str(self.__dict__)
-
     @classmethod
-    def get_averages_for_player(cls, player: 'ApiPlayer', saltie_game: 'SaltieGame'):
-        goal_frames = saltie_game.data_frame.game.goal_number.notnull()
-        player_dataframe = saltie_game.data_frame[player.name][goal_frames]
+    def get_averages_for_player(cls, player: Player, proto_game: game_pb2.Game, data_frames):
+        goal_frames = data_frames.game.goal_number.notnull()
+        player_data_frame = data_frames[player.name][goal_frames]
 
-        speed: pd.Series = (
-                                   player_dataframe.vel_x ** 2 + player_dataframe.vel_y ** 2 + player_dataframe.vel_z ** 2) ** 0.5
+        speed: pd.Series = (player_data_frame.vel_x ** 2 +
+                            player_data_frame.vel_y ** 2 +
+                            player_data_frame.vel_z ** 2) ** 0.5
+
         average_speed = speed.mean()
 
-        player_hits: List['SaltieHit'] = [saltie_hit for saltie_hit in saltie_game.saltie_hits.values() if
-                                          saltie_hit.hit.player.name == player.name]
+        player.stats.averages.average_speed = average_speed
+
+        player_hits: List[Hit] = [saltie_hit for saltie_hit in proto_game.game_stats.hits if
+                                  saltie_hit.player_id.id == player.id]
 
         hit_distances = [saltie_hit.distance for saltie_hit in player_hits
                          if saltie_hit.distance is not None and not saltie_hit.dribble]
-        average_hit_distance = sum(hit_distances) / len(hit_distances)
-
-        return cls(average_speed=average_speed, average_hit_distance=average_hit_distance)
+        if len(hit_distances) > 0:
+            average_hit_distance = sum(hit_distances) / len(hit_distances)
+            player.stats.averages.average_hit_distance = average_hit_distance
