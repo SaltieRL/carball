@@ -8,6 +8,7 @@ from replay_analysis.generated.api.stats.events_pb2 import Hit
 
 
 class Averages:
+
     @classmethod
     def get_averages_for_player(cls, player: Player, proto_game: game_pb2.Game, data_frames):
         goal_frames = data_frames.game.goal_number.notnull()
@@ -22,7 +23,7 @@ class Averages:
         player.stats.averages.average_speed = average_speed
 
         player_hits: List[Hit] = [saltie_hit for saltie_hit in proto_game.game_stats.hits if
-                                  saltie_hit.player_id.id == player.id]
+                                  saltie_hit.player_id == player.id]
 
         hit_distances = [saltie_hit.distance for saltie_hit in player_hits
                          if saltie_hit.distance is not None and not saltie_hit.dribble]
