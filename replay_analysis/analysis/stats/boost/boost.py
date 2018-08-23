@@ -35,6 +35,13 @@ class BoostStat(BaseStat):
         return boost_usage
 
     @staticmethod
+    def get_player_boost_usage_max_speed(player_dataframe: pd.DataFrame) -> np.float64:
+        """TODO: do this"""
+        _diff = -player_dataframe.boost.diff()
+        boost_usage = _diff[_diff > 0].sum() / 255 * 100
+        return boost_usage
+
+    @staticmethod
     def get_player_boost_collection(player_dataframe: pd.DataFrame) -> Dict[str, int]:
         value_counts = player_dataframe.boost_collect.value_counts()
         try:

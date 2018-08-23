@@ -8,7 +8,10 @@ message Boost {
     optional double usage = 1;
     optional int32 num_small_boosts = 2;
     optional int32 num_large_boosts = 3;
-    optional double waste = 4;
+    // Collecting boost when near full
+    optional float wasted_collection = 4;
+    // Using boost when at max speed while on the ground
+    optional float wasted_useage = 5;
 }
 
 message Distance {

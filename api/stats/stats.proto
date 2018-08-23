@@ -3,6 +3,8 @@ syntax = "proto2";
 package api.stats;
 
 message Possession {
-    optional int32 turnovers = 1;
-    optional double possession_time = 2;
+    optional double possession_time = 1;
+    optional int32 turnovers = 2;
+    optional int32 turnovers_on_your_half = 3;
+    optional int32 turnovers_on_their_half = 4;
 }
