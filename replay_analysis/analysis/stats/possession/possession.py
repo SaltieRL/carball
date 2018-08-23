@@ -81,7 +81,16 @@ class PossessionStat(BaseStat, HitStat):
         )
         self.frame_possession_time_deltas.columns = ['hit_team_no', 'delta']
 
-
-    def calculate_next_hit_stat(self, game: Game, saltie_hit: Hit, next_saltie_hit: Hit, player_map: Dict[str, Player]):
-        if saltie_hit.player_id.id == next_saltie_hit.player_id.id:
-            pass
+    def calculate_next_hit_stat(self, game: Game, proto_game: game_pb2.Game, saltie_hit: Hit, next_saltie_hit: Hit,
+                                player_map: Dict[str, Player]):
+        player = player_map[saltie_hit.player_id.id]
+        next_player = player_map[next_saltie_hit.player_id.id]
+        if player.is_orange == next_player.is_orange:
+            hit_possession_time = self.frame_possession_time_deltas.delta.loc[
+                                  saltie_hit.frame_number:next_saltie_hit.frame_number].sum()
+            player.stats.possession.possession_time = player.stats.possession.possession_time + hit_possession_time
+        else:
+            hit_possession_time = self.frame_possession_time_deltas.delta.loc[
+                                  saltie_hit.frame_number:next_saltie_hit.frame_number].sum()
+            player.stats.possession.possession_time = player.stats.possession.possession_time + hit_possession_time
+            proto_game.game_stats.neutral_possession_time = proto_game.game_stats.neutral_possession_time + hit_possession_time

@@ -6,4 +6,5 @@ package api.stats;
 
 message GameStats {
     repeated api.stats.Hit hits = 1;
+    optional float neutral_possession_time = 2;
 }

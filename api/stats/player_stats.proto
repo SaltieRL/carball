@@ -19,5 +19,5 @@ message Distance {
 message PlayerStats {
     optional Boost boost = 1;
     optional Distance distance = 2;
-    optional api.stats.Possession possion = 3;
+    optional api.stats.Possession possession = 3;
 }

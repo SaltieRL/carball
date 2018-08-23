@@ -5,6 +5,7 @@ from bisect import bisect_left
 import numpy as np
 
 from replay_analysis.analysis.stats.ball_forward.distance_hit_ball_forward import DistanceStats
+from replay_analysis.analysis.stats.possession.possession import PossessionStat
 from replay_analysis.analysis.stats.stats import HitStat
 from replay_analysis.generated.api import game_pb2
 from replay_analysis.generated.api.player_pb2 import Player
@@ -22,7 +23,7 @@ class SaltieHit:
 
     @staticmethod
     def get_next_hit_stats() -> List[HitStat]:
-        return [DistanceStats()]
+        return [DistanceStats(), PossessionStat()]
 
     @staticmethod
     def get_distance_to_goal(game: Game, hit: Hit, player_map: Dict[str, Player]):
@@ -47,7 +48,7 @@ class SaltieHit:
         total_time = time.time() - start_time
         logger.debug('goal time: %s', total_time * 1000)
 
-        SaltieHit.find_hit_stats(game, player_map, data_frames, sorted_frames, hit_analytics_dict)
+        SaltieHit.find_hit_stats(game, proto_game, player_map, data_frames, sorted_frames, hit_analytics_dict)
 
         return hit_analytics_dict
 
@@ -78,16 +79,19 @@ class SaltieHit:
                 logger.debug("Found hit for goal on frame %s: %s", goal.frame_number, last_goalscorer_saltie_hit)
 
     @staticmethod
-    def next_hit_stats(game: Game, saltie_hit: Hit, next_saltie_hit: Hit,
-                       player_map: Dict[str, Player], last_passing_hit: Hit, next_hit_stats: List[HitStat]):
+    def next_hit_stats(game: Game, proto_game: game_pb2.Game, saltie_hit: Hit, next_saltie_hit: Hit,
+                       player_map: Dict[str, Player], last_passing_hit: Hit,
+                       next_hit_stats: List[HitStat]):
         """
         finds stats that happen based off of the next hit.
         Passes, dribbles are found here, also candidates for assists.
         :param game:
+        :param proto_game
         :param saltie_hit:
         :param next_saltie_hit:
         :param player_map:
         :param last_passing_hit:
+        :param next_hit_stats
         :return:
         """
 
@@ -110,7 +114,7 @@ class SaltieHit:
                 last_passing_hit = saltie_hit
 
         for hit_stat in next_hit_stats:
-            hit_stat.calculate_next_hit_stat(game, saltie_hit, next_saltie_hit, player_map)
+            hit_stat.calculate_next_hit_stat(game, proto_game, saltie_hit, next_saltie_hit, player_map)
 
         return last_passing_hit
 
@@ -135,11 +139,12 @@ class SaltieHit:
             logger.warning('Goal is not shot: %s', saltie_hit)
 
     @staticmethod
-    def find_hit_stats(game: Game, player_map: Dict[str, Player], data_frames,
+    def find_hit_stats(game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player], data_frames,
                        sorted_frames, hit_analytics_dict: Dict[int, Hit]):
         """
         Finds stats for all hits.
         :param game:
+        :param proto_game
         :param player_map:
         :param data_frames:
         :param sorted_frames:
@@ -192,7 +197,7 @@ class SaltieHit:
 
             # hit distance
             if next_saltie_hit:
-                last_passing_hit = SaltieHit.next_hit_stats(game, saltie_hit, next_saltie_hit,
+                last_passing_hit = SaltieHit.next_hit_stats(game, proto_game, saltie_hit, next_saltie_hit,
                                                             player_map, last_passing_hit, next_hit_stats)
             elif saltie_hit.goal:
                 saltie_hit.distance = 0
@@ -206,7 +211,6 @@ class SaltieHit:
 
             simulation_time = time.time()
             total_simulation_time = simulation_time - stat_time
-
 
         logger.debug('next time: %s', total_next_hit_time * 1000)
         logger.debug('stat time: %s', total_stat_time * 1000)

@@ -40,5 +40,6 @@ class HitStat:
     def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frames):
         raise NotImplementedError()
 
-    def calculate_next_hit_stat(self, game: Game, saltie_hit: Hit, next_saltie_hit: Hit, player_map: Dict[str, Player]):
+    def calculate_next_hit_stat(self, game: Game, proto_game: game_pb2.Game, saltie_hit: Hit, next_saltie_hit: Hit,
+                                player_map: Dict[str, Player]):
         raise NotImplementedError()
