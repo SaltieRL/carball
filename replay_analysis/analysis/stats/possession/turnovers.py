@@ -24,7 +24,7 @@ class TurnoverStat(BaseStat):
                     # this is a turnover!
                     # if the hit occurred on the on the same half as my team
                     my_half = (hits[i].ball_data.pos_y > 0) == hit_player.is_orange
-                    neutral_zone = self.field_constants.get_neutral_zone(hits[i].ball_data.pos_y)
+                    neutral_zone = self.field_constants.get_neutral_zone(hits[i].ball_data)
                     self.assign_turnover(hit_player.stats.possession, my_half, neutral_zone)
                     self.assign_turnover(proto_game.teams[hit_player.is_orange].stats.possession,
                                          my_half, neutral_zone)
