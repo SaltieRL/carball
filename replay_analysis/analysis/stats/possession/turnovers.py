@@ -1,5 +1,6 @@
 from typing import Dict
 
+from replay_analysis.analysis.constants.field_constants import FieldConstants
 from replay_analysis.analysis.stats.stats import BaseStat
 from replay_analysis.generated.api import game_pb2
 from replay_analysis.generated.api.player_pb2 import Player
@@ -8,7 +9,7 @@ from replay_analysis.json_parser.game import Game
 
 class TurnoverStat(BaseStat):
 
-    NEUTRAL_ZONE = 512
+    field_constants = FieldConstants()
 
     def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game,
                        player_map: Dict[str, Player], data_frames):
@@ -23,9 +24,10 @@ class TurnoverStat(BaseStat):
                     # this is a turnover!
                     # if the hit occurred on the on the same half as my team
                     my_half = (hits[i].ball_data.pos_y > 0) == hit_player.is_orange
-                    self.assign_turnover(hit_player.stats.possession, my_half, abs(hits[i].ball_data.pos_y) < self.NEUTRAL_ZONE)
+                    neutral_zone = self.field_constants.get_neutral_zone(hits[i].ball_data.pos_y)
+                    self.assign_turnover(hit_player.stats.possession, my_half, neutral_zone)
                     self.assign_turnover(proto_game.teams[hit_player.is_orange].stats.possession,
-                                         my_half, abs(hits[i].ball_data.pos_y) < self.NEUTRAL_ZONE)
+                                         my_half, neutral_zone)
                     second_hit_player.stats.possession.won_turnovers += 1
                     proto_game.teams[second_hit_player.is_orange].stats.possession.won_turnovers += 1
 
