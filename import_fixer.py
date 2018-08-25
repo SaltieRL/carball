@@ -1,11 +1,7 @@
 import os
 import fileinput
-import shutil
-from tempfile import mkstemp
 
 import_statement = 'import '
-from_statement = 'from '
-
 
 def split_to_list(drive_and_path):
     path = os.path.splitdrive(drive_and_path)[1]
@@ -34,11 +30,6 @@ def analyze_file(deepness, file_path, top_level_import):
     for line in fileinput.FileInput(file_path, inplace=1):
         extra_cases = '.' in line and top_level_import in line
         if line.startswith(import_statement) and extra_cases:
-            cut_line = line[len(import_statement):].rstrip()
-            ending_string = cut_line[cut_line.rfind('.') + 1:]
-            replace_map[cut_line] = ending_string
-            line = 'from ' + '.' * deepness + cut_line[:cut_line.rfind(ending_string) - 1] + ' import ' + ending_string + '\n'
-        elif line.startswith(from_statement) and extra_cases:
             cut_line = line[len(import_statement):].rstrip()
             ending_string = cut_line[cut_line.rfind('.') + 1:]
             replace_map[cut_line] = ending_string
