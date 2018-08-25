@@ -56,10 +56,10 @@ class PositionalTendencies:
             _k: _v.copy() for _k, _v in data_frames.items()
         }
 
-        for dataframe in new_dataframes.values():
-            dataframe.pos_y *= -1
-            dataframe.rot_y += 65535 / 2
-            dataframe.rot_y %= 65536
+        for data_frame in new_dataframes.values():
+            data_frame.pos_y *= -1
+            data_frame.rot_y += 65535 / 2
+            data_frame.rot_y %= 65536
 
         return new_dataframes
 

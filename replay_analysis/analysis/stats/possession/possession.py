@@ -18,11 +18,11 @@ class PossessionStat(BaseStat, HitStat):
                             proto_game: game_pb2.Game, player_map: Dict[str, Player],
                             data_frame: pandas.DataFrame):
         goal_frames = data_frame.game.goal_number.notnull()
-        dataframe = data_frame[goal_frames]
+        data_frame = data_frame[goal_frames]
         frame_possession_time_deltas = pandas.concat(
             [
-                dataframe['ball', 'hit_team_no'],
-                dataframe['game', 'delta']
+                data_frame['ball', 'hit_team_no'],
+                data_frame['game', 'delta']
             ],
             axis=1
         )
@@ -35,11 +35,11 @@ class PossessionStat(BaseStat, HitStat):
 
     def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frame: pandas.DataFrame):
         goal_frames = data_frame.game.goal_number.notnull()
-        dataframe = data_frame[goal_frames]
+        data_frame = data_frame[goal_frames]
         self.frame_possession_time_deltas = pandas.concat(
             [
-                dataframe['ball', 'hit_team_no'],
-                dataframe['game', 'delta']
+                data_frame['ball', 'hit_team_no'],
+                data_frame['game', 'delta']
             ],
             axis=1
         )

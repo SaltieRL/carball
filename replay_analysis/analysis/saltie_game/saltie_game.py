@@ -34,12 +34,12 @@ class SaltieGame:
         data_dict['ball'] = game.ball
         initial_df = pandas.concat(data_dict, axis=1)
 
-        dataframe = pandas.concat([initial_df, game.frames], axis=1)
+        data_frame = pandas.concat([initial_df, game.frames], axis=1)
         cols = []
-        for c in dataframe.columns.values:
+        for c in data_frame.columns.values:
             if isinstance(c, str):
                 cols.append(('game', c))
             else:
                 cols.append(c)
-        dataframe.columns = pandas.MultiIndex.from_tuples(cols)
-        return dataframe
+        data_frame.columns = pandas.MultiIndex.from_tuples(cols)
+        return data_frame
