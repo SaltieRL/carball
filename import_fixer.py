@@ -3,6 +3,7 @@ import shutil
 from tempfile import mkstemp
 
 import_statement = 'import '
+from_statement = 'from '
 
 
 def split_to_list(drive_and_path):
@@ -36,11 +37,17 @@ def analyze_file(deepness, file_path, top_level_import):
             for i in range(len(lines)):
                 line = lines[i]
                 extra_cases = '.' in line and top_level_import in line
-                if line.startswith(import_statement) and import_statement + 'sys' not in line and extra_cases:
-                    cut_line = line[len(import_statement):].rstrip()
-                    ending_string = cut_line[cut_line.rfind('.') + 1:]
-                    replace_map[cut_line] = ending_string
-                    line = 'from ' + '.' * deepness + cut_line[:cut_line.rfind(ending_string) - 1] + ' import ' + ending_string + '\n'
+                if extra_cases:
+                    if line.startswith(import_statement):
+                        cut_line = line[len(import_statement):].rstrip()
+                        ending_string = cut_line[cut_line.rfind('.') + 1:]
+                        replace_map[cut_line] = ending_string
+                        line = 'from ' + '.' * deepness + cut_line[:cut_line.rfind(ending_string) - 1] + ' import ' + ending_string + '\n'
+                    elif line.startswith(from_statement):
+                        cut_line = line[len(import_statement):].rstrip()
+                        ending_string = cut_line[cut_line.rfind('.') + 1:]
+                        replace_map[cut_line] = ending_string
+                        line = 'from ' + '.' * deepness + cut_line[:cut_line.rfind(ending_string) - 1] + ' import ' + ending_string + '\n'
                 else:
                     for key in replace_map:
                         line = line.replace(key, replace_map[key])
@@ -71,5 +78,5 @@ def prevent_leaks(top_level_dir='generated', exclude_dir=None, top_level_import=
             analyze_file(path_item[1], file[0], top_level_import)
 
 
-prevent_leaks("replay_analysis", "generated")
+prevent_leaks("replay_analysis", "generated", "replay_analysis")
 #prevent_leaks()
