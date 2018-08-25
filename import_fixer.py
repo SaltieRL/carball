@@ -50,7 +50,8 @@ def analyze_file(deepness, file_path, top_level_import):
                         line = 'from ' + '.' * deepness + cut_line[:cut_line.rfind(ending_string) - 1] + ' import ' + ending_string + '\n'
                 else:
                     for key in replace_map:
-                        line = line.replace(key, replace_map[key])
+                        if key in line:
+                            line = line.replace(key, replace_map[key])
                 new_file.write(line)
     os.remove(file_path)
     shutil.move(abs_path, file_path)
