@@ -27,7 +27,7 @@ def get_deepness(top_level_dir, path_list):
     return len(path_list) - path_list.index(top_level_dir)
 
 
-def analyze_file(deepness, path_data, file_path):
+def analyze_file(deepness, file_path, top_level_import):
     replace_map = dict()
     fh, abs_path = mkstemp()
     with os.fdopen(fh, 'w') as new_file:
@@ -35,7 +35,8 @@ def analyze_file(deepness, path_data, file_path):
             lines = old_file.readlines()
             for i in range(len(lines)):
                 line = lines[i]
-                if line.startswith(import_statement) and import_statement +'sys' not in line:
+                extra_cases = '.' in line and top_level_import in line
+                if line.startswith(import_statement) and import_statement + 'sys' not in line and extra_cases:
                     cut_line = line[len(import_statement):].rstrip()
                     ending_string = cut_line[cut_line.rfind('.') + 1:]
                     replace_map[cut_line] = ending_string
@@ -49,7 +50,7 @@ def analyze_file(deepness, path_data, file_path):
     print('fixed:', str(len(replace_map)), 'imports')
 
 
-def prevent_leaks(top_level_dir='generated', exclude_dir=None):
+def prevent_leaks(top_level_dir='generated', exclude_dir=None, top_level_import="api"):
     current_dir = os.path.dirname(__file__)
     proto_dir = [x[0] for x in os.walk(current_dir) if top_level_dir in x[0] and '__pycache__' not in x[0]]
 
@@ -67,7 +68,8 @@ def prevent_leaks(top_level_dir='generated', exclude_dir=None):
                       and '.py' in f and '__init__' not in f]
         for file in only_files:
             print('fixing file: ', file[1], end='\t')
-            analyze_file(path_item[1], path_lists, file[0])
+            analyze_file(path_item[1], file[0], top_level_import)
 
 
-prevent_leaks()
+prevent_leaks("replay_analysis", "generated")
+#prevent_leaks()
