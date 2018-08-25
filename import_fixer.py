@@ -1,5 +1,7 @@
 import os
 import fileinput
+import shutil
+from tempfile import mkstemp
 
 import_statement = 'import '
 
@@ -27,19 +29,32 @@ def get_deepness(top_level_dir, path_list):
 
 def analyze_file(deepness, file_path, top_level_import):
     replace_map = dict()
-    for line in fileinput.FileInput(file_path, inplace=1):
-        extra_cases = '.' in line and top_level_import in line
-        if line.startswith(import_statement) and extra_cases:
-            cut_line = line[len(import_statement):].rstrip()
-            ending_string = cut_line[cut_line.rfind('.') + 1:]
-            replace_map[cut_line] = ending_string
-            line = 'from ' + '.' * deepness + cut_line[:cut_line.rfind(ending_string) - 1] + ' import ' + ending_string + '\n'
-        else:
-            for key in replace_map:
-                if key in line:
-                    line = line.replace(key, replace_map[key])
-        print(line, end='')
-    print('fixed:', str(len(replace_map)), 'imports')
+    fh, abs_path = mkstemp()
+    modified = False
+    with os.fdopen(fh, 'w') as new_file:
+        with open(file_path, 'r') as old_file:
+            lines = old_file.readlines()
+            for i in range(len(lines)):
+                line = lines[i]
+                extra_cases = '.' in line and top_level_import in line and not (import_statement + '.') in line
+                if line.startswith(import_statement) and extra_cases:
+                    cut_line = line[len(import_statement):].rstrip()
+                    ending_string = cut_line[cut_line.rfind('.') + 1:]
+                    replace_map[cut_line] = ending_string
+                    line = 'from ' + '.' * deepness + cut_line[:cut_line.rfind(ending_string) - 1] + ' import ' + ending_string + '\n'
+                    modified = True
+                else:
+                    for key in replace_map:
+                        if key in line:
+                            modified = True
+                            line = line.replace(key, replace_map[key])
+                new_file.write(line)
+    if modified:
+        os.remove(file_path)
+        shutil.move(abs_path, file_path)
+        print(str(len(replace_map)), 'imports')
+    else:
+        print('not modified')
 
 
 def prevent_leaks(top_level_dir='generated', exclude_dir=None, top_level_import="api"):
