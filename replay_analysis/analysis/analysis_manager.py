@@ -8,7 +8,6 @@ from replay_analysis.analysis.saltie_game.saltie_hit import SaltieHit
 from replay_analysis.analysis.stats.pandas_manager import PandasManager
 from replay_analysis.analysis.stats.stats_manager import StatsManager
 from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.generated.api.stats import data_frames_pb2
 from ..analysis.saltie_game.saltie_game import SaltieGame
 from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame
@@ -28,6 +27,8 @@ class AnalysisManager:
         self.protobuf_game = game_pb2.Game()
         self.id_creator = self.create_player_id_function(game)
         self.stats_manager = StatsManager()
+        self.should_store_frames = False
+        self.df_bytes = None
 
     def create_analysis(self):
         self.start_time()
@@ -112,7 +113,16 @@ class AnalysisManager:
         self.stats_manager.get_stats(game, proto_game, player_map, data_frames)
 
     def store_frames(self, data_frames):
-        PandasManager.add_pandas(self.protobuf_game, data_frames)
+        if self.should_store_frames:
+            PandasManager.add_pandas(self.protobuf_game, data_frames)
+        else:
+            self.df_bytes = PandasManager.safe_write_pandas_to_memory(data_frames)
 
-    def write_out_to_file(self, file):
+    def write_proto_out_to_file(self, file):
         file.write(self.protobuf_game.SerializeToString())
+
+    def write_pandas_out_to_file(self, file):
+        if self.df_bytes is not None:
+            file.write(self.df_bytes)
+        elif not self.should_store_frames:
+            logger.warning("Panda frames are not being stored anywhere")
