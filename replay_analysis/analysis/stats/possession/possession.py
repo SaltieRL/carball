@@ -2,12 +2,12 @@ from typing import Dict
 
 import pandas as pd
 
-from replay_analysis.analysis.stats.stats import BaseStat, HitStat
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.generated.api.stats.events_pb2 import Hit
-from replay_analysis.generated.api.stats.team_stats_pb2 import TeamStats
-from replay_analysis.json_parser.game import Game
+from ....analysis.stats.stats import BaseStat, HitStat
+from ....generated.api import game_pb2
+from ....generated.api.player_pb2 import Player
+from ....generated.api.stats.events_pb2 import Hit
+from ....generated.api.stats.team_stats_pb2 import TeamStats
+from ....json_parser.game import Game
 
 
 class PossessionStat(BaseStat, HitStat):

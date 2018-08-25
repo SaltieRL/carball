@@ -6,9 +6,9 @@ import logging
 import numpy as np
 import pandas as pd
 
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.stats.events_pb2 import Hit
-from replay_analysis.json_parser.game import Game
+from ...generated.api import game_pb2
+from ...generated.api.stats.events_pb2 import Hit
+from ...json_parser.game import Game
 from .hitbox.car import get_hitbox, get_distance
 
 COLLISION_DISTANCE_HIGH_LIMIT = 500

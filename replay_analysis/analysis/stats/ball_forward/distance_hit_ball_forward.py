@@ -1,10 +1,10 @@
 from typing import Dict
 
-from replay_analysis.analysis.stats.stats import HitStat
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.generated.api.stats.events_pb2 import Hit
-from replay_analysis.json_parser.game import Game
+from ....analysis.stats.stats import HitStat
+from ....generated.api import game_pb2
+from ....generated.api.player_pb2 import Player
+from ....generated.api.stats.events_pb2 import Hit
+from ....json_parser.game import Game
 
 
 class DistanceStats(HitStat):

@@ -1,12 +1,12 @@
 from typing import Dict, List
 
-from replay_analysis.analysis.stats.stats_list import StatsList
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.generated.api.stats.player_stats_pb2 import PlayerStats
-from replay_analysis.generated.api.stats.team_stats_pb2 import TeamStats
-from replay_analysis.generated.api.team_pb2 import Team
-from replay_analysis.json_parser.game import Game
+from ...analysis.stats.stats_list import StatsList
+from ...generated.api import game_pb2
+from ...generated.api.player_pb2 import Player
+from ...generated.api.stats.player_stats_pb2 import PlayerStats
+from ...generated.api.stats.team_stats_pb2 import TeamStats
+from ...generated.api.team_pb2 import Team
+from ...json_parser.game import Game
 
 
 class StatsManager:

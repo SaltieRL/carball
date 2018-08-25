@@ -1,6 +1,6 @@
 from typing import List, Callable
 
-from replay_analysis.generated.api import team_pb2, game_pb2
+from ....generated.api import team_pb2, game_pb2
 from ....json_parser.game import Game
 
 

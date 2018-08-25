@@ -1,11 +1,11 @@
 from typing import List
 
-from replay_analysis.analysis.stats.ball_forward.distance_hit_ball_forward import DistanceStats
-from replay_analysis.analysis.stats.boost.boost import BoostStat
-from replay_analysis.analysis.stats.possession.possession import PossessionStat
-from replay_analysis.analysis.stats.possession.turnovers import TurnoverStat
-from replay_analysis.analysis.stats.stats import BaseStat, HitStat
-from replay_analysis.analysis.stats.tendencies.tendencies import TendenciesStat
+from ...analysis.stats.ball_forward.distance_hit_ball_forward import DistanceStats
+from ...analysis.stats.boost.boost import BoostStat
+from ...analysis.stats.possession.possession import PossessionStat
+from ...analysis.stats.possession.turnovers import TurnoverStat
+from ...analysis.stats.stats import BaseStat, HitStat
+from ...analysis.stats.tendencies.tendencies import TendenciesStat
 
 
 class StatsList:

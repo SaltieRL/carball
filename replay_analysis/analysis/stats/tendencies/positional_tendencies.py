@@ -3,9 +3,9 @@ from typing import Callable, Dict
 import pandas
 import pandas as pd
 
-from replay_analysis.analysis.constants.field_constants import FieldConstants
-from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.generated.api.stats import stats_pb2
+from ....analysis.constants.field_constants import FieldConstants
+from ....generated.api.player_pb2 import Player
+from ....generated.api.stats import stats_pb2
 
 
 class PositionalTendencies:

@@ -2,9 +2,9 @@ from typing import List
 
 import pandas as pd
 
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.generated.api.stats.events_pb2 import Hit
+from ....generated.api import game_pb2
+from ....generated.api.player_pb2 import Player
+from ....generated.api.stats.events_pb2 import Hit
 
 
 class Averages:

@@ -3,11 +3,11 @@ from typing import TYPE_CHECKING, Dict
 import numpy as np
 import pandas as pd
 
-from replay_analysis.analysis.stats.stats import BaseStat
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.generated.api.stats.player_stats_pb2 import PlayerStats
-from replay_analysis.json_parser.game import Game
+from ....analysis.stats.stats import BaseStat
+from ....generated.api import game_pb2
+from ....generated.api.player_pb2 import Player
+from ....generated.api.stats.player_stats_pb2 import PlayerStats
+from ....json_parser.game import Game
 
 if TYPE_CHECKING:
     from ...saltie_game.saltie_game import SaltieGame

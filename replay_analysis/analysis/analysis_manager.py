@@ -2,12 +2,12 @@ import time
 from typing import Dict
 import logging
 
-from replay_analysis.analysis.hit_detection.base_hit import BaseHit
-from replay_analysis.analysis.saltie_game.metadata.ApiTeam import ApiTeam
-from replay_analysis.analysis.saltie_game.saltie_hit import SaltieHit
-from replay_analysis.analysis.stats.pandas_manager import PandasManager
-from replay_analysis.analysis.stats.stats_manager import StatsManager
-from replay_analysis.generated.api.player_pb2 import Player
+from ..analysis.hit_detection.base_hit import BaseHit
+from ..analysis.saltie_game.metadata.ApiTeam import ApiTeam
+from ..analysis.saltie_game.saltie_hit import SaltieHit
+from ..analysis.stats.pandas_manager import PandasManager
+from ..analysis.stats.stats_manager import StatsManager
+from ..generated.api.player_pb2 import Player
 from ..analysis.saltie_game.saltie_game import SaltieGame
 from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame

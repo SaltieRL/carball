@@ -1,7 +1,7 @@
 import logging
 
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.stats import data_frames_pb2
+from ...generated.api import game_pb2
+from ...generated.api.stats import data_frames_pb2
 
 
 logger = logging.getLogger(__name__)

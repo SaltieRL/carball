@@ -1,6 +1,6 @@
 from typing import Callable
-from replay_analysis.generated.api import player_pb2
-from replay_analysis.json_parser.player import Player
+from ....generated.api import player_pb2
+from ....json_parser.player import Player
 from .ApiPlayerCameraSettings import ApiPlayerCameraSettings
 from .ApiPlayerLoadout import ApiPlayerLoadout
 

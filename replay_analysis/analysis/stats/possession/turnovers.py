@@ -1,10 +1,10 @@
 from typing import Dict
 
-from replay_analysis.analysis.constants.field_constants import FieldConstants
-from replay_analysis.analysis.stats.stats import BaseStat
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.json_parser.game import Game
+from ....analysis.constants.field_constants import FieldConstants
+from ....analysis.stats.stats import BaseStat
+from ....generated.api import game_pb2
+from ....generated.api.player_pb2 import Player
+from ....json_parser.game import Game
 
 
 class TurnoverStat(BaseStat):
