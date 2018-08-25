@@ -1,5 +1,4 @@
 import os
-import fileinput
 import shutil
 from tempfile import mkstemp
 
@@ -78,5 +77,5 @@ def prevent_leaks(top_level_dir='generated', exclude_dir=None, top_level_import=
             analyze_file(path_item[1], file[0], top_level_import)
 
 
-#prevent_leaks("replay_analysis", "generated", "replay_analysis")
+# prevent_leaks("replay_analysis", "generated", "replay_analysis")
 prevent_leaks()
