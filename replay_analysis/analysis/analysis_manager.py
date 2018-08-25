@@ -34,8 +34,11 @@ class AnalysisManager:
         self.start_time()
         player_map = self.get_game_metadata(self.game, self.protobuf_game)
         self.log_time("creating metadata")
-        data_frames, kickoff_frames = self.get_frames(self.game, self.protobuf_game)
+        data_frames = self.get_data_frames(self.game)
         self.log_time("getting frames")
+        kickoff_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frames)
+        self.log_time("getting kickoff")
+
         self.calculate_hit_stats(self.game, self.protobuf_game, player_map, data_frames, kickoff_frames)
         self.log_time("calculating hits")
         self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frames)
@@ -62,21 +65,24 @@ class AnalysisManager:
 
         return player_map
 
-    def get_frames(self, game: Game, proto_game: game_pb2.Game):
+    def get_data_frames(self, game: Game):
         data_frame = SaltieGame.create_data_df(game)
+
+        logger.info("Assigned goal_number in .data_frame")
+        return data_frame
+
+    def get_kickoff_frames(self, game: Game, proto_game: game_pb2.Game, data_frame):
         kickoff_frames = SaltieGame.get_kickoff_frames(game)
+
         for goal_number, goal in enumerate(game.goals):
             data_frame.loc[
-                kickoff_frames[goal_number]: goal.frame_number, ('game', 'goal_number')
+            kickoff_frames[goal_number]: goal.frame_number, ('game', 'goal_number')
             ] = goal_number
 
         # Set goal_number of frames that are post-last-goal to -1 (ie non None)
         if len(kickoff_frames) > len(proto_game.game_metadata.goals):
             data_frame.loc[kickoff_frames[-1]:, ('game', 'goal_number')] = -1
-
-        logger.info("Assigned goal_number in .data_frame")
-        # proto_game.kickoff_frames = self.write_pandas_to_memeroy(kickoff_frames)
-        return data_frame, kickoff_frames
+        return kickoff_frames
 
     def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                             data_frames, kickoff_frames):
