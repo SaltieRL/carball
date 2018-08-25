@@ -4,10 +4,10 @@ from typing import Dict, List
 from bisect import bisect_left
 import numpy as np
 
-from ..generated.api import game_pb2
-from ..generated.api.player_pb2 import Player
-from ..generated.api.stats.events_pb2 import Hit
-from ..json_parser.game import Game
+from ...generated.api import game_pb2
+from ...generated.api.player_pb2 import Player
+from ...generated.api.stats.events_pb2 import Hit
+from ...json_parser.game import Game
 from ..hit_detection.base_hit import BaseHit
 from ..simulator.ball_simulator import BallSimulator
 from ..simulator.map_constants import *
