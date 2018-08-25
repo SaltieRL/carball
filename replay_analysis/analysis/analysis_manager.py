@@ -2,6 +2,8 @@ import time
 from typing import Dict
 import logging
 
+import pandas
+
 from ..analysis.hit_detection.base_hit import BaseHit
 from ..analysis.saltie_game.metadata.ApiTeam import ApiTeam
 from ..analysis.saltie_game.saltie_hit import SaltieHit
@@ -34,19 +36,19 @@ class AnalysisManager:
         self.start_time()
         player_map = self.get_game_metadata(self.game, self.protobuf_game)
         self.log_time("creating metadata")
-        data_frames = self.get_data_frames(self.game)
+        data_frame = self.get_data_frames(self.game)
         self.log_time("getting frames")
-        kickoff_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frames)
+        kickoff_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frame)
         self.log_time("getting kickoff")
 
-        self.calculate_hit_stats(self.game, self.protobuf_game, player_map, data_frames, kickoff_frames)
+        self.calculate_hit_stats(self.game, self.protobuf_game, player_map, data_frame, kickoff_frames)
         self.log_time("calculating hits")
-        self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frames)
+        self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frame)
 
         # log before we add the dataframes
         logger.debug(self.protobuf_game)
 
-        self.store_frames(data_frames)
+        self.store_frames(data_frame)
 
     def get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
 
@@ -71,7 +73,7 @@ class AnalysisManager:
         logger.info("Assigned goal_number in .data_frame")
         return data_frame
 
-    def get_kickoff_frames(self, game: Game, proto_game: game_pb2.Game, data_frame):
+    def get_kickoff_frames(self, game: Game, proto_game: game_pb2.Game, data_frame: pandas.DataFrame):
         kickoff_frames = SaltieGame.get_kickoff_frames(game)
 
         for goal_number, goal in enumerate(game.goals):
@@ -85,9 +87,9 @@ class AnalysisManager:
         return kickoff_frames
 
     def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                            data_frames, kickoff_frames):
+                            data_frame, kickoff_frames):
         logger.info("Looking for hits.")
-        hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frames)
+        hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frame)
         logger.info("Found %s hits." % len(hits))
 
         SaltieHit.get_saltie_hits_from_game(game, proto_game, hits, player_map, kickoff_frames)
@@ -115,14 +117,14 @@ class AnalysisManager:
         return create_name
 
     def get_advanced_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                           data_frames):
-        self.stats_manager.get_stats(game, proto_game, player_map, data_frames)
+                           data_frame: pandas.DataFrame):
+        self.stats_manager.get_stats(game, proto_game, player_map, data_frame)
 
-    def store_frames(self, data_frames):
+    def store_frames(self, data_frame: pandas.DataFrame):
         if self.should_store_frames:
-            PandasManager.add_pandas(self.protobuf_game, data_frames)
+            PandasManager.add_pandas(self.protobuf_game, data_frame)
         else:
-            self.df_bytes = PandasManager.safe_write_pandas_to_memory(data_frames)
+            self.df_bytes = PandasManager.safe_write_pandas_to_memory(data_frame)
 
     def write_proto_out_to_file(self, file):
         file.write(self.protobuf_game.SerializeToString())

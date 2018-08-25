@@ -1,16 +1,5 @@
 class ApiPlayerLoadout:
 
-    def __init__(self, banner: int = None, boost: int = None, car: int = None, goal_explosion: int = None,
-                 skin: int = None, trail: int = None, version: int = None, wheels: int = None):
-        self.banner = banner
-        self.boost = boost
-        self.car = car
-        self.goal_explosion = goal_explosion
-        self.skin = skin
-        self.trail = trail
-        self.wheels = wheels
-        self.version = version
-
     @staticmethod
     def create_from_player(proto_loadout, player):
         try:

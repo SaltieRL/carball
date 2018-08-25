@@ -1,15 +1,5 @@
 class ApiPlayerCameraSettings:
 
-    def __init__(self, stiffness: float = None, height: float = None, transition_speed: float = None,
-                 pitch: float = None, swivel_speed: float = None, field_of_view: float = None, distance: float = None):
-        self.stiffness = stiffness
-        self.height = height
-        self.transition_speed = transition_speed
-        self.pitch = pitch
-        self.swivel_speed = swivel_speed
-        self.field_of_view = field_of_view
-        self.distance = distance
-
     @staticmethod
     def create_from_player(proto_camera, player):
         player_camera_settings = player.camera_settings
