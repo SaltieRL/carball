@@ -7,17 +7,6 @@ from replay_analysis.generated.api.stats.player_stats_pb2 import PlayerStats
 from replay_analysis.generated.api.stats.team_stats_pb2 import TeamStats
 from replay_analysis.json_parser.game import Game
 
-""""
-if TYPE_CHECKING:
-    from ..saltie_game.saltie_game import SaltieGame
-
-
-def get_stats(saltie_game: 'SaltieGame') -> Dict:
-    return {
-        'tendencies': TendenciesStat.get_tendencies(saltie_game),
-    }
-"""
-
 
 class BaseStat:
     def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
