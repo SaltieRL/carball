@@ -4,6 +4,7 @@ from tempfile import mkstemp
 
 import_statement = 'import '
 
+
 def split_to_list(drive_and_path):
     path = os.path.splitdrive(drive_and_path)[1]
     folders = []
@@ -48,13 +49,14 @@ def analyze_file(deepness, path_data, file_path):
     print('fixed:', str(len(replace_map)), 'imports')
 
 
-def prevent_leaks():
-    top_level_dir = 'generated'
+def prevent_leaks(top_level_dir='generated', exclude_dir=None):
     current_dir = os.path.dirname(__file__)
     proto_dir = [x[0] for x in os.walk(current_dir) if top_level_dir in x[0] and '__pycache__' not in x[0]]
 
     path_lists = []
     for path in proto_dir:
+        if exclude_dir is not None and exclude_dir in path:
+            continue
         path_list = split_to_list(path)
         deepness = get_deepness(top_level_dir, path_list)
         left_over_paths = path_list[-deepness:]

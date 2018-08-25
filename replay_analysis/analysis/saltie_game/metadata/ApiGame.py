@@ -5,7 +5,6 @@ from ....json_parser.game import Game
 from ....generated.api.metadata import game_metadata_pb2
 from .ApiDemo import ApiDemo
 from .ApiGoal import ApiGoal
-from .ApiTeam import ApiTeam
 
 
 class ApiGameScore:
