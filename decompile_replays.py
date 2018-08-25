@@ -1,3 +1,4 @@
+import gzip
 import json
 import os
 import subprocess
@@ -67,7 +68,7 @@ if __name__ == '__main__':
             analysis_manager = decompile_replay(filepath, output)
             with open(os.path.join(OUTPUT_DIR, filename + '.pts'), 'wb') as fo:
                 analysis_manager.write_proto_out_to_file(fo)
-            with open(os.path.join(OUTPUT_DIR, filename + '.hdf5'), 'wb') as fo:
+            with gzip.open(os.path.join(OUTPUT_DIR, filename + '.gzip'), 'wb') as fo:
                 analysis_manager.write_pandas_out_to_file(fo)
                 success += 1
         except Exception as e:
