@@ -4,11 +4,11 @@ from replay_analysis.generated.api import game_pb2
 class ProtobufManager:
 
     @staticmethod
-    def write_proto_out_to_file(self, file, proto_game: game_pb2.Game):
+    def write_proto_out_to_file(file, proto_game: game_pb2.Game):
         file.write(proto_game.SerializeToString())
 
     @staticmethod
-    def read_proto_out_from_file(self, file, ):
+    def read_proto_out_from_file(file):
         proto_game = game_pb2.Game()
         proto_game.ParseFromString(file.read())
         return proto_game
