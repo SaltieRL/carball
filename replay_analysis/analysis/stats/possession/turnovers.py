@@ -12,7 +12,7 @@ class TurnoverStat(BaseStat):
     field_constants = FieldConstants()
 
     def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game,
-                       player_map: Dict[str, Player], data_frames):
+                       player_map: Dict[str, Player], data_frame: pandas.DataFrame):
 
         hits = list(proto_stat.hits)
         for i in range(len(hits) - 2):

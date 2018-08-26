@@ -10,8 +10,9 @@ from ...analysis.stats.tendencies.tendencies import TendenciesStat
 
 class StatsList:
     """
-    Where you add any extra stats you want calculated
+    Where you add any extra stats you want calculated.
     """
+
     @staticmethod
     def get_player_stats() -> List[BaseStat]:
         """These are stats that end up being assigned to a specific player"""

@@ -1,5 +1,7 @@
 from typing import Dict, List
 
+import pandas
+
 from ...analysis.stats.stats_list import StatsList
 from ...generated.api import game_pb2
 from ...generated.api.player_pb2 import Player
@@ -11,41 +13,50 @@ from ...json_parser.game import Game
 
 class StatsManager:
 
-    def get_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                  data_frames):
-        self.calculate_player_stats(game, proto_game, player_map, data_frames)
-        self.calculate_team_stats(game, proto_game, proto_game.teams, player_map, data_frames)
-        self.calculate_game_stats(game, proto_game, player_map, data_frames)
-        self.calculate_hit_stats(game, proto_game, player_map, data_frames)
+    def get_stats(self, game: Game, proto_game: game_pb2.Game,
+                  player_map: Dict[str, Player], data_frame: pandas.DataFrame):
+        """
+        Calculates all advanced stats.
+        The stats are always calculated in this order:
+            Player, Team, Game, Hit
+        """
+        self.calculate_player_stats(game, proto_game, player_map, data_frame)
+        self.calculate_team_stats(game, proto_game, proto_game.teams, player_map, data_frame)
+        self.calculate_game_stats(game, proto_game, player_map, data_frame)
+        self.calculate_hit_stats(game, proto_game, player_map, data_frame)
 
-    def calculate_game_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                             data_frames):
-        for stat_funciton in StatsList.get_general_stats():
-            stat_funciton.calculate_stat(proto_game.game_stats, game, proto_game, player_map, data_frames)
-
-    def calculate_team_stats(self, game: Game, proto_game: game_pb2.Game, teams: List[Team],
-                             player_map: Dict[str, Player], data_frames):
-        stats_proto: Dict[int, TeamStats] = {
-            int(team.is_orange): team.stats
-            for team in teams
-        }
-        for stat_function in StatsList.get_team_stats():
-            stat_function.calculate_team_stat(stats_proto, game, proto_game, player_map, data_frames)
-
-    def calculate_player_stats(self, game: Game, proto_game: game_pb2.Game,
-                               player_map: Dict[str, Player], data_frames):
+    @staticmethod
+    def calculate_player_stats(game: Game, proto_game: game_pb2.Game,
+                               player_map: Dict[str, Player], data_frame: pandas.DataFrame):
         stats_proto: Dict[str, PlayerStats] = {
             key: player.stats
             for key, player in player_map.items()
         }
         for stat_function in StatsList.get_player_stats():
-            stat_function.calculate_player_stat(stats_proto, game, proto_game, player_map, data_frames)
+            stat_function.calculate_player_stat(stats_proto, game, proto_game, player_map, data_frame)
 
-    def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game,
-                            player_map: Dict[str, Player], data_frames):
+    @staticmethod
+    def calculate_team_stats(game: Game, proto_game: game_pb2.Game, teams: List[Team],
+                             player_map: Dict[str, Player], data_frame: pandas.DataFrame):
+        stats_proto: Dict[int, TeamStats] = {
+            int(team.is_orange): team.stats
+            for team in teams
+        }
+        for stat_function in StatsList.get_team_stats():
+            stat_function.calculate_team_stat(stats_proto, game, proto_game, player_map, data_frame)
+
+    @staticmethod
+    def calculate_game_stats(game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                             data_frame: pandas.DataFrame):
+        for stat_function in StatsList.get_general_stats():
+            stat_function.calculate_stat(proto_game.game_stats, game, proto_game, player_map, data_frame)
+
+    @staticmethod
+    def calculate_hit_stats(game: Game, proto_game: game_pb2.Game,
+                            player_map: Dict[str, Player], data_frame: pandas.DataFrame):
         hit_stats = StatsList.get_hit_stats()
         for hit_stat in hit_stats:
-            hit_stat.initialize_hit_stat(game, player_map, data_frames)
+            hit_stat.initialize_hit_stat(game, player_map, data_frame)
         hits = proto_game.game_stats.hits
         for hit_index in range(len(hits) - 1):
             current_hit = hits[hit_index]

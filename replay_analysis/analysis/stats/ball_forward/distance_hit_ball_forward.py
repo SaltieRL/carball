@@ -1,5 +1,7 @@
 from typing import Dict
 
+import pandas
+
 from ....analysis.stats.stats import HitStat
 from ....generated.api import game_pb2
 from ....generated.api.player_pb2 import Player
@@ -9,7 +11,7 @@ from ....json_parser.game import Game
 
 class DistanceStats(HitStat):
 
-    def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frames):
+    def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frame: pandas.DataFrame):
         pass
 
     def calculate_next_hit_stat(self, game: Game, proto_game: game_pb2.Game, saltie_hit: Hit, next_saltie_hit: Hit,

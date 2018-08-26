@@ -1,6 +1,6 @@
 from enum import Enum
 
-import pandas as pd
+import pandas
 
 from ..simulator.map_constants import MAP_Y
 
@@ -65,7 +65,7 @@ class FieldConstants:
         return player_data_frame.pos_y > ball_data_frame.pos_y
 
     def abs(self, value):
-        if value is pd.DataFrame:
+        if value is pandas.DataFrame:
             return value.abs()
         else:
             return abs(value)
