@@ -4,6 +4,7 @@ import logging
 
 import pandas
 
+from ..analysis.utils.proto_manager import ProtobufManager
 from ..analysis.hit_detection.base_hit import BaseHit
 from ..analysis.saltie_game.metadata.ApiTeam import ApiTeam
 from ..analysis.saltie_game.saltie_hit import SaltieHit
@@ -127,7 +128,7 @@ class AnalysisManager:
             self.df_bytes = PandasManager.safe_write_pandas_to_memory(data_frame)
 
     def write_proto_out_to_file(self, file):
-        file.write(self.protobuf_game.SerializeToString())
+        ProtobufManager.write_proto_out_to_file(file, self.protobuf_game)
 
     def write_pandas_out_to_file(self, file):
         if self.df_bytes is not None:
