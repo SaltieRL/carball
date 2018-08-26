@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package api.metadata;
+
+message PlayerLoadout {
+    optional int32 load_out_id = 1;
+    optional int32 banner = 2;
+    optional int32 boost = 3;
+    optional int32 car = 4;
+    optional int32 goal_explosion = 5;
+    optional int32 skin = 6;
+    optional int32 trail = 7;
+    optional int32 wheels = 8;
+    optional int32 version = 9;
+}

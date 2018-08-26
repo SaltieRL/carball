@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package api.stats;
+
+message Possession {
+    optional double possession_time = 1;
+    optional int32 turnovers = 2;
+    optional int32 turnovers_on_my_half = 3;
+    optional int32 turnovers_on_their_half = 4;
+    //  This player was the first hit on a turnover
+    optional int32 won_turnovers = 5;
+}
+
+message PositionalTendencies {
+    optional float time_on_ground = 1;
+    optional float time_low_in_air = 2;
+    optional float time_high_in_air = 3;
+    optional float time_in_defending_half = 4;
+    optional float time_in_attacking_half = 5;
+    optional float time_in_defending_third = 6;
+    optional float time_in_neutral_third = 7;
+    optional float time_in_attacking_third = 8;
+    optional float time_behind_ball = 9;
+    optional float time_in_front_ball = 10;
+}
+
+message Averages {
+    optional float average_speed = 1;
+    optional float average_hit_distance = 2;
+}

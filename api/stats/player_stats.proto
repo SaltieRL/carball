@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+import "api/stats/stats.proto";
+
+package api.stats;
+
+message Boost {
+    optional double usage = 1;
+    optional int32 num_small_boosts = 2;
+    optional int32 num_large_boosts = 3;
+    // Collecting boost when near full
+    optional float wasted_collection = 4;
+    // Using boost when at max speed while on the ground
+    optional float wasted_useage = 5;
+}
+
+message Distance {
+    optional double forward = 1;
+    optional double backward = 2;
+}
+
+message PlayerStats {
+    optional Boost boost = 1;
+    optional Distance distance = 2;
+    optional api.stats.Possession possession = 3;
+    optional api.stats.PositionalTendencies positional_tendencies = 4;
+    optional api.stats.Averages averages = 5;
+}

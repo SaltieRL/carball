@@ -1,17 +1,20 @@
+import gzip
 import json
 import os
-import pickle
 import subprocess
 import traceback
+import logging
 
-from .analysis.saltie_game.saltie_game import SaltieGame
+from replay_analysis.analysis.analysis_manager import AnalysisManager
+
+logger = logging.getLogger(__name__)
 
 try:
-    from .json_parser.game import Game
-    from .controls.controls import get_controls
+    from replay_analysis.json_parser.game import Game
+    from replay_analysis.controls.controls import get_controls
 except:
-    from json_parser.game import Game
-    from controls.controls import get_controls
+    from replay_analysis.json_parser.game import Game
+    from replay_analysis.controls.controls import get_controls
 
 BASE_DIR = os.path.dirname(__file__)
 OUTPUT_DIR = os.path.join('replays', 'pickled')
@@ -23,7 +26,10 @@ def decompile_replay(path, output_path):
         binary = [f for f in binaries if f.endswith('.exe')][0]
     else:
         binary = [f for f in binaries if 'linux' in f][0]
-    os.chdir(os.path.dirname(__file__))
+    try:
+        os.chdir(os.path.dirname(__file__))
+    except:
+        logger.warning("Unable to change directory path")
     output_dirs = os.path.dirname(output_path)
     if not os.path.isdir(output_dirs) and output_dirs != '':
         os.makedirs(output_dirs)
@@ -37,8 +43,10 @@ def decompile_replay(path, output_path):
     _json = json.load(open(output_path, encoding="utf8"))
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
+    analysis = AnalysisManager(game)
+    analysis.create_analysis()
 
-    return SaltieGame(game)
+    return analysis
 
 
 if __name__ == '__main__':
@@ -57,9 +65,11 @@ if __name__ == '__main__':
         print(filepath)
         output = 'replays/decompiled/{}'.format(filepath.replace(".replay", ".json"))
         try:
-            g = decompile_replay(filepath, output)
-            with open(os.path.join(OUTPUT_DIR, filename + '.pkl'), 'wb') as fo:
-                pickle.dump(g, fo)
+            analysis_manager = decompile_replay(filepath, output)
+            with open(os.path.join(OUTPUT_DIR, filename + '.pts'), 'wb') as fo:
+                analysis_manager.write_proto_out_to_file(fo)
+            with gzip.open(os.path.join(OUTPUT_DIR, filename + '.gzip'), 'wb') as fo:
+                analysis_manager.write_pandas_out_to_file(fo)
                 success += 1
         except Exception as e:
             traceback.print_exc()

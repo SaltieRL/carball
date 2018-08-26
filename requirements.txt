@@ -1,0 +1,5 @@
+numpy
+tables
+protobuf
+xlrd
+pandas

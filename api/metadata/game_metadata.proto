@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+import "api/player_id.proto";
+
+package api.metadata;
+
+message GameScore {
+    optional int32 team_0_score = 1;
+    optional int32 team_1_score = 2;
+}
+
+
+message Goal {
+    optional int32 frame_number = 1;
+    optional api.PlayerId player_id = 2;
+}
+
+message Demo {
+    optional int32 frame_number = 1;
+    optional api.PlayerId attacker_id = 2;
+    optional api.PlayerId victim_id = 3;
+}
+
+message GameMetadata {
+    optional string id = 1;
+    optional string name = 2;
+    optional string map = 3;
+    optional int32 version = 4;
+    optional int64 time = 5;
+    optional int32 frames = 6;
+    optional GameScore score = 7;
+    repeated Goal goals = 9;
+    repeated Demo demos = 10;
+}

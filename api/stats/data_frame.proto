@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+import "api/game.proto";
+
+package api.stats;
+
+// Put the data frames separately so we can ignore them when we want to load data more quickly.
+extend api.Game {
+    optional bytes data_frame = 100;
+}
