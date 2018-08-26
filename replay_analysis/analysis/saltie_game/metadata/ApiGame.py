@@ -27,7 +27,7 @@ class ApiGame:
         proto_game.map = game.map
         if game.replay_version is not None:
             proto_game.version = game.replay_version
-        proto_game.time = game.datetime.timestamp()
+        proto_game.time = int(game.datetime.timestamp())
         proto_game.frames = game.frames.index.max()
         proto_game.score.CopyFrom(ApiGameScore.create_from_game(game))
         ApiGoal.create_goals_from_game(game, proto_game.goals, id_creator)
