@@ -2,7 +2,6 @@ import io
 import logging
 
 import pandas
-from pandas import DataFrame
 
 from replay_analysis.analysis.utils.numpy_manager import write_array_to_file, read_array_from_file
 from ...generated.api import game_pb2
@@ -43,28 +42,6 @@ class PandasManager:
             logger.exception("Failure to read pandas [%s] from memory: %s", field_name, e)
 
     @staticmethod
-    def read_hdf_from_buffer(buffer, key="/data"):
-        from pandas import get_store
-        with get_store(
-                "data.h5",
-                mode="r",
-                driver="H5FD_CORE",
-                driver_core_backing_store=0,
-                driver_core_image=buffer.read()
-        ) as store:
-            return store[key]
-
-    @staticmethod
-    def write_hdf_to_buffer(df):
-        from pandas import get_store
-        with get_store(
-                "data.h5", mode="a", driver="H5FD_CORE",
-                driver_core_backing_store=0
-        ) as out:
-            out["/data"] = df
-            return out._handle.get_file_image()
-
-    @staticmethod
     def write_numpy_to_memory(df):
         numpy_array = df.to_records(index=True)
         compressed_array = io.BytesIO()
@@ -74,4 +51,4 @@ class PandasManager:
     @staticmethod
     def read_numpy_from_memory(buffer):
         array = read_array_from_file(buffer)
-        return DataFrame.from_records(array)
+        return pandas.DataFrame.from_records(array)
