@@ -1,5 +1,7 @@
 from typing import Dict
 
+import pandas
+
 from ....analysis.constants.field_constants import FieldConstants
 from ....analysis.stats.stats import BaseStat
 from ....generated.api import game_pb2
