@@ -370,7 +370,7 @@ class Game:
                             cameras_data[actor_id] = actor_data["TAGame.PRI_TA:CameraSettings"]
                         ball_cam = actor_data.get("TAGame.CameraSettingsActor_TA:bUsingSecondaryCamera", None)
                         try:
-                            player_ball_data[player_actor_id][frame_number]['ball_cam'] = ball_cam
+                            player_ball_data[actor_id][frame_number]['ball_cam'] = ball_cam
                         except KeyError:
                             # key error due to frame_number not in inputs
                             # ignore as no point knowing
