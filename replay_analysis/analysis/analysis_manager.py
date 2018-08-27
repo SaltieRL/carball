@@ -2,7 +2,7 @@ import time
 from typing import Dict
 import logging
 
-import pandas
+import pandas as pd
 
 from ..analysis.utils.proto_manager import ProtobufManager
 from ..analysis.hit_detection.base_hit import BaseHit
@@ -74,7 +74,7 @@ class AnalysisManager:
         logger.info("Assigned goal_number in .data_frame")
         return data_frame
 
-    def get_kickoff_frames(self, game: Game, proto_game: game_pb2.Game, data_frame: pandas.DataFrame):
+    def get_kickoff_frames(self, game: Game, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
         kickoff_frames = SaltieGame.get_kickoff_frames(game)
 
         for goal_number, goal in enumerate(game.goals):
@@ -118,10 +118,10 @@ class AnalysisManager:
         return create_name
 
     def get_advanced_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                           data_frame: pandas.DataFrame):
+                           data_frame: pd.DataFrame):
         self.stats_manager.get_stats(game, proto_game, player_map, data_frame)
 
-    def store_frames(self, data_frame: pandas.DataFrame):
+    def store_frames(self, data_frame: pd.DataFrame):
         if self.should_store_frames:
             PandasManager.add_pandas(self.protobuf_game, data_frame)
         else:
@@ -134,4 +134,4 @@ class AnalysisManager:
         if self.df_bytes is not None:
             file.write(self.df_bytes)
         elif not self.should_store_frames:
-            logger.warning("Panda frames are not being stored anywhere")
+            logger.warning("pd DataFrames are not being stored anywhere")

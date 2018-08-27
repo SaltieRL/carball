@@ -3,7 +3,7 @@ import time
 from typing import Dict, List
 from bisect import bisect_left
 import numpy as np
-import pandas
+import pandas as pd
 
 from ...generated.api import game_pb2
 from ...generated.api.player_pb2 import Player
@@ -32,7 +32,7 @@ class SaltieHit:
 
     @staticmethod
     def get_saltie_hits_from_game(game: Game, proto_game: game_pb2.Game, hits: Dict[int, Hit],
-                                  player_map: Dict[str, Player], kickoff_frames: pandas.DataFrame) -> Dict[int, Hit]:
+                                  player_map: Dict[str, Player], kickoff_frames: pd.DataFrame) -> Dict[int, Hit]:
         hit_analytics_dict: Dict[int, Hit] = hits
 
         sorted_frames = sorted(hit_analytics_dict)
@@ -47,7 +47,7 @@ class SaltieHit:
         return hit_analytics_dict
 
     @staticmethod
-    def find_goal_hits(proto_game: game_pb2.Game, kickoff_frames: pandas.DataFrame,
+    def find_goal_hits(proto_game: game_pb2.Game, kickoff_frames: pd.DataFrame,
                        sorted_frames: List[int], hit_analytics_dict: [int, Hit]):
         total_frames = len(sorted_frames)
         end_search = 0

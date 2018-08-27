@@ -1,6 +1,6 @@
 from typing import Dict
 
-import pandas
+import pandas as pd
 
 from ....analysis.stats.stats import BaseStat
 from ....generated.api import game_pb2
@@ -16,7 +16,7 @@ class TendenciesStat(BaseStat):
         self.tendencies = PositionalTendencies()
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pandas.DataFrame):
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
 
         for id, player in player_map.items():
             self.tendencies.get_player_tendencies(player, data_frame)

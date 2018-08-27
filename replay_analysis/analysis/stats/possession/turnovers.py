@@ -1,6 +1,6 @@
 from typing import Dict
 
-import pandas
+import pandas as pd
 
 from ....analysis.constants.field_constants import FieldConstants
 from ....analysis.stats.stats import BaseStat
@@ -14,7 +14,7 @@ class TurnoverStat(BaseStat):
     field_constants = FieldConstants()
 
     def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game,
-                       player_map: Dict[str, Player], data_frame: pandas.DataFrame):
+                       player_map: Dict[str, Player], data_frame: pd.DataFrame):
 
         hits = list(proto_stat.hits)
         for i in range(len(hits) - 2):

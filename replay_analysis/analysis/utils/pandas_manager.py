@@ -1,8 +1,7 @@
 import io
 import logging
 
-import pandas
-from pandas import DataFrame
+import pandas as pd
 
 from replay_analysis.analysis.utils.numpy_manager import write_array_to_file, read_array_from_file
 from ...generated.api import game_pb2
@@ -14,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class PandasManager:
     @staticmethod
-    def add_pandas(protobuf_game: game_pb2.Game, data_frame: pandas.DataFrame):
+    def add_pandas(protobuf_game: game_pb2.Game, data_frame: pd.DataFrame):
         hdf5_bytes = PandasManager.safe_write_pandas_to_memory(data_frame, field_name="game_frames")
         if hdf5_bytes is not None:
             protobuf_game.Extensions[data_frame_pb2.data_frame] = hdf5_bytes
@@ -33,19 +32,18 @@ class PandasManager:
             # return PandasManager.write_hdf_to_buffer(df)
             return PandasManager.write_numpy_to_memory(df)
         except BaseException as e:
-            logger.exception("Failure to write pandas [%s] to memory: %s", field_name, e)
+            logger.exception("Failure to write pd [%s] to memory: %s", field_name, e)
 
     @staticmethod
     def safe_read_pandas_to_memory(buffer, field_name=""):
         try:
             return PandasManager.read_numpy_from_memory(buffer)
         except BaseException as e:
-            logger.exception("Failure to read pandas [%s] from memory: %s", field_name, e)
+            logger.exception("Failure to read pd [%s] from memory: %s", field_name, e)
 
     @staticmethod
     def read_hdf_from_buffer(buffer, key="/data"):
-        from pandas import get_store
-        with get_store(
+        with pd.get_store(
                 "data.h5",
                 mode="r",
                 driver="H5FD_CORE",
@@ -56,8 +54,7 @@ class PandasManager:
 
     @staticmethod
     def write_hdf_to_buffer(df):
-        from pandas import get_store
-        with get_store(
+        with pd.get_store(
                 "data.h5", mode="a", driver="H5FD_CORE",
                 driver_core_backing_store=0
         ) as out:
@@ -74,4 +71,4 @@ class PandasManager:
     @staticmethod
     def read_numpy_from_memory(buffer):
         array = read_array_from_file(buffer)
-        return DataFrame.from_records(array)
+        return pd.DataFrame.from_records(array)
