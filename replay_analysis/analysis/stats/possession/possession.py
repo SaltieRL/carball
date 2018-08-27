@@ -11,8 +11,8 @@ from ....json_parser.game import Game
 
 
 class PossessionStat(BaseStat, HitStat):
-
-    frame_possession_time_deltas = None
+    def __init__(self):
+        self.frame_possession_time_deltas = None
 
     def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game,
                             proto_game: game_pb2.Game, player_map: Dict[str, Player],
