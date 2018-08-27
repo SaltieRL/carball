@@ -19,10 +19,21 @@ message Distance {
     optional double backward = 2;
 }
 
+message Hits {
+    optional int32 hits = 1;
+    optional int32 goals = 2;
+    optional int32 passes = 3;
+    optional int32 saves = 4;
+    optional int32 shots = 5;
+    optional int32 dribbles = 6;
+    optional int32 dribble_conts = 7;
+}
+
 message PlayerStats {
     optional Boost boost = 1;
     optional Distance distance = 2;
     optional api.stats.Possession possession = 3;
     optional api.stats.PositionalTendencies positional_tendencies = 4;
     optional api.stats.Averages averages = 5;
+    optional api.stats.Hits hits = 6;
 }
