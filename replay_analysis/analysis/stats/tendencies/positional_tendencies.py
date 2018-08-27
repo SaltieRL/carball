@@ -1,11 +1,10 @@
 from typing import Callable, Dict
 
 import pandas
-import pandas as pd
 
-from replay_analysis.analysis.constants.field_constants import FieldConstants
-from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.generated.api.stats import stats_pb2
+from ....analysis.constants.field_constants import FieldConstants
+from ....generated.api.player_pb2 import Player
+from ....generated.api.stats import stats_pb2
 
 
 class PositionalTendencies:
@@ -27,10 +26,10 @@ class PositionalTendencies:
             "ball_1": self.field_constants.get_ball_1
         }
 
-    def get_player_tendencies(self, player: Player, data_frames: pandas.DataFrame):
-        player_data_frame = data_frames[player.name]
-        ball_data_frame = data_frames['ball']
-        player_ball_dataframes: Dict[str, pd.DataFrame] = {
+    def get_player_tendencies(self, player: Player, data_frame: pandas.DataFrame):
+        player_data_frame = data_frame[player.name]
+        ball_data_frame = data_frame['ball']
+        player_ball_dataframes: Dict[str, pandas.DataFrame] = {
             "player_data_frame": player_data_frame,
             "ball_data_frame": ball_data_frame
         }
@@ -38,29 +37,29 @@ class PositionalTendencies:
             player_ball_dataframes = self.get_flipped_dataframes(player_ball_dataframes)
 
         init_params = {
-            attr: self.get_duration_from_predicate(predicate, player_ball_dataframes, data_frames)
+            attr: self.get_duration_from_predicate(predicate, player_ball_dataframes, data_frame)
             for attr, predicate in self.map_attributes_to_predicates.items()
         }
         self.set_tendency_proto(player.stats.positional_tendencies, **init_params)
 
     @staticmethod
     def get_duration_from_predicate(predicate: Callable,
-                                    player_ball_dataframes: Dict[str, pd.DataFrame], data_frames: pandas.DataFrame):
+                                    player_ball_dataframes: Dict[str, pandas.DataFrame], data_frame: pandas.DataFrame):
         boolean_index = predicate(**player_ball_dataframes)
-        deltas = data_frames.game.delta
-        goal_frames = data_frames.game.goal_number.notnull()
+        deltas = data_frame.game.delta
+        goal_frames = data_frame.game.goal_number.notnull()
         return deltas[goal_frames][boolean_index].sum()
 
     @staticmethod
-    def get_flipped_dataframes(dataframes: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
+    def get_flipped_dataframes(data_frames: Dict[str, pandas.DataFrame]) -> Dict[str, pandas.DataFrame]:
         new_dataframes = {
-            _k: _v.copy() for _k, _v in dataframes.items()
+            _k: _v.copy() for _k, _v in data_frames.items()
         }
 
-        for dataframe in new_dataframes.values():
-            dataframe.pos_y *= -1
-            dataframe.rot_y += 65535 / 2
-            dataframe.rot_y %= 65536
+        for data_frame in new_dataframes.values():
+            data_frame.pos_y *= -1
+            data_frame.rot_y += 65535 / 2
+            data_frame.rot_y %= 65536
 
         return new_dataframes
 

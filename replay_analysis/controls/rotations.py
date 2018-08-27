@@ -140,8 +140,8 @@ def predict_user_inputs(ang_vels, rotations):
     #     columns={'ang_vel_x': 'omega_dt_x', 'ang_vel_y': 'omega_dt_y', 'ang_vel_z': 'omega_dt_z'}
     # )
     # rotation = rotations.loc[:, rotation_columns] * np.pi
-    # dataframe = pd.concat([omega_t, omega_dt, rotation], axis=1)
-    # predicted_df_2 = dataframe[:5].apply(df_apply_find_user_input, axis=1, reduce=False)
+    # data_frame = pd.concat([omega_t, omega_dt, rotation], axis=1)
+    # predicted_df_2 = data_frame[:5].apply(df_apply_find_user_input, axis=1, reduce=False)
     return predicted_df
 
 

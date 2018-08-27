@@ -1,20 +1,20 @@
 from typing import List
 
-import pandas as pd
+import pandas
 
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.generated.api.stats.events_pb2 import Hit
+from ....generated.api import game_pb2
+from ....generated.api.player_pb2 import Player
+from ....generated.api.stats.events_pb2 import Hit
 
 
 class Averages:
 
     @classmethod
-    def get_averages_for_player(cls, player: Player, proto_game: game_pb2.Game, data_frames):
-        goal_frames = data_frames.game.goal_number.notnull()
-        player_data_frame = data_frames[player.name][goal_frames]
+    def get_averages_for_player(cls, player: Player, proto_game: game_pb2.Game, data_frame: pandas.DataFrame):
+        goal_frames = data_frame.game.goal_number.notnull()
+        player_data_frame = data_frame[player.name][goal_frames]
 
-        speed: pd.Series = (player_data_frame.vel_x ** 2 +
+        speed: pandas.Series = (player_data_frame.vel_x ** 2 +
                             player_data_frame.vel_y ** 2 +
                             player_data_frame.vel_z ** 2) ** 0.5
 

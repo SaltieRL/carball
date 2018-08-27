@@ -1,11 +1,13 @@
+import gzip
 import json
 import os
-import pickle
 import subprocess
 import traceback
+import logging
 
 from replay_analysis.analysis.analysis_manager import AnalysisManager
-from replay_analysis.analysis.saltie_game.saltie_game import SaltieGame
+
+logger = logging.getLogger(__name__)
 
 try:
     from replay_analysis.json_parser.game import Game
@@ -24,7 +26,10 @@ def decompile_replay(path, output_path):
         binary = [f for f in binaries if f.endswith('.exe')][0]
     else:
         binary = [f for f in binaries if 'linux' in f][0]
-    os.chdir(os.path.dirname(__file__))
+    try:
+        os.chdir(os.path.dirname(__file__))
+    except:
+        logger.warning("Unable to change directory path")
     output_dirs = os.path.dirname(output_path)
     if not os.path.isdir(output_dirs) and output_dirs != '':
         os.makedirs(output_dirs)
@@ -62,7 +67,9 @@ if __name__ == '__main__':
         try:
             analysis_manager = decompile_replay(filepath, output)
             with open(os.path.join(OUTPUT_DIR, filename + '.pts'), 'wb') as fo:
-                analysis_manager.write_out_to_file(fo)
+                analysis_manager.write_proto_out_to_file(fo)
+            with gzip.open(os.path.join(OUTPUT_DIR, filename + '.gzip'), 'wb') as fo:
+                analysis_manager.write_pandas_out_to_file(fo)
                 success += 1
         except Exception as e:
             traceback.print_exc()

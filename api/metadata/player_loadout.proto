@@ -3,7 +3,7 @@ syntax = "proto2";
 package api.metadata;
 
 message PlayerLoadout {
-    optional int32 loadOutId = 1;
+    optional int32 load_out_id = 1;
     optional int32 banner = 2;
     optional int32 boost = 3;
     optional int32 car = 4;

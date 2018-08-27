@@ -4,11 +4,11 @@ from typing import List, Dict, Callable
 import logging
 
 import numpy as np
-import pandas as pd
+import pandas
 
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.stats.events_pb2 import Hit
-from replay_analysis.json_parser.game import Game
+from ...generated.api import game_pb2
+from ...generated.api.stats.events_pb2 import Hit
+from ...json_parser.game import Game
 from .hitbox.car import get_hitbox, get_distance
 
 COLLISION_DISTANCE_HIGH_LIMIT = 500
@@ -20,7 +20,8 @@ logger = logging.getLogger(__name__)
 class BaseHit:
 
     @staticmethod
-    def get_hits_from_game(game: Game, proto_game: game_pb2, id_creation: Callable, data_frames) -> Dict[int, Hit]:
+    def get_hits_from_game(game: Game, proto_game: game_pb2, id_creation: Callable,
+                           data_frame: pandas.DataFrame) -> Dict[int, Hit]:
 
         start_time = time.time()
 
@@ -30,9 +31,6 @@ class BaseHit:
             team_dict[team.is_orange] = team
 
         hit_frame_numbers = BaseHit.get_hit_frame_numbers_by_ball_ang_vel(game)
-        frame_slice = (slice(None), ['pos_x', 'pos_y', 'pos_z', 'rot_x', 'rot_y', 'rot_z', 'goal_number', 'hit_team_no'])
-        location_slice = ['pos_x', 'pos_y', 'pos_z']
-        rotation_slice = ['rot_x', 'rot_y', 'rot_z']
 
         hit_creation_time = time.time()
         logger.info('time to get get frame_numbers: %s', (hit_creation_time - start_time) * 1000)
@@ -59,7 +57,7 @@ class BaseHit:
                 except KeyError:
                     continue
 
-                joined = pd.concat([player_rotation, ball_displacement])
+                joined = pandas.concat([player_rotation, ball_displacement])
                 joined.dropna(inplace=True)
                 if joined.any():
                     ball_displacement = joined.loc[['pos_x', 'pos_y', 'pos_z']].values
@@ -83,7 +81,7 @@ class BaseHit:
             if hit_player is not None:
                 hit = proto_game.game_stats.hits.add()
                 hit.frame_number = frame_number
-                goal_number = data_frames.at[frame_number, ('game', 'goal_number')]
+                goal_number = data_frame.at[frame_number, ('game', 'goal_number')]
                 if not math.isnan(goal_number):
                     hit.goal_number = int(goal_number)
                 id_creation(hit.player_id, hit_player.name)
