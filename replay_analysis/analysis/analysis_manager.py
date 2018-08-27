@@ -33,6 +33,21 @@ class AnalysisManager:
         self.should_store_frames = False
         self.df_bytes = None
 
+    def can_do_full_analysis(self) -> bool:
+        # Analyse only if 1v1 or 2v2 or 3v3
+        team_sizes = []
+        for team in self.game.teams:
+            team_sizes.append(len(team.players))
+
+        if len(team_sizes) == 0:
+            logger.warning("Not doing full analysis. No teams found")
+            return False
+        if any((team_size != team_sizes[0]) for team_size in team_sizes):
+            logger.warning("Not doing full analysis. Not all team sizes are equal")
+            return False
+
+        return True
+
     def create_analysis(self):
         self.start_time()
         player_map = self.get_game_metadata(self.game, self.protobuf_game)
@@ -42,9 +57,10 @@ class AnalysisManager:
         kickoff_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frame)
         self.log_time("getting kickoff")
 
-        self.calculate_hit_stats(self.game, self.protobuf_game, player_map, data_frame, kickoff_frames)
-        self.log_time("calculating hits")
-        self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frame)
+        if self.can_do_full_analysis():
+            self.calculate_hit_stats(self.game, self.protobuf_game, player_map, data_frame, kickoff_frames)
+            self.log_time("calculating hits")
+            self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frame)
 
         # log before we add the dataframes
         logger.debug(self.protobuf_game)
