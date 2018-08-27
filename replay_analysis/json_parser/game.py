@@ -35,7 +35,7 @@ class Game:
         # set properties
         self.properties = self.replay['header']['body']['properties']['value']
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
-        self.map = self.find_actual_value(self.properties['MapName']['value'])['name']
+        self.map = self.find_actual_value(self.properties['MapName']['value'])
         self.name = self.find_actual_value(self.properties.get('ReplayName', {})
                                            .get('value', {}))
         if self.name is None:
@@ -77,14 +77,14 @@ class Game:
         team_1_score = self.teams[1].score
         return "%s: %s vs %s (%s:%s)" % (self.name, team_0_name, team_1_name, team_0_score, team_1_score)
 
-    def create_players(self):
+    def create_players(self) -> List[Player]:
         players = []
         for player_stats in self.properties["PlayerStats"]["value"]["array"]:
             player = Player().parse_player_stats(player_stats["value"])
             players.append(player)
         return players
 
-    def get_goals(self):
+    def get_goals(self) -> List[Goal]:
         goals = [g['value'] for g in self.properties["Goals"]["value"]["array"]]
 
         logger.info('Found %s goals.' % len(goals))
@@ -97,15 +97,18 @@ class Game:
         return goals_list
 
     @staticmethod
-    def find_actual_value(dicti):
-        types = ['int', 'boolean', 'string', 'byte', 'str']
-        if 'flagged_int' in dicti:
-            return dicti['flagged_int']['int']
-        for t in types:
-            if t in dicti:
-                return dicti[t]
+    def find_actual_value(value_dict: dict) -> dict or int or bool or str:
+        types = ['int', 'boolean', 'string', 'byte', 'str', 'name', ('flagged_int', 'int')]
+        for _type in types:
+            if isinstance(_type, str):
+                if _type in value_dict:
+                    return value_dict[_type]
+            else:
+                for type_str in _type:
+                    if type_str in value_dict:
+                        return value_dict[type_str]
         else:
-            return dicti
+            return value_dict
 
     def parse_replay(self):
         """
@@ -174,19 +177,19 @@ class Game:
 
             _f_time = frame["time"]
             _f_delta = frame["delta"]
-            DeletedActorIds = []
-            ActorUpdates = []
-            ActorSpawns = []
+            deleted_actor_ids = []
+            actor_updates = []
+            actor_spawns = []
             for replication in frame['replications']:
                 category = list(replication['value'].keys())[0]
                 if category == 'destroyed':
-                    DeletedActorIds.append(replication)
+                    deleted_actor_ids.append(replication)
                 elif category == 'updated':
-                    ActorUpdates.append(replication)
+                    actor_updates.append(replication)
                 elif category == 'spawned':
-                    ActorSpawns.append(replication)
+                    actor_spawns.append(replication)
             # remove deleted actors
-            for deleted_actor in DeletedActorIds:
+            for deleted_actor in deleted_actor_ids:
                 deleted_actor_id = deleted_actor['actor_id']['value']
                 current_actor_ids.remove(deleted_actor_id)
                 current_actors.pop(deleted_actor_id)
@@ -198,7 +201,7 @@ class Game:
                     except KeyError:
                         pass
 
-            for actor_spawn in ActorSpawns:
+            for actor_spawn in actor_spawns:
                 actor_id = actor_spawn['actor_id']['value']
                 current_actor_ids.append(actor_id)
                 current_actors[actor_id] = {
@@ -208,7 +211,7 @@ class Game:
                     'Id': actor_id
                 }
             # apply actor updates
-            for actor_update in ActorUpdates:
+            for actor_update in actor_updates:
                 actor_id = actor_update['actor_id']['value']
                 # update_type = list(actor_update['value'].keys())[0]
                 actual_update = {v['name']: self.find_actual_value(v['value']) for v in
@@ -472,7 +475,7 @@ class Game:
 
         return all_data
 
-    def parse_all_data(self, all_data):
+    def parse_all_data(self, all_data) -> None:
         """
         Finishes parsing after frame-parsing is done.
         E.g. Adds players not found in MatchStats metadata
