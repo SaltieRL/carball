@@ -20,6 +20,7 @@ message Distance {
 }
 
 message Hits {
+    // counts the number of hits of each type
     optional int32 hits = 1;
     optional int32 goals = 2;
     optional int32 passes = 3;
