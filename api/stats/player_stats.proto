@@ -28,6 +28,7 @@ message Hits {
     optional int32 shots = 5;
     optional int32 dribbles = 6;
     optional int32 dribble_conts = 7;
+    optional int32 aerials = 8;
 }
 
 message PlayerStats {

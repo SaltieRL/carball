@@ -23,7 +23,7 @@ class HitsStat(BaseStat):
             # and not (h.dribble or h.dribble_continuation)])
             hits = len(player_hits)
             player.stats.hits.hits = hits
-            analytics = {'dribbles': 0, 'dribble_conts': 0, 'passes': 0, 'shots': 0, 'goals': 0, 'saves': 0}
+            analytics = {'dribbles': 0, 'dribble_conts': 0, 'passes': 0, 'shots': 0, 'goals': 0, 'saves': 0, 'aerials': 0}
             for h in player_hits:
                 if h.dribble:
                     analytics['dribbles'] += 1
@@ -37,5 +37,7 @@ class HitsStat(BaseStat):
                     analytics['shots'] += 1
                 if h.save:
                     analytics['saves'] += 1
+                if h.aerial:
+                    analytics['aerials'] += 1
             for k in analytics:
                 setattr(player.stats.hits, k, analytics[k])
