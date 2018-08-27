@@ -104,9 +104,11 @@ class Game:
                 if _type in value_dict:
                     return value_dict[_type]
             else:
-                for type_str in _type:
-                    if type_str in value_dict:
-                        return value_dict[type_str]
+                value = value_dict
+                if _type[0] in value:
+                    for type_str in _type:
+                        value = value[type_str]
+                    return value
         else:
             return value_dict
 
