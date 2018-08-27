@@ -48,13 +48,11 @@ def get_array(file, chunk):
     try:
         starting_byte = struct.unpack('i', chunk)[0]
     except struct.error:
-        # print('struct error')
-        raise EOFError
+        raise EOFError('Struct error')
     numpy_bytes = file.read(starting_byte)
     fake_file = io.BytesIO(numpy_bytes)
     try:
         result = np.load(fake_file, fix_imports=False)
     except OSError:
-        print('numpy parse error')
-        raise EOFError
+        raise EOFError('NumPy parsing error')
     return result, starting_byte
