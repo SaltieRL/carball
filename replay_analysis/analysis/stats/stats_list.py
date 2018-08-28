@@ -1,6 +1,6 @@
 from typing import List
 
-from ...analysis.stats.tendencies.hits import HitsStat
+from ...analysis.stats.tendencies.hit_counts import HitCountStat
 from ...analysis.stats.ball_forward.distance_hit_ball_forward import DistanceStats
 from ...analysis.stats.boost.boost import BoostStat
 from ...analysis.stats.possession.possession import PossessionStat
@@ -19,7 +19,6 @@ class StatsList:
         """These are stats that end up being assigned to a specific player"""
         return [BoostStat(),
                 TendenciesStat(),
-                HitsStat()
                 ]
 
     @staticmethod
@@ -36,5 +35,6 @@ class StatsList:
     def get_hit_stats() ->List[HitStat]:
         """These are stats that depend on current hit and next hit"""
         return [DistanceStats(),
-                PossessionStat()
+                PossessionStat(),
+                HitCountStat()
                 ]
