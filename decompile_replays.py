@@ -4,7 +4,9 @@ import os
 import subprocess
 import traceback
 import logging
+import sys
 
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from replay_analysis.analysis.analysis_manager import AnalysisManager
 
 logger = logging.getLogger(__name__)
@@ -26,10 +28,6 @@ def decompile_replay(path, output_path):
         binary = [f for f in binaries if f.endswith('.exe')][0]
     else:
         binary = [f for f in binaries if 'linux' in f][0]
-    try:
-        os.chdir(os.path.dirname(__file__))
-    except:
-        logger.warning("Unable to change directory path")
     output_dirs = os.path.dirname(output_path)
     if not os.path.isdir(output_dirs) and output_dirs != '':
         os.makedirs(output_dirs)
