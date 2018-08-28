@@ -1,6 +1,7 @@
 syntax = "proto2";
 
 import "api/stats/stats.proto";
+import "api/stats/events.proto";
 
 package api.stats;
 
@@ -26,4 +27,5 @@ message PlayerStats {
     optional api.stats.PositionalTendencies positional_tendencies = 4;
     optional api.stats.Averages averages = 5;
     optional api.stats.HitCounts hit_counts = 6;
+    repeated api.stats.CameraChange camera_changes = 7;
 }

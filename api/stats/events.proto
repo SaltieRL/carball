@@ -52,3 +52,10 @@ message CameraChange {
     optional float length_in_this_mode = 5;
     optional bool is_on_ball_cam = 6;
 }
+
+message FiftyFifty {
+    optional int32 frame_number = 1;
+    repeated api.PlayerId players = 2;
+    optional bool is_kickoff = 3;
+    optional api.PlayerId winning_player = 4;
+}
