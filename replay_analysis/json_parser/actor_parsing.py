@@ -1,3 +1,5 @@
+import math
+
 RBSTATE = "TAGame.RBActor_TA:ReplicatedRBState"
 rbstate = "rigid_body_state"
 
@@ -60,6 +62,10 @@ CAR_DATA_DICT_PAIRS = {
     'rot_x': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'x', 'value'),
     'rot_y': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'y', 'value'),
     'rot_z': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'z', 'value'),
+    'quat_w': (RBSTATE, rbstate, 'rotation', 'quaternion', 'w'),
+    'quat_x': (RBSTATE, rbstate, 'rotation', 'quaternion', 'x'),
+    'quat_y': (RBSTATE, rbstate, 'rotation', 'quaternion', 'y'),
+    'quat_z': (RBSTATE, rbstate, 'rotation', 'quaternion', 'z'),
     'vel_x': (RBSTATE, rbstate, 'linear_velocity', 'x'),
     'vel_y': (RBSTATE, rbstate, 'linear_velocity', 'y'),
     'vel_z': (RBSTATE, rbstate, 'linear_velocity', 'z'),
@@ -97,4 +103,27 @@ class CarActor:
                     data_dict[_item] /= _divisor
                 except TypeError:
                     continue
+        if version is not None and version >= 7 and data_dict['quat_w'] is not None:
+            # https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_Angles_Conversion
+            w = data_dict['quat_w']
+            x = data_dict['quat_x']
+            y = data_dict['quat_y']
+            z = data_dict['quat_z']
+
+            sinr = 2.0 * (w * x + y * z)
+            cosr = 1.0 - 2.0 * (x * x + y * y)
+            roll = math.atan2(sinr, cosr)
+
+            sinp = 2.0 * (w * y - z * x)
+            if abs(sinp) >= 1:
+                pitch = math.copysign(math.pi / 2, sinp)
+            else:
+                pitch = math.asin(sinp)
+
+            siny = 2.0 * (w * z + x * y)
+            cosy = 1.0 - 2.0 * (y * y + z * z)
+            yaw = math.atan2(siny, cosy)
+            data_dict['rot_x'] = pitch * 65536.0 / math.pi
+            data_dict['rot_y'] = yaw * 65536.0 / math.pi
+            data_dict['rot_z'] = roll * 65536.0 / math.pi
         return data_dict
