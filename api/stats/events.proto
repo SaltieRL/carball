@@ -27,12 +27,15 @@ message Hit {
     optional bool assist = 12;
     optional bool assisted = 13;
     optional bool save = 14;
-    optional bool aerial = 15;
-    optional float distance = 16;
-    optional float distance_to_goal = 17;
+    optional bool aerial = 15; // ball is above 800 units
+    optional bool on_ground = 16;
+    optional float distance = 17;
+    optional float distance_to_goal = 18;
 
-    optional int32 previous_hit_frame_number = 18;
-    optional int32 next_hit_frame_number = 19;
+    optional int32 previous_hit_frame_number = 19;
+    optional int32 next_hit_frame_number = 20;
+
+
 
     // pseudo stats
     // is_turnover = !(goal || dribble || pass)
