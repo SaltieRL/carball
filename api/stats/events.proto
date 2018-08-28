@@ -38,12 +38,14 @@ message Hit {
     // is_turnover = !(goal || dribble || pass)
 }
 
+// Not Implemented
 message Bump {
     optional int32 frame_number = 1;
     optional api.PlayerId attacker_id = 2;
     optional api.PlayerId victim_id = 3;
 }
 
+// Not Implemented
 message CameraChange {
     optional int32 frame_number = 1;
     optional api.PlayerId player_id = 2;
@@ -53,6 +55,7 @@ message CameraChange {
     optional bool is_on_ball_cam = 6;
 }
 
+// Not Implemented
 message FiftyFifty {
     optional int32 frame_number = 1;
     repeated api.PlayerId players = 2;
