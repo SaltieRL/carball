@@ -28,3 +28,15 @@ message Averages {
     optional float average_speed = 1;
     optional float average_hit_distance = 2;
 }
+
+message HitCounts {
+    // counts the number of hits of each type
+    optional int32 hits = 1;
+    optional int32 goals = 2;
+    optional int32 passes = 3;
+    optional int32 saves = 4;
+    optional int32 shots = 5;
+    optional int32 dribbles = 6;
+    optional int32 dribble_conts = 7;
+    optional int32 aerials = 8;
+}

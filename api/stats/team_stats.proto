@@ -6,4 +6,5 @@ package api.stats;
 
 message TeamStats {
     optional api.stats.Possession possession = 1;
+    optional api.stats.HitCounts hit_counts = 2;
 }
