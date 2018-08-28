@@ -49,6 +49,10 @@ class AnalysisManager:
         return True
 
     def create_analysis(self):
+        """
+        Organizes all the different analsysis that can occurs
+        :return:
+        """
         self.start_time()
         player_map = self.get_game_metadata(self.game, self.protobuf_game)
         self.log_time("creating metadata")

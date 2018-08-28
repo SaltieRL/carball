@@ -144,7 +144,7 @@ class SaltieHit:
         for hit_number in range(len(sorted_frames)):
             start_time = time.time()
             hit_frame_number = sorted_frames[hit_number]
-            saltie_hit = hit_analytics_dict[hit_frame_number]
+            saltie_hit: Hit = hit_analytics_dict[hit_frame_number]
 
             saltie_hit_goal_number = saltie_hit.goal_number
             # previous hit
@@ -170,6 +170,10 @@ class SaltieHit:
 
             next_hit_time = time.time()
             total_next_hit_time += next_hit_time - start_time
+
+            # aerials
+            if saltie_hit.ball_data.pos_z >= 800.0:
+                saltie_hit.aerial = True
 
             # assist calculation
             if saltie_hit.goal and last_passing_hit is not None:
