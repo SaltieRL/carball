@@ -3,7 +3,7 @@ import time
 from typing import Dict, List
 from bisect import bisect_left
 import numpy as np
-import pandas
+import pandas as pd
 
 from ...generated.api import game_pb2
 from ...generated.api.player_pb2 import Player
@@ -32,7 +32,7 @@ class SaltieHit:
 
     @staticmethod
     def get_saltie_hits_from_game(game: Game, proto_game: game_pb2.Game, hits: Dict[int, Hit],
-                                  player_map: Dict[str, Player], kickoff_frames: pandas.DataFrame) -> Dict[int, Hit]:
+                                  player_map: Dict[str, Player], kickoff_frames: pd.DataFrame) -> Dict[int, Hit]:
         hit_analytics_dict: Dict[int, Hit] = hits
 
         sorted_frames = sorted(hit_analytics_dict)
@@ -47,7 +47,7 @@ class SaltieHit:
         return hit_analytics_dict
 
     @staticmethod
-    def find_goal_hits(proto_game: game_pb2.Game, kickoff_frames: pandas.DataFrame,
+    def find_goal_hits(proto_game: game_pb2.Game, kickoff_frames: pd.DataFrame,
                        sorted_frames: List[int], hit_analytics_dict: [int, Hit]):
         total_frames = len(sorted_frames)
         end_search = 0
@@ -144,7 +144,7 @@ class SaltieHit:
         for hit_number in range(len(sorted_frames)):
             start_time = time.time()
             hit_frame_number = sorted_frames[hit_number]
-            saltie_hit = hit_analytics_dict[hit_frame_number]
+            saltie_hit: Hit = hit_analytics_dict[hit_frame_number]
 
             saltie_hit_goal_number = saltie_hit.goal_number
             # previous hit
@@ -170,6 +170,10 @@ class SaltieHit:
 
             next_hit_time = time.time()
             total_next_hit_time += next_hit_time - start_time
+
+            # aerials
+            if saltie_hit.ball_data.pos_z >= 800.0:
+                saltie_hit.aerial = True
 
             # assist calculation
             if saltie_hit.goal and last_passing_hit is not None:

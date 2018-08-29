@@ -27,12 +27,38 @@ message Hit {
     optional bool assist = 12;
     optional bool assisted = 13;
     optional bool save = 14;
-    optional float distance = 15;
-    optional float distance_to_goal = 16;
+    optional bool aerial = 15;
+    optional float distance = 16;
+    optional float distance_to_goal = 17;
 
-    optional int32 previous_hit_frame_number = 17;
-    optional int32 next_hit_frame_number = 18;
-    
+    optional int32 previous_hit_frame_number = 18;
+    optional int32 next_hit_frame_number = 19;
+
     // pseudo stats
     // is_turnover = !(goal || dribble || pass)
+}
+
+// Not Implemented
+message Bump {
+    optional int32 frame_number = 1;
+    optional api.PlayerId attacker_id = 2;
+    optional api.PlayerId victim_id = 3;
+}
+
+// Not Implemented
+message CameraChange {
+    optional int32 frame_number = 1;
+    optional api.PlayerId player_id = 2;
+    optional float distance_from_ball = 3;
+    optional bool is_in_possession = 4; // True if the player making the change has possession of the ball
+    optional float length_in_this_mode = 5;
+    optional bool is_on_ball_cam = 6;
+}
+
+// Not Implemented
+message FiftyFifty {
+    optional int32 frame_number = 1;
+    repeated api.PlayerId players = 2;
+    optional bool is_kickoff = 3;
+    optional api.PlayerId winning_player = 4;
 }

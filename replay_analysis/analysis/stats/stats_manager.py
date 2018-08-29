@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-import pandas
+import pandas as pd
 
 from ...analysis.stats.stats_list import StatsList
 from ...generated.api import game_pb2
@@ -14,7 +14,7 @@ from ...json_parser.game import Game
 class StatsManager:
 
     def get_stats(self, game: Game, proto_game: game_pb2.Game,
-                  player_map: Dict[str, Player], data_frame: pandas.DataFrame):
+                  player_map: Dict[str, Player], data_frame: pd.DataFrame):
         """
         Calculates all advanced stats.
         The stats are always calculated in this order:
@@ -27,7 +27,7 @@ class StatsManager:
 
     @staticmethod
     def calculate_player_stats(game: Game, proto_game: game_pb2.Game,
-                               player_map: Dict[str, Player], data_frame: pandas.DataFrame):
+                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
         stats_proto: Dict[str, PlayerStats] = {
             key: player.stats
             for key, player in player_map.items()
@@ -37,7 +37,7 @@ class StatsManager:
 
     @staticmethod
     def calculate_team_stats(game: Game, proto_game: game_pb2.Game, teams: List[Team],
-                             player_map: Dict[str, Player], data_frame: pandas.DataFrame):
+                             player_map: Dict[str, Player], data_frame: pd.DataFrame):
         stats_proto: Dict[int, TeamStats] = {
             int(team.is_orange): team.stats
             for team in teams
@@ -47,13 +47,13 @@ class StatsManager:
 
     @staticmethod
     def calculate_game_stats(game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                             data_frame: pandas.DataFrame):
+                             data_frame: pd.DataFrame):
         for stat_function in StatsList.get_general_stats():
             stat_function.calculate_stat(proto_game.game_stats, game, proto_game, player_map, data_frame)
 
     @staticmethod
     def calculate_hit_stats(game: Game, proto_game: game_pb2.Game,
-                            player_map: Dict[str, Player], data_frame: pandas.DataFrame):
+                            player_map: Dict[str, Player], data_frame: pd.DataFrame):
         hit_stats = StatsList.get_hit_stats()
         for hit_stat in hit_stats:
             hit_stat.initialize_hit_stat(game, player_map, data_frame)

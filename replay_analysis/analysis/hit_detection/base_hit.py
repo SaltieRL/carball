@@ -4,7 +4,7 @@ from typing import List, Dict, Callable
 import logging
 
 import numpy as np
-import pandas
+import pandas as pd
 
 from ...generated.api import game_pb2
 from ...generated.api.stats.events_pb2 import Hit
@@ -21,7 +21,7 @@ class BaseHit:
 
     @staticmethod
     def get_hits_from_game(game: Game, proto_game: game_pb2, id_creation: Callable,
-                           data_frame: pandas.DataFrame) -> Dict[int, Hit]:
+                           data_frame: pd.DataFrame) -> Dict[int, Hit]:
 
         start_time = time.time()
 
@@ -57,7 +57,7 @@ class BaseHit:
                 except KeyError:
                     continue
 
-                joined = pandas.concat([player_rotation, ball_displacement])
+                joined = pd.concat([player_rotation, ball_displacement])
                 joined.dropna(inplace=True)
                 if joined.any():
                     ball_displacement = joined.loc[['pos_x', 'pos_y', 'pos_z']].values
