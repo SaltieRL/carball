@@ -1,4 +1,4 @@
-from json_parser.game import Game
+from replay_analysis.json_parser.game import Game
 
 
 def check_game(game: Game):
