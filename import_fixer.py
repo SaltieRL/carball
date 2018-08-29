@@ -56,7 +56,7 @@ def analyze_file(deepness, file_path, top_level_import):
         print('not modified')
 
 
-def prevent_leaks(top_level_dir='generated', exclude_dir=None, top_level_import="api"):
+def convert_to_relative_imports(top_level_dir='generated', exclude_dir=None, top_level_import="api"):
     current_dir = os.path.dirname(__file__)
     proto_dir = [x[0] for x in os.walk(current_dir) if top_level_dir in x[0] and '__pycache__' not in x[0]]
 
@@ -78,4 +78,18 @@ def prevent_leaks(top_level_dir='generated', exclude_dir=None, top_level_import=
 
 
 # prevent_leaks("replay_analysis", "generated", "replay_analysis")
-prevent_leaks()
+convert_to_relative_imports()
+
+"""
+Hi All  This file converts protobuf imports to relative imports so instead of
+import api.player_pb2
+it does
+import ...api.player_pb2
+
+The reason for this is described here:
+https://github.com/protocolbuffers/protobuf/issues/1491
+
+Basically google does not allow relative imports from their generated protobuf code.
+So we do it so that our genreated file can go in a folder we dont care about
+
+"""

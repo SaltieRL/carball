@@ -1,3 +1,5 @@
+from typing import Dict
+
 import math
 
 RBSTATE = "TAGame.RBActor_TA:ReplicatedRBState"
@@ -22,7 +24,7 @@ BALL_DATA_DICT_PAIRS = {
 
 class BallActor:
     @staticmethod
-    def get_data_dict(actor_data, version=None):
+    def get_data_dict(actor_data: Dict, version: int = None) -> Dict:
         # is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
 
         data_dict = {}
@@ -83,7 +85,7 @@ CAR_DATA_DICT_PAIRS = {
 
 class CarActor:
     @staticmethod
-    def get_data_dict(actor_data, version=None):
+    def get_data_dict(actor_data: Dict, version: int = None) -> Dict:
         # is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
 
         data_dict = {}
