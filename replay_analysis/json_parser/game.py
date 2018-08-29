@@ -66,6 +66,7 @@ class Game:
         self.ball = None
         self.ball_type = None
         self.demos = None
+        self.parties = None
         self.parse_all_data(self.all_data)
 
         logger.info("Finished parsing %s" % self)
@@ -165,7 +166,7 @@ class Game:
         demos_data = []  # frame_number: demolish_data
 
         latest_game_actor_data = None
-
+        parties = {}
         # loop through frames
         for i, frame in enumerate(frames):
             # # don't bother after last goal
@@ -234,6 +235,17 @@ class Game:
                         # 'steam_id': actor_data["Engine.PlayerReplicationInfo:UniqueId"]["SteamID64"],
                         # 'player_id': actor_data["Engine.PlayerReplicationInfo:PlayerID"]
                     }
+                    if "TAGame.PRI_TA:PartyLeader" in actor_data:
+                        try:
+                            leader = str(actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0]["steam"])
+                            steamid = str(actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id']['steam'])
+                            if leader in parties:
+                                if steamid not in parties[leader]:
+                                    parties[leader].append(steamid)
+                            else:
+                                parties[leader] = [steamid]
+                        except KeyError:
+                            logger.warning('Could not get party leader for actor id:', actor_id)
                     if actor_id not in player_dicts:
                         # add new player
                         player_dicts[actor_id] = player_dict
@@ -467,7 +479,8 @@ class Game:
             'frames_data': frames_data,
             'cameras_data': cameras_data,
             'demos_data': demos_data,
-            'latest_game_actor_data': latest_game_actor_data
+            'latest_game_actor_data': latest_game_actor_data,
+            'parties': parties
         }
 
         return all_data
@@ -549,6 +562,9 @@ class Game:
                                _demo_data["victim_velocity"]["z"],),
             }
             self.demos.append(demo)
+
+        # PARTIES
+        self.parties = all_data['parties']
 
         del self.replay_data
         del self.replay
