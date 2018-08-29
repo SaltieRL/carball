@@ -27,26 +27,6 @@ class PandasManager:
             logger.exception("Failure to read pandas [%s] from memory: %s", field_name, e)
 
     @staticmethod
-    def read_hdf_from_buffer(buffer, key="/data"):
-        with pd.get_store(
-                "data.h5",
-                mode="r",
-                driver="H5FD_CORE",
-                driver_core_backing_store=0,
-                driver_core_image=buffer.read()
-        ) as store:
-            return store[key]
-
-    @staticmethod
-    def write_hdf_to_buffer(df):
-        with pd.get_store(
-                "data.h5", mode="a", driver="H5FD_CORE",
-                driver_core_backing_store=0
-        ) as out:
-            out["/data"] = df
-            return out._handle.get_file_image()
-
-    @staticmethod
     def write_numpy_to_memory(df):
         numpy_array = df.to_records(index=True)
         compressed_array = io.BytesIO()
