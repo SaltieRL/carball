@@ -4,6 +4,11 @@ import pandas as pd
 
 from .boost import get_if_full_boost_position
 
+from typing import TYPE_CHECKING, List
+
+if TYPE_CHECKING:
+    from .team import Team
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,7 +46,7 @@ class Player:
         else:
             return '%s: %s' % (self.__class__.__name__, self.name)
 
-    def create_from_actor_data(self, actor_data, teams):
+    def create_from_actor_data(self, actor_data: dict, teams: List['Team']):
         self.name = actor_data['name']
         if 'Engine.PlayerReplicationInfo:bBot' in actor_data and actor_data['Engine.PlayerReplicationInfo:bBot']:
             self.online_id = 0  # this is a bot
@@ -67,7 +72,7 @@ class Player:
         logger.info('Created Player from actor_data: %s' % self)
         return self
 
-    def parse_player_stats(self, player_stats):
+    def parse_player_stats(self, player_stats: dict):
         self.name = player_stats["Name"]["value"]["str"]
         self.online_id = str(player_stats["OnlineID"]["value"]["q_word"])
         self.is_orange = bool(player_stats["Team"]["value"]["int"])
@@ -81,7 +86,7 @@ class Player:
         logger.info('Created Player from stats: %s' % self)
         return self
 
-    def get_camera_settings(self, camera_data):
+    def get_camera_settings(self, camera_data: dict):
         self.camera_settings['field_of_view'] = camera_data.get('fov', None)
         self.camera_settings['height'] = camera_data.get('height', None)
         self.camera_settings['pitch'] = camera_data.get('angle', None)
@@ -95,7 +100,7 @@ class Player:
                 logger.warning('Could not find ' + key + ' in camera settings for ' + self.name)
         logger.info('Camera settings for %s: %s' % (self.name, self.camera_settings))
 
-    def parse_actor_data(self, actor_data):
+    def parse_actor_data(self, actor_data: dict):
         """
         Adds stuff not found in PlayerStats metadata.
         PlayerStats is a better source of truth - as actor_data might not have been updated (e.g. for last assist)
@@ -115,7 +120,7 @@ class Player:
         self.steering_sensitivity = actor_data.get('TAGame.PRI_TA:SteeringSensitivity', None)
         return self
 
-    def get_loadout(self, actor_data):
+    def get_loadout(self, actor_data: dict):
         if "TAGame.PRI_TA:ClientLoadouts" in actor_data:  # new version (2 loadouts)
             loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]["loadouts"]
         else:
@@ -137,7 +142,7 @@ class Player:
             # TODO: Support painted stuff (look in ClientLoadoutsOnline)
         logger.info('Loadout for %s: %s' % (self.name, self.loadout))
 
-    def parse_data(self, _dict):
+    def parse_data(self, _dict: dict):
         """
         ['ping', 'pos_x', 'pos_y', 'pos_z', 'rot_x', 'rot_y', 'rot_z', 'vel_x',
         'vel_y', 'vel_z', 'ang_vel_x', 'ang_vel_y', 'ang_vel_z', 'throttle',

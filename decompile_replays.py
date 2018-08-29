@@ -11,12 +11,9 @@ from replay_analysis.analysis.analysis_manager import AnalysisManager
 
 logger = logging.getLogger(__name__)
 
-try:
-    from replay_analysis.json_parser.game import Game
-    from replay_analysis.controls.controls import get_controls
-except:
-    from replay_analysis.json_parser.game import Game
-    from replay_analysis.controls.controls import get_controls
+from replay_analysis.json_parser.game import Game
+from replay_analysis.controls.controls import get_controls
+from replay_analysis.json_parser.sanity_check import sanity_check
 
 BASE_DIR = os.path.dirname(__file__)
 OUTPUT_DIR = os.path.join('replays', 'pickled')
@@ -41,6 +38,7 @@ def decompile_replay(path, output_path):
     _json = json.load(open(output_path, encoding="utf8"))
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
+    sanity_check.check_game(game)
     analysis = AnalysisManager(game)
     analysis.create_analysis()
 

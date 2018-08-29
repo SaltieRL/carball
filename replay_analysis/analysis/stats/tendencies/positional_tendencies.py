@@ -1,6 +1,6 @@
 from typing import Callable, Dict
 
-import pandas
+import pandas as pd
 
 from ....analysis.constants.field_constants import FieldConstants
 from ....generated.api.player_pb2 import Player
@@ -26,10 +26,10 @@ class PositionalTendencies:
             "ball_1": self.field_constants.get_ball_1
         }
 
-    def get_player_tendencies(self, player: Player, data_frame: pandas.DataFrame):
+    def get_player_tendencies(self, player: Player, data_frame: pd.DataFrame):
         player_data_frame = data_frame[player.name]
         ball_data_frame = data_frame['ball']
-        player_ball_dataframes: Dict[str, pandas.DataFrame] = {
+        player_ball_dataframes: Dict[str, pd.DataFrame] = {
             "player_data_frame": player_data_frame,
             "ball_data_frame": ball_data_frame
         }
@@ -44,14 +44,14 @@ class PositionalTendencies:
 
     @staticmethod
     def get_duration_from_predicate(predicate: Callable,
-                                    player_ball_dataframes: Dict[str, pandas.DataFrame], data_frame: pandas.DataFrame):
+                                    player_ball_dataframes: Dict[str, pd.DataFrame], data_frame: pd.DataFrame):
         boolean_index = predicate(**player_ball_dataframes)
         deltas = data_frame.game.delta
         goal_frames = data_frame.game.goal_number.notnull()
         return deltas[goal_frames][boolean_index].sum()
 
     @staticmethod
-    def get_flipped_dataframes(data_frames: Dict[str, pandas.DataFrame]) -> Dict[str, pandas.DataFrame]:
+    def get_flipped_dataframes(data_frames: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
         new_dataframes = {
             _k: _v.copy() for _k, _v in data_frames.items()
         }

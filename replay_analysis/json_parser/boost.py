@@ -11,7 +11,7 @@ FULL_BOOST_POSITIONS = np.array([
 ])
 
 
-def get_if_full_boost_position(position) -> bool:
+def get_if_full_boost_position(position: np.array) -> bool:
     # returns 1 for full boost, 0 for small boost
     if len(position) > 2:
         position = position[0:2]
