@@ -79,6 +79,7 @@ class AnalysisManager:
         # create team metadata
         ApiTeam.create_teams_from_game(game, proto_game, self.id_creator)
 
+        ApiGame.create_parties(proto_game.parties, game, self.id_creator)
         # create player metadata
         player_map = dict()
         for player in game.players:
