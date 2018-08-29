@@ -1,5 +1,6 @@
 from typing import Callable
 
+from replay_analysis.generated.api import party_pb2
 from ....json_parser.game import Game
 from ....generated.api.metadata import game_metadata_pb2
 from .ApiDemo import ApiDemo
@@ -33,3 +34,12 @@ class ApiGame:
         ApiGoal.create_goals_from_game(game, proto_game.goals, id_creator)
         ApiDemo.create_demos_from_game(game, proto_game.demos, id_creator)
         return id_creator, proto_game
+
+    @staticmethod
+    def create_parties(parties, game: Game, id_creator: Callable):
+        for k, v in game.parties.items():
+            proto_party: party_pb2.Party = parties.add()
+            proto_party.leader_id.id = k
+            for p in v:
+                player = proto_party.members.add()
+                player.id = p

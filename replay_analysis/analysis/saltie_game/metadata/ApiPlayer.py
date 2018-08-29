@@ -29,5 +29,6 @@ class ApiPlayer:
             proto_player.shots = player.shots
         if player.is_orange is not None:
             proto_player.is_orange = player.is_orange
-
+        if player.party_leader is not None:
+            proto_player.party_leader.id = player.party_leader
         return proto_player

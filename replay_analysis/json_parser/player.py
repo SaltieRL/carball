@@ -34,6 +34,7 @@ class Player:
         self.total_xp = None
         self.steering_sensitivity = None
 
+        self.party_leader = None
     def __repr__(self):
         if self.team:
             return '%s: %s on %s' % (self.__class__.__name__, self.name, self.team)
@@ -106,7 +107,7 @@ class Player:
         self.party_leader = actor_data.get('TAGame.PRI_TA:PartyLeader', None)
         try:
             if self.party_leader is not None:
-                self.party_leader = self.party_leader['party_leader']['id'][0]['steam']
+                self.party_leader = str(self.party_leader['party_leader']['id'][0]['steam'])
         except KeyError:
             logger.warning('Could not set player party leader for:', self.name)
         self.title = actor_data.get('TAGame.PRI_TA:Title', None)
