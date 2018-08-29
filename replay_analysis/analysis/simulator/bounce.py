@@ -14,7 +14,8 @@ def bounce(state, normal=GROUND_NORMAL):
     # vel = state.loc[:, ['vx', 'vy', 'vz']].values
     # ang_vel = state.loc[:, ['rotvx', 'rotvy', 'rotvz']].values
     vel, ang_vel = state
-
+    normal = normal.astype(float)
+    ang_vel = ang_vel.astype(float)
     v_perp = np.dot(vel, normal) * normal
     v_para = vel - v_perp
     v_spin = R * np.cross(normal, ang_vel)
@@ -26,5 +27,5 @@ def bounce(state, normal=GROUND_NORMAL):
     delta_v_para = - min(1.0, Y * ratio) * mu * s
 
     new_state = (vel + delta_v_perp + delta_v_para,
-                 ang_vel + A * R * np.cross(delta_v_para, normal))
+                 ang_vel + A * R * np.cross(delta_v_para.astype(float), normal))
     return new_state
