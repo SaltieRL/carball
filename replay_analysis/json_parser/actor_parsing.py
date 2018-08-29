@@ -9,9 +9,9 @@ BALL_DATA_DICT_PAIRS = {
     'pos_x': (RBSTATE, rbstate, 'location', 'x'),
     'pos_y': (RBSTATE, rbstate, 'location', 'y'),
     'pos_z': (RBSTATE, rbstate, 'location', 'z'),
-    'rot_x': (RBSTATE, rbstate, 'rotation', 'x', 'value'),
-    'rot_y': (RBSTATE, rbstate, 'rotation', 'y', 'value'),
-    'rot_z': (RBSTATE, rbstate, 'rotation', 'z', 'value'),
+    'rot_x': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'x', 'value'),
+    'rot_y': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'y', 'value'),
+    'rot_z': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'z', 'value'),
     'vel_x': (RBSTATE, rbstate, 'linear_velocity', 'x'),
     'vel_y': (RBSTATE, rbstate, 'linear_velocity', 'y'),
     'vel_z': (RBSTATE, rbstate, 'linear_velocity', 'z'),
@@ -61,12 +61,9 @@ CAR_DATA_DICT_PAIRS = {
     'pos_x': (RBSTATE, rbstate, 'location', 'x'),
     'pos_y': (RBSTATE, rbstate, 'location', 'y'),
     'pos_z': (RBSTATE, rbstate, 'location', 'z'),
-    'rot_x': (RBSTATE, rbstate, 'rotation', 'x', 'value'),
-    'rot_y': (RBSTATE, rbstate, 'rotation', 'y', 'value'),
-    'rot_z': (RBSTATE, rbstate, 'rotation', 'z', 'value'),
-    'new_rot_x': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'x', 'value'),
-    'new_rot_y': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'y', 'value'),
-    'new_rot_z': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'z', 'value'),
+    'rot_x': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'x', 'value'),
+    'rot_y': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'y', 'value'),
+    'rot_z': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'z', 'value'),
     'quat_w': (RBSTATE, rbstate, 'rotation', 'quaternion', 'w'),
     'quat_x': (RBSTATE, rbstate, 'rotation', 'quaternion', 'x'),
     'quat_y': (RBSTATE, rbstate, 'rotation', 'quaternion', 'y'),
@@ -97,10 +94,6 @@ class CarActor:
                 if _value is None:
                     break
             data_dict[_key] = _value
-        if data_dict['rot_x'] is None:
-            data_dict['rot_x'] = data_dict['new_rot_x']
-            data_dict['rot_y'] = data_dict['new_rot_y']
-            data_dict['rot_z'] = data_dict['new_rot_z']
 
         if version is not None and version >= 7:
             correction_dict = {'pos_x': 100, 'pos_y': 100, 'pos_z': 100,
@@ -112,6 +105,12 @@ class CarActor:
                     data_dict[_item] /= _divisor
                 except TypeError:
                     continue
+        if data_dict['quat_w'] is None:
+            # convert from int16 to radians
+            data_dict['rot_x'] *= 2 * math.pi / 65535
+            data_dict['rot_y'] = (data_dict['rot_y'] / 65535) - 0.5 * 2 * math.pi
+            data_dict['rot_z'] *= -2 * math.pi / 65535
+
         if version is not None and version >= 7 and data_dict['quat_w'] is not None:
             # https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_Angles_Conversion
             w = data_dict['quat_w']
@@ -132,7 +131,7 @@ class CarActor:
             siny = 2.0 * (w * z + x * y)
             cosy = 1.0 - 2.0 * (y * y + z * z)
             yaw = math.atan2(siny, cosy)
-            data_dict['rot_x'] = pitch * 65536.0 / math.pi
-            data_dict['rot_y'] = yaw * 65536.0 / math.pi
-            data_dict['rot_z'] = roll * 65536.0 / math.pi
+            data_dict['rot_x'] = pitch
+            data_dict['rot_y'] = yaw
+            data_dict['rot_z'] = roll
         return data_dict
