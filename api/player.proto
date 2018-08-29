@@ -20,4 +20,5 @@ message Player {
     optional api.metadata.PlayerLoadout loadout = 10;
     optional int32 is_orange = 11;
     optional api.stats.PlayerStats stats = 12;
+    optional PlayerId party_leader = 13;
 }
