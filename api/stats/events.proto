@@ -35,8 +35,6 @@ message Hit {
     optional int32 previous_hit_frame_number = 19;
     optional int32 next_hit_frame_number = 20;
 
-
-
     // pseudo stats
     // is_turnover = !(goal || dribble || pass)
 }
