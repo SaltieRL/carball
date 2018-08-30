@@ -80,9 +80,12 @@ class Game:
 
     def create_players(self) -> List[Player]:
         players = []
-        for player_stats in self.properties["PlayerStats"]["value"]["array"]:
-            player = Player().parse_player_stats(player_stats["value"])
-            players.append(player)
+        try:
+            for player_stats in self.properties["PlayerStats"]["value"]["array"]:
+                player = Player().parse_player_stats(player_stats["value"])
+                players.append(player)
+        except KeyError:
+            pass
         return players
 
     def get_goals(self) -> List[Goal]:
