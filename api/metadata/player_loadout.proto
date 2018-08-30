@@ -12,4 +12,7 @@ message PlayerLoadout {
     optional int32 trail = 7;
     optional int32 wheels = 8;
     optional int32 version = 9;
+    optional int32 topper = 10;
+    optional int32 antenna = 11;
+    optional int32 engine_audio = 12;
 }
