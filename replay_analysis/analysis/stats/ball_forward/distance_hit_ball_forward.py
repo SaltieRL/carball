@@ -23,6 +23,6 @@ class DistanceStats(HitStat):
             hit_distance_y *= -1
 
         if hit_distance_y > 0:
-            player.stats.distance.ball_hit_forward = player.stats.distance.forward + hit_distance_y
+            player.stats.distance.ball_hit_forward += hit_distance_y
         if hit_distance_y < 0:
-            player.stats.distance.ball_hit_backward = player.stats.distance.backward + abs(hit_distance_y)
+            player.stats.distance.ball_hit_backward += abs(hit_distance_y)
