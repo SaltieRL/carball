@@ -245,15 +245,20 @@ class Game:
                     }
                     if "TAGame.PRI_TA:PartyLeader" in actor_data:
                         try:
-                            leader = str(actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0]["steam"])
-                            steamid = str(actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id']['steam'])
+
+                            actor_type = \
+                            list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[
+                                0]
+                            unique_id = str(actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][actor_type])
+                            leader = str(actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0][actor_type])
                             if leader in parties:
-                                if steamid not in parties[leader]:
-                                    parties[leader].append(steamid)
+                                if unique_id not in parties[leader]:
+                                    parties[leader].append(unique_id)
                             else:
-                                parties[leader] = [steamid]
+                                parties[leader] = [unique_id]
                         except KeyError:
-                            logger.warning('Could not get party leader for actor id:', actor_id)
+                            logger.warning('Could not get party leader for actor id: ' + str(actor_id))
+                            assert 0 == 1
                     if actor_id not in player_dicts:
                         # add new player
                         player_dicts[actor_id] = player_dict
