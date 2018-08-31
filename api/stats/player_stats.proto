@@ -16,8 +16,11 @@ message Boost {
 }
 
 message Distance {
-    optional double forward = 1;
-    optional double backward = 2;
+    optional double ball_hit_forward = 1;
+    optional double ball_hit_backward = 2;
+    optional float time_closest_to_ball = 3; // TODO: Implement
+    optional float time_furthest_from_ball = 4; // TODO: Implement
+    optional float time_close_to_ball = 5; // TODO: define what unit close is, Implement
 }
 
 message PlayerStats {
