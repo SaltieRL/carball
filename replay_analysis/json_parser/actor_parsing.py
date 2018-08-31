@@ -134,4 +134,8 @@ class CarActor:
             data_dict['rot_x'] = pitch
             data_dict['rot_y'] = yaw
             data_dict['rot_z'] = roll
+
+        data_dict.pop('quat_x')
+        data_dict.pop('quat_y')
+        data_dict.pop('quat_z')
         return data_dict

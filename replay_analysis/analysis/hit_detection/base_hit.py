@@ -35,6 +35,14 @@ class BaseHit:
         hit_creation_time = time.time()
         logger.info('time to get get frame_numbers: %s', (hit_creation_time - start_time) * 1000)
 
+        positional_columns = ['pos_x', 'pos_y', 'pos_z', 'rot_x', 'rot_y', 'rot_z']
+        hit_frames = data_frame.loc[hit_frame_numbers, (slice(None), positional_columns)]
+        player_distances = [get_player_ball_distances(hit_frames, player.name) for player in game.players]
+        player_distances = pd.concat(player_distances, axis=1)
+
+        # SINCE YOU ASKED FOR IT DTRACERS
+        # TODO: Complete this function.
+
         # find closest player in team to ball for known hits
         for frame_number in hit_frame_numbers:
             try:
@@ -105,6 +113,14 @@ class BaseHit:
     @staticmethod
     def get_ball_data(game: Game, hit: Hit):
         return game.ball.loc[hit.frame_number, :]
+
+
+def get_player_ball_distances(data_frame: pd.DataFrame, player_name: str):
+    player_df = data_frame[player_name]
+    ball_df = data_frame['ball']
+    axes = ['pos_x', 'pos_y', 'pos_z']
+    displacement_in_axes = [((player_df[axis] - ball_df[axis])) ** 2 for axis in axes]
+    return np.sqrt(pd.concat(displacement_in_axes, axis=1).sum(axis=1)).rename(player_name)
 
 
 def unrotate_position(relative_position, rotation):
