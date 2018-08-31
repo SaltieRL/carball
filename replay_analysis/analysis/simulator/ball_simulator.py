@@ -3,7 +3,6 @@ import pandas as pd
 
 from .bounce import bounce
 
-
 BALL_RADIUS = 91.25
 SIDE_WALL_DISTANCE = 4096
 BACK_WALL_DISTANCE = 5140
@@ -67,7 +66,8 @@ class BallSimulator:
                                       starting_x_v)
         return sim_data
 
-    def simulate_time(self, start_time, end_time, time_step, step_func, starting_values):
+    def simulate_time(self, start_time, end_time, time_step, step_func, starting_values, break_if_goal=True,
+                      get_sim_data=False):
         t_s = []
         x_vs = []
         av_s = []
@@ -86,12 +86,14 @@ class BallSimulator:
             latest_x_v = latest_x_v + derivatives * time_step
             simulated_time += time_step
             # CHECK IF BALL IN GOAL
-            if self.is_orange:
-                if latest_x_v[1] < -BACK_WALL_DISTANCE:
-                    self.is_shot = True
-            else:
-                if latest_x_v[1] > BACK_WALL_DISTANCE:
-                    self.is_shot = True
+            if (self.is_orange and latest_x_v[1] < -BACK_WALL_DISTANCE) or (
+                    (not self.is_orange) and latest_x_v[1] > BACK_WALL_DISTANCE):
+                self.is_shot = True
+                if break_if_goal:
+                    break
+
+        if not get_sim_data:
+            return
 
         t_s = np.array(t_s)
         x_vs = np.array(x_vs)
@@ -255,4 +257,3 @@ class BallSimulator:
             return True
         else:
             return False
-
