@@ -112,9 +112,13 @@ class Player:
         self.party_leader = actor_data.get('TAGame.PRI_TA:PartyLeader', None)
         try:
             if self.party_leader is not None:
-                self.party_leader = str(self.party_leader['party_leader']['id'][0]['steam'])
+                actor_type = \
+                    list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[
+                        0]
+                self.party_leader = str(self.party_leader['party_leader']['id'][0][actor_type])
         except KeyError:
             logger.warning('Could not set player party leader for:', self.name)
+            self.party_leader = None
         self.title = actor_data.get('TAGame.PRI_TA:Title', None)
         self.total_xp = actor_data.get('TAGame.PRI_TA:TotalXP', None)
         self.steering_sensitivity = actor_data.get('TAGame.PRI_TA:SteeringSensitivity', None)
