@@ -59,65 +59,46 @@ class BaseHit:
         ]
         collision_distances_data_frame = pd.concat(collision_distances, axis=1)
 
-        # using hit_team_no, loop through players in team to find distances
-        for player in game.players:
-            create_rotation_matrix(hit_frames, player.name)
+        player_name_to_team: Dict[str, int] = {player.name: int(player.team.is_orange) for player in game.players}
+        columns = [(player_name_to_team[player_name], player_name)
+                   for player_name in collision_distances_data_frame.columns]
+        collision_distances_data_frame.columns = pd.MultiIndex.from_tuples(columns)
 
-        # find closest player in team to ball for known hits
-        for frame_number in hit_frame_numbers:
-            try:
-                team = team_dict[game.ball.loc[frame_number, 'hit_team_no']]
-            except KeyError:
-                continue
-            closest_player = None
-            closest_player_distance = 999999
-            for player in team.players:
-                if len(player.loadout) == 1:
-                    player_hitbox = get_hitbox(player.loadout[0]['car'])
-                else:
-                    player_hitbox = get_hitbox(player.loadout[player.is_orange]['car'])
-                try:
-                    player_position = player.data.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
-                    ball_position = game.ball.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
-                    ball_displacement = ball_position - player_position
+        collision_distances_data_frame['closest_player', 'name'] = None
+        collision_distances_data_frame['closest_player', 'distance'] = None
+        for hit_team_no in [0, 1]:
+            collision_distances_for_team = collision_distances_data_frame[
+                hit_team_no][game.ball['hit_team_no'] == hit_team_no]
 
-                    player_rotation = player.data.loc[frame_number, ['rot_x', 'rot_y', 'rot_z']]
-                except KeyError:
-                    continue
+            close_collision_distances_for_team = collision_distances_for_team[
+                (collision_distances_for_team < 300).any(axis=1)
+            ]
 
-                joined = pd.concat([player_rotation, ball_displacement])
-                joined.dropna(inplace=True)
-                if joined.any():
-                    ball_displacement = joined.loc[['pos_x', 'pos_y', 'pos_z']].values
-                    player_rotation = joined.loc[['rot_x', 'rot_y', 'rot_z']].values
-                    ball_unrotated_displacement = unrotate_position(ball_displacement, player_rotation)
+            collision_distances_data_frame['closest_player', 'distance'].fillna(
+                close_collision_distances_for_team.min(axis=1),
+                inplace=True
+            )
+            collision_distances_data_frame['closest_player', 'name'].fillna(
+                close_collision_distances_for_team.idxmin(axis=1),
+                inplace=True
+            )
 
-                    collision_distance = get_distance(ball_unrotated_displacement, player_hitbox)
-                    if collision_distance < closest_player_distance:
-                        closest_player = player
-                        closest_player_distance = collision_distance
-
-            # TODO: Check if this works with ball_type == 'Basketball'
-            # COLLISION_DISTANCE_HIGH_LIMIT probably needs to be increased if Basketball.
-            if closest_player_distance < COLLISION_DISTANCE_HIGH_LIMIT:
-                hit_player = closest_player
-                hit_collision_distance = closest_player_distance
-            else:
-                hit_player = None
-                hit_collision_distance = 999999
-
-            if hit_player is not None:
-                hit = proto_game.game_stats.hits.add()
-                hit.frame_number = frame_number
-                goal_number = data_frame.at[frame_number, ('game', 'goal_number')]
-                if not math.isnan(goal_number):
-                    hit.goal_number = int(goal_number)
-                id_creation(hit.player_id, hit_player.name)
-                hit.collision_distance = hit_collision_distance
-                hit.ball_data.pos_x = float(ball_position['pos_x'])
-                hit.ball_data.pos_y = float(ball_position['pos_y'])
-                hit.ball_data.pos_z = float(ball_position['pos_z'])
-                all_hits[frame_number] = hit
+        all_hits = {}
+        hits_data = collision_distances_data_frame['closest_player'].dropna()
+        for row in hits_data.itertuples():
+            frame_number, player_name, collision_distance = row.Index, row.name, row.distance
+            hit = proto_game.game_stats.hits.add()
+            hit.frame_number = frame_number
+            goal_number = data_frame.at[frame_number, ('game', 'goal_number')]
+            if not np.isnan(goal_number):
+                hit.goal_number = int(goal_number)
+            id_creation(hit.player_id, player_name)
+            hit.collision_distance = collision_distance
+            ball_position = game.ball.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
+            hit.ball_data.pos_x = float(ball_position['pos_x'])
+            hit.ball_data.pos_y = float(ball_position['pos_y'])
+            hit.ball_data.pos_z = float(ball_position['pos_z'])
+            all_hits[frame_number] = hit
 
         time_diff = time.time() - hit_creation_time
         logger.info('ball hit creation time: %s', time_diff * 1000)
