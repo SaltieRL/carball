@@ -53,6 +53,7 @@ class Game:
             logger.error('Cannot parse date: ' + date_string)
 
         self.replay_version = self.properties.get('ReplayVersion', {}).get('value', {}).get('int', None)
+        logger.info(f"version: {self.replay_version}, date: {self.datetime}")
         if self.replay_version is None:
             logger.warning('Replay version not found')
 

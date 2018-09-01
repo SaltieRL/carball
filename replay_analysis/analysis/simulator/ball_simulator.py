@@ -85,6 +85,7 @@ class BallSimulator:
             latest_x_v[3:] = derivatives[:3]
             latest_x_v = latest_x_v + derivatives * time_step
             simulated_time += time_step
+
             # CHECK IF BALL IN GOAL
             if (self.is_orange and latest_x_v[1] < -BACK_WALL_DISTANCE) or (
                     (not self.is_orange) and latest_x_v[1] > BACK_WALL_DISTANCE):
