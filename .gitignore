@@ -2,4 +2,3 @@
 *.pyc
 replays/
 venv/
-/**/generated/**/*.py
