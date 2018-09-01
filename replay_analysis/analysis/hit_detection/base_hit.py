@@ -11,9 +11,6 @@ from ...generated.api.stats.events_pb2 import Hit
 from ...json_parser.game import Game
 from .hitbox.hitbox import Hitbox
 
-COLLISION_DISTANCE_HIGH_LIMIT = 500
-COLLISION_DISTANCE_LOW_LIMIT = 250
-
 logger = logging.getLogger(__name__)
 
 
@@ -26,7 +23,7 @@ class BaseHit:
         start_time = time.time()
 
         team_dict = {}
-        all_hits = {}  # frame_number: [{hit_data}, {hit_data}] for hit guesses
+
         for team in game.teams:
             team_dict[team.is_orange] = team
 
@@ -68,7 +65,7 @@ class BaseHit:
         collision_distances_data_frame['closest_player', 'distance'] = None
         for hit_team_no in [0, 1]:
             collision_distances_for_team = collision_distances_data_frame[
-                hit_team_no][collision_distances_data_frame.index.isin(game.ball['hit_team_no'] == hit_team_no)]
+                hit_team_no].loc[game.ball['hit_team_no'] == hit_team_no]
 
             close_collision_distances_for_team = collision_distances_for_team[
                 (collision_distances_for_team < 300).any(axis=1)
