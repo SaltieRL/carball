@@ -9,7 +9,7 @@ import pandas as pd
 from ...generated.api import game_pb2
 from ...generated.api.stats.events_pb2 import Hit
 from ...json_parser.game import Game
-from .hitbox.car import get_hitbox, get_distance
+from .hitbox.hitbox import Hitbox
 
 COLLISION_DISTANCE_HIGH_LIMIT = 500
 COLLISION_DISTANCE_LOW_LIMIT = 250
@@ -37,11 +37,31 @@ class BaseHit:
 
         positional_columns = ['pos_x', 'pos_y', 'pos_z', 'rot_x', 'rot_y', 'rot_z']
         hit_frames = data_frame.loc[hit_frame_numbers, (slice(None), positional_columns)]
-        player_distances = [get_player_ball_distances(hit_frames, player.name) for player in game.players]
-        player_distances = pd.concat(player_distances, axis=1)
+        player_displacements = {player.name: get_player_ball_displacements(hit_frames, player.name)
+                                for player in game.players}
+        player_distances = {player_name: get_distance_from_displacements(data_frame).rename(player_name)
+                            for player_name, data_frame in player_displacements.items()}
 
-        # SINCE YOU ASKED FOR IT DTRACERS
-        # TODO: Complete this function.
+        player_distances_data_frame = pd.concat(player_distances, axis=1)
+
+        rotation_matrices = {player.name: get_rotation_matrices(hit_frames, player.name) for player in game.players}
+
+        local_displacements: Dict[str, pd.DataFrame] = {
+            player.name: get_local_displacement(player_displacements[player.name],
+                                                rotation_matrices[player.name])
+            for player in game.players
+        }
+
+        player_hitboxes = get_player_hitboxes(game)
+        collision_distances = [
+            get_collision_distances(local_displacements[player.name], player_hitboxes[player.name]).rename(player.name)
+            for player in game.players
+        ]
+        collision_distances_data_frame = pd.concat(collision_distances, axis=1)
+
+        # using hit_team_no, loop through players in team to find distances
+        for player in game.players:
+            create_rotation_matrix(hit_frames, player.name)
 
         # find closest player in team to ball for known hits
         for frame_number in hit_frame_numbers:
@@ -115,39 +135,70 @@ class BaseHit:
         return game.ball.loc[hit.frame_number, :]
 
 
-def get_player_ball_distances(data_frame: pd.DataFrame, player_name: str):
+def get_player_ball_displacements(data_frame: pd.DataFrame, player_name: str) -> pd.DataFrame:
     player_df = data_frame[player_name]
     ball_df = data_frame['ball']
-    axes = ['pos_x', 'pos_y', 'pos_z']
-    displacement_in_axes = [((player_df[axis] - ball_df[axis])) ** 2 for axis in axes]
-    return np.sqrt(pd.concat(displacement_in_axes, axis=1).sum(axis=1)).rename(player_name)
+    position_column_names = ['pos_x', 'pos_y', 'pos_z']
+    return player_df[position_column_names] - ball_df[position_column_names]
 
 
-def unrotate_position(relative_position, rotation):
-    # TODO: Use rotation matrix
-    new_position = relative_position
+def get_distance_from_displacements(data_frame: pd.DataFrame) -> pd.Series:
+    position_column_names = ['pos_x', 'pos_y', 'pos_z']
+    return np.sqrt((data_frame[position_column_names] ** 2).sum(axis=1))
 
-    # YAW
-    yaw = rotation[1]
-    yaw = -yaw * np.pi
 
-    new_position[0], new_position[1] = new_position[0] * np.cos(yaw) - new_position[1] * np.sin(yaw), new_position[
-        0] * np.sin(yaw) + new_position[1] * np.cos(yaw)
+def get_rotation_matrices(data_frame: pd.DataFrame, player_name: str) -> pd.Series:
+    pitch = data_frame[player_name, 'rot_x']
+    yaw = data_frame[player_name, 'rot_y']
+    roll = data_frame[player_name, 'rot_z']
 
-    # PITCH
+    cos_roll = np.cos(roll).rename('cos_roll')
+    sin_roll = np.sin(roll).rename('sin_roll')
+    cos_pitch = np.cos(pitch).rename('cos_pitch')
+    sin_pitch = np.sin(pitch).rename('sin_pitch')
+    cos_yaw = np.cos(yaw).rename('cos_yaw')
+    sin_yaw = np.sin(yaw).rename('sin_yaw')
 
-    pitch = rotation[0]
-    pitch = pitch * np.pi / 2
+    components: pd.DataFrame = pd.concat([cos_roll, sin_roll, cos_pitch, sin_pitch, cos_yaw, sin_yaw], axis=1)
 
-    new_position[0], new_position[0] = new_position[2] * np.cos(pitch) - new_position[0] * np.sin(pitch), new_position[
-        2] * np.sin(pitch) + new_position[0] * np.cos(pitch)
+    rotation_matrix = components.apply(get_rotation_matrix_from_row, axis=1, result_type='reduce')
+    return rotation_matrix
 
-    # ROLL
 
-    roll = rotation[2]
-    roll = roll * np.pi
+def get_rotation_matrix_from_row(components: pd.Series) -> np.array:
+    cos_roll, sin_roll, cos_pitch, sin_pitch, cos_yaw, sin_yaw = components.values
+    rotation_matrix = np.array(
+        [[cos_pitch * cos_yaw, cos_yaw * sin_pitch * sin_roll - cos_roll * sin_yaw,
+          -cos_roll * cos_yaw * sin_pitch - sin_roll * sin_yaw],
+         [cos_pitch * sin_yaw, sin_yaw * sin_pitch * sin_roll + cos_roll * cos_yaw,
+          -cos_roll * sin_yaw * sin_pitch + sin_roll * cos_yaw],
+         [sin_pitch, -cos_pitch * sin_roll, cos_pitch * cos_roll]])
+    return rotation_matrix
 
-    new_position[1], new_position[2] = new_position[1] * np.cos(roll) - new_position[2] * np.sin(roll), new_position[
-        1] * np.sin(roll) + new_position[2] * np.cos(roll)
 
-    return new_position
+def get_local_displacement(displacement: pd.DataFrame, rotation_matrices: pd.Series) -> pd.DataFrame:
+    position_column_names = ['pos_x', 'pos_y', 'pos_z']
+    displacement_vectors = np.expand_dims(displacement[position_column_names].values, 2)
+    inverse_rotation_matrices: pd.Series = np.transpose(rotation_matrices)
+    inverse_rotation_array = np.stack(inverse_rotation_matrices.values)
+    local_displacement = np.matmul(inverse_rotation_array, displacement_vectors)
+    displacement_data_frame = pd.DataFrame(data=np.squeeze(local_displacement, 2),
+                                           index=displacement.index,
+                                           columns=position_column_names)
+    return displacement_data_frame
+
+
+def get_player_hitboxes(game: Game) -> Dict[str, Hitbox]:
+    player_hitboxes = {}
+    for player in game.players:
+        car_item_id = player.loadout[0]['car'] if len(player.loadout) == 1 else player.loadout[player.is_orange]['car']
+        player_hitboxes[player.name] = Hitbox(car_item_id)
+    return player_hitboxes
+
+
+def get_collision_distances(local_ball_displacement: pd.DataFrame, player_hitbox: Hitbox) -> pd.Series:
+    def get_distance_function_for_player(displacement: pd.Series):
+        return player_hitbox.get_collision_distance(displacement.values)
+
+    collision_distances = local_ball_displacement.apply(get_distance_function_for_player, axis=1, result_type='reduce')
+    return collision_distances
