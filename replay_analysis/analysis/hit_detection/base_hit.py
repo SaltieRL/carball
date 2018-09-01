@@ -68,7 +68,7 @@ class BaseHit:
         collision_distances_data_frame['closest_player', 'distance'] = None
         for hit_team_no in [0, 1]:
             collision_distances_for_team = collision_distances_data_frame[
-                hit_team_no][game.ball['hit_team_no'] == hit_team_no]
+                hit_team_no][collision_distances_data_frame.index.isin(game.ball['hit_team_no'] == hit_team_no)]
 
             close_collision_distances_for_team = collision_distances_for_team[
                 (collision_distances_for_team < 300).any(axis=1)
