@@ -70,8 +70,6 @@ def create_proto_files():
     for file in file_list:
         path = file[0]
         file = file[1]
-        if is_windows():
-            file.replace(' ', '\ ')
         print('creating proto file', file, end='\t')
         result = call([get_proto(), '--python_out=' + proto_dir, '--proto_path=' + current_dir, file])
         print(result)
