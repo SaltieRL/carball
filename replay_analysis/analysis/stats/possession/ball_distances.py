@@ -22,14 +22,17 @@ class BallDistanceStat(BaseStat):
                              for player_name, player_data_frame in player_displacements.items()}
 
         player_distances_data_frame = pd.concat(player_distances, axis=1)
-        closest_players = player_distances_data_frame.idxmin(axis=1)
-        furthest_players = player_distances_data_frame.idxmax(axis=1)
-        self.return_time_by_player(data_frame, closest_players)
-        for player_id, stat in player_stat_map.items():
-            print(player_distances)
+        closest_players = player_distances_data_frame.idxmin(axis=1).rename('closest_player')
+        furthest_players = player_distances_data_frame.idxmax(axis=1).rename('furthest_player')
+
+        player_ball_distance_times = pd.concat([
+            self.return_time_by_player(data_frame, players_data_frame)
+            for players_data_frame in [closest_players, furthest_players]
+        ], axis=1)
+        pass
 
 
 
-    def return_time_by_player(self, data_frame, player_frame):
-        combined_data = pd.concat([player_frame, data_frame['game', 'delta']])
-        combined_data.groupby('hit_team_no').sum()
+    def return_time_by_player(self, data_frame: pd.DataFrame, players_data_frame: pd.DataFrame) -> pd.DataFrame:
+        combined_data = pd.concat([players_data_frame, data_frame['game', 'delta'].rename('delta')], axis=1)
+        return combined_data.groupby(players_data_frame.name).sum().rename(columns={'delta':players_data_frame.name})
