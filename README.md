@@ -11,8 +11,10 @@ You should look at:<br />
 
 If you want to see the output format of the stats created you can look [here](api)
 
-# Setup
-If on Windows you need to install pytables
-run this from the home directory
+Compile the proto files by running in this directory
+`setup.bat` or `setup.sh` depending on your operating system.
 
-`pip install replay_analysis\generated\tables-3.4.4-cp36-cp36m-win_amd64.whl`
+# Running
+Create a folder called `replays`
+Put a rocket league replay into this folder and then run
+`decompile_replays.py`
