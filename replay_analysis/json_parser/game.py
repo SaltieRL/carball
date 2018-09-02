@@ -361,12 +361,16 @@ class Game:
                                 actor_data.pop("TAGame.Car_TA:ReplicatedDemolish")
 
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Default":
+                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
+                            continue
                         self.ball_type = 'Default'
                         # RBState = actor_data.get(REPLICATED_RB_STATE_KEY, {})
                         # ball_is_sleeping = RBState.get('Sleeping', True)
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Basketball":
+                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
+                            continue
                         self.ball_type = 'Basketball'
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
