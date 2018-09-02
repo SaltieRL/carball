@@ -8,8 +8,7 @@ def is_windows():
 
 
 current_dir = os.path.dirname(os.path.dirname(__file__))
-if is_windows():
-    current_dir = current_dir.replace(' ', '\ ')
+
 
 proto_dir = os.path.join(current_dir, 'replay_analysis', 'generated')
 
