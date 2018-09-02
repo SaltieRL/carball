@@ -1,6 +1,6 @@
 from typing import Optional
 
-from json_parser.player import Player
+from ....json_parser.player import Player
 from .base_check import BaseCheck
 
 

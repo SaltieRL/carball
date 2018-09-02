@@ -1,4 +1,4 @@
-from json_parser.game import Game
+from ....json_parser.game import Game
 from .base_check import BaseCheck
 
 
