@@ -34,18 +34,7 @@ class BallActor:
     def get_data_dict(actor_data: Dict, version: int = None) -> Dict:
         # is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
         data_dict = get_data_dict_from_pairs(actor_data, pairs=BALL_DATA_DICT_PAIRS)
-
-        if version is not None and version >= 7:
-            data_dict = rescale_to_uu(data_dict)
-        if data_dict['quat_w'] is None:
-            data_dict = convert_to_radians(data_dict)
-        if version is not None and version >= 7 and data_dict['quat_w'] is not None:
-            data_dict = convert_quat_to_rot(data_dict)
-
-        data_dict.pop('quat_w')
-        data_dict.pop('quat_x')
-        data_dict.pop('quat_y')
-        data_dict.pop('quat_z')
+        data_dict = standardise_data_dict(data_dict, version)
         return data_dict
 
 
@@ -66,20 +55,8 @@ class CarActor:
     @staticmethod
     def get_data_dict(actor_data: Dict, version: int = None) -> Dict:
         # is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
-
         data_dict = get_data_dict_from_pairs(actor_data, pairs=CAR_DATA_DICT_PAIRS)
-
-        if version is not None and version >= 7:
-            data_dict = rescale_to_uu(data_dict)
-        if data_dict['quat_w'] is None:
-            data_dict = convert_to_radians(data_dict)
-        if version is not None and version >= 7 and data_dict['quat_w'] is not None:
-            data_dict = convert_quat_to_rot(data_dict)
-
-        data_dict.pop('quat_w')
-        data_dict.pop('quat_x')
-        data_dict.pop('quat_y')
-        data_dict.pop('quat_z')
+        data_dict = standardise_data_dict(data_dict, version)
         return data_dict
 
 
@@ -93,6 +70,20 @@ def get_data_dict_from_pairs(actor_data: dict, pairs: dict) -> dict:
             if _value is None:
                 break
         data_dict[_key] = _value
+    return data_dict
+
+
+def standardise_data_dict(data_dict: dict, version: int = None) -> dict:
+    if version is not None and version >= 7:
+        data_dict = rescale_to_uu(data_dict)
+    if data_dict['quat_w'] is None:
+        data_dict = convert_to_radians(data_dict)
+    if version is not None and version >= 7 and data_dict['quat_w'] is not None:
+        data_dict = convert_quat_to_rot(data_dict)
+    data_dict.pop('quat_w')
+    data_dict.pop('quat_x')
+    data_dict.pop('quat_y')
+    data_dict.pop('quat_z')
     return data_dict
 
 
