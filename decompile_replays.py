@@ -40,7 +40,7 @@ def decompile_replay(path, output_path):
     _json = json.load(open(output_path, encoding="utf8"))
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
-    sanity_check.check_game(game, failing_level=CheckErrorLevel.IGNORE_ERRORS)
+    sanity_check.check_game(game, failing_level=CheckErrorLevel.CRITICAL)
     analysis = AnalysisManager(game)
     analysis.create_analysis()
 

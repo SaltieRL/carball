@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, List
 
 import pandas as pd
@@ -9,6 +10,9 @@ from ...generated.api.stats.player_stats_pb2 import PlayerStats
 from ...generated.api.stats.team_stats_pb2 import TeamStats
 from ...generated.api.team_pb2 import Team
 from ...json_parser.game import Game
+
+
+logger = logging.getLogger(__name__)
 
 
 class StatsManager:
@@ -33,6 +37,7 @@ class StatsManager:
             for key, player in player_map.items()
         }
         for stat_function in StatsList.get_player_stats():
+            logger.debug("Building player stat: %s", type(stat_function).__name__)
             stat_function.calculate_player_stat(stats_proto, game, proto_game, player_map, data_frame)
 
     @staticmethod
@@ -43,12 +48,14 @@ class StatsManager:
             for team in teams
         }
         for stat_function in StatsList.get_team_stats():
+            logger.debug("Building team stat: %s", type(stat_function).__name__)
             stat_function.calculate_team_stat(stats_proto, game, proto_game, player_map, data_frame)
 
     @staticmethod
     def calculate_game_stats(game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                              data_frame: pd.DataFrame):
         for stat_function in StatsList.get_general_stats():
+            logger.debug("Building game stat: %s", type(stat_function).__name__)
             stat_function.calculate_stat(proto_game.game_stats, game, proto_game, player_map, data_frame)
 
     @staticmethod
@@ -56,6 +63,7 @@ class StatsManager:
                             player_map: Dict[str, Player], data_frame: pd.DataFrame):
         hit_stats = StatsList.get_hit_stats()
         for hit_stat in hit_stats:
+            logger.debug("Building hit stat: %s", type(hit_stat).__name__)
             hit_stat.initialize_hit_stat(game, player_map, data_frame)
         hits = proto_game.game_stats.hits
         for hit_index in range(len(hits) - 1):
