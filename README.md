@@ -12,7 +12,7 @@ You should look at:<br />
 If you want to see the output format of the stats created you can look [here](api)
 
 Compile the proto files by running in this directory
-`setup.bat` or `setup.sh` depending on your operating system.
+`setup.bat` (Windows) or `setup.sh` (Linux/mac)
 
 # Running
 Create a folder called `replays`

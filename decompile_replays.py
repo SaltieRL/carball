@@ -70,5 +70,8 @@ if __name__ == '__main__':
         except Exception as e:
             traceback.print_exc()
             failure += 1
+    if float(success + failure) == 0:
+        print("NO REPLAYS WERE RUN.")
+        print("Need files in: " + BASE_DIR)
     ratio = success / float(success + failure)
     print('success ratio:', ratio)
