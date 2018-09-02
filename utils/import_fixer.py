@@ -2,28 +2,9 @@ import os
 import shutil
 from tempfile import mkstemp
 
+from .create_proto import get_file_list
+
 import_statement = 'import '
-
-def split_to_list(drive_and_path):
-    path = os.path.splitdrive(drive_and_path)[1]
-    folders = []
-    while 1:
-        path, folder = os.path.split(path)
-
-        if folder != "":
-            folders.append(folder)
-        else:
-            if path != "":
-                folders.append(path)
-
-            break
-
-    folders.reverse()
-    return folders
-
-
-def get_deepness(top_level_dir, path_list):
-    return len(path_list) - path_list.index(top_level_dir)
 
 
 def analyze_file(deepness, file_path, top_level_import):
@@ -57,28 +38,16 @@ def analyze_file(deepness, file_path, top_level_import):
 
 
 def convert_to_relative_imports(top_level_dir='generated', exclude_dir=None, top_level_import="api"):
-    current_dir = os.path.dirname(__file__)
-    proto_dir = [x[0] for x in os.walk(current_dir) if top_level_dir in x[0] and '__pycache__' not in x[0]]
-
-    path_lists = []
-    for path in proto_dir:
-        if exclude_dir is not None and exclude_dir in path:
-            continue
-        path_list = split_to_list(path)
-        deepness = get_deepness(top_level_dir, path_list)
-        left_over_paths = path_list[-deepness:]
-        path_lists.append((path, deepness, left_over_paths))
-    for path_item in path_lists:
-        path = path_item[0]
-        only_files = [(os.path.join(path, f), f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))
-                      and '.py' in f and '__init__' not in f]
-        for file in only_files:
-            print('fixing file: ', file[1], end='\t')
-            analyze_file(path_item[1], file[0], top_level_import)
+    print('###FIXING IMPORTS###')
+    file_list = get_file_list(top_level_dir, exclude_dir)
+    for file in file_list:
+        print('fixing file: ', file[1], end='\t')
+        analyze_file(file[0], file[1], top_level_import)
 
 
 # prevent_leaks("replay_analysis", "generated", "replay_analysis")
-convert_to_relative_imports()
+if __name__ == '__main__':
+    convert_to_relative_imports()
 
 """
 Hi All  This file converts protobuf imports to relative imports so instead of
