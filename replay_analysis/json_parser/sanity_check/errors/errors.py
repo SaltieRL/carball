@@ -5,6 +5,7 @@ class CheckErrorLevel(Enum):
     MINOR = 1
     MAJOR = 2
     CRITICAL = 3
+    IGNORE_ERRORS = 99999
 
 
 class CheckError(Exception):

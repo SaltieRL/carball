@@ -67,7 +67,7 @@ class AnalysisManager:
             self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frame)
 
         # log before we add the dataframes
-        logger.debug(self.protobuf_game)
+        # logger.debug(self.protobuf_game)
 
         self.store_frames(data_frame)
 

@@ -6,6 +6,8 @@ import traceback
 import logging
 import sys
 
+from replay_analysis.json_parser.sanity_check.errors.errors import CheckErrorLevel
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from replay_analysis.analysis.analysis_manager import AnalysisManager
 
@@ -38,7 +40,7 @@ def decompile_replay(path, output_path):
     _json = json.load(open(output_path, encoding="utf8"))
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
-    sanity_check.check_game(game)
+    sanity_check.check_game(game, failing_level=CheckErrorLevel.IGNORE_ERRORS)
     analysis = AnalysisManager(game)
     analysis.create_analysis()
 
