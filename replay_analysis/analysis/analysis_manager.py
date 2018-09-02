@@ -1,21 +1,21 @@
+import logging
 import time
 from typing import Dict
-import logging
 
 import pandas as pd
 
-from ..analysis.utils.proto_manager import ProtobufManager
 from ..analysis.hit_detection.base_hit import BaseHit
-from ..analysis.saltie_game.metadata.ApiTeam import ApiTeam
-from ..analysis.saltie_game.saltie_hit import SaltieHit
-from ..analysis.utils.pandas_manager import PandasManager
-from ..analysis.stats.stats_manager import StatsManager
-from ..generated.api.player_pb2 import Player
-from ..analysis.saltie_game.saltie_game import SaltieGame
-from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame
-from ..json_parser.game import Game
+from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
+from ..analysis.saltie_game.metadata.ApiTeam import ApiTeam
+from ..analysis.saltie_game.saltie_game import SaltieGame
+from ..analysis.saltie_game.saltie_hit import SaltieHit
+from ..analysis.stats.stats_manager import StatsManager
+from ..analysis.utils.pandas_manager import PandasManager
+from ..analysis.utils.proto_manager import ProtobufManager
 from ..generated.api import game_pb2
+from ..generated.api.player_pb2 import Player
+from ..json_parser.game import Game
 
 logger = logging.getLogger(__name__)
 
@@ -140,7 +140,8 @@ class AnalysisManager:
 
     def get_advanced_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                            data_frame: pd.DataFrame):
-        self.stats_manager.get_stats(game, proto_game, player_map, data_frame)
+        goal_frames = data_frame.game.goal_number.notnull()
+        self.stats_manager.get_stats(game, proto_game, player_map, data_frame[goal_frames])
 
     def store_frames(self, data_frame: pd.DataFrame):
         if self.should_store_frames:

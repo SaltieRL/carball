@@ -17,8 +17,6 @@ class PossessionStat(BaseStat, HitStat):
     def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game,
                             proto_game: game_pb2.Game, player_map: Dict[str, Player],
                             data_frame: pd.DataFrame):
-        goal_frames = data_frame.game.goal_number.notnull()
-        data_frame = data_frame[goal_frames]
         frame_possession_time_deltas = pd.concat(
             [
                 data_frame['ball', 'hit_team_no'],
@@ -34,8 +32,6 @@ class PossessionStat(BaseStat, HitStat):
             stat.possession.possession_time = float(last_hit_possession.delta.loc[index])
 
     def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frame: pd.DataFrame):
-        goal_frames = data_frame.game.goal_number.notnull()
-        data_frame = data_frame[goal_frames]
         self.frame_possession_time_deltas = pd.concat(
             [
                 data_frame['ball', 'hit_team_no'],

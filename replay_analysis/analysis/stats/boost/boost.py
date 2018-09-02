@@ -14,13 +14,11 @@ class BoostStat(BaseStat):
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
-        goal_frames = data_frame.game.goal_number.notnull()
-
         for player_key, stats in player_stat_map.items():
             proto_boost = stats.boost
             player_name = player_map[player_key].name
-            proto_boost.usage = self.get_player_boost_usage(data_frame[player_name][goal_frames])
-            collection = self.get_player_boost_collection(data_frame[player_name][goal_frames])
+            proto_boost.usage = self.get_player_boost_usage(data_frame[player_name])
+            collection = self.get_player_boost_collection(data_frame[player_name])
             proto_boost.wasted_collection = self.get_player_boost_waste(proto_boost.usage, collection)
             if 'small' in collection and collection['small'] is not None:
                 proto_boost.num_small_boosts = collection['small']

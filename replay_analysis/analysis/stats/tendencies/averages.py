@@ -11,8 +11,7 @@ class Averages:
 
     @classmethod
     def get_averages_for_player(cls, player: Player, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
-        goal_frames = data_frame.game.goal_number.notnull()
-        player_data_frame = data_frame[player.name][goal_frames]
+        player_data_frame = data_frame[player.name]
 
         speed: pd.Series = (player_data_frame.vel_x ** 2 +
                             player_data_frame.vel_y ** 2 +

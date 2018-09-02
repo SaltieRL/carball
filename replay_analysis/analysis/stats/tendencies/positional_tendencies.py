@@ -47,8 +47,7 @@ class PositionalTendencies:
                                     player_ball_dataframes: Dict[str, pd.DataFrame], data_frame: pd.DataFrame):
         boolean_index = predicate(**player_ball_dataframes)
         deltas = data_frame.game.delta
-        goal_frames = data_frame.game.goal_number.notnull()
-        return deltas[goal_frames][boolean_index].sum()
+        return deltas[boolean_index].sum()
 
     @staticmethod
     def get_flipped_dataframes(data_frames: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
