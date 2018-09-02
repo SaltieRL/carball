@@ -1,4 +1,4 @@
-import math
+
 import time
 from typing import List, Dict, Callable
 import logging
@@ -36,10 +36,11 @@ class BaseHit:
         hit_frames = data_frame.loc[hit_frame_numbers, (slice(None), positional_columns)]
         player_displacements = {player.name: get_player_ball_displacements(hit_frames, player.name)
                                 for player in game.players}
-        player_distances = {player_name: get_distance_from_displacements(data_frame).rename(player_name)
-                            for player_name, data_frame in player_displacements.items()}
 
-        player_distances_data_frame = pd.concat(player_distances, axis=1)
+        # player_distances = {player_name: get_distance_from_displacements(data_frame).rename(player_name)
+        #                     for player_name, data_frame in player_displacements.items()}
+
+        # player_distances_data_frame = pd.concat(player_distances, axis=1)
 
         rotation_matrices = {player.name: get_rotation_matrices(hit_frames, player.name) for player in game.players}
 
