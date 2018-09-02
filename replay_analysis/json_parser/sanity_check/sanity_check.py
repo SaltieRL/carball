@@ -1,7 +1,7 @@
 import logging
 from typing import List, Type
 
-from json_parser.game import Game
+from ...json_parser.game import Game
 from .base_checks.base_check import BaseCheck
 from .base_checks.game_check import GameCheck
 from .base_checks.player_check import PlayerCheck
