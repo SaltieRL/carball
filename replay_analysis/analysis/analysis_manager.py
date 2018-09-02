@@ -59,6 +59,7 @@ class AnalysisManager:
         data_frame = self.get_data_frames(self.game)
         self.log_time("getting frames")
         kickoff_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frame)
+        self.game.kickoff_frames = kickoff_frames
         self.log_time("getting kickoff")
 
         if self.can_do_full_analysis():

@@ -64,6 +64,7 @@ class Game:
         self.all_data = self.parse_replay()
 
         self.frames = None
+        self.kickoff_frames = None
         self.ball = None
         self.ball_type = None
         self.demos = None
