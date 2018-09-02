@@ -1,14 +1,14 @@
 import logging
 from typing import List, Type
 
-from ...json_parser.game import Game
 from .base_checks.base_check import BaseCheck
 from .base_checks.game_check import GameCheck
 from .base_checks.player_check import PlayerCheck
-from .checks.ball_dataframe import BallDataFrameCheck
-from .checks.player_attributes import PlayerAttributesCheck
-from .checks.player_dataframe import PlayerDataFrameCheck
+from .checks.ball_data_frame_check import BallDataFrameCheck
+from .checks.player_attributes_check import PlayerAttributesCheck
+from .checks.player_data_frame_check import PlayerDataFrameCheck
 from .errors.errors import CheckErrorLevel, CheckError
+from ...json_parser.game import Game
 
 logger = logging.getLogger(__name__)
 
