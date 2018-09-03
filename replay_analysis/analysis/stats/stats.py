@@ -1,3 +1,4 @@
+import logging
 from typing import Dict
 
 import pandas as pd
@@ -11,6 +12,10 @@ from ...json_parser.game import Game
 
 
 class BaseStat:
+
+    def __init__(self):
+        self.logger = logging.getLogger(type(self).__name__)
+
     def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                        data_frame: pd.DataFrame):
         """

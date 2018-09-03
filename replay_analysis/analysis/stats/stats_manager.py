@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Dict, List
 
 import pandas as pd
@@ -13,6 +14,13 @@ from ...json_parser.game import Game
 
 
 logger = logging.getLogger(__name__)
+
+
+def start_time():
+    return time.time()
+
+def end_time(start):
+    return (time.time() - start) * 1000
 
 
 class StatsManager:
@@ -37,8 +45,10 @@ class StatsManager:
             for key, player in player_map.items()
         }
         for stat_function in StatsList.get_player_stats():
+            time = start_time()
             logger.debug("Building player stat: %s", type(stat_function).__name__)
             stat_function.calculate_player_stat(stats_proto, game, proto_game, player_map, data_frame)
+            logger.debug("Built in [%d] milliseconds", end_time(time))
 
     @staticmethod
     def calculate_team_stats(game: Game, proto_game: game_pb2.Game, teams: List[Team],
@@ -48,15 +58,19 @@ class StatsManager:
             for team in teams
         }
         for stat_function in StatsList.get_team_stats():
+            time = start_time()
             logger.debug("Building team stat: %s", type(stat_function).__name__)
             stat_function.calculate_team_stat(stats_proto, game, proto_game, player_map, data_frame)
+            logger.debug("Built in [%d] milliseconds", end_time(time))
 
     @staticmethod
     def calculate_game_stats(game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                              data_frame: pd.DataFrame):
         for stat_function in StatsList.get_general_stats():
+            time = start_time()
             logger.debug("Building game stat: %s", type(stat_function).__name__)
             stat_function.calculate_stat(proto_game.game_stats, game, proto_game, player_map, data_frame)
+            logger.debug("Built in [%d] milliseconds", end_time(time))
 
     @staticmethod
     def calculate_hit_stats(game: Game, proto_game: game_pb2.Game,
