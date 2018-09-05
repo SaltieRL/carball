@@ -1,4 +1,4 @@
-# ReplayAnalysis
+# carball
 Various tools for decompiling / analyzing Rocket League replays.
 
 ## Pipeline
@@ -22,7 +22,9 @@ Decompile and analyze a replay:
 ```Python
 import carball
 
-manager = carball.analyze_replay_file('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', '9EB5E5814D73F55B51A1BD9664D4CBF3.json', overwrite=True)
+manager = carball.analyze_replay_file('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', 
+                                      '9EB5E5814D73F55B51A1BD9664D4CBF3.json', 
+                                      overwrite=True)
 proto_game = manager.proto_game
 
 ```
@@ -32,7 +34,9 @@ Just decompile a replay to a JSON object:
 ```Python
 import carball
 
-json = carball.decompile_replay('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', '9EB5E5814D73F55B51A1BD9664D4CBF3.json', overwrite=True)
+json = carball.decompile_replay('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', 
+                                '9EB5E5814D73F55B51A1BD9664D4CBF3.json', 
+                                overwrite=True)
 ```
 
 Analyze a JSON game object:
