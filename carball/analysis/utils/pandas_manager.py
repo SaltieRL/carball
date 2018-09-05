@@ -3,7 +3,7 @@ import logging
 
 import pandas as pd
 
-from replay_analysis.analysis.utils.numpy_manager import write_array_to_file, read_array_from_file
+from carball.analysis.utils.numpy_manager import write_array_to_file, read_array_from_file
 
 
 logger = logging.getLogger(__name__)

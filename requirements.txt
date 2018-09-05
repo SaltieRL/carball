@@ -2,3 +2,4 @@ numpy
 protobuf
 xlrd
 pandas
+twine

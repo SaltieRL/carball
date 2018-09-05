@@ -1,6 +1,6 @@
 from typing import Callable
 
-from replay_analysis.generated.api import party_pb2
+from carball.generated.api import party_pb2
 from ....json_parser.game import Game
 from ....generated.api.metadata import game_metadata_pb2
 from .ApiDemo import ApiDemo

@@ -2,7 +2,7 @@ import gzip
 import os
 import unittest
 
-from replay_analysis.analysis.utils.pandas_manager import PandasManager
+from carball.analysis.utils.pandas_manager import PandasManager
 
 OUTPUT_DIR = os.path.join('..', 'replays', 'pickled')
 OUTPUT_FORMAT = '.gzip'

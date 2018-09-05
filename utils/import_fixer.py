@@ -45,7 +45,7 @@ def convert_to_relative_imports(top_level_dir='generated', exclude_dir=None, top
         analyze_file(file[0], file[1], top_level_import)
 
 
-# prevent_leaks("replay_analysis", "generated", "replay_analysis")
+# prevent_leaks("carball", "generated", "carball")
 if __name__ == '__main__':
     convert_to_relative_imports()
 

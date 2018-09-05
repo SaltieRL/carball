@@ -1,4 +1,4 @@
-from replay_analysis.generated.api import game_pb2
+from carball.generated.api import game_pb2
 
 
 class ProtobufManager:

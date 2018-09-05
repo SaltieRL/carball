@@ -2,12 +2,12 @@ from typing import Dict
 
 import pandas
 
-from replay_analysis.analysis.stats.stats import HitStat
-from replay_analysis.generated.api import game_pb2
-from replay_analysis.generated.api.player_pb2 import Player
-from replay_analysis.generated.api.stats import stats_pb2
-from replay_analysis.generated.api.stats.events_pb2 import Hit
-from replay_analysis.json_parser.game import Game
+from carball.analysis.stats.stats import HitStat
+from carball.generated.api import game_pb2
+from carball.generated.api.player_pb2 import Player
+from carball.generated.api.stats import stats_pb2
+from carball.generated.api.stats.events_pb2 import Hit
+from carball.json_parser.game import Game
 
 
 class HitCountStat(HitStat):

@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-from replay_analysis.analysis.utils.split_location import LocationSplitManager, STANDARD_MIN_VALUES, STANDARD_MAX_VALUES
+from carball.analysis.utils.split_location import LocationSplitManager, STANDARD_MIN_VALUES, STANDARD_MAX_VALUES
 
 
 class DBTest(unittest.TestCase):
