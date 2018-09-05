@@ -34,7 +34,7 @@ Just decompile a replay to a JSON object:
 ```Python
 import carball
 
-json = carball.decompile_replay('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', 
+_json = carball.decompile_replay('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', 
                                 '9EB5E5814D73F55B51A1BD9664D4CBF3.json', 
                                 overwrite=True)
 ```
