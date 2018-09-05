@@ -36,8 +36,8 @@ class Game:
         self.properties = self.replay['header']['body']['properties']['value']
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
         self.map = self.find_actual_value(self.properties['MapName']['value'])
-        self.name = self.find_actual_value(self.properties.get('ReplayName', {})
-                                           .get('value', {}))
+        self.name = self.find_actual_value(self.properties.get('ReplayName', None))
+
         if self.name is None:
             logger.warning('Replay name not found')
         self.id = self.find_actual_value(self.properties["Id"]['value'])
@@ -105,6 +105,10 @@ class Game:
     @staticmethod
     def find_actual_value(value_dict: dict) -> dict or int or bool or str:
         types = ['int', 'boolean', 'string', 'byte', 'str', 'name', ('flagged_int', 'int')]
+        if 'value' in value_dict:
+            value_dict = value_dict['value']
+        if value_dict is None:
+            return None
         for _type in types:
             if isinstance(_type, str):
                 if _type in value_dict:
