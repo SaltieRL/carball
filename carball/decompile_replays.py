@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(__file__)
 OUTPUT_DIR = os.path.join('replays', 'pickled')
 
 
-def decompile_replay(replay_path, output_path):
+def decompile_replay(replay_path, output_path, overwrite=True):
     binaries = [f for f in os.listdir(os.path.join(BASE_DIR, 'rattletrap')) if not f.endswith('.py')]
     platform = pt.system()
     if platform == 'Windows':
@@ -39,18 +39,31 @@ def decompile_replay(replay_path, output_path):
     output_dirs = os.path.dirname(output_path)
     if not os.path.isdir(output_dirs) and output_dirs != '':
         os.makedirs(output_dirs)
-    if not os.path.isfile(output_path):
+    if overwrite or not os.path.isfile(output_path):
         cmd = [os.path.join(os.path.join(BASE_DIR, 'rattletrap'), '{}'.format(binary)), '--compact', '-i',
                replay_path,
                '--output',
                output_path]
         logger.debug(" ".join(cmd))
         subprocess.check_output(cmd)
-    logger.debug(output_path)
     _json = json.load(open(output_path, encoding="utf8"))
+    return _json
+
+
+def analyze_replay_file(replay_path: str, output_path: str, overwrite=True, sanity_check=False):
+    """Decompile and analyze a replay file.
+
+    :param sanity_check: Run sanity check to make sure we analyzed correctly (BETA)
+    :param replay_path: Path to replay file
+    :param output_path: Path to write JSON
+    :param overwrite: If to overwrite JSON (suggest True if speed is not an issue)
+    :return: AnalysisManager of game with analysis
+    """
+    _json = decompile_replay(replay_path, output_path, overwrite=overwrite)
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
-    sanity_check.check_game(game, failing_level=CheckErrorLevel.CRITICAL)
+    if sanity_check:
+        sanity_check.check_game(game, failing_level=CheckErrorLevel.CRITICAL)
     analysis = AnalysisManager(game)
     analysis.create_analysis()
 
@@ -75,14 +88,14 @@ if __name__ == '__main__':
         output = 'replays/decompiled/{}'.format(filepath.replace(".replay", ".json"))
         if DEBUGGING:
             try:
-                analysis_manager = decompile_replay(filepath, output)
+                analysis_manager = analyze_replay_file(filepath, output)
                 with open('game.json', 'w') as f:
                     f.write(MessageToJson(analysis_manager.protobuf_game))
             except subprocess.CalledProcessError as e:
                 traceback.print_exc()
         else:
             try:
-                analysis_manager = decompile_replay(filepath, output)
+                analysis_manager = analyze_replay_file(filepath, output)
                 with open(os.path.join(OUTPUT_DIR, filename + '.pts'), 'wb') as fo:
                     analysis_manager.write_proto_out_to_file(fo)
                 with gzip.open(os.path.join(OUTPUT_DIR, filename + '.gzip'), 'wb') as fo:
