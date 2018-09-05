@@ -12,7 +12,7 @@ message Boost {
     // Collecting boost when near full
     optional float wasted_collection = 4;
     // Using boost when at max speed while on the ground
-    optional float wasted_useage = 5;
+    optional float wasted_usage = 5;
 }
 
 message Distance {
