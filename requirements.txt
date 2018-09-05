@@ -1,5 +1,5 @@
 numpy
-tables
 protobuf
 xlrd
 pandas
+twine

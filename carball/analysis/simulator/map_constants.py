@@ -1,0 +1,9 @@
+OUT_OF_FRAME_COORDS = (10000, 10000)
+MAP_X, MAP_Y, MAP_Z = 8200, 10280, 2050  # field dimensions
+GOAL_X, GOAL_Y, GOAL_Z = 1792, 900, 640
+
+
+MAP_X_LIMS = (-MAP_X / 2, MAP_X / 2)
+MAP_Y_LIMS = (-MAP_Y / 2, MAP_Y / 2)
+MAP_Z_LIMS = (0, MAP_Z)
+
