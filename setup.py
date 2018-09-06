@@ -8,16 +8,13 @@ else:
     long_description = ''
 setup(
     name='carball',
-    version='0.2.0',
+    version='0.2.1',
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=['pandas==0.23.4', 'protobuf==3.6.1', 'xlrd'],
     url='https://github.com/SaltieRL/ReplayAnalysis',
     keywords=['rocket-league'],
     license='Apache 2.0',
-    classifiers=[
-        "Programming Language :: Python :: 3",
-    ],
     author='Matthew Mage, Harry Xie, David Turner',
     author_email='sciguymjm@gmail.com',
     description='Rocket League replay parsing and analysis.',
