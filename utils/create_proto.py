@@ -66,7 +66,7 @@ def get_file_list(top_level_dir, exclude_dir=None, file_extension='.py'):
 
 def create_proto_files():
     print('###CREATING PROTO FILES###')
-    file_list = get_file_list(top_level_dir='api', exclude_dir='carball', file_extension='.proto')
+    file_list = get_file_list(top_level_dir='api', file_extension='.proto')
     for file in file_list:
         path = file[0]
         file = file[1]
