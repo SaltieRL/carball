@@ -19,19 +19,27 @@ CHECKS_TO_RUN: List[Type[BaseCheck]] = [
 ]
 
 
-def check_game(game: Game, failing_level: CheckErrorLevel = CheckErrorLevel.CRITICAL):
-    errors: List[CheckError] = []
+class SanityChecker:
+    """
+    Checks the replays to make sure the data we are outputting are correct data.
+    """
 
-    for check in CHECKS_TO_RUN:
-        logger.info(f'Running check: {check.__name__}')
-        if issubclass(check, PlayerCheck):
-            for player in game.players:
-                errors += check(player).run_check()
-        elif issubclass(check, GameCheck):
-            errors += check(game).run_check()
+    def __init__(self, failing_level: CheckErrorLevel = CheckErrorLevel.CRITICAL):
+        self.failing_level = failing_level
 
-    for error in errors:
-        if error.level.value >= failing_level.value:
-            raise error
+    def check_game(self, game: Game):
+        errors: List[CheckError] = []
 
-    logger.info('All checks passed.')
+        for check in CHECKS_TO_RUN:
+            logger.info(f'Running check: {check.__name__}')
+            if issubclass(check, PlayerCheck):
+                for player in game.players:
+                    errors += check(player).run_check()
+            elif issubclass(check, GameCheck):
+                errors += check(game).run_check()
+
+        for error in errors:
+            if error.level.value >= self.failing_level.value:
+                raise error
+
+        logger.info('All checks passed.')
