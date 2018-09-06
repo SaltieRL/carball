@@ -2,3 +2,4 @@ include requirements.txt
 include carball/rattletrap/*
 exclude carball/generated/*
 recursive-include carball/generated/api *.py
+recursive-include carball *.xlsx

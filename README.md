@@ -1,20 +1,14 @@
 # carball
 Various tools for decompiling / analyzing Rocket League replays.
 
-## Pipeline
-![pipeline is in Parserformat.png](Parser%20format.png)
+## Requirements
 
-If you want to add a new stat it is best to do it in the advanced stats section of the pipeline.
-You should look at:
+- Python 3.5+
+- Windows, Mac or Linux
 
-[Stat base classes](carball/analysis/stats/stats.py)
+## Install
 
-[Where you add a new stat](carball/analysis/stats/stats_list.py)
-
-If you want to see the output format of the stats created you can look [here](api)
-
-Compile the proto files by running in this directory
-`setup.bat` (Windows) or `setup.sh` (Linux/mac)
+`pip install carball`
 
 ## Examples / Usage
 
@@ -62,3 +56,18 @@ with gzip.open(os.path.join('output.gzip'), 'wb') as fo:
     analysis.write_pandas_out_to_file(fo)
 ```
 
+
+## Pipeline
+![pipeline is in Parserformat.png](Parser%20format.png)
+
+If you want to add a new stat it is best to do it in the advanced stats section of the pipeline.
+You should look at:
+
+[Stat base classes](carball/analysis/stats/stats.py)
+
+[Where you add a new stat](carball/analysis/stats/stats_list.py)
+
+If you want to see the output format of the stats created you can look [here](api)
+
+Compile the proto files by running in this directory
+`setup.bat` (Windows) or `setup.sh` (Linux/mac)

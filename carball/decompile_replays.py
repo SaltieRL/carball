@@ -1,16 +1,12 @@
-import gzip
 import json
 import os
-import shutil
 import subprocess
-import traceback
 import logging
 import sys
 import platform as pt
 
-from google.protobuf.json_format import MessageToJson
+from carball.json_parser.sanity_check.sanity_check import SanityChecker
 
-from carball.json_parser.sanity_check.errors.errors import CheckErrorLevel
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from carball.analysis.analysis_manager import AnalysisManager
@@ -18,14 +14,20 @@ from carball.analysis.analysis_manager import AnalysisManager
 logger = logging.getLogger(__name__)
 
 from carball.json_parser.game import Game
-from carball.controls.controls import get_controls
-from carball.json_parser.sanity_check import sanity_check
+from carball.controls.controls import ControlsCreator
 
 BASE_DIR = os.path.dirname(__file__)
-OUTPUT_DIR = os.path.join('replays', 'pickled')
 
 
 def decompile_replay(replay_path, output_path, overwrite=True):
+    """
+    Takes a path to the replay and outputs the json of that replay.
+
+    :param replay_path: Path to a specific replay.
+    :param output_path: The output path of rattletrap.
+    :param overwrite: True if we should recreate the json even if it already exists.
+    :return: The json created from rattle trap.
+    """
     binaries = [f for f in os.listdir(os.path.join(BASE_DIR, 'rattletrap')) if not f.endswith('.py')]
     platform = pt.system()
     if platform == 'Windows':
@@ -50,20 +52,25 @@ def decompile_replay(replay_path, output_path, overwrite=True):
     return _json
 
 
-def analyze_replay_file(replay_path: str, output_path: str, overwrite=True, sanity_check=False):
-    """Decompile and analyze a replay file.
+def analyze_replay_file(replay_path: str, output_path: str, overwrite=True, controls: ControlsCreator=None,
+                        sanity_check: SanityChecker=None):
+    """
+    Decompile and analyze a replay file.
 
-    :param sanity_check: Run sanity check to make sure we analyzed correctly (BETA)
     :param replay_path: Path to replay file
     :param output_path: Path to write JSON
     :param overwrite: If to overwrite JSON (suggest True if speed is not an issue)
-    :return: AnalysisManager of game with analysis
+    :param controls: Generate controls from the replay using our best guesses (ALPHA)
+    :param sanity_check: Run sanity check to make sure we analyzed correctly (BETA)
+    :return: AnalysisManager of game with analysis.
     """
     _json = decompile_replay(replay_path, output_path, overwrite=overwrite)
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
-    if sanity_check:
-        sanity_check.check_game(game, failing_level=CheckErrorLevel.CRITICAL)
+    if controls is not None:
+        controls.get_controls(game)
+    if sanity_check is not None:
+        sanity_check.check_game(game)
     analysis = AnalysisManager(game)
     analysis.create_analysis()
 
@@ -71,44 +78,5 @@ def analyze_replay_file(replay_path: str, output_path: str, overwrite=True, sani
 
 
 if __name__ == '__main__':
-    import logging
-
-    logging.basicConfig(level=logging.WARNING)
-    logger = logging.getLogger(__name__)
-    MOVE_WORKING = True
-    DEBUGGING = True
-    success = 0
-    failure = 0
-    if not os.path.isdir(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
-
-    for filename in [f for f in os.listdir('replays/') if os.path.isfile('replays/' + f)]:
-        filepath = 'replays/' + filename
-        print(filepath)
-        output = 'replays/decompiled/{}'.format(filepath.replace(".replay", ".json"))
-        if DEBUGGING:
-            try:
-                analysis_manager = analyze_replay_file(filepath, output)
-                with open('game.json', 'w') as f:
-                    f.write(MessageToJson(analysis_manager.protobuf_game))
-            except subprocess.CalledProcessError as e:
-                traceback.print_exc()
-        else:
-            try:
-                analysis_manager = analyze_replay_file(filepath, output)
-                with open(os.path.join(OUTPUT_DIR, filename + '.pts'), 'wb') as fo:
-                    analysis_manager.write_proto_out_to_file(fo)
-                with gzip.open(os.path.join(OUTPUT_DIR, filename + '.gzip'), 'wb') as fo:
-                    analysis_manager.write_pandas_out_to_file(fo)
-                if MOVE_WORKING:
-                    shutil.move(filepath, os.path.join('replays', 'working', filename))
-                success += 1
-            except Exception as e:
-                traceback.print_exc()
-                failure += 1
-    if not DEBUGGING:
-        if float(success + failure) == 0:
-            print("NO REPLAYS WERE RUN.")
-            print("Need files in: " + BASE_DIR)
-        ratio = success / float(success + failure)
-        print('success ratio:', ratio)
+    from carball.tests.analysis_test import __test_replays
+    __test_replays(BASE_DIR)

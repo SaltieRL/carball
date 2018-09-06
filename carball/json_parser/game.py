@@ -105,10 +105,10 @@ class Game:
     @staticmethod
     def find_actual_value(value_dict: dict) -> dict or int or bool or str:
         types = ['int', 'boolean', 'string', 'byte', 'str', 'name', ('flagged_int', 'int')]
-        if 'value' in value_dict:
-            value_dict = value_dict['value']
         if value_dict is None:
             return None
+        if 'value' in value_dict:
+            value_dict = value_dict['value']
         for _type in types:
             if isinstance(_type, str):
                 if _type in value_dict:
