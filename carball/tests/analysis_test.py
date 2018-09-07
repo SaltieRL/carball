@@ -50,19 +50,20 @@ def __test_replays(BASE_DIR):
                     f.write(MessageToJson(analysis_manager.protobuf_game))
             except subprocess.CalledProcessError as e:
                 traceback.print_exc()
-        try:
-            analysis_manager = analyze_replay_file(filepath, json_path)
-            with open(proto_path, 'wb') as fo:
-                analysis_manager.write_proto_out_to_file(fo)
-            with gzip.open(pandas_path, 'wb') as fo:
-                analysis_manager.write_pandas_out_to_file(fo)
-            if MOVE_WORKING:
-                shutil.move(filepath, os.path.join('replays', 'working', filepath))
-            success += 1
-        except Exception as e:
-            traceback.print_exc()
-            failure += 1
-    if DEBUGGING:
+        else:
+            try:
+                analysis_manager = analyze_replay_file(filepath, json_path)
+                with open(proto_path, 'wb') as fo:
+                    analysis_manager.write_proto_out_to_file(fo)
+                with gzip.open(pandas_path, 'wb') as fo:
+                    analysis_manager.write_pandas_out_to_file(fo)
+                if MOVE_WORKING:
+                    shutil.move(filepath, os.path.join('replays', 'working', filepath))
+                success += 1
+            except Exception as e:
+                traceback.print_exc()
+                failure += 1
+    if not DEBUGGING:
         if float(success + failure) == 0:
             print("NO REPLAYS WERE RUN.")
             print("Need files in: " + BASE_DIR)

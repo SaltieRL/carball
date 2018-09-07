@@ -8,7 +8,7 @@ else:
     long_description = ''
 setup(
     name='carball',
-    version='0.2.2',
+    version='0.2.3',
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=['pandas==0.23.4', 'protobuf==3.6.1', 'xlrd'],
