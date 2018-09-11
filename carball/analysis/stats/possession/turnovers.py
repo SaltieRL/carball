@@ -44,17 +44,16 @@ class TurnoverStat(BaseStat, HitStat):
         if not next_saltie_hit.HasField("next_hit_frame_number") or hit_index + 2 >= len(hits):
             return
         third_hit_player = player_map[hits[hit_index + 2].player_id.id]
-        if hit_player.is_orange != second_hit_player.is_orange:
-            if third_hit_player.is_orange != second_hit_player.is_orange:
-                # this is a turnover!
-                # if the hit occurred on the on the same half as my team
-                my_half = (saltie_hit.ball_data.pos_y > 0) == hit_player.is_orange
-                neutral_zone = self.field_constants.get_neutral_zone(saltie_hit.ball_data)
-                self.assign_turnover(hit_player.stats.possession, my_half, neutral_zone)
-                self.assign_turnover(proto_game.teams[hit_player.is_orange].stats.possession,
-                                     my_half, neutral_zone)
-                second_hit_player.stats.possession.won_turnovers += 1
-                proto_game.teams[second_hit_player.is_orange].stats.possession.won_turnovers += 1
+        if hit_player.is_orange != second_hit_player.is_orange and hit_player.is_orange != third_hit_player.is_orange:
+            # this is a turnover!
+            # if the hit occurred on the on the same half as my team
+            my_half = (saltie_hit.ball_data.pos_y > 0) == hit_player.is_orange
+            neutral_zone = self.field_constants.get_neutral_zone(saltie_hit.ball_data)
+            self.assign_turnover(hit_player.stats.possession, my_half, neutral_zone)
+            self.assign_turnover(proto_game.teams[hit_player.is_orange].stats.possession,
+                                 my_half, neutral_zone)
+            second_hit_player.stats.possession.won_turnovers += 1
+            proto_game.teams[second_hit_player.is_orange].stats.possession.won_turnovers += 1
 
     def assign_turnover(self, possession_proto, is_turnover_my_half, is_neutral):
         possession_proto.turnovers += 1
