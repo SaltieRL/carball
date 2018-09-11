@@ -21,8 +21,11 @@ class TurnoverStat(HitStat):
         hits = proto_game.game_stats.hits
         hit_player = player_map[saltie_hit.player_id.id]
         second_hit_player = player_map[next_saltie_hit.player_id.id]
+
+        # If there is a goal between 2nd hit and 3rd hit abort check
         if not next_saltie_hit.HasField("next_hit_frame_number") or hit_index + 2 >= len(hits):
             return
+
         third_hit_player = player_map[hits[hit_index + 2].player_id.id]
         if hit_player.is_orange != second_hit_player.is_orange and hit_player.is_orange != third_hit_player.is_orange:
             # this is a turnover!
