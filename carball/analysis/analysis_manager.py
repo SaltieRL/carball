@@ -9,7 +9,7 @@ from ..analysis.saltie_game.metadata.ApiGame import ApiGame
 from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
 from ..analysis.saltie_game.metadata.ApiTeam import ApiTeam
 from ..analysis.saltie_game.saltie_game import SaltieGame
-from carball.analysis.hit_detection.hit_analysis import SaltieHit
+from ..analysis.hit_detection.hit_analysis import SaltieHit
 from ..analysis.stats.stats_manager import StatsManager
 from ..analysis.utils.pandas_manager import PandasManager
 from ..analysis.utils.proto_manager import ProtobufManager
