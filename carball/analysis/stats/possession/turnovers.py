@@ -4,37 +4,17 @@ import pandas as pd
 
 from carball.generated.api.stats.events_pb2 import Hit
 from ....analysis.constants.field_constants import FieldConstants
-from ....analysis.stats.stats import BaseStat, HitStat
+from ....analysis.stats.stats import HitStat
 from ....generated.api import game_pb2
 from ....generated.api.player_pb2 import Player
 from ....json_parser.game import Game
 
 
-class TurnoverStat(BaseStat, HitStat):
+class TurnoverStat(HitStat):
     field_constants = FieldConstants()
 
     def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frame: pd.DataFrame):
         pass
-
-    def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game,
-                       player_map: Dict[str, Player], data_frame: pd.DataFrame):
-
-        hits = list(proto_stat.hits)
-        for i in range(len(hits) - 2):
-            hit_player = player_map[hits[i].player_id.id]
-            second_hit_player = player_map[hits[i + 1].player_id.id]
-            third_hit_player = player_map[hits[i + 2].player_id.id]
-            if hit_player.is_orange != second_hit_player.is_orange:
-                if third_hit_player.is_orange != second_hit_player.is_orange:
-                    # this is a turnover!
-                    # if the hit occurred on the on the same half as my team
-                    my_half = (hits[i].ball_data.pos_y > 0) == hit_player.is_orange
-                    neutral_zone = self.field_constants.get_neutral_zone(hits[i].ball_data)
-                    self.assign_turnover(hit_player.stats.possession, my_half, neutral_zone)
-                    self.assign_turnover(proto_game.teams[hit_player.is_orange].stats.possession,
-                                         my_half, neutral_zone)
-                    second_hit_player.stats.possession.won_turnovers += 1
-                    proto_game.teams[second_hit_player.is_orange].stats.possession.won_turnovers += 1
 
     def calculate_next_hit_stat(self, game: Game, proto_game: game_pb2.Game, saltie_hit: Hit, next_saltie_hit: Hit,
                                 player_map: Dict[str, Player], hit_index: int):
