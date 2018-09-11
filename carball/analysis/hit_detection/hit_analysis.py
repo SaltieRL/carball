@@ -9,9 +9,9 @@ from ...generated.api import game_pb2
 from ...generated.api.player_pb2 import Player
 from ...generated.api.stats.events_pb2 import Hit
 from ...json_parser.game import Game
-from ..hit_detection.base_hit import BaseHit
-from ..simulator.ball_simulator import BallSimulator
-from ..simulator.map_constants import *
+from ...analysis.hit_detection.base_hit import BaseHit
+from ...analysis.simulator.ball_simulator import BallSimulator
+from ...analysis.simulator.map_constants import *
 
 
 logger = logging.getLogger(__name__)
@@ -196,7 +196,7 @@ class SaltieHit:
             SaltieHit.get_shot(game, saltie_hit, player_map)
 
             simulation_time = time.time()
-            total_simulation_time = simulation_time - stat_time
+            total_simulation_time += simulation_time - stat_time
 
         logger.debug('next time: %s', total_next_hit_time * 1000)
         logger.debug('stat time: %s', total_stat_time * 1000)
