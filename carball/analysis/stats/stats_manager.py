@@ -85,4 +85,4 @@ class StatsManager:
             if current_hit.HasField("next_hit_frame_number"):
                 next_hit = hits[hit_index + 1]
                 for hit_stat in hit_stats:
-                    hit_stat.calculate_next_hit_stat(game, proto_game, current_hit, next_hit, player_map)
+                    hit_stat.calculate_next_hit_stat(game, proto_game, current_hit, next_hit, player_map, hit_index)

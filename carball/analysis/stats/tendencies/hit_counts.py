@@ -33,7 +33,7 @@ class HitCountStat(HitStat):
         hit_count.total_hits += 1
 
     def calculate_next_hit_stat(self, game: Game, proto_game: game_pb2.Game, saltie_hit: Hit, next_saltie_hit: Hit,
-                                player_map: Dict[str, Player]):
+                                player_map: Dict[str, Player], hit_index: int):
         player = player_map[saltie_hit.player_id.id]
         self.apply_stat(player.stats.hit_counts, saltie_hit)
         team = proto_game.teams[player.is_orange]

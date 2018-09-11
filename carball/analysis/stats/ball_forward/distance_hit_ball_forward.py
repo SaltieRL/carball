@@ -15,7 +15,7 @@ class DistanceStats(HitStat):
         pass
 
     def calculate_next_hit_stat(self, game: Game, proto_game: game_pb2.Game, saltie_hit: Hit, next_saltie_hit: Hit,
-                                player_map: Dict[str, Player]):
+                                player_map: Dict[str, Player], hit_index: int):
         player = player_map[saltie_hit.player_id.id]
         hit_distance_y = next_saltie_hit.ball_data.pos_y - saltie_hit.ball_data.pos_y
 
