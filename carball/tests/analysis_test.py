@@ -23,7 +23,7 @@ def __test_replays(BASE_DIR):
     ROOT_DIR = os.path.dirname(BASE_DIR)
     OUTPUT_DIR = os.path.join(ROOT_DIR, 'output')
 
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger(__name__)
     MOVE_WORKING = True
     DEBUGGING = True

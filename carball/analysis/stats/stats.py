@@ -61,7 +61,7 @@ class HitStat:
         raise NotImplementedError()
 
     def calculate_next_hit_stat(self, game: Game, proto_game: game_pb2.Game, saltie_hit: Hit, next_saltie_hit: Hit,
-                                player_map: Dict[str, Player]):
+                                player_map: Dict[str, Player], hit_index: int):
         """
         Calculate stats that use only the current hit + the next hit.
         :param game:
@@ -69,6 +69,7 @@ class HitStat:
         :param saltie_hit:
         :param next_saltie_hit:
         :param player_map:
+        :param hit_index:
         :return:
         """
         raise NotImplementedError()
