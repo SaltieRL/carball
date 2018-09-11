@@ -17,7 +17,7 @@ class BoostStat(BaseStat):
         for player_key, stats in player_stat_map.items():
             proto_boost = stats.boost
             player_name = player_map[player_key].name
-            proto_boost.usage = self.get_player_boost_usage(data_frame[player_name])
+            proto_boost.boost_usage = self.get_player_boost_usage(data_frame[player_name])
             collection = self.get_player_boost_collection(data_frame[player_name])
             proto_boost.wasted_collection = self.get_player_boost_waste(proto_boost.usage, collection)
             if 'small' in collection and collection['small'] is not None:

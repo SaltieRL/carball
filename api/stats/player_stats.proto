@@ -6,7 +6,7 @@ import "api/stats/events.proto";
 package api.stats;
 
 message Boost {
-    optional double usage = 1;
+    optional double boost_usage = 1;
     optional int32 num_small_boosts = 2;
     optional int32 num_large_boosts = 3;
     // Collecting boost when near full
