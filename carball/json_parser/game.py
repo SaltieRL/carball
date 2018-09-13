@@ -527,8 +527,7 @@ class Game:
         player_actor_id_player_dict = {}  # player_actor_id: Player
         for _player_actor_id, _player_data in all_data['player_dicts'].items():
             if "TAGame.PRI_TA:MatchScore" not in _player_data:
-                logger.info("Ignoring player %s as player has no MatchScore." % _player_data['name'])
-                continue
+                logger.warning(f"Player {_player_data['name']} as player has no MatchScore.")
 
             found_player = False
             for player in self.players:
