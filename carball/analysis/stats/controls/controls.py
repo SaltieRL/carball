@@ -28,3 +28,4 @@ class ControlsStat(BaseStat):
         total_frames = len(data_frame[player_name][column])
         count = (data_frame[player_name][column] == 0).sum() + (data_frame[player_name][column] == 128).sum()  + (data_frame[player_name][column] == 255).sum() + data_frame[player_name][column].isna().sum()
         return 100 - ((count * 100) / total_frames)
+    
