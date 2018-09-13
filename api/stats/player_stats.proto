@@ -31,4 +31,11 @@ message PlayerStats {
     optional api.stats.Averages averages = 5;
     optional api.stats.HitCounts hit_counts = 6;
     repeated api.stats.CameraChange camera_changes = 7;
+    optional Controller controller = 8;
+}
+
+message Controller {
+    optional bool is_keyboard = 1;
+    optional float analogue_steering_input_percent = 2;
+    optional float analogue_throttle_input_percent = 3;
 }
