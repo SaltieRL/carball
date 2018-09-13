@@ -8,7 +8,7 @@ from ...analysis.stats.possession.possession import PossessionStat
 from ...analysis.stats.possession.turnovers import TurnoverStat
 from ...analysis.stats.stats import BaseStat, HitStat
 from ...analysis.stats.tendencies.tendencies import TendenciesStat
-
+from ...analysis.stats.controls.controls import ControlsStat
 
 class StatsList:
     """
@@ -21,6 +21,7 @@ class StatsList:
         return [BoostStat(),
                 TendenciesStat(),
                 BallDistanceStat(),
+                ControlsStat(),
                 ]
 
     @staticmethod
