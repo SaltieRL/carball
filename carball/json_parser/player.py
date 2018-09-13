@@ -1,4 +1,5 @@
 import logging
+import math
 
 import pandas as pd
 
@@ -40,6 +41,7 @@ class Player:
         self.steering_sensitivity = None
 
         self.party_leader = None
+
     def __repr__(self):
         if self.team:
             return '%s: %s on %s' % (self.__class__.__name__, self.name, self.team)
@@ -184,6 +186,8 @@ class Player:
 
     def get_boost(self):
         # comparator has to be == for pandas
+        if not ('boost_collect' in self.data.columns):
+            self.data['boost_collect'] = math.nan
         boost_collection_frames = self.data.boost_collect[self.data.boost_collect == True].index.values
         for boost_collection_frame in boost_collection_frames:
             position = self.data.loc[boost_collection_frame, ['pos_x', 'pos_y', 'pos_z']]
