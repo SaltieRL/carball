@@ -36,4 +36,10 @@ class PandasManager:
     @staticmethod
     def read_numpy_from_memory(buffer):
         array = read_array_from_file(buffer)
-        return pd.DataFrame.from_records(array)
+        dataframe = pd.DataFrame.from_records(array)
+        dataframe.set_index('index', drop=True, inplace=True)
+        columns = []
+        for tuple_str in dataframe.columns.values:
+            columns.append(eval(tuple_str))
+        dataframe.columns = pd.MultiIndex.from_tuples(columns)
+        return dataframe
