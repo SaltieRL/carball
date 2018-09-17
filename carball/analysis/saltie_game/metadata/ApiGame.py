@@ -33,6 +33,8 @@ class ApiGame:
         proto_game.score.CopyFrom(ApiGameScore.create_from_game(game))
         ApiGoal.create_goals_from_game(game, proto_game.goals, id_creator)
         ApiDemo.create_demos_from_game(game, proto_game.demos, id_creator)
+        if game.primary_player['id'] is not None:
+            proto_game.primary_player.id = game.primary_player['id']
         return id_creator, proto_game
 
     @staticmethod
