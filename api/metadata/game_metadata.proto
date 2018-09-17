@@ -31,4 +31,5 @@ message GameMetadata {
     optional GameScore score = 7;
     repeated Goal goals = 9;
     repeated Demo demos = 10;
+    optional PlayerId primary_player = 11; // Player who saved the replay locally
 }

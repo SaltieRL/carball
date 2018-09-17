@@ -60,7 +60,7 @@ class Game:
         self.teams: List[Team] = []  # Added in parse_all_data
         self.players: List[Player] = self.create_players()
         self.goals: List[Goal] = self.get_goals()
-
+        self.primary_player: dict = self.get_primary_player()
         self.all_data = self.parse_replay()
 
         self.frames = None
@@ -89,6 +89,15 @@ class Game:
         except KeyError:
             pass
         return players
+
+    def get_primary_player(self):
+        owner_name = self.properties.get('PlayerName')
+        if owner_name is not None:
+            owner_name = owner_name['value']['str']
+            for player in self.players:
+                if player.name == owner_name:
+                    return {'name': owner_name, 'id': player.online_id}
+            return {'name': owner_name, 'id': None}
 
     def get_goals(self) -> List[Goal]:
         goals = [g['value'] for g in self.properties["Goals"]["value"]["array"]]
@@ -253,9 +262,12 @@ class Game:
                         try:
 
                             actor_type = \
-                            list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[
-                                0]
-                            unique_id = str(actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][actor_type])
+                                list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id'][
+                                         'remote_id'].keys())[
+                                    0]
+                            unique_id = str(
+                                actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][
+                                    actor_type])
                             leader = str(actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0][actor_type])
                             if leader in parties:
                                 if unique_id not in parties[leader]:
