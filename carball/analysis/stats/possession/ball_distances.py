@@ -2,6 +2,7 @@ from typing import Dict
 
 import pandas as pd
 
+from carball.analysis.stats.utils.panda_utils import return_time_by_player
 from ....analysis.hit_detection.base_hit import get_distance_from_displacements, get_player_ball_displacements
 from ....analysis.stats.stats import BaseStat
 from ....generated.api import game_pb2
@@ -26,7 +27,7 @@ class BallDistanceStat(BaseStat):
         player_distance_with_delta = pd.concat([player_distances_data_frame, data_frame['game', 'delta'].rename('delta')], axis=1)
 
         player_ball_distance_times = pd.concat([
-            self.return_time_by_player(data_frame, players_data_frame)
+            return_time_by_player(data_frame, players_data_frame)
             for players_data_frame in [closest_players, furthest_players]
         ], axis=1)
 
@@ -39,6 +40,4 @@ class BallDistanceStat(BaseStat):
             distance_stats.time_closest_to_ball = player_ball_distance_times['closest_player'][player_id]
             distance_stats.time_furthest_from_ball = player_ball_distance_times['furthest_player'][player_id]
 
-    def return_time_by_player(self, data_frame: pd.DataFrame, players_data_frame: pd.DataFrame) -> pd.DataFrame:
-        combined_data = pd.concat([players_data_frame, data_frame['game', 'delta'].rename('delta')], axis=1)
-        return combined_data.groupby(players_data_frame.name).sum().rename(columns={'delta': players_data_frame.name})
+

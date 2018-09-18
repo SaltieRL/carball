@@ -67,12 +67,13 @@ def analyze_replay_file(replay_path: str, output_path: str, overwrite=True, cont
     _json = decompile_replay(replay_path, output_path, overwrite=overwrite)
     game = Game(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
-    if controls is not None:
-        controls.get_controls(game)
     if sanity_check is not None:
         sanity_check.check_game(game)
     analysis = AnalysisManager(game)
     analysis.create_analysis()
+
+    if controls is not None:
+        controls.get_controls(game)
 
     return analysis
 

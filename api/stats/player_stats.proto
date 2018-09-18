@@ -11,8 +11,12 @@ message Boost {
     optional int32 num_large_boosts = 3;
     // Collecting boost when near full
     optional float wasted_collection = 4;
+
     // Using boost when at max speed while on the ground
-    optional float wasted_usage = 5;
+    optional float wasted_usage = 5; // TODO: Implement
+    optional float time_full_boost = 6; // TODO: Implement
+    // Time when player has < 10 boost
+    optional float time_low_boost = 7; // TODO: Implement
 }
 
 message Distance {
@@ -21,6 +25,12 @@ message Distance {
     optional float time_closest_to_ball = 3;
     optional float time_furthest_from_ball = 4;
     optional float time_close_to_ball = 5; // only when player is < 500 units away
+}
+
+message Speed {
+    optional float time_slow_speed = 1; // Time when car is < 700uu/s
+    optional float time_at_super_sonic_speed = 2; // time when car is > 2200
+    optional float time_at_boost_speed = 3; // time when car is > 1410
 }
 
 message PlayerStats {
@@ -32,6 +42,7 @@ message PlayerStats {
     optional api.stats.HitCounts hit_counts = 6;
     repeated api.stats.CameraChange camera_changes = 7;
     optional Controller controller = 8;
+    optional Speed speed = 9;
 }
 
 message Controller {
