@@ -30,13 +30,12 @@ class SpeedTendencies(BaseStat):
 
         player.stats.averages.average_speed = average_speed
 
-        fast_frames = speed >= 2200
-        result = return_time_by_truthy_data(data_frame, fast_frames)
-        player.stats.speed.time_at_super_sonic = result
+        fast_frames = speed >= 22000
+        player.stats.speed.time_at_super_sonic = return_time_by_truthy_data(data_frame, fast_frames).delta
 
-        slow_frames = speed <= 700
-        player.stats.speed.time_at_slow_speed = return_time_by_truthy_data(data_frame, slow_frames)
+        slow_frames = speed <= 7000
+        player.stats.speed.time_at_slow_speed = return_time_by_truthy_data(data_frame, slow_frames).delta
 
-        boost_frames = speed > 1410
-        player.stats.speed.time_at_boost_speed = return_time_by_truthy_data(data_frame, boost_frames)
+        boost_frames = speed > 14100
+        player.stats.speed.time_at_boost_speed = return_time_by_truthy_data(data_frame, boost_frames).delta
 
