@@ -55,7 +55,10 @@ class Player:
         else:
             actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[0]
             self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'][actor_type]
-        self.score = actor_data["TAGame.PRI_TA:MatchScore"]
+        try:
+            self.score = actor_data["TAGame.PRI_TA:MatchScore"]
+        except KeyError:
+            logger.warning('Score is not found for player')
         team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]
         if team_actor_id == -1:
             # if they leave at the end
