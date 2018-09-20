@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def return_time_by_player(data_frame: pd.DataFrame, players_data_frame: pd.DataFrame) -> pd.DataFrame:
+def sum_deltas_by_player_name(data_frame: pd.DataFrame, players_data_frame: pd.Series) -> pd.DataFrame:
     """
     Gets the delta from the pandas data frame for certain players at certain times
     :param data_frame: The game data frame, goal frames are removed
@@ -12,7 +12,7 @@ def return_time_by_player(data_frame: pd.DataFrame, players_data_frame: pd.DataF
     return combined_data.groupby(players_data_frame.name).sum().rename(columns={'delta': players_data_frame.name})
 
 
-def return_time_by_truthy_data(data_frame: pd.DataFrame, truthy_frames: pd.DataFrame) -> pd.DataFrame:
+def sum_deltas_by_truthy_data(data_frame: pd.DataFrame, truthy_frames: pd.Series) -> pd.DataFrame:
     """
     Gets the delta from the pandas data frame for certain players at certain times.
     :param data_frame: The game data frame, goal frames are removed
@@ -21,4 +21,4 @@ def return_time_by_truthy_data(data_frame: pd.DataFrame, truthy_frames: pd.DataF
     """
     truthy_frames = truthy_frames.rename('truthy')
     combined_data = pd.concat([truthy_frames, data_frame['game', 'delta'].rename('delta')], axis=1)
-    return combined_data.loc[combined_data['truthy'] == True].sum().rename(columns={'delta': 'true_values'})
+    return combined_data.loc[combined_data['truthy'] == True].sum().rename(columns={'delta': 'true_values'}).delta
