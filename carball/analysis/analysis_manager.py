@@ -61,7 +61,7 @@ class AnalysisManager:
         kickoff_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frame)
         self.game.kickoff_frames = kickoff_frames
         self.log_time("getting kickoff")
-
+        self.get_game_time(self.game, self.protobuf_game, data_frame)
         if self.can_do_full_analysis():
             self.calculate_hit_stats(self.game, self.protobuf_game, player_map, data_frame, kickoff_frames)
             self.log_time("calculating hits")
@@ -158,3 +158,6 @@ class AnalysisManager:
             file.write(self.df_bytes)
         elif not self.should_store_frames:
             logger.warning("pd DataFrames are not being stored anywhere")
+
+    def get_game_time(self, game: Game, protobuf_game: game_pb2.Game, df):
+         protobuf_game.game_metadata.length = df.game[df.game.goal_number.notnull()].delta.sum()
