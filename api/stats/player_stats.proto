@@ -19,6 +19,8 @@ message Boost {
     optional float time_low_boost = 7;
     // Time when player has 0 boost
     optional float time_no_boost = 8;
+    // Number of the large boosts taken on the enemy side
+    optional int32 num_stolen_boosts = 9;
 }
 
 message Distance {

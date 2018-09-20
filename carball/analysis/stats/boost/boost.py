@@ -2,6 +2,7 @@ from typing import Dict
 
 import numpy as np
 import pandas as pd
+from carball.analysis.constants.field_constants import FieldConstants
 
 from carball.analysis.stats.utils.pandas_utils import sum_deltas_by_truthy_data
 from ....analysis.stats.stats import BaseStat
@@ -12,6 +13,8 @@ from ....json_parser.game import Game
 
 
 class BoostStat(BaseStat):
+
+    field_constants = FieldConstants()
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
@@ -33,11 +36,24 @@ class BoostStat(BaseStat):
             proto_boost.time_low_boost = self.get_time_with_low_boost(data_frame, player_data_frame)
             proto_boost.time_no_boost = self.get_time_with_zero_boost(data_frame, player_data_frame)
 
+            proto_boost.num_stolen_boosts = self.get_num_stolen_boosts(player_data_frame,
+                                                                       player_map[player_key].is_orange)
+
     @staticmethod
     def get_player_boost_usage(player_dataframe: pd.DataFrame) -> np.float64:
         _diff = -player_dataframe.boost.diff()
         boost_usage = _diff[_diff > 0].sum() / 255 * 100
         return boost_usage
+
+    @classmethod
+    def get_num_stolen_boosts(cls, player_dataframe: pd.DataFrame, is_orange):
+        filtered = player_dataframe[player_dataframe.boost_collect == True]
+        if is_orange == 1:
+            filtered = filtered[cls.field_constants.get_third_0(filtered)]
+        else:
+            filtered = filtered[cls.field_constants.get_third_2(filtered)]
+
+        return len(filtered.index)
 
     @staticmethod
     def get_player_boost_usage_max_speed(player_dataframe: pd.DataFrame) -> np.float64:
