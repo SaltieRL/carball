@@ -47,13 +47,13 @@ class BoostStat(BaseStat):
 
     @classmethod
     def get_num_stolen_boosts(cls, player_dataframe: pd.DataFrame, is_orange):
-        filtered = player_dataframe[player_dataframe.boost_collect == True]
+        big_pads_collected = player_dataframe[player_dataframe.boost_collect == True]
         if is_orange == 1:
-            filtered = filtered[cls.field_constants.get_third_0(filtered)]
+            boost_collected_in_opposing_third = big_pads_collected[cls.field_constants.get_third_0(big_pads_collected)]
         else:
-            filtered = filtered[cls.field_constants.get_third_2(filtered)]
+            boost_collected_in_opposing_third = big_pads_collected[cls.field_constants.get_third_2(big_pads_collected)]
 
-        return len(filtered.index)
+        return len(boost_collected_in_opposing_third.index)
 
     @staticmethod
     def get_player_boost_usage_max_speed(player_dataframe: pd.DataFrame) -> np.float64:
@@ -68,15 +68,13 @@ class BoostStat(BaseStat):
 
         combined = pd.concat([_diff, speed], axis=1)
 
-        filtered_1 = combined[combined.speed > 22000]
-        filtered_2 = filtered_1[filtered_1.boost > 0]
-        filtered_3 = filtered_2[filtered_2.boost < 10]
-        boost_usage = filtered_3.boost.sum() / 255 * 100
-        return float(boost_usage)
+        wasted_boost = combined[(combined.speed > 22000) & (combined.boost > 0) & (combined.boost < 10)]
+        boost_usage = wasted_boost.boost.sum() / 255 * 100
+        return boost_usage
 
     @staticmethod
     def get_time_with_max_boost(data_frame: pd.DataFrame, player_dataframe: pd.DataFrame) -> np.float64:
-        return sum_deltas_by_truthy_data(data_frame, player_dataframe.boost > 252.45)
+        return sum_deltas_by_truthy_data(data_frame, player_dataframe.boost > 252.45)  # 100% visible boost
 
     @staticmethod
     def get_time_with_low_boost(data_frame: pd.DataFrame, player_dataframe: pd.DataFrame) -> np.float64: # less than 25
