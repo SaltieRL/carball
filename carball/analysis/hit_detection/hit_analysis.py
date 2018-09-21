@@ -21,7 +21,7 @@ class SaltieHit:
 
     @staticmethod
     def get_distance_to_goal(game: Game, hit: Hit, player_map: Dict[str, Player]):
-        ball_data = BaseHit.get_ball_data(game, hit)
+        ball_data = BaseHit.get_ball_data(game.frames, hit)
         _goal_x = min(max(ball_data['pos_x'], GOAL_X / 2), -GOAL_X / 2)
         _goal_y = -MAP_Y / 2 if player_map[hit.player_id.id].is_orange else MAP_Y / 2
 
@@ -87,8 +87,8 @@ class SaltieHit:
         """
 
         # distance the ball traveled
-        displacement = (BaseHit.get_ball_data(game, next_saltie_hit)[['pos_x', 'pos_y', 'pos_z']].values -
-                        BaseHit.get_ball_data(game, saltie_hit)[['pos_x', 'pos_y', 'pos_z']].values)
+        displacement = (BaseHit.get_ball_data(game.frames, next_saltie_hit)[['pos_x', 'pos_y', 'pos_z']].values -
+                        BaseHit.get_ball_data(game.frames, saltie_hit)[['pos_x', 'pos_y', 'pos_z']].values)
         saltie_hit.distance = np.sqrt(np.square(displacement).sum())
 
         # dribble detection
@@ -116,7 +116,7 @@ class SaltieHit:
         """
         # find shots
         # TODO: Support non-standard maps? Raise warning/don't predict for non-standard maps?
-        ball_sim = BallSimulator(BaseHit.get_ball_data(game, saltie_hit),
+        ball_sim = BallSimulator(BaseHit.get_ball_data(game.frames, saltie_hit),
                                  player_map[saltie_hit.player_id.id].is_orange)
         is_shot = ball_sim.get_is_shot()
         if is_shot:

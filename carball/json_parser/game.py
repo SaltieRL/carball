@@ -21,7 +21,33 @@ DATETIME_FORMATS = [
 
 class Game:
 
-    def __init__(self, file_path='', loaded_json=None):
+    def __init__(self):
+        self.file_path = None
+        self.replay = None
+        self.properties = None
+        self.replay_id = None
+        self.map = None
+        self.name = None
+        self.id = None
+        self.datetime = None
+        self.replay_version = None
+
+        self.replay_data = None
+
+        self.teams: List[Team] = None  # Added in parse_all_data
+        self.players: List[Player] = None
+        self.goals: List[Goal] = None
+        self.primary_player: dict = None
+        self.all_data = None
+
+        self.frames = None
+        self.kickoff_frames = None
+        self.ball = None
+        self.ball_type = None
+        self.demos = None
+        self.parties = None
+
+    def initialize(self, file_path='', loaded_json=None):
         self.file_path = file_path
         if loaded_json is None:
             with open(file_path, 'r') as f:
@@ -57,20 +83,12 @@ class Game:
         if self.replay_version is None:
             logger.warning('Replay version not found')
 
-        self.teams: List[Team] = []  # Added in parse_all_data
         self.players: List[Player] = self.create_players()
         self.goals: List[Goal] = self.get_goals()
         self.primary_player: dict = self.get_primary_player()
         self.all_data = self.parse_replay()
 
-        self.frames = None
-        self.kickoff_frames = None
-        self.ball = None
-        self.ball_type = None
-        self.demos = None
-        self.parties = None
         self.parse_all_data(self.all_data)
-
         logger.info("Finished parsing %s" % self)
 
     def __repr__(self):
