@@ -5,11 +5,11 @@ from typing import Dict
 import pandas as pd
 
 from ..analysis.hit_detection.base_hit import BaseHit
+from ..analysis.hit_detection.hit_analysis import SaltieHit
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame
 from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
 from ..analysis.saltie_game.metadata.ApiTeam import ApiTeam
 from ..analysis.saltie_game.saltie_game import SaltieGame
-from ..analysis.hit_detection.hit_analysis import SaltieHit
 from ..analysis.stats.stats_manager import StatsManager
 from ..analysis.utils.pandas_manager import PandasManager
 from ..analysis.utils.proto_manager import ProtobufManager
@@ -42,9 +42,9 @@ class AnalysisManager:
         if len(team_sizes) == 0:
             logger.warning("Not doing full analysis. No teams found")
             return False
-        if any((team_size != team_sizes[0]) for team_size in team_sizes):
-            logger.warning("Not doing full analysis. Not all team sizes are equal")
-            return False
+        # if any((team_size != team_sizes[0]) for team_size in team_sizes):
+        #     logger.warning("Not doing full analysis. Not all team sizes are equal")
+        #     return False
 
         return True
 
