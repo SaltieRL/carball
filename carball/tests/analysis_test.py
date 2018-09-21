@@ -45,7 +45,7 @@ def __test_replays(BASE_DIR):
         if DEBUGGING:
             try:
                 analysis_manager = analyze_replay_file(filepath, json_path, sanity_check=SanityChecker(),
-                                                       controls=ControlsCreator())
+                                                       controls=ControlsCreator(), analysis_per_goal=False)
                 with open(os.path.join(OUTPUT_DIR, 'game.json'), 'w') as f:
                     f.write(MessageToJson(analysis_manager.protobuf_game))
             except subprocess.CalledProcessError as e:

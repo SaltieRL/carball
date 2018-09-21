@@ -27,7 +27,7 @@ class BaseHit:
         for team in game.teams:
             team_dict[team.is_orange] = team
 
-        hit_frame_numbers = BaseHit.get_hit_frame_numbers_by_ball_ang_vel(game)
+        hit_frame_numbers = BaseHit.get_hit_frame_numbers_by_ball_ang_vel(data_frame)
 
         hit_creation_time = time.time()
         logger.info('time to get get frame_numbers: %s', (hit_creation_time - start_time) * 1000)
@@ -66,7 +66,7 @@ class BaseHit:
         collision_distances_data_frame['closest_player', 'distance'] = None
         for hit_team_no in [0, 1]:
             collision_distances_for_team = collision_distances_data_frame[
-                hit_team_no].loc[game.ball['hit_team_no'] == hit_team_no]
+                hit_team_no].loc[data_frame.ball['hit_team_no'] == hit_team_no]
 
             close_collision_distances_for_team = collision_distances_for_team[
                 (collision_distances_for_team < 300).any(axis=1)
@@ -92,7 +92,7 @@ class BaseHit:
                 hit.goal_number = int(goal_number)
             id_creation(hit.player_id, player_name)
             hit.collision_distance = collision_distance
-            ball_position = game.ball.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
+            ball_position = data_frame.ball.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
             hit.ball_data.pos_x = float(ball_position['pos_x'])
             hit.ball_data.pos_y = float(ball_position['pos_y'])
             hit.ball_data.pos_z = float(ball_position['pos_z'])
@@ -103,15 +103,15 @@ class BaseHit:
         return all_hits
 
     @staticmethod
-    def get_hit_frame_numbers_by_ball_ang_vel(game) -> List[int]:
-        ball_ang_vels = game.ball.loc[:, ['ang_vel_x', 'ang_vel_y', 'ang_vel_z']]
+    def get_hit_frame_numbers_by_ball_ang_vel(data_frame: pd.DataFrame) -> List[int]:
+        ball_ang_vels = data_frame.ball.loc[:, ['ang_vel_x', 'ang_vel_y', 'ang_vel_z']]
         diff_series = ball_ang_vels.diff().any(axis=1)
         indices = diff_series.index[diff_series].tolist()
         return indices
 
     @staticmethod
-    def get_ball_data(game: Game, hit: Hit):
-        return game.ball.loc[hit.frame_number, :]
+    def get_ball_data(data_frame: pd.DataFrame, hit: Hit):
+        return data_frame.ball.loc[hit.frame_number, :]
 
 
 def get_player_ball_displacements(data_frame: pd.DataFrame, player_name: str) -> pd.DataFrame:

@@ -20,8 +20,8 @@ logger = logging.getLogger(__name__)
 class SaltieHit:
 
     @staticmethod
-    def get_distance_to_goal(game: Game, hit: Hit, player_map: Dict[str, Player]):
-        ball_data = BaseHit.get_ball_data(game, hit)
+    def get_distance_to_goal(data_frame: pd.DataFrame, hit: Hit, player_map: Dict[str, Player]):
+        ball_data = BaseHit.get_ball_data(data_frame, hit)
         _goal_x = min(max(ball_data['pos_x'], GOAL_X / 2), -GOAL_X / 2)
         _goal_y = -MAP_Y / 2 if player_map[hit.player_id.id].is_orange else MAP_Y / 2
 
@@ -31,8 +31,9 @@ class SaltieHit:
         return distance
 
     @staticmethod
-    def get_saltie_hits_from_game(game: Game, proto_game: game_pb2.Game, hits: Dict[int, Hit],
-                                  player_map: Dict[str, Player], kickoff_frames: pd.DataFrame) -> Dict[int, Hit]:
+    def get_saltie_hits_from_game(proto_game: game_pb2.Game, hits: Dict[int, Hit],
+                                  player_map: Dict[str, Player], data_frame: pd.DataFrame,
+                                  kickoff_frames: pd.DataFrame) -> Dict[int, Hit]:
         hit_analytics_dict: Dict[int, Hit] = hits
 
         sorted_frames = sorted(hit_analytics_dict)
@@ -42,7 +43,7 @@ class SaltieHit:
         total_time = time.time() - start_time
         logger.debug('goal time: %s', total_time * 1000)
 
-        SaltieHit.find_hit_stats(game, player_map, sorted_frames, hit_analytics_dict)
+        SaltieHit.find_hit_stats(data_frame, player_map, sorted_frames, hit_analytics_dict)
 
         return hit_analytics_dict
 
@@ -73,7 +74,7 @@ class SaltieHit:
                 # logger.debug("Found hit for goal on frame %s: %s", goal.frame_number, last_goalscorer_saltie_hit)
 
     @staticmethod
-    def next_hit_stats(game: Game, saltie_hit: Hit, next_saltie_hit: Hit,
+    def next_hit_stats(data_frame: pd.DataFrame, saltie_hit: Hit, next_saltie_hit: Hit,
                        player_map: Dict[str, Player], last_passing_hit: Hit):
         """
         finds stats that happen based off of the next hit.
@@ -87,8 +88,8 @@ class SaltieHit:
         """
 
         # distance the ball traveled
-        displacement = (BaseHit.get_ball_data(game, next_saltie_hit)[['pos_x', 'pos_y', 'pos_z']].values -
-                        BaseHit.get_ball_data(game, saltie_hit)[['pos_x', 'pos_y', 'pos_z']].values)
+        displacement = (BaseHit.get_ball_data(data_frame, next_saltie_hit)[['pos_x', 'pos_y', 'pos_z']].values -
+                        BaseHit.get_ball_data(data_frame, saltie_hit)[['pos_x', 'pos_y', 'pos_z']].values)
         saltie_hit.distance = np.sqrt(np.square(displacement).sum())
 
         # dribble detection
@@ -107,7 +108,7 @@ class SaltieHit:
         return last_passing_hit
 
     @staticmethod
-    def get_shot(game: Game, saltie_hit: Hit, player_map: Dict[str, Player]):
+    def get_shot(data_frame: pd.DataFrame, saltie_hit: Hit, player_map: Dict[str, Player]):
         """
         Finds shots using ball prediction.
         :param game:
@@ -116,7 +117,7 @@ class SaltieHit:
         """
         # find shots
         # TODO: Support non-standard maps? Raise warning/don't predict for non-standard maps?
-        ball_sim = BallSimulator(BaseHit.get_ball_data(game, saltie_hit),
+        ball_sim = BallSimulator(BaseHit.get_ball_data(data_frame, saltie_hit),
                                  player_map[saltie_hit.player_id.id].is_orange)
         is_shot = ball_sim.get_is_shot()
         if is_shot:
@@ -127,7 +128,7 @@ class SaltieHit:
             logger.warning('Goal is not shot: %s', saltie_hit)
 
     @staticmethod
-    def find_hit_stats(game: Game, player_map: Dict[str, Player],
+    def find_hit_stats(data_frame: pd.DataFrame, player_map: Dict[str, Player],
                        sorted_frames, hit_analytics_dict: Dict[int, Hit]):
         """
         Finds stats for all hits.
@@ -183,7 +184,7 @@ class SaltieHit:
 
             # hit distance
             if next_saltie_hit:
-                last_passing_hit = SaltieHit.next_hit_stats(game, saltie_hit, next_saltie_hit,
+                last_passing_hit = SaltieHit.next_hit_stats(data_frame, saltie_hit, next_saltie_hit,
                                                             player_map, last_passing_hit)
             elif saltie_hit.goal:
                 saltie_hit.distance = 0
@@ -191,9 +192,9 @@ class SaltieHit:
             stat_time = time.time()
             total_stat_time += stat_time - next_hit_time
 
-            saltie_hit.distance_to_goal = SaltieHit.get_distance_to_goal(game, saltie_hit, player_map)
+            saltie_hit.distance_to_goal = SaltieHit.get_distance_to_goal(data_frame, saltie_hit, player_map)
 
-            SaltieHit.get_shot(game, saltie_hit, player_map)
+            SaltieHit.get_shot(data_frame, saltie_hit, player_map)
 
             simulation_time = time.time()
             total_simulation_time += simulation_time - stat_time
