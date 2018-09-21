@@ -1,15 +1,15 @@
 
+import logging
 import time
 from typing import List, Dict, Callable
-import logging
 
 import numpy as np
 import pandas as pd
 
+from .hitbox.hitbox import Hitbox
 from ...generated.api import game_pb2
 from ...generated.api.stats.events_pb2 import Hit
 from ...json_parser.game import Game
-from .hitbox.hitbox import Hitbox
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +83,29 @@ class BaseHit:
 
         all_hits = {}
         hits_data = collision_distances_data_frame['closest_player'].dropna()
+
+        hit_frames_to_keep = []
+        for row in hits_data.itertuples():
+            frame_number, player_name, collision_distance = row.Index, row.name, row.distance
+            # Remove frame numbers where there is a hit in the next or previous frame by the same player
+            # and player is closer in that (next or previous) hit frame.
+            try:
+                previous_frame_hit = hits_data.loc[frame_number - 1]
+                if previous_frame_hit.loc['name'] == player_name and previous_frame_hit.distance < collision_distance:
+                    continue
+            except KeyError:
+                pass
+            try:
+                next_frame_hit = hits_data.loc[frame_number + 1]
+                if next_frame_hit.loc['name'] == player_name and next_frame_hit.distance < collision_distance:
+                    continue
+            except KeyError:
+                pass
+
+            hit_frames_to_keep.append(frame_number)
+
+        hits_data = hits_data.loc[hit_frames_to_keep]
+
         for row in hits_data.itertuples():
             frame_number, player_name, collision_distance = row.Index, row.name, row.distance
             hit = proto_game.game_stats.hits.add()
