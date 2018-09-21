@@ -63,14 +63,17 @@ class AnalysisManager:
         self.log_time("getting kickoff")
         self.get_game_time(self.game, self.protobuf_game, data_frame)
         if self.can_do_full_analysis():
-            self.calculate_hit_stats(self.game, self.protobuf_game, player_map, data_frame, kickoff_frames)
-            self.log_time("calculating hits")
-            self.get_advanced_stats(self.game, self.protobuf_game, player_map, data_frame)
+            self.perform_full_analysis(self.game, self.protobuf_game, player_map, data_frame, kickoff_frames)
 
         # log before we add the dataframes
         # logger.debug(self.protobuf_game)
 
         self.store_frames(data_frame)
+
+    def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map, data_frame, kickoff_frames):
+        self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames)
+        self.log_time("calculating hits")
+        self.get_advanced_stats(game, proto_game, player_map, data_frame)
 
     def get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
 
@@ -161,3 +164,9 @@ class AnalysisManager:
 
     def get_game_time(self, game: Game, protobuf_game: game_pb2.Game, df):
          protobuf_game.game_metadata.length = df.game[df.game.goal_number.notnull()].delta.sum()
+
+    def get_protobuf_data(self) -> game_pb2.Game:
+        """
+        :return: The protobuf data created by the analysis
+        """
+        return self.protobuf_game
