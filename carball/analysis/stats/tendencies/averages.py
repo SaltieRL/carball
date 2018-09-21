@@ -1,26 +1,23 @@
-from typing import List
-
+from typing import List, Dict
 import pandas as pd
+from ....analysis.stats.stats import BaseStat
 
 from ....generated.api import game_pb2
 from ....generated.api.player_pb2 import Player
 from ....generated.api.stats.events_pb2 import Hit
+from ....generated.api.stats.player_stats_pb2 import PlayerStats
+from ....json_parser.game import Game
 
 
-class Averages:
+class Averages(BaseStat):
+    def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+
+        for key, player in player_map.items():
+            self.get_averages_for_player(player, proto_game, data_frame)
 
     @classmethod
     def get_averages_for_player(cls, player: Player, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
-        player_data_frame = data_frame[player.name]
-
-        speed: pd.Series = (player_data_frame.vel_x ** 2 +
-                            player_data_frame.vel_y ** 2 +
-                            player_data_frame.vel_z ** 2) ** 0.5
-
-        average_speed = speed.mean()
-
-        player.stats.averages.average_speed = average_speed
-
         player_hits: List[Hit] = [saltie_hit for saltie_hit in proto_game.game_stats.hits if
                                   saltie_hit.player_id == player.id]
 
