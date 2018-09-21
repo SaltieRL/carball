@@ -118,7 +118,7 @@ class AnalysisManager:
         hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frame)
         logger.info("Found %s hits." % len(hits))
 
-        SaltieHit.get_saltie_hits_from_game(game, proto_game, hits, player_map, kickoff_frames)
+        SaltieHit.get_saltie_hits_from_game(proto_game, hits, player_map, data_frame, kickoff_frames)
         logger.info("Analysed hits.")
 
         # self.stats = get_stats(self)

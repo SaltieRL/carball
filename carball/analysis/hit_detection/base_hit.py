@@ -111,9 +111,6 @@ class BaseHit:
 
     @staticmethod
     def get_ball_data(data_frame: pd.DataFrame, hit: Hit):
-        ball = data_frame.ball
-        if ball is None:
-            print(ball)
         return data_frame.ball.loc[hit.frame_number, :]
 
 
