@@ -2,16 +2,15 @@ import logging
 import time
 
 import pandas as pd
-import numpy as np
+
 from carball.json_parser.game import Game
-
 from .rotations import predict_user_inputs
-
 
 # RETURNS CONTROLS
 # THROTTLE STEER PITCH YAW ROLL JUMP BOOST HANDBRAKE
 
 logger = logging.getLogger(__name__)
+
 
 class ControlsCreator:
 
@@ -32,10 +31,10 @@ class ControlsCreator:
 
             frames_not_on_ground = player.data.loc[:, 'pos_z'][player.data.loc[:, 'pos_z'] > 18].index.values
             # print(frames_not_on_ground)
-            rotations = player.data.loc[frames_not_on_ground, ['rot_x', 'rot_y', 'rot_z']] / 65536 * 2 * np.pi
+            rotations = player.data.loc[frames_not_on_ground, ['rot_x', 'rot_y', 'rot_z']]
             ang_vels = player.data.loc[frames_not_on_ground, ['ang_vel_x', 'ang_vel_y', 'ang_vel_z']] / 1000
 
-            predicted_inputs = predict_user_inputs(ang_vels, rotations)
+            predicted_inputs = predict_user_inputs(ang_vels, rotations, game.frames.delta)
             # print(predicted_inputs)
             pitch = predicted_inputs.loc[:, 'predicted_input_pitch']
             yaw = predicted_inputs.loc[:, 'predicted_input_yaw']
@@ -45,7 +44,8 @@ class ControlsCreator:
             #                        predicted_inputs), axis=1)
 
             player.controls = pd.DataFrame.from_dict({'throttle': throttle, 'steer': steer, 'pitch': pitch, 'yaw': yaw,
-                                                      'roll': roll, 'jump': jump, 'boost': boost, 'handbrake': handbrake})
+                                                      'roll': roll, 'jump': jump, 'boost': boost,
+                                                      'handbrake': handbrake})
 
         logger.info('Finished controls in %s seconds', str(time.time() - start_time))
         return
