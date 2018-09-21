@@ -3,15 +3,19 @@ from typing import Callable, Dict
 import pandas as pd
 
 from ....analysis.constants.field_constants import FieldConstants
+from ....analysis.stats.stats import BaseStat
+from ....generated.api import game_pb2
 from ....generated.api.player_pb2 import Player
 from ....generated.api.stats import stats_pb2
+from ....generated.api.stats.player_stats_pb2 import PlayerStats
+from ....json_parser.game import Game
 
 
-class PositionalTendencies:
-
+class PositionalTendencies(BaseStat):
     field_constants = FieldConstants()
 
     def __init__(self):
+        super().__init__()
         self.field_constants = FieldConstants()
         self.map_attributes_to_predicates = {
             "height_0": self.field_constants.get_height_0,
@@ -25,6 +29,12 @@ class PositionalTendencies:
             "ball_0": self.field_constants.get_ball_0,
             "ball_1": self.field_constants.get_ball_1
         }
+
+    def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+
+        for id, player in player_map.items():
+            self.get_player_tendencies(player, data_frame)
 
     def get_player_tendencies(self, player: Player, data_frame: pd.DataFrame):
         player_data_frame = data_frame[player.name]

@@ -1,5 +1,7 @@
 from typing import List
 
+from ...analysis.stats.tendencies.speed_tendencies import SpeedTendencies
+from ...analysis.stats.tendencies.averages import Averages
 from ...analysis.stats.possession.ball_distances import BallDistanceStat
 from ...analysis.stats.tendencies.hit_counts import HitCountStat
 from ...analysis.stats.ball_forward.distance_hit_ball_forward import DistanceStats
@@ -7,8 +9,9 @@ from ...analysis.stats.boost.boost import BoostStat
 from ...analysis.stats.possession.possession import PossessionStat
 from ...analysis.stats.possession.turnovers import TurnoverStat
 from ...analysis.stats.stats import BaseStat, HitStat
-from ...analysis.stats.tendencies.tendencies import TendenciesStat
+from ...analysis.stats.tendencies.positional_tendencies import PositionalTendencies
 from ...analysis.stats.controls.controls import ControlsStat
+
 
 class StatsList:
     """
@@ -19,9 +22,11 @@ class StatsList:
     def get_player_stats() -> List[BaseStat]:
         """These are stats that end up being assigned to a specific player"""
         return [BoostStat(),
-                TendenciesStat(),
+                PositionalTendencies(),
+                Averages(),
                 BallDistanceStat(),
                 ControlsStat(),
+                SpeedTendencies()
                 ]
 
     @staticmethod
