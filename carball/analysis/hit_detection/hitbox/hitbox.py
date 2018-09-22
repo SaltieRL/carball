@@ -28,7 +28,7 @@ class Hitbox:
 
     def get_collision_distance(self, ball_displacement) -> np.float64:
         if np.isnan(ball_displacement).any():
-            return np.float64(1000000000000000)
+            return np.nan
         pos_x, pos_y, pos_z = ball_displacement
         # x axis
         if pos_x < self.car_x_lims[0]:
