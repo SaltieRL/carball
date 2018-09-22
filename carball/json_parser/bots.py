@@ -78,7 +78,7 @@ def get_online_id_for_bot(bot_map, player):
     except:
         logger.warning('Found bot not in bot list')
         try:
-            return 'b' + h11(str(player.name).encode('utf-8')) + 'b'
+            return 'b' + h11(str(player.name).encode('utf-8').lower()) + 'b'
         except:
             logger.warning('bot has invalid name')
             return 'invalid_name'
