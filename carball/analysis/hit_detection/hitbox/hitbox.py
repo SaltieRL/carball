@@ -1,5 +1,7 @@
 import logging
 
+import numpy as np
+
 from .car import read_xl
 
 logger = logging.getLogger(__name__)
@@ -24,7 +26,9 @@ class Hitbox:
         self.car_z_lims = (-self.car_height / 2 + self.car_elevation,
                            self.car_height / 2 + self.car_elevation)
 
-    def get_collision_distance(self, ball_displacement) -> float:
+    def get_collision_distance(self, ball_displacement) -> np.float64:
+        if np.isnan(ball_displacement).any():
+            return np.float64(1000000000000000)
         pos_x, pos_y, pos_z = ball_displacement
         # x axis
         if pos_x < self.car_x_lims[0]:
