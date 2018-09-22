@@ -80,6 +80,6 @@ def get_online_id_for_bot(bot_map, player):
         try:
             return 'b' + h11(str(player.name).encode('utf-8')) + 'b'
         except:
-            logger.warning('y u do this to me')
-            return 'b' + str(player.name) + 'b'
+            logger.warning('bot has invalid name')
+            return 'invalid_name'
 
