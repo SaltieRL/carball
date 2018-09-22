@@ -3,6 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 
+from ..json_parser.bots import get_bot_map
 from .boost import get_if_full_boost_position
 
 from typing import TYPE_CHECKING, List
@@ -11,6 +12,7 @@ if TYPE_CHECKING:
     from .team import Team
 
 logger = logging.getLogger(__name__)
+bot_map = get_bot_map()
 
 
 class Player:
@@ -51,7 +53,12 @@ class Player:
     def create_from_actor_data(self, actor_data: dict, teams: List['Team']):
         self.name = actor_data['name']
         if 'Engine.PlayerReplicationInfo:bBot' in actor_data and actor_data['Engine.PlayerReplicationInfo:bBot']:
-            self.online_id = 0  # this is a bot
+            self.is_bot = True
+            try:
+                self.online_id = 'b' + str(bot_map[self.name]) + 'b'
+            except:
+                self.online_id = '0'
+                logger.warning('Found bot not in bot list')
         else:
             actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[0]
             self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'][actor_type]
@@ -89,6 +96,12 @@ class Player:
         self.is_bot = bool(player_stats["bBot"]["value"]["bool"])
 
         logger.info('Created Player from stats: %s' % self)
+        if self.is_bot or self.online_id == '0' or self.online_id == 0:
+            try:
+                self.online_id = 'b' + str(bot_map[self.name]) + 'b'
+            except:
+                logger.warning('Found bot not in bot list')
+
         return self
 
     def get_camera_settings(self, camera_data: dict):

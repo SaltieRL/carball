@@ -31,13 +31,19 @@ class BallDistanceStat(BaseStat):
             for players_data_frame in [closest_players, furthest_players]
         ], axis=1)
 
+        player_ball_distance_times.fillna(value=0, inplace=True)
+
         for player_id in player_stat_map.keys():
             close_frames = player_distances_data_frame[player_id] < 500
             time_close_to_ball = player_distance_with_delta[close_frames]['delta'].sum()
             distance_stats = player_stat_map[player_id].distance
 
             distance_stats.time_close_to_ball = time_close_to_ball
-            distance_stats.time_closest_to_ball = player_ball_distance_times['closest_player'][player_id]
-            distance_stats.time_furthest_from_ball = player_ball_distance_times['furthest_player'][player_id]
 
+            try:
+                distance_stats.time_closest_to_ball = player_ball_distance_times['closest_player'][player_id]
+                distance_stats.time_furthest_from_ball = player_ball_distance_times['furthest_player'][player_id]
+            except:
+                distance_stats.time_closest_to_ball = 0
+                distance_stats.time_furthest_from_ball = 0
 

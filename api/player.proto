@@ -21,4 +21,5 @@ message Player {
     optional int32 is_orange = 11;
     optional api.stats.PlayerStats stats = 12;
     optional PlayerId party_leader = 13;
+    optional bool is_bot = 14;
 }
