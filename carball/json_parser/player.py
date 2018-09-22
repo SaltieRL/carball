@@ -3,7 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from ..json_parser.bots import get_bot_map
+from ..json_parser.bots import get_bot_map, get_online_id_for_bot
 from .boost import get_if_full_boost_position
 
 from typing import TYPE_CHECKING, List
@@ -54,11 +54,8 @@ class Player:
         self.name = actor_data['name']
         if 'Engine.PlayerReplicationInfo:bBot' in actor_data and actor_data['Engine.PlayerReplicationInfo:bBot']:
             self.is_bot = True
-            try:
-                self.online_id = 'b' + str(bot_map[self.name]) + 'b'
-            except:
-                self.online_id = '0'
-                logger.warning('Found bot not in bot list')
+            self.online_id = get_online_id_for_bot(bot_map, self)
+
         else:
             actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[0]
             self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'][actor_type]
@@ -97,10 +94,7 @@ class Player:
 
         logger.info('Created Player from stats: %s' % self)
         if self.is_bot or self.online_id == '0' or self.online_id == 0:
-            try:
-                self.online_id = 'b' + str(bot_map[self.name]) + 'b'
-            except:
-                logger.warning('Found bot not in bot list')
+            self.online_id = get_online_id_for_bot(bot_map, self)
 
         return self
 
