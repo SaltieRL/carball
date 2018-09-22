@@ -4,6 +4,7 @@ from typing import Dict
 
 import pandas as pd
 
+from ..analysis.cleaner.cleaner import clean_replay
 from ..analysis.hit_detection.base_hit import BaseHit
 from ..analysis.hit_detection.hit_analysis import SaltieHit
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame
@@ -15,7 +16,6 @@ from ..analysis.utils.pandas_manager import PandasManager
 from ..analysis.utils.proto_manager import ProtobufManager
 from ..generated.api import game_pb2
 from ..generated.api.player_pb2 import Player
-from carball.analysis.cleaner import clean_replay
 from ..json_parser.game import Game
 
 logger = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ class AnalysisManager:
         kickoff_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frame)
         self.game.kickoff_frames = kickoff_frames
         self.log_time("getting kickoff")
-        self.get_game_time(self.game, self.protobuf_game, data_frame)
+        self.get_game_time(self.protobuf_game, data_frame)
         if self.can_do_full_analysis():
             self.perform_full_analysis(self.game, self.protobuf_game, player_map, data_frame, kickoff_frames)
 
@@ -150,10 +150,7 @@ class AnalysisManager:
         self.stats_manager.get_stats(game, proto_game, player_map, data_frame[goal_frames])
 
     def store_frames(self, data_frame: pd.DataFrame):
-        if self.should_store_frames:
-            PandasManager.add_pandas(self.protobuf_game, data_frame)
-        else:
-            self.df_bytes = PandasManager.safe_write_pandas_to_memory(data_frame)
+        self.df_bytes = PandasManager.safe_write_pandas_to_memory(data_frame)
 
     def write_proto_out_to_file(self, file):
         ProtobufManager.write_proto_out_to_file(file, self.protobuf_game)
@@ -164,8 +161,15 @@ class AnalysisManager:
         elif not self.should_store_frames:
             logger.warning("pd DataFrames are not being stored anywhere")
 
-    def get_game_time(self, game: Game, protobuf_game: game_pb2.Game, df):
-         protobuf_game.game_metadata.length = df.game[df.game.goal_number.notnull()].delta.sum()
+    def get_game_time(self, protobuf_game: game_pb2.Game, data_frame: pd.DataFrame):
+        protobuf_game.game_metadata.length = data_frame.game[data_frame.game.goal_number.notnull()].delta.sum()
+        for player in protobuf_game.players:
+            if 'pos_x' in data_frame[player.name]:
+                player.time_in_game = data_frame[data_frame[player.name].pos_x.notnull()].game.delta.sum()
+                player.first_frame_in_game = data_frame[player.name].pos_x.first_valid_index()
+            else:
+                player.time_in_game = 0
+        logger.info('created all times for players')
 
     def get_protobuf_data(self) -> game_pb2.Game:
         """

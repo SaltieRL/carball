@@ -1,3 +1,4 @@
+import logging
 from typing import Dict
 
 import numpy as np
@@ -12,6 +13,9 @@ from ....generated.api.stats.player_stats_pb2 import PlayerStats
 from ....json_parser.game import Game
 
 
+logger = logging.getLogger(__name__)
+
+
 class BoostStat(BaseStat):
 
     field_constants = FieldConstants()
@@ -23,21 +27,26 @@ class BoostStat(BaseStat):
             player_name = player_map[player_key].name
             player_data_frame = data_frame[player_name]
             proto_boost.boost_usage = self.get_player_boost_usage(player_data_frame)
-            collection = self.get_player_boost_collection(player_data_frame)
-            proto_boost.wasted_collection = self.get_player_boost_waste(proto_boost.boost_usage, collection)
 
             proto_boost.wasted_usage = self.get_player_boost_usage_max_speed(player_data_frame)
-            if 'small' in collection and collection['small'] is not None:
-                proto_boost.num_small_boosts = collection['small']
-            if 'big' in collection and collection['big'] is not None:
-                proto_boost.num_large_boosts = collection['big']
 
             proto_boost.time_full_boost = self.get_time_with_max_boost(data_frame, player_data_frame)
             proto_boost.time_low_boost = self.get_time_with_low_boost(data_frame, player_data_frame)
             proto_boost.time_no_boost = self.get_time_with_zero_boost(data_frame, player_data_frame)
 
-            proto_boost.num_stolen_boosts = self.get_num_stolen_boosts(player_data_frame,
-                                                                       player_map[player_key].is_orange)
+            if 'boost_collect' not in player_data_frame:
+                logger.warning('%s did not collect any boost', player_key)
+            else:
+                collection = self.get_player_boost_collection(player_data_frame)
+                proto_boost.wasted_collection = self.get_player_boost_waste(proto_boost.boost_usage, collection)
+
+                if 'small' in collection and collection['small'] is not None:
+                    proto_boost.num_small_boosts = collection['small']
+                if 'big' in collection and collection['big'] is not None:
+                    proto_boost.num_large_boosts = collection['big']
+
+                proto_boost.num_stolen_boosts = self.get_num_stolen_boosts(player_data_frame,
+                                                                           player_map[player_key].is_orange)
 
     @staticmethod
     def get_player_boost_usage(player_dataframe: pd.DataFrame) -> np.float64:
@@ -86,13 +95,13 @@ class BoostStat(BaseStat):
 
     @staticmethod
     def get_player_boost_collection(player_dataframe: pd.DataFrame) -> Dict[str, int]:
-        value_counts = player_dataframe.boost_collect.value_counts()
         try:
+            value_counts = player_dataframe.boost_collect.value_counts()
             return {
                 'big': int(value_counts[True]),
                 'small': int(value_counts[False])
             }
-        except KeyError:
+        except (AttributeError, KeyError):
             return {}
 
     @staticmethod

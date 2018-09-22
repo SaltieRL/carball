@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 
 def remove_invalid_players(game: Game, data_frame: pd.DataFrame, proto_game: game_pb2.Game, player_map):
     invalid_players = []
-    for player in game.players:
+    for player in proto_game.players:
         name = player.name
-        if name not in data_frame or ('pos_x' not in data_frame[name]):
+        if player.time_in_game < 5 or name not in data_frame or ('pos_x' not in data_frame[name]):
             invalid_players.append(player.name)
     if len(invalid_players) == 0:
         return

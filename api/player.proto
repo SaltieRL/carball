@@ -22,4 +22,6 @@ message Player {
     optional api.stats.PlayerStats stats = 12;
     optional PlayerId party_leader = 13;
     optional bool is_bot = 14;
+    optional float time_in_game = 15;
+    optional int32 first_frame_in_game = 16;
 }

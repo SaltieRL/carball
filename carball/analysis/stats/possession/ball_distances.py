@@ -43,7 +43,7 @@ class BallDistanceStat(BaseStat):
             try:
                 distance_stats.time_closest_to_ball = player_ball_distance_times['closest_player'][player_id]
                 distance_stats.time_furthest_from_ball = player_ball_distance_times['furthest_player'][player_id]
-            except KeyError:
+            except (AttributeError, KeyError):
                 distance_stats.time_closest_to_ball = 0
                 distance_stats.time_furthest_from_ball = 0
 
