@@ -15,6 +15,7 @@ from ..analysis.utils.pandas_manager import PandasManager
 from ..analysis.utils.proto_manager import ProtobufManager
 from ..generated.api import game_pb2
 from ..generated.api.player_pb2 import Player
+from ..json_parser.cleaner.cleaner import clean_replay
 from ..json_parser.game import Game
 
 logger = logging.getLogger(__name__)
@@ -71,6 +72,7 @@ class AnalysisManager:
         self.store_frames(data_frame)
 
     def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map, data_frame, kickoff_frames):
+        clean_replay(game, data_frame, proto_game, player_map)
         self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames)
         self.log_time("calculating hits")
         self.get_advanced_stats(game, proto_game, player_map, data_frame)
