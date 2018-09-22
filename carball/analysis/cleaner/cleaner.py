@@ -2,9 +2,9 @@ import logging
 
 import pandas as pd
 
+from ...analysis.cleaner.frame_cleaner import remove_invalid_players
 from ...generated.api import game_pb2
 from ...json_parser.game import Game
-from ...json_parser.cleaner.frame_cleaner import remove_invalid_players
 
 
 logger = logging.getLogger(__name__)

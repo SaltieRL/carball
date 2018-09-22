@@ -15,7 +15,7 @@ from ..analysis.utils.pandas_manager import PandasManager
 from ..analysis.utils.proto_manager import ProtobufManager
 from ..generated.api import game_pb2
 from ..generated.api.player_pb2 import Player
-from ..json_parser.cleaner.cleaner import clean_replay
+from carball.analysis.cleaner import clean_replay
 from ..json_parser.game import Game
 
 logger = logging.getLogger(__name__)

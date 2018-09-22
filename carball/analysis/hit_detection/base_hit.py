@@ -138,8 +138,6 @@ class BaseHit:
 
 
 def get_player_ball_displacements(data_frame: pd.DataFrame, player_name: str) -> pd.DataFrame:
-    if not player_name in data_frame:
-        print(player_name)
     player_df = data_frame[player_name]
     ball_df = data_frame['ball']
     position_column_names = ['pos_x', 'pos_y', 'pos_z']
