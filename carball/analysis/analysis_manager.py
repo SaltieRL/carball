@@ -29,6 +29,7 @@ class AnalysisManager:
     def __init__(self, game: Game):
         self.game = game
         self.protobuf_game = game_pb2.Game()
+        self.protobuf_game.version = 1
         self.id_creator = self.create_player_id_function(game)
         self.stats_manager = StatsManager()
         self.should_store_frames = False
