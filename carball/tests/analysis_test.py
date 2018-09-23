@@ -33,6 +33,8 @@ def __test_replays(BASE_DIR):
 
     for filepath in glob.iglob(ROOT_DIR + '/**/*.replay', recursive=True):
         logger.info('decompiling %s', filepath)
+        if "output" in filepath:
+            continue
         base_file = os.path.basename(filepath)
         json_path = os.path.join(OUTPUT_DIR, 'replays/decompiled/{}'.format(base_file.replace(".replay", ".json")))
         proto_path = os.path.join(OUTPUT_DIR, 'replays/protos/{}'.format(base_file.replace(".replay", ".pts")))
@@ -44,8 +46,9 @@ def __test_replays(BASE_DIR):
 
         if DEBUGGING:
             try:
-                analysis_manager = analyze_replay_file(filepath, json_path, sanity_check=SanityChecker(),
-                                                       controls=ControlsCreator(), analysis_per_goal=False)
+                analysis_manager = analyze_replay_file(filepath, json_path,
+                                                       controls=ControlsCreator(), analysis_per_goal=False,
+                                                       sanity_check=SanityChecker())
                 with open(os.path.join(OUTPUT_DIR, 'game.json'), 'w') as f:
                     f.write(MessageToJson(analysis_manager.protobuf_game))
             except subprocess.CalledProcessError as e:

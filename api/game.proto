@@ -14,5 +14,7 @@ message Game {
     repeated Team teams = 3;
     optional api.stats.GameStats game_stats = 4;
     repeated Party parties = 5;
+    // Version info just a normal increasing number
+    optional int32 version = 6;
     extensions 100 to 199;
 }
