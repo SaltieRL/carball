@@ -4,7 +4,9 @@ import os
 import shutil
 import subprocess
 import traceback
+from io import BytesIO
 
+from carball.analysis.utils.pandas_manager import PandasManager
 from google.protobuf.json_format import MessageToJson
 
 from carball.controls.controls import ControlsCreator
@@ -51,6 +53,8 @@ def __test_replays(BASE_DIR):
                                                        sanity_check=SanityChecker())
                 with open(os.path.join(OUTPUT_DIR, 'game.json'), 'w') as f:
                     f.write(MessageToJson(analysis_manager.protobuf_game))
+                pandas = PandasManager.safe_read_pandas_to_memory(BytesIO(analysis_manager.df_bytes))
+                print(len(pandas))
             except subprocess.CalledProcessError as e:
                 traceback.print_exc()
         else:
