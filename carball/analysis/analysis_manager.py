@@ -34,21 +34,6 @@ class AnalysisManager:
         self.should_store_frames = False
         self.df_bytes = None
 
-    def can_do_full_analysis(self) -> bool:
-        # Analyse only if 1v1 or 2v2 or 3v3
-        team_sizes = []
-        for team in self.game.teams:
-            team_sizes.append(len(team.players))
-
-        if len(team_sizes) == 0:
-            logger.warning("Not doing full analysis. No teams found")
-            return False
-        # if any((team_size != team_sizes[0]) for team_size in team_sizes):
-        #     logger.warning("Not doing full analysis. Not all team sizes are equal")
-        #     return False
-
-        return True
-
     def create_analysis(self):
         """
         Organizes all the different analsysis that can occurs
@@ -95,6 +80,16 @@ class AnalysisManager:
 
         return player_map
 
+    def get_game_time(self, protobuf_game: game_pb2.Game, data_frame: pd.DataFrame):
+        protobuf_game.game_metadata.length = data_frame.game[data_frame.game.goal_number.notnull()].delta.sum()
+        for player in protobuf_game.players:
+            if 'pos_x' in data_frame[player.name]:
+                player.time_in_game = data_frame[data_frame[player.name].pos_x.notnull()].game.delta.sum()
+                player.first_frame_in_game = data_frame[player.name].pos_x.first_valid_index()
+            else:
+                player.time_in_game = 0
+        logger.info('created all times for players')
+
     def get_data_frames(self, game: Game):
         data_frame = SaltieGame.create_data_df(game)
 
@@ -125,6 +120,29 @@ class AnalysisManager:
 
         # self.stats = get_stats(self)
 
+    def get_advanced_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                           data_frame: pd.DataFrame):
+        goal_frames = data_frame.game.goal_number.notnull()
+        self.stats_manager.get_stats(game, proto_game, player_map, data_frame[goal_frames])
+
+    def store_frames(self, data_frame: pd.DataFrame):
+        self.df_bytes = PandasManager.safe_write_pandas_to_memory(data_frame)
+
+    def write_proto_out_to_file(self, file):
+        ProtobufManager.write_proto_out_to_file(file, self.protobuf_game)
+
+    def write_pandas_out_to_file(self, file):
+        if self.df_bytes is not None:
+            file.write(self.df_bytes)
+        elif not self.should_store_frames:
+            logger.warning("pd DataFrames are not being stored anywhere")
+
+    def get_protobuf_data(self) -> game_pb2.Game:
+        """
+        :return: The protobuf data created by the analysis
+        """
+        return self.protobuf_game
+
     def start_time(self):
         self.timer = time.time()
         logger.info("starting timer")
@@ -144,35 +162,17 @@ class AnalysisManager:
 
         return create_name
 
-    def get_advanced_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                           data_frame: pd.DataFrame):
-        goal_frames = data_frame.game.goal_number.notnull()
-        self.stats_manager.get_stats(game, proto_game, player_map, data_frame[goal_frames])
+    def can_do_full_analysis(self) -> bool:
+        # Analyse only if 1v1 or 2v2 or 3v3
+        team_sizes = []
+        for team in self.game.teams:
+            team_sizes.append(len(team.players))
 
-    def store_frames(self, data_frame: pd.DataFrame):
-        self.df_bytes = PandasManager.safe_write_pandas_to_memory(data_frame)
+        if len(team_sizes) == 0:
+            logger.warning("Not doing full analysis. No teams found")
+            return False
+        # if any((team_size != team_sizes[0]) for team_size in team_sizes):
+        #     logger.warning("Not doing full analysis. Not all team sizes are equal")
+        #     return False
 
-    def write_proto_out_to_file(self, file):
-        ProtobufManager.write_proto_out_to_file(file, self.protobuf_game)
-
-    def write_pandas_out_to_file(self, file):
-        if self.df_bytes is not None:
-            file.write(self.df_bytes)
-        elif not self.should_store_frames:
-            logger.warning("pd DataFrames are not being stored anywhere")
-
-    def get_game_time(self, protobuf_game: game_pb2.Game, data_frame: pd.DataFrame):
-        protobuf_game.game_metadata.length = data_frame.game[data_frame.game.goal_number.notnull()].delta.sum()
-        for player in protobuf_game.players:
-            if 'pos_x' in data_frame[player.name]:
-                player.time_in_game = data_frame[data_frame[player.name].pos_x.notnull()].game.delta.sum()
-                player.first_frame_in_game = data_frame[player.name].pos_x.first_valid_index()
-            else:
-                player.time_in_game = 0
-        logger.info('created all times for players')
-
-    def get_protobuf_data(self) -> game_pb2.Game:
-        """
-        :return: The protobuf data created by the analysis
-        """
-        return self.protobuf_game
+        return True
