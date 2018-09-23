@@ -35,7 +35,8 @@ message Hit {
     optional int32 previous_hit_frame_number = 19;
     optional int32 next_hit_frame_number = 20;
 
-    // What goal number this hit belongs to
+    // What goal number this hit belongs to:
+    // it starts at 0 and counts up,  -1 means no more goals were scored
     optional int32 goal_number = 21;
 
     // pseudo stats
