@@ -43,7 +43,7 @@ message Hit {
     // is_turnover = !(goal || dribble || pass)
 
     // DEPRECATED STATS
-    optional bool deprecated_field_goal_number = 11;
+    optional bool DEPRECATED_field_goal_number = 11;
 }
 
 // Not Implemented
