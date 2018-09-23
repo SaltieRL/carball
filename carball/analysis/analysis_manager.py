@@ -154,9 +154,7 @@ class AnalysisManager:
         self.timer = end
 
     def create_player_id_function(self, game: Game):
-        name_map = dict()
-        for player in game.players:
-            name_map[player.name] = player.online_id
+        name_map = {player.name: player.online_id for player in game.players}
 
         def create_name(proto_player_id, name):
             proto_player_id.id = str(name_map[name])

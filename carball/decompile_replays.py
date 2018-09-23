@@ -68,8 +68,7 @@ def analyze_replay_file(replay_path: str, output_path: str, overwrite=True, cont
     game.initialize(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.
     if sanity_check is not None:
-        pass
-#        sanity_check.check_game(game)
+        sanity_check.check_game(game)
     if analysis_per_goal:
         analysis = PerGoalAnalysis(game)
     else:
