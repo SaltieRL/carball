@@ -13,6 +13,8 @@ from ...json_parser.game import Game
 
 logger = logging.getLogger(__name__)
 
+position_column_names = ['pos_x', 'pos_y', 'pos_z']
+
 
 class BaseHit:
 
@@ -115,7 +117,7 @@ class BaseHit:
                 hit.goal_number = int(goal_number)
             id_creation(hit.player_id, player_name)
             hit.collision_distance = collision_distance
-            ball_position = data_frame.ball.loc[frame_number, ['pos_x', 'pos_y', 'pos_z']]
+            ball_position = data_frame.ball.loc[frame_number, position_column_names]
             hit.ball_data.pos_x = float(ball_position['pos_x'])
             hit.ball_data.pos_y = float(ball_position['pos_y'])
             hit.ball_data.pos_z = float(ball_position['pos_z'])
@@ -140,13 +142,16 @@ class BaseHit:
 def get_player_ball_displacements(data_frame: pd.DataFrame, player_name: str) -> pd.DataFrame:
     player_df = data_frame[player_name]
     ball_df = data_frame['ball']
-    position_column_names = ['pos_x', 'pos_y', 'pos_z']
-    return player_df[position_column_names] - ball_df[position_column_names]
+
+    result = player_df[position_column_names] - ball_df[position_column_names]
+    return result
 
 
 def get_distance_from_displacements(data_frame: pd.DataFrame) -> pd.Series:
-    position_column_names = ['pos_x', 'pos_y', 'pos_z']
-    return np.sqrt((data_frame[position_column_names] ** 2).sum(axis=1))
+    positions = data_frame[position_column_names]
+
+    summed = (positions ** 2).sum(axis=1, skipna=False)
+    return np.sqrt(summed)
 
 
 def get_rotation_matrices(data_frame: pd.DataFrame, player_name: str) -> pd.Series:
@@ -179,7 +184,6 @@ def get_rotation_matrix_from_row(components: pd.Series) -> np.array:
 
 
 def get_local_displacement(displacement: pd.DataFrame, rotation_matrices: pd.Series) -> pd.DataFrame:
-    position_column_names = ['pos_x', 'pos_y', 'pos_z']
     displacement_vectors = np.expand_dims(displacement[position_column_names].values, 2)
     inverse_rotation_matrices: pd.Series = np.transpose(rotation_matrices)
     inverse_rotation_array = np.stack(inverse_rotation_matrices.values)
