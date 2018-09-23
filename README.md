@@ -41,7 +41,8 @@ import gzip
 from carball.json_parser.game import Game
 from carball.analysis.analysis_manager import AnalysisManager
 # _json is a JSON game object (from decompile_replay)
-game = Game(loaded_json=_json)
+game = Game()
+game.initialize(loaded_json=_json)
 
 analysis = AnalysisManager(game)
 analysis.create_analysis()
