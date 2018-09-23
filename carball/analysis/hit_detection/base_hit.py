@@ -115,6 +115,8 @@ class BaseHit:
             goal_number = data_frame.at[frame_number, ('game', 'goal_number')]
             if not np.isnan(goal_number):
                 hit.goal_number = int(goal_number)
+                if hit.goal_number <= 0:
+                    print(hit.goal_number)
             id_creation(hit.player_id, player_name)
             hit.collision_distance = collision_distance
             ball_position = data_frame.ball.loc[frame_number, position_column_names]

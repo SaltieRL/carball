@@ -23,7 +23,7 @@ message Hit {
     optional bool dribble_continuation = 8;
     optional bool shot = 9;
     optional bool goal = 10;
-    optional bool goal_number = 11;
+
     optional bool assist = 12;
     optional bool assisted = 13;
     optional bool save = 14;
@@ -35,8 +35,14 @@ message Hit {
     optional int32 previous_hit_frame_number = 19;
     optional int32 next_hit_frame_number = 20;
 
+    // What goal number this hit belongs to
+    optional int32 goal_number = 21;
+
     // pseudo stats
     // is_turnover = !(goal || dribble || pass)
+
+    // DEPRECATED STATS
+    optional bool deprecated_field_goal_number = 11;
 }
 
 // Not Implemented
