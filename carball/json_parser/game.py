@@ -411,6 +411,18 @@ class Game:
                         self.ball_type = 'Basketball'
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
+                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Puck":
+                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
+                            continue
+                        self.ball_type = 'Puck'
+                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
+                        player_ball_data['ball'][frame_number] = data_dict
+                    elif actor_data["TypeName"] == "Archetypes.Ball.CubeBall":
+                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
+                            continue
+                        self.ball_type = 'Cubeball'
+                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
+                        player_ball_data['ball'][frame_number] = data_dict
 
                 for actor_id, actor_data in current_actors.items():
                     COMPONENT_ACTIVE_KEY = "TAGame.CarComponent_TA:Active"
