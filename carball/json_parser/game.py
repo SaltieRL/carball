@@ -6,6 +6,7 @@ from typing import List
 import pandas as pd
 
 from .actor_parsing import BallActor, CarActor
+from .ball_type import BallType
 from .goal import Goal
 from .player import Player
 from .team import Team
@@ -399,7 +400,7 @@ class Game:
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Default":
                         if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
                             continue
-                        self.ball_type = 'Default'
+                        self.ball_type = BallType.default
                         # RBState = actor_data.get(REPLICATED_RB_STATE_KEY, {})
                         # ball_is_sleeping = RBState.get('Sleeping', True)
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
@@ -408,19 +409,19 @@ class Game:
                         actor_data["TypeName"] == "Archetypes.Ball.Ball_BasketBall":
                         if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
                             continue
-                        self.ball_type = 'Basketball'
+                        self.ball_type = BallType.basketball
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Puck":
                         if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
                             continue
-                        self.ball_type = 'Puck'
+                        self.ball_type = BallType.puck
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
                     elif actor_data["TypeName"] == "Archetypes.Ball.CubeBall":
                         if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
                             continue
-                        self.ball_type = 'Cubeball'
+                        self.ball_type = BallType.cubeball
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
 
