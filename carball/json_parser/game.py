@@ -575,11 +575,14 @@ class Game:
                 # player not in endgame stats, create new player
                 try:
                     player = Player().create_from_actor_data(_player_data, self.teams)
-                except KeyError:
+                except KeyError as e:
                     # KeyError: 'Engine.PlayerReplicationInfo:Team'
                     # in `team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]`
                     # Player never actually joins the game.
-                    continue
+                    if 'Engine.PlayerReplicationInfo:Team' not in _player_data:
+                        logger.warning(f"Ignoring player: {_player_data['name']} as player has no team.")
+                        continue
+                    raise e
                 self.players.append(player)
                 player_actor_id_player_dict[_player_actor_id] = player
 
