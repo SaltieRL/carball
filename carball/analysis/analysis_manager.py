@@ -48,7 +48,6 @@ class AnalysisManager:
         kickoff_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frame)
         self.game.kickoff_frames = kickoff_frames
         self.log_time("getting kickoff")
-        self.get_game_time(self.protobuf_game, data_frame)
         if self.can_do_full_analysis():
             self.perform_full_analysis(self.game, self.protobuf_game, player_map, data_frame, kickoff_frames)
 
@@ -58,6 +57,7 @@ class AnalysisManager:
         self.store_frames(data_frame)
 
     def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map, data_frame, kickoff_frames):
+        self.get_game_time(proto_game, data_frame)
         clean_replay(game, data_frame, proto_game, player_map)
         self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames)
         self.log_time("calculating hits")
@@ -84,10 +84,10 @@ class AnalysisManager:
     def get_game_time(self, protobuf_game: game_pb2.Game, data_frame: pd.DataFrame):
         protobuf_game.game_metadata.length = data_frame.game[data_frame.game.goal_number.notnull()].delta.sum()
         for player in protobuf_game.players:
-            if 'pos_x' in data_frame[player.name]:
+            try:
                 player.time_in_game = data_frame[data_frame[player.name].pos_x.notnull()].game.delta.sum()
                 player.first_frame_in_game = data_frame[player.name].pos_x.first_valid_index()
-            else:
+            except:
                 player.time_in_game = 0
         logger.info('created all times for players')
 

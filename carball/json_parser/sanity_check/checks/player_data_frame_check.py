@@ -6,7 +6,7 @@ from ..base_checks.player_check import PlayerCheck
 class PlayerDataFrameCheck(PlayerCheck):
     class_message: ClassVar[str] = "All columns in player data frame must have at least 1 truthy value."
 
-    excluded_columns = ['ball_cam', 'ping', 'double_jump_active']
+    included_columns = ['pos_x', 'pos_y', 'pos_z']
 
     def critical_checks(self) -> List[Optional[AssertionError]]:
         player = self.obj
@@ -14,7 +14,7 @@ class PlayerDataFrameCheck(PlayerCheck):
             return [
                 self.check(condition, f'player.data column: {column_name} has truthy values')
                 for column_name, condition in player.data.any(axis=0).iteritems()
-                if column_name not in self.excluded_columns
+                if column_name in self.included_columns
             ]
         else:
             return [
