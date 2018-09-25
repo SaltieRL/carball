@@ -5,23 +5,23 @@ import "api/player_id.proto";
 package api.metadata;
 
 enum Playlist {
-    ranked = 1;
-    unranked = 2;
-    private = 3;
-    local = 4;
+    RANKED = 1;
+    UNRANKED = 2;
+    PRIVATE = 3;
+    LOCAL = 4;
 }
 
 enum GameMode {
-    solo_standard = 1;
-    duel = 2;
-    duos = 3;
-    standard = 4;
-    chaos = 5;
-    hoops = 6;
-    dropshot = 7;
-    hockey = 8;
-    rumble = 9;
-    custom = 10;
+    SOLO_STANDARD = 1;
+    DUEL = 2;
+    DUOS = 3;
+    STANDARD = 4;
+    CHAOS = 5;
+    HOOPS = 6;
+    DROPSHOT = 7;
+    HOCKEY = 8;
+    RUMBLE = 9;
+    CUSTOM = 10;
 }
 
 message GameScore {
