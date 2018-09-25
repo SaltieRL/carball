@@ -3,5 +3,5 @@ syntax = "proto2";
 package api.metadata;
 
 message Mutators {
-    optional BallType ball_type = 1;
+    optional int32 ball_type = 1;
 }
