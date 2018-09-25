@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package api.metadata;
+
+message Mutators {
+    optional BallType ball_type = 1;
+}

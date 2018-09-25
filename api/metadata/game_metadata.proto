@@ -9,7 +9,6 @@ message GameScore {
     optional int32 team_1_score = 2;
 }
 
-
 message Goal {
     optional int32 frame_number = 1;
     optional api.PlayerId player_id = 2;
@@ -33,4 +32,6 @@ message GameMetadata {
     repeated Demo demos = 10;
     optional PlayerId primary_player = 11; // Player who saved the replay locally
     optional float length = 12;
+    optional Playlist playlist = 13;
+    optional GameMode game_mode = 14;
 }
