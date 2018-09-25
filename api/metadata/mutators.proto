@@ -2,6 +2,13 @@ syntax = "proto2";
 
 package api.metadata;
 
+enum BallType {
+    default = 1;
+    basketball = 2;
+    puck = 3;
+    cubeball = 4;
+}
+
 message Mutators {
-    optional int32 ball_type = 1;
+    optional BallType ball_type = 1;
 }

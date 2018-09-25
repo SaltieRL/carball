@@ -4,6 +4,26 @@ import "api/player_id.proto";
 
 package api.metadata;
 
+enum Playlist {
+    ranked = 1;
+    unranked = 2;
+    private = 3;
+    local = 4;
+}
+
+enum GameMode {
+    solo_standard = 1;
+    duel = 2;
+    duos = 3;
+    standard = 4;
+    chaos = 5;
+    hoops = 6;
+    dropshot = 7;
+    hockey = 8;
+    rumble = 9;
+    custom = 10;
+}
+
 message GameScore {
     optional int32 team_0_score = 1;
     optional int32 team_1_score = 2;
@@ -32,24 +52,6 @@ message GameMetadata {
     repeated Demo demos = 10;
     optional PlayerId primary_player = 11; // Player who saved the replay locally
     optional float length = 12;
-    enum Playlist {
-        ranked = 1;
-        unranked = 2;
-        private = 3;
-        local = 4;
-    }
     optional Playlist playlist = 13;
-    enum GameMode {
-        solo_standard = 1;
-        duel = 2;
-        duos = 3;
-        standard = 4;
-        chaos = 5;
-        hoops = 6;
-        dropshot = 7;
-        hockey = 8;
-        rumble = 9;
-        custom = 10;
-    }
     optional GameMode game_mode = 14;
 }
