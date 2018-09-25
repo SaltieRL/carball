@@ -12,4 +12,9 @@ enum BallType {
 
 message Mutators {
     optional BallType ball_type = 1;
+    optional int32 game_server_id = 2;
+    optional string server_name = 3;
+    optional string match_guid = 4;
+    optional int32 team_size = 5;
+    optional int32 game_mutator_index = 6;
 }
