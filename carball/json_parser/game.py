@@ -10,6 +10,7 @@ from carball.generated.api.game_pb2 import mutators_pb2 as mutators
 from .goal import Goal
 from .player import Player
 from .team import Team
+from .game_info import GameInfo
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +65,8 @@ class Game:
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
         self.map = self.find_actual_value(self.properties['MapName']['value'])
         self.name = self.find_actual_value(self.properties.get('ReplayName', None))
+        self.match_type = self.find_actual_value(self.properties['MatchType']['value'])
+        self.team_size = self.find_actual_value(self.properties['TeamSize']['value'])
 
         if self.name is None:
             logger.warning('Replay name not found')
@@ -574,7 +577,7 @@ class Game:
         :return:
         """
         # GAME INFO
-        self.game_info_actor = self.parse_game_info_actor(all_data['game_info_actor'])
+        self.game_info = GameInfo().parse_game_info_actor(all_data['game_info_actor'])
 
         # TEAMS
         self.teams = []
@@ -659,14 +662,3 @@ class Game:
         del self.replay_data
         del self.replay
         del self.all_data
-
-    def parse_game_info_actor(self, actor_data):
-        """
-        Adds additional data to the game meta information
-        :param actor_data: game replication info
-        :return: Dict with additional data
-        """
-        actor_data['MatchType'] = self.find_actual_value(self.properties['MatchType']['value'])
-        actor_data['TeamSize'] = self.find_actual_value(self.properties['TeamSize']['value'])
-
-        return actor_data

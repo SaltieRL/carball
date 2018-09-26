@@ -5,23 +5,21 @@ import "api/player_id.proto";
 package api.metadata;
 
 enum Playlist {
-    RANKED = 1;
-    UNRANKED = 2;
-    PRIVATE = 3;
-    LOCAL = 4;
-}
-
-enum GameMode {
-    SOLO_STANDARD = 1;
-    DUEL = 2;
-    DUOS = 3;
-    STANDARD = 4;
-    CHAOS = 5;
-    HOOPS = 6;
-    DROPSHOT = 7;
-    HOCKEY = 8;
-    RUMBLE = 9;
-    CUSTOM = 10;
+	UNRANKED_DUELS = 1;
+	UNRANKED_DOUBLES = 2;
+	UNRANKED_STANDARD = 3;
+	UNRANKED_CHAOS = 4;
+	CUSTOM_LOBBY = 6;
+	RANKED_DUELS = 10;
+	RANKED_DOUBLES = 11;
+	RANKED_SOLO_STANDARD = 12;
+	RANKED_STANDARD = 13;
+	UNRANKED_SNOW_DAY = 15;
+	ROCKET_LABS = 16;
+	RANKED_HOOPS = 27;
+	RANKED_RUMBLE = 28;
+	RANKED_DROPSHOT = 29;
+	RANKED_SNOW_DAY = 30;
 }
 
 message GameScore {
@@ -52,6 +50,9 @@ message GameMetadata {
     repeated Demo demos = 10;
     optional PlayerId primary_player = 11; // Player who saved the replay locally
     optional float length = 12;
-    optional Playlist playlist = 13;
-    optional GameMode game_mode = 14;
+    optional string game_server_id = 13;
+    optional string server_name = 14;
+    optional string match_guid = 15;
+    optional int32 team_size = 16;
+	optional Playlist playlist = 17;
 }
