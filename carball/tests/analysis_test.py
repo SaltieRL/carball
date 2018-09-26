@@ -4,9 +4,11 @@ import os
 import shutil
 import subprocess
 import traceback
+from io import BytesIO
 
 from google.protobuf.json_format import MessageToJson
 
+from carball.analysis.utils.pandas_manager import PandasManager
 from carball.controls.controls import ControlsCreator
 from carball.decompile_replays import analyze_replay_file
 from carball.json_parser.sanity_check.sanity_check import SanityChecker
@@ -30,6 +32,7 @@ def __test_replays(BASE_DIR):
     success = 0
     failure = 0
     create_dir(OUTPUT_DIR)
+    sanity_check = SanityChecker()
 
     for filepath in glob.iglob(ROOT_DIR + '/**/*.replay', recursive=True):
         logger.info('decompiling %s', filepath)
@@ -48,9 +51,11 @@ def __test_replays(BASE_DIR):
             try:
                 analysis_manager = analyze_replay_file(filepath, json_path,
                                                        controls=ControlsCreator(), analysis_per_goal=False,
-                                                       sanity_check=SanityChecker())
+                                                       sanity_check=sanity_check)
                 with open(os.path.join(OUTPUT_DIR, 'game.json'), 'w') as f:
                     f.write(MessageToJson(analysis_manager.protobuf_game))
+                data_frame = PandasManager.safe_read_pandas_to_memory(BytesIO(analysis_manager.df_bytes))
+                logger.info('length of decoded pandas %i', len(data_frame))
             except subprocess.CalledProcessError as e:
                 traceback.print_exc()
         else:

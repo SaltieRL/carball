@@ -268,17 +268,18 @@ class Game:
             # find players and ball
             for actor_id, actor_data in current_actors.items():
                 if actor_data["TypeName"] == "TAGame.Default__PRI_TA" \
-                        and "Engine.PlayerReplicationInfo:Team" in actor_data:
+                        and "Engine.PlayerReplicationInfo:PlayerName" in actor_data:
+
                     player_dict = {
                         'name': actor_data["Engine.PlayerReplicationInfo:PlayerName"],
-                        'team': actor_data["Engine.PlayerReplicationInfo:Team"],
-
-                        # 'steam_id': actor_data["Engine.PlayerReplicationInfo:UniqueId"]["SteamID64"],
-                        # 'player_id': actor_data["Engine.PlayerReplicationInfo:PlayerID"]
                     }
+                    # Conditionally add ['team'] key to player_dict
+                    player_team = actor_data.get("Engine.PlayerReplicationInfo:Team", None)
+                    if player_team is not None and player_team != -1:
+                        player_dict['team'] = player_team
+
                     if "TAGame.PRI_TA:PartyLeader" in actor_data:
                         try:
-
                             actor_type = \
                                 list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id'][
                                          'remote_id'].keys())[
@@ -303,7 +304,7 @@ class Game:
                         player_ball_data[actor_id] = {}
                     else:
                         # update player_dicts
-                        for _k, _v in actor_data.items():
+                        for _k, _v in {**actor_data, **player_dict}.items():
                             player_dicts[actor_id][_k] = _v
                 elif actor_data["ClassName"] == "TAGame.Team_Soccar_TA":
                     team_dicts[actor_id] = actor_data
@@ -403,7 +404,8 @@ class Game:
                         # ball_is_sleeping = RBState.get('Sleeping', True)
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
-                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Basketball":
+                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Basketball" or \
+                        actor_data["TypeName"] == "Archetypes.Ball.Ball_BasketBall":
                         if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
                             continue
                         self.ball_type = 'Basketball'
@@ -571,7 +573,16 @@ class Game:
                 player.parse_actor_data(_player_data)
             else:
                 # player not in endgame stats, create new player
-                player = Player().create_from_actor_data(_player_data, self.teams)
+                try:
+                    player = Player().create_from_actor_data(_player_data, self.teams)
+                except KeyError as e:
+                    # KeyError: 'Engine.PlayerReplicationInfo:Team'
+                    # in `team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]`
+                    # Player never actually joins the game.
+                    if 'Engine.PlayerReplicationInfo:Team' not in _player_data:
+                        logger.warning(f"Ignoring player: {_player_data['name']} as player has no team.")
+                        continue
+                    raise e
                 self.players.append(player)
                 player_actor_id_player_dict[_player_actor_id] = player
 
