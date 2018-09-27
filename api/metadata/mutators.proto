@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package api.metadata;
+
+enum BallType {
+    DEFAULT = 1;
+    BASKETBALL = 2;
+    PUCK = 3;
+    CUBEBALL = 4;
+    BREAKOUT = 5;
+}
+
+message Mutators {
+    optional BallType ball_type = 1;
+    optional int32 game_mutator_index = 2;
+}

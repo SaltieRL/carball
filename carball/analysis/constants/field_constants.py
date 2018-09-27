@@ -9,6 +9,7 @@ class FieldType(Enum):
     STANDARD = 1
 
 
+HEIGHT_0_BALL_LIM = 95  # Height of car when on ground
 HEIGHT_0_LIM = 20  # Height of car when on ground
 HEIGHT_1_LIM = 840  # Goal height
 
@@ -49,6 +50,9 @@ class FieldConstants:
 
     def get_height_0(self, player_data_frame, **kwargs):
         return player_data_frame.pos_z < HEIGHT_0_LIM
+
+    def get_height_0_ball(self, player_data_frame, **kwargs):
+        return player_data_frame.pos_z < HEIGHT_0_BALL_LIM
 
     def get_height_1(self, player_data_frame, **kwargs):
         return (HEIGHT_0_LIM < player_data_frame.pos_z) & (player_data_frame.pos_z < HEIGHT_1_LIM)

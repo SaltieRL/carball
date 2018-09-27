@@ -33,6 +33,7 @@ def __test_replays(BASE_DIR):
     failure = 0
     create_dir(OUTPUT_DIR)
     sanity_check = SanityChecker()
+    sanity_check = None
 
     for filepath in glob.iglob(ROOT_DIR + '/**/*.replay', recursive=True):
         logger.info('decompiling %s', filepath)
@@ -52,7 +53,8 @@ def __test_replays(BASE_DIR):
                 analysis_manager = analyze_replay_file(filepath, json_path,
                                                        controls=ControlsCreator(), analysis_per_goal=False,
                                                        sanity_check=sanity_check)
-                with open(os.path.join(OUTPUT_DIR, 'game.json'), 'w') as f:
+                id = analysis_manager.protobuf_game.game_metadata.id
+                with open(os.path.join(OUTPUT_DIR, id + 'game.json'), 'w') as f:
                     f.write(MessageToJson(analysis_manager.protobuf_game))
                 data_frame = PandasManager.safe_read_pandas_to_memory(BytesIO(analysis_manager.df_bytes))
                 logger.info('length of decoded pandas %i', len(data_frame))

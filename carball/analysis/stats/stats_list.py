@@ -37,7 +37,9 @@ class StatsList:
     @staticmethod
     def get_general_stats() ->List[BaseStat]:
         """These are stats that end up being assigned to the game as a whole"""
-        return []
+        return [PositionalTendencies(),
+                SpeedTendencies()
+                ]
 
     @staticmethod
     def get_hit_stats() ->List[HitStat]:

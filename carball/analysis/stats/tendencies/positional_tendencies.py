@@ -17,7 +17,7 @@ class PositionalTendencies(BaseStat):
     def __init__(self):
         super().__init__()
         self.field_constants = FieldConstants()
-        self.map_attributes_to_predicates = {
+        self.map_player_attributes_to_predicates = {
             "height_0": self.field_constants.get_height_0,
             "height_1": self.field_constants.get_height_1,
             "height_2": self.field_constants.get_height_2,
@@ -30,6 +30,35 @@ class PositionalTendencies(BaseStat):
             "ball_1": self.field_constants.get_ball_1
         }
 
+        self.map_ball_attributes_to_predicates = {
+            "height_0": self.field_constants.get_height_0_ball,
+            "height_1": self.field_constants.get_height_1,
+            "height_2": self.field_constants.get_height_2,
+            "half_0": self.field_constants.get_half_0,
+            "half_1": self.field_constants.get_half_1,
+            "third_0": self.field_constants.get_third_0,
+            "third_1": self.field_constants.get_third_1,
+            "third_2": self.field_constants.get_third_2,
+            "ball_0": self.field_constants.get_ball_0,
+            "ball_1": self.field_constants.get_ball_1
+        }
+
+    def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                       data_frame: pd.DataFrame):
+        ball_data_frame = data_frame['ball']
+
+        # Use the same for most
+        player_ball_dataframes: Dict[str, pd.DataFrame] = {
+            "player_data_frame": ball_data_frame,
+            "ball_data_frame": ball_data_frame,
+        }
+
+        init_params = {
+            attr: self.get_duration_from_predicate(predicate, player_ball_dataframes, data_frame)
+            for attr, predicate in self.map_ball_attributes_to_predicates.items()
+        }
+        self.set_tendency_proto(proto_stat.ball_stats.positional_tendencies, **init_params)
+
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
 
@@ -39,16 +68,17 @@ class PositionalTendencies(BaseStat):
     def get_player_tendencies(self, player: Player, data_frame: pd.DataFrame):
         player_data_frame = data_frame[player.name]
         ball_data_frame = data_frame['ball']
+
         player_ball_dataframes: Dict[str, pd.DataFrame] = {
             "player_data_frame": player_data_frame,
-            "ball_data_frame": ball_data_frame
+            "ball_data_frame": player_data_frame,
         }
         if player.is_orange:
             player_ball_dataframes = self.get_flipped_dataframes(player_ball_dataframes)
 
         init_params = {
             attr: self.get_duration_from_predicate(predicate, player_ball_dataframes, data_frame)
-            for attr, predicate in self.map_attributes_to_predicates.items()
+            for attr, predicate in self.map_player_attributes_to_predicates.items()
         }
         self.set_tendency_proto(player.stats.positional_tendencies, **init_params)
 

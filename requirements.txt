@@ -3,3 +3,5 @@ protobuf
 xlrd
 pandas
 twine
+pytest
+requests
