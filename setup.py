@@ -1,14 +1,19 @@
 import setuptools
 from setuptools import setup
 import os
+from carball.analysis.analysis_manager import AnalysisManager
+
 if os.path.isfile('README.md'):
     with open("README.md", "r") as readme_file:
         long_description = readme_file.read()
 else:
     long_description = ''
+
+subversion = 0
+version_string = '0.' + str(AnalysisManager.PROTOBUF_VERSION + 2) + '.' + str(subversion)
 setup(
     name='carball',
-    version='0.3.1',
+    version=version_string,
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=['pandas==0.23.4', 'protobuf==3.6.1', 'xlrd'],
