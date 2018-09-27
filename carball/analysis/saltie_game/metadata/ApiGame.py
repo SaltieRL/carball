@@ -35,6 +35,12 @@ class ApiGame:
         ApiDemo.create_demos_from_game(game, proto_game.demos, id_creator)
         if game.primary_player is not None and game.primary_player['id'] is not None:
             proto_game.primary_player.id = game.primary_player['id']
+        proto_game.playlist = game.game_info.playlist
+        proto_game.game_server_id = game.game_info.server_id
+        proto_game.server_name = game.game_info.server_name
+        proto_game.match_guid = game.game_info.match_guid
+        proto_game.team_size = game.team_size
+
         return id_creator, proto_game
 
     @staticmethod

@@ -1,6 +1,7 @@
 syntax = "proto2";
 
 import "api/stats/events.proto";
+import "api/stats/ball_stats.proto";
 package api.stats;
 
 
@@ -8,4 +9,5 @@ message GameStats {
     repeated api.stats.Hit hits = 1;
     optional float neutral_possession_time = 2;
     repeated api.stats.Bump bumps = 3;
+    optional api.stats.BallStats ball_stats = 4;
 }

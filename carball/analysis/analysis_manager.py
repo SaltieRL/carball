@@ -8,6 +8,7 @@ from ..analysis.cleaner.cleaner import clean_replay
 from ..analysis.hit_detection.base_hit import BaseHit
 from ..analysis.hit_detection.hit_analysis import SaltieHit
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame
+from ..analysis.saltie_game.metadata.ApiMutators import ApiMutators
 from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
 from ..analysis.saltie_game.metadata.ApiTeam import ApiTeam
 from ..analysis.saltie_game.saltie_game import SaltieGame
@@ -78,6 +79,9 @@ class AnalysisManager:
             player_proto = proto_game.players.add()
             ApiPlayer.create_from_player(player_proto, player, self.id_creator)
             player_map[str(player.online_id)] = player_proto
+
+        # create mutators
+        ApiMutators.create_from_game(proto_game.mutators, game, self.id_creator)
 
         return player_map
 
