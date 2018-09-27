@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 class AnalysisManager:
     id_creator = None
     timer = None
-    PROTOBUF_VERSION = 3
+    PROTOBUF_VERSION = 5
 
     def __init__(self, game: Game):
         self.game = game

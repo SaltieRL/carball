@@ -10,7 +10,7 @@ else:
     long_description = ''
 
 subversion = 0
-version_string = '0.' + str(AnalysisManager.PROTOBUF_VERSION + 2) + '.' + str(subversion)
+version_string = '0.' + str(AnalysisManager.PROTOBUF_VERSION) + '.' + str(subversion)
 setup(
     name='carball',
     version=version_string,
