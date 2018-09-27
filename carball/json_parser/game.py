@@ -6,9 +6,11 @@ from typing import List
 import pandas as pd
 
 from .actor_parsing import BallActor, CarActor
+from carball.generated.api.game_pb2 import mutators_pb2 as mutators
 from .goal import Goal
 from .player import Player
 from .team import Team
+from .game_info import GameInfo
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +65,8 @@ class Game:
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
         self.map = self.find_actual_value(self.properties['MapName']['value'])
         self.name = self.find_actual_value(self.properties.get('ReplayName', None))
+        self.match_type = self.find_actual_value(self.properties['MatchType']['value'])
+        self.team_size = self.find_actual_value(self.properties['TeamSize']['value'])
 
         if self.name is None:
             logger.warning('Replay name not found')
@@ -206,7 +210,7 @@ class Game:
         cameras_data = {}  # player_actor_id: actor_data
         demos_data = []  # frame_number: demolish_data
 
-        latest_game_actor_data = None
+        game_info_actor = None
         parties = {}
         # loop through frames
         for i, frame in enumerate(frames):
@@ -264,6 +268,13 @@ class Game:
                     # update stuff in current_actors
                     for _k, _v in actual_update.items():
                         current_actors[actor_id][_k] = _v
+
+            # server metadata
+            if game_info_actor is None:
+                for actor_id, actor_data in current_actors.items():
+                    if actor_data['TypeName'].endswith(':GameReplicationInfoArchetype'):
+                        game_info_actor = actor_data
+                        break
 
             # find players and ball
             for actor_id, actor_data in current_actors.items():
@@ -338,8 +349,8 @@ class Game:
                                 or "TAGame.GameEvent_Soccar_TA:SecondsRemaining" in actor_data:
                             # TODO: Investigate if there's a less hacky way to detect GameActors with not TypeName
                             soccar_game_event_actor_id = actor_id
-                            latest_game_actor_data = actor_data
                             break
+
                 frame_data['seconds_remaining'] = current_actors[soccar_game_event_actor_id].get(
                     "TAGame.GameEvent_Soccar_TA:SecondsRemaining", None)
                 frame_data['is_overtime'] = current_actors[soccar_game_event_actor_id].get(
@@ -399,7 +410,7 @@ class Game:
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Default":
                         if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
                             continue
-                        self.ball_type = 'Default'
+                        self.ball_type = mutators.DEFAULT
                         # RBState = actor_data.get(REPLICATED_RB_STATE_KEY, {})
                         # ball_is_sleeping = RBState.get('Sleeping', True)
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
@@ -408,7 +419,25 @@ class Game:
                         actor_data["TypeName"] == "Archetypes.Ball.Ball_BasketBall":
                         if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
                             continue
-                        self.ball_type = 'Basketball'
+                        self.ball_type = mutators.BASKETBALL
+                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
+                        player_ball_data['ball'][frame_number] = data_dict
+                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Puck":
+                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
+                            continue
+                        self.ball_type = mutators.PUCK
+                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
+                        player_ball_data['ball'][frame_number] = data_dict
+                    elif actor_data["TypeName"] == "Archetypes.Ball.CubeBall":
+                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
+                            continue
+                        self.ball_type = mutators.CUBEBALL
+                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
+                        player_ball_data['ball'][frame_number] = data_dict
+                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Breakout":
+                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
+                            continue
+                        self.ball_type = mutators.BREAKOUT
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
 
@@ -534,7 +563,7 @@ class Game:
             'frames_data': frames_data,
             'cameras_data': cameras_data,
             'demos_data': demos_data,
-            'latest_game_actor_data': latest_game_actor_data,
+            'game_info_actor': game_info_actor,
             'parties': parties
         }
 
@@ -547,7 +576,8 @@ class Game:
         :param all_data: Dict returned by parse_replay
         :return:
         """
-        self.game_actor_data = all_data['latest_game_actor_data']
+        # GAME INFO
+        self.game_info = GameInfo().parse_game_info_actor(all_data['game_info_actor'])
 
         # TEAMS
         self.teams = []
