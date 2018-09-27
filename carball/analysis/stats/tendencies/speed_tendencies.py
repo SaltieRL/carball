@@ -12,14 +12,26 @@ from ....json_parser.game import Game
 
 class SpeedTendencies(BaseStat):
 
+    def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                       data_frame: pd.DataFrame):
+
+        ball = data_frame['ball']
+        speed: pd.Series = (ball.vel_x ** 2 +
+                            ball.vel_y ** 2 +
+                            ball.vel_z ** 2) ** 0.5
+
+        average_speed = speed.mean()
+
+        proto_stat.ball_stats.averages.average_speed = average_speed
+
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
 
         for key, player in player_map.items():
-            self.calculate_speed_for_player(player, data_frame)
+            self.calculate_speed_for_data_frame(player, data_frame)
 
     @classmethod
-    def calculate_speed_for_player(cls, player: Player, data_frame: pd.DataFrame):
+    def calculate_speed_for_data_frame(cls, player: Player, data_frame: pd.DataFrame):
         player_data_frame = data_frame[player.name]
 
         speed: pd.Series = (player_data_frame.vel_x ** 2 +

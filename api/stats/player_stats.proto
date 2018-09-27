@@ -31,12 +31,6 @@ message Distance {
     optional float time_close_to_ball = 5; // only when player is < 500 units away
 }
 
-message Speed {
-    optional float time_at_slow_speed = 1; // Time when car is < 700uu/s
-    optional float time_at_super_sonic = 2; // time when car is > 2200
-    optional float time_at_boost_speed = 3; // time when car is > 1410
-}
-
 message PlayerStats {
     optional Boost boost = 1;
     optional Distance distance = 2;
@@ -46,7 +40,7 @@ message PlayerStats {
     optional api.stats.HitCounts hit_counts = 6;
     repeated api.stats.CameraChange camera_changes = 7;
     optional Controller controller = 8;
-    optional Speed speed = 9;
+    optional api.stats.Speed speed = 9;
 }
 
 message Controller {

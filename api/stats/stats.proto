@@ -40,3 +40,9 @@ message HitCounts {
     optional int32 total_dribble_conts = 7;
     optional int32 total_aerials = 8;
 }
+
+message Speed {
+    optional float time_at_slow_speed = 1; // Time when car is < 700uu/s
+    optional float time_at_super_sonic = 2; // time when car is > 2200
+    optional float time_at_boost_speed = 3; // time when car is > 1410
+}
