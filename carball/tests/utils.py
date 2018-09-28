@@ -4,6 +4,10 @@ import tempfile
 import requests
 
 
+def get_replay_list():
+    return ['https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay']
+
+
 def download_replay_discord(url):
     file = requests.get(url, stream=True)
     replay = file.raw.data
@@ -18,12 +22,13 @@ def save_locally(replay_object):
     os.close(fd)
     return file_path
 
+
 def run_replay(url):
     replay = download_replay_discord(url)
     file = save_locally(replay)
 
 
-
 if __name__ == "__main__":
-    replay = download_replay_discord('https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay')
+    replay = download_replay_discord(
+        'https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay')
     save_locally(replay)

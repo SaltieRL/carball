@@ -1,8 +1,9 @@
 import os
 import unittest
 
+from carball.analysis.analysis_manager import AnalysisManager
 from carball.tests import utils
-from carball.tests.running_test import get_replay_list
+from carball.tests.utils import get_replay_list
 from .. import decompile_replays
 
 OUTPUT_DIR = os.path.join('..', 'replays', 'pickled')
@@ -28,13 +29,13 @@ class DBTest(unittest.TestCase):
         for filename in files:
             print(filename)
             output = 'replays/decompiled/{}'.format(os.path.basename(filename).replace(".replay", ".json"))
-            self.g = decompile_replays.decompile_replay(filename, output)
+            self.g: AnalysisManager = decompile_replays.analyze_replay_file(filename, output)
             break
 
     def test_replay_attrs(self):
-        self.assertIsNotNone(self.g.api_game.name)
-        self.assertIsNotNone(self.g.api_game.map)
-        self.assertIsNotNone(self.g.api_game.id)
+        self.assertIsNotNone(self.g.protobuf_game.game_metadata.match_guid)
+        self.assertIsNotNone(self.g.protobuf_game.game_metadata.map)
+        self.assertIsNotNone(self.g.protobuf_game.game_metadata.id)
 
 
 if __name__ == '__main__':
