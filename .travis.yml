@@ -1,13 +1,13 @@
 language: python
 python:
 - "3.6"
-- "3.7"
 
 # command to install dependencies
 before_install:
 - sudo apt-get install libstdc++6
 - "sudo chmod 755 utils/install_protobuf.sh"
 - "./utils/install_protobuf.sh"
+- "ls ."
 - "yes | cp -rf /usr/local/bin/protoc ./carball/generated"
 
 install:
