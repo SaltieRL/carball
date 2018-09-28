@@ -2,12 +2,14 @@ language: python
 python:
 - "3.6"
 - "3.7"
+
 # command to install dependencies
+before_install:
+- "sudo chmod 755 utils/install_protobuf.sh"
+- "./utils/install_protobuf.sh"
+
 install:
 - pip install -r requirements.txt
-- sudo apt-get update
-- sudo apt-get install libprotobuf9=2.6.1
-- sudo apt-get install libprotobuf-c0
 # command to run tests
 script:
 - python init.py
