@@ -14,7 +14,7 @@ if [ "`$HOME/local/bin/protoc --version 2>/dev/null | cut -d' ' -f 2`" != ${prot
 	cd protobuf-${protoc_version}
 	./configure
 	make
-	make install
+	sudo make install
 fi
 
 echo \$ protoc --version
