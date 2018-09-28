@@ -1,6 +1,8 @@
 import os
 import unittest
 
+from carball.tests import utils
+from carball.tests.running_test import get_replay_list
 from .. import decompile_replays
 
 OUTPUT_DIR = os.path.join('..', 'replays', 'pickled')
@@ -13,11 +15,20 @@ class DBTest(unittest.TestCase):
             os.makedirs(OUTPUT_DIR)
 
         replays_folder = os.path.join(BASE_DIR, 'replays')
-        for filename in [f for f in os.listdir(replays_folder) if os.path.isfile(os.path.join(replays_folder, f))]:
-            filepath = 'replays/' + filename
-            print(filepath)
-            output = 'replays/decompiled/{}'.format(filepath.replace(".replay", ".json"))
-            self.g = decompile_replays.decompile_replay(filepath, output)
+        if not os.path.isdir(replays_folder):
+            os.makedirs(replays_folder)
+        downloaded_list = []
+        for filename in get_replay_list():
+            replay = utils.download_replay_discord(filename)
+            filename = utils.save_locally(replay)
+            downloaded_list.append(filename)
+        files = [os.path.join(replays_folder, f) for f in os.listdir(replays_folder) if
+                 os.path.isfile(os.path.join(replays_folder, f))] + downloaded_list
+
+        for filename in files:
+            print(filename)
+            output = 'replays/decompiled/{}'.format(os.path.basename(filename).replace(".replay", ".json"))
+            self.g = decompile_replays.decompile_replay(filename, output)
             break
 
     def test_replay_attrs(self):
