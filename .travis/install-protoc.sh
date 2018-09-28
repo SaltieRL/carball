@@ -9,10 +9,10 @@ if [ "`$HOME/local/bin/protoc --version 2>/dev/null | cut -d' ' -f 2`" != ${prot
 
 	mkdir -p $HOME/tmp $HOME/local
 	cd $HOME/tmp
-	wget https://github.com/google/protobuf/releases/download/v${protoc_version}/protoc-${protoc_version}-linux-x86_64.zip
-	unzip protoc-${protoc_version}-linux-x86_64.zip
-	mv bin $HOME/local/bin
-	mv include $HOME/local/include
+	wget https://github.com/protocolbuffers/protobuf/releases/download/v${protoc_version}/protobuf-${protoc_version}.zip
+	unzip protobuf-${protoc_version}.zip
+	make
+	make install
 fi
 
 echo \$ $HOME/local/bin/protoc --version
