@@ -5,6 +5,7 @@ python:
 # command to install dependencies
 before_install:
 - sudo apt-get install protobuf-compiler
+- ldconfig
 #- sudo apt-get install libstdc++6
 #- "sudo chmod 755 utils/install_protobuf.sh"
 #- "./utils/install_protobuf.sh"
