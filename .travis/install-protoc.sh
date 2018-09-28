@@ -12,9 +12,10 @@ if [ "`$HOME/local/bin/protoc --version 2>/dev/null | cut -d' ' -f 2`" != ${prot
 	wget https://github.com/protocolbuffers/protobuf/releases/download/v${protoc_version}/protobuf-${protoc_version}.zip
 	unzip protobuf-${protoc_version}.zip
 	cd protobuf-${protoc_version}
+	./configure
 	make
 	make install
 fi
 
-echo \$ $HOME/local/bin/protoc --version
-$HOME/local/bin/protoc --version
+echo \$ protoc --version
+protoc --version
