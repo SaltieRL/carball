@@ -11,6 +11,7 @@ if [ "`$HOME/local/bin/protoc --version 2>/dev/null | cut -d' ' -f 2`" != ${prot
 	cd $HOME/tmp
 	wget https://github.com/protocolbuffers/protobuf/releases/download/v${protoc_version}/protobuf-${protoc_version}.zip
 	unzip protobuf-${protoc_version}.zip
+	cd protobuf-${protoc_version}
 	make
 	make install
 fi
