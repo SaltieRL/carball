@@ -7,7 +7,7 @@ before_install:
 - sudo apt-get install libstdc++6
 - "sudo chmod 755 utils/install_protobuf.sh"
 - "./utils/install_protobuf.sh"
-- "yes | cp -rf /usr/lib/protoc ./carball/generated"
+- "yes | cp -rf /usr/bin/protoc ./carball/generated"
 
 install:
 - pip install -r requirements.txt
