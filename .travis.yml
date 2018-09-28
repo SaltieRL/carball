@@ -5,6 +5,7 @@ python:
 # command to install dependencies
 install:
 - pip install -r requirements.txt
+- apt-get install --reinstall libprotobuf9 libprotobuf-c0
 # command to run tests
 script:
 - python init.py
