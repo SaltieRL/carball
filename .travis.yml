@@ -4,8 +4,9 @@ python:
 
 addons:
   apt:
+    sources:
+    - ubuntu-toolchain-r-test
     packages:
-    - libsecret-1-dev
     - libstdc++6
     - gcc-4.8
 
