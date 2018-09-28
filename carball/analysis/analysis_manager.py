@@ -23,14 +23,14 @@ logger = logging.getLogger(__name__)
 
 
 class AnalysisManager:
-
     id_creator = None
     timer = None
+    PROTOBUF_VERSION = 5
 
     def __init__(self, game: Game):
         self.game = game
         self.protobuf_game = game_pb2.Game()
-        self.protobuf_game.version = 1
+        self.protobuf_game.version = self.PROTOBUF_VERSION
         self.id_creator = self.create_player_id_function(game)
         self.stats_manager = StatsManager()
         self.should_store_frames = False
