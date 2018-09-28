@@ -8,10 +8,10 @@ from io import BytesIO
 
 from google.protobuf.json_format import MessageToJson
 
-from carball.analysis.utils.pandas_manager import PandasManager
-from carball.controls.controls import ControlsCreator
-from carball.decompile_replays import analyze_replay_file
-from carball.json_parser.sanity_check.sanity_check import SanityChecker
+from ..analysis.utils.pandas_manager import PandasManager
+from ..controls.controls import ControlsCreator
+from ..decompile_replays import analyze_replay_file
+from ..json_parser.sanity_check.sanity_check import SanityChecker
 
 
 def create_dir(directory):

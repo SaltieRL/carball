@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from carball import decompile_replays
+from .. import decompile_replays
 
 OUTPUT_DIR = os.path.join('..', 'replays', 'pickled')
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
