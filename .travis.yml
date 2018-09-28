@@ -12,6 +12,7 @@ addons:
 
 # command to install dependencies
 before_install:
+- chmod 777 ./.travis/install-protoc.sh
 - ./.travis/install-protoc.sh 2.6.1
 
 install:
