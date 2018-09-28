@@ -7,6 +7,7 @@ before_install:
 - sudo apt-get update
 - sudo apt-get install libstdc++6
 - sudo ldconfig
+- strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6
 - "sudo chmod 755 utils/install_protobuf.sh"
 - "./utils/install_protobuf.sh"
 - sudo sh -c "echo '/usr/lib' >> /etc/ld.so.conf.d/lib.conf"
