@@ -5,6 +5,7 @@ python:
 # command to install dependencies
 before_install:
 - sudo apt-get update
+- apt-cache policy protobuf-compiler
 - apt-cache madison protobuf-compiler
 - sudo apt-get install protobuf-compiler
 - sudo sh -c "echo '/usr/lib' >> /etc/ld.so.conf.d/lib.conf"
