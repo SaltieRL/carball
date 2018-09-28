@@ -4,10 +4,12 @@ python:
 
 # command to install dependencies
 before_install:
+- apt-cache madison protobuf-compiler
 - sudo apt-get install protobuf-compiler
 - sudo sh -c "echo '/usr/lib' >> /etc/ld.so.conf.d/lib.conf"
 - sudo sh -c "echo '/usr/local/lib' >> /etc/local.conf"
 - sudo ldconfig
+- export LD_LIBRARY_PATH=/usr/local/lib
 #- sudo apt-get install libstdc++6
 #- "sudo chmod 755 utils/install_protobuf.sh"
 #- "./utils/install_protobuf.sh"
