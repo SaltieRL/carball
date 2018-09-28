@@ -12,21 +12,12 @@ addons:
 
 # command to install dependencies
 before_install:
-- sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-- sudo apt-get update
-- sudo apt-get install libstdc++6
-- sudo ldconfig
-- strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBCXX
-- "sudo chmod 755 utils/install_protobuf.sh"
-- "./utils/install_protobuf.sh"
-- sudo sh -c "echo '/usr/lib' >> /etc/ld.so.conf.d/lib.conf"
-- sudo sh -c "echo '/usr/local/lib' >> /etc/local.conf"
-- sudo ldconfig
-- export LD_LIBRARY_PATH=/usr/local/lib
+- chmod 777 ./.travis/install-protoc.sh
+- ./.travis/install-protoc.sh 2.6.1
 
 install:
 - pip install -r requirements.txt
 # command to run tests
 script:
 - python init.py
-- pytest
+- pytest --ignore=protobuf-2.6.1/
