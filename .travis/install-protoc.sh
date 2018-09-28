@@ -6,6 +6,10 @@ cd protobuf-${protoc_version}
 ./configure
 make
 ./src/protoc --version
+pwd
+ls -lh
 cd ..
+pwd
+ls -lh
 cp ./.travis/protobuf-${protoc_version}/src/protoc carball/generated
 ./carball/generated/protoc
