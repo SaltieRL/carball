@@ -12,4 +12,3 @@ cd ..
 pwd
 ls -lh
 cp ./protobuf-${protoc_version}/src/protoc carball/generated
-./carball/generated/protoc
