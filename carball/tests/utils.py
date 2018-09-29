@@ -1,11 +1,8 @@
 import os
 import tempfile
+from typing import Callable
 
 import requests
-
-
-def get_replay_list():
-    return ['https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay']
 
 
 def download_replay_discord(url):
@@ -23,12 +20,31 @@ def save_locally(replay_object):
     return file_path
 
 
-def run_replay(url):
+def test_on_list(unit_test, replay_list=None):
+    if replay_list is None:
+        replay_list = get_replay_list()
+
+    for replay_url in replay_list:
+        run_replay(replay_url, unit_test)
+
+
+def run_replay(url, func: Callable):
+    """
+    Runs the replay with the file downloaded locally then deletes the file.
+    :param url:
+    :param func:
+    :return:
+    """
+
     replay = download_replay_discord(url)
     file = save_locally(replay)
 
+    fd, file_path = tempfile.mkstemp()
+    os.close(fd)
+    func(file, file_path)
+    os.remove(file)
+    os.remove(file_path)
 
-if __name__ == "__main__":
-    replay = download_replay_discord(
-        'https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay')
-    save_locally(replay)
+
+def get_replay_list():
+    return ['https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay']

@@ -1,16 +1,13 @@
-import os
-import tempfile
 import unittest
 
-from carball.json_parser.game import Game
+from ..json_parser.game import Game
+from ..tests.utils import test_on_list
 
-from carball.tests.utils import test_on_list
 from .. import decompile_replays
 
 
 class DBTest(unittest.TestCase):
     def test_replay_attrs(self):
-
 
         def test(replay, file_path):
             json_object = decompile_replays.decompile_replay(replay, file_path)
