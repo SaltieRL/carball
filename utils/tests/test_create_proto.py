@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest.mock import patch
 
-from ..create_proto import get_proto
+from utils.create_proto import get_proto
 
 
 class GetProtoTests(unittest.TestCase):
