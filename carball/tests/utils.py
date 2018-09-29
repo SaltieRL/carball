@@ -20,12 +20,12 @@ def save_locally(replay_object):
     return file_path
 
 
-def test_on_list(unit_test, replay_list=None):
+def run_tests_on_list(unit_test_func, replay_list=None):
     if replay_list is None:
         replay_list = get_replay_list()
 
     for replay_url in replay_list:
-        run_replay(replay_url, unit_test)
+        run_replay(replay_url, unit_test_func)
 
 
 def run_replay(url, func: Callable):

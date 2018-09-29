@@ -1,7 +1,7 @@
 import unittest
 
 from ..json_parser.game import Game
-from ..tests.utils import test_on_list
+from ..tests.utils import run_tests_on_list
 
 from .. import decompile_replays
 
@@ -18,7 +18,7 @@ class DBTest(unittest.TestCase):
             self.assertIsNotNone(game.map)
             self.assertIsNotNone(game.game_info.match_guid)
 
-        test_on_list(test)
+        run_tests_on_list(test)
 
 
 if __name__ == '__main__':
