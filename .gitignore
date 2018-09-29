@@ -4,3 +4,4 @@ replays/
 venv/
 /**/generated/**/*.py
 output
+.env
