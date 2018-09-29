@@ -2,7 +2,7 @@ import gzip
 import os
 import unittest
 
-from carball.analysis.utils.pandas_manager import PandasManager
+from ..analysis.utils.pandas_manager import PandasManager
 
 OUTPUT_DIR = os.path.join('..', 'replays', 'pickled')
 OUTPUT_FORMAT = '.gzip'
@@ -11,6 +11,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 class DBTest(unittest.TestCase):
     def setUp(self):
+        self.pandas = None
         if not os.path.isdir(OUTPUT_DIR):
             os.makedirs(OUTPUT_DIR)
 
@@ -20,9 +21,9 @@ class DBTest(unittest.TestCase):
                 with gzip.open(filepath, 'rb') as file:
                     self.pandas = PandasManager.read_numpy_from_memory(file)
 
-
     def test_replay_attrs(self):
-        print(self.pandas)
+        if self.pandas is not None:
+            print(self.pandas)
 
 
 if __name__ == '__main__':
