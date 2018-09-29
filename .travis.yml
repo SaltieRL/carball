@@ -1,10 +1,23 @@
 language: python
 python:
 - "3.6"
-- "3.7"
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - libstdc++6
+    - gcc-4.8
+
 # command to install dependencies
+before_install:
+- chmod 777 ./.travis/install-protoc.sh
+- ./.travis/install-protoc.sh 2.6.1
+
 install:
 - pip install -r requirements.txt
 # command to run tests
 script:
-- pytest
+- python init.py
+- pytest --ignore=protobuf-2.6.1/

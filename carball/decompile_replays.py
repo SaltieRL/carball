@@ -2,15 +2,13 @@ import json
 import os
 import subprocess
 import logging
-import sys
 import platform as pt
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from carball.analysis.analysis_manager import AnalysisManager
-from carball.extras.per_goal_analysis import PerGoalAnalysis
-from carball.json_parser.sanity_check.sanity_check import SanityChecker
-from carball.json_parser.game import Game
-from carball.controls.controls import ControlsCreator
+from .analysis.analysis_manager import AnalysisManager
+from .extras.per_goal_analysis import PerGoalAnalysis
+from .json_parser.sanity_check.sanity_check import SanityChecker
+from .json_parser.game import Game
+from .controls.controls import ControlsCreator
 
 
 logger = logging.getLogger(__name__)
