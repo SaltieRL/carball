@@ -99,11 +99,20 @@ class BoostStat(BaseStat):
             value_counts = player_dataframe.boost_collect.value_counts()
             if len(value_counts) == 0:
                 return {}
+            if len(value_counts) == 1:
+                if True in value_counts:
+                    return {
+                        'big': int(value_counts[True])
+                    }
+                else:
+                    return {
+                        'small': int(value_counts[False])
+                    }
             return {
                 'big': int(value_counts[True]),
                 'small': int(value_counts[False])
             }
-        except (AttributeError, KeyError):
+        except (AttributeError, KeyError) as e:
             return {}
 
     @staticmethod
