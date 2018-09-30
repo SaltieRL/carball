@@ -36,7 +36,7 @@ message Hit {
     optional int32 next_hit_frame_number = 20;
 
     // What goal number this hit belongs to:
-    // it starts at 0 and counts up,  -1 means no more goals were scored
+    // it starts at 0 and counts up,  -1 means no more kickoffs will happen.
     optional int32 goal_number = 21;
 
     // pseudo stats
@@ -70,4 +70,9 @@ message FiftyFifty {
     repeated api.PlayerId players = 2;
     optional bool is_kickoff = 3;
     optional api.PlayerId winning_player = 4;
+}
+
+message Kickoff {
+    optional int32 start_frame_number = 1;
+    optional int32 end_frame_number = 2;
 }

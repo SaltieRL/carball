@@ -10,6 +10,7 @@ enum Playlist {
 	UNRANKED_STANDARD = 3;
 	UNRANKED_CHAOS = 4;
 	CUSTOM_LOBBY = 6;
+    UNKNOWN = 8; // TODO: find out what this actually is
 	RANKED_DUELS = 10;
 	RANKED_DOUBLES = 11;
 	RANKED_SOLO_STANDARD = 12;
@@ -55,4 +56,5 @@ message GameMetadata {
     optional string match_guid = 15;
     optional int32 team_size = 16;
 	optional Playlist playlist = 17;
+    optional bool is_invalid_analysis = 18; // True if we did not perform a full analysis on the replay.
 }

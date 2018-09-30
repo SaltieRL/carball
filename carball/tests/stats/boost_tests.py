@@ -17,7 +17,7 @@ class DBTest(unittest.TestCase):
             self.assertEqual(boost.num_small_boosts, 1)
             print(analysis)
 
-        run_analysis_test_on_replay(test, get_specific_replays()["12_BOOST_PAD_45_USED"])
+        run_analysis_test_on_replay(test, get_specific_replays()["12_BOOST_PAD_0_USED"])
 
 
 if __name__ == '__main__':

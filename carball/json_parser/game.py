@@ -122,6 +122,9 @@ class Game:
             return {'name': owner_name, 'id': None}
 
     def get_goals(self) -> List[Goal]:
+        if "Goals" not in self.properties:
+            return []
+
         goals = [g['value'] for g in self.properties["Goals"]["value"]["array"]]
 
         logger.info('Found %s goals.' % len(goals))
@@ -353,6 +356,8 @@ class Game:
 
                 frame_data['seconds_remaining'] = current_actors[soccar_game_event_actor_id].get(
                     "TAGame.GameEvent_Soccar_TA:SecondsRemaining", None)
+                frame_data['replicated_seconds_remaining'] = current_actors[soccar_game_event_actor_id].get(
+                    "TAGame.GameEvent_TA:ReplicatedGameStateTimeRemaining", None)
                 frame_data['is_overtime'] = current_actors[soccar_game_event_actor_id].get(
                     "TAGame.GameEvent_Soccar_TA:bOverTime", None)
                 frame_data['ball_has_been_hit'] = current_actors[soccar_game_event_actor_id].get(

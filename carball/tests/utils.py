@@ -87,7 +87,10 @@ def get_specific_replays():
         "100_BOST_PAD_100_USED": ["https://cdn.discordapp.com/attachments/493849514680254468/495735264262488065/100_BOOST_PAD_100_USED.replay"],
         "NO_BOOST_PAD_0_USED": ["https://cdn.discordapp.com/attachments/493849514680254468/495735276338020372/NO_BOOST_PAD_0_USED.replay"],
         "NO_BOOST_PAD_33_USED": ["https://cdn.discordapp.com/attachments/493849514680254468/495735288254169109/NO_BOOST_PAD_33_USED.replay"],
-        "STRAIGHT_KICKOFF_GOAL": ["https://cdn.discordapp.com/attachments/493849514680254468/495735301604376576/Straight_Kickoff_Goal.replay"]
+        "STRAIGHT_KICKOFF_GOAL": ["https://cdn.discordapp.com/attachments/493849514680254468/495735301604376576/Straight_Kickoff_Goal.replay"],
+        "KICKOFF_NO_TOUCH": ["https://cdn.discordapp.com/attachments/493849514680254468/496034430943756289/NO_KICKOFF.replay"],
+        "3_KICKOFFS": ["https://cdn.discordapp.com/attachments/493849514680254468/496034443442782208/3_KICKOFFS_4_SHOTS.replay"],
+        "4_SHOTS": ["https://cdn.discordapp.com/attachments/493849514680254468/496034443442782208/3_KICKOFFS_4_SHOTS.replay"]
     }
 
 
