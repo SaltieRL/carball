@@ -5,7 +5,7 @@ from carball.analysis.analysis_manager import AnalysisManager
 from carball.tests.utils import run_analysis_test_on_replay, get_specific_replays, get_specific_answers
 
 
-class DBTest(unittest.TestCase):
+class BoostTest(unittest.TestCase):
 
     def test_1_small_pad_collected(self):
 

@@ -74,7 +74,7 @@ class AnalysisManager:
         """
         self.get_game_time(proto_game, data_frame)
         clean_replay(game, data_frame, proto_game, player_map)
-        self.calculate_hit_stats(game, proto_game, player_map, data_frame, first_touch_frames)
+        self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames)
         self.log_time("calculating hits")
         self.get_advanced_stats(game, proto_game, player_map, data_frame)
 

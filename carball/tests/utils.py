@@ -103,6 +103,7 @@ def get_raw_replays():
         "3_KICKOFFS": ["https://cdn.discordapp.com/attachments/493849514680254468/496034443442782208/3_KICKOFFS_4_SHOTS.replay"],
         # hits
         "4_SHOTS": ["https://cdn.discordapp.com/attachments/493849514680254468/496034443442782208/3_KICKOFFS_4_SHOTS.replay"],
+        "KICKOFF_3_HITS": ["https://cdn.discordapp.com/attachments/493849514680254468/496072257928691743/KICKOFF_3_HITS.replay"],
         "MID_AIR_PASS": ["https://cdn.discordapp.com/attachments/493849514680254468/495887162928267314/MID_AIR_PASS_GOAL.replay"],
         "HIGH_AIR_PASS": ["https://cdn.discordapp.com/attachments/493849514680254468/495887164425633802/HIGH_AIR_PASS_GOAL.replay"],
         "GROUND_PASS": ["https://cdn.discordapp.com/attachments/493849514680254468/495887165570678794/GROUNDED_PASS_GOAL.replay"],
@@ -121,9 +122,9 @@ def get_specific_replays():
         "BOOST_USED": raw_map["12_BOOST_PAD_45_USED"] + raw_map["100_BOST_PAD_100_USED"] + raw_map["NO_BOOST_PAD_33_USED"],  # [45, 100, 33]
 
         # HITS
-        "HITS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"],
+        "HITS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"] + raw_map["KICKOFF_3_HITS"],
         "SHOTS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"],
-        "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"]  + raw_map["HIGH_AIR_PASS"],
+        "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
     }
 
 def get_specific_answers():
@@ -131,7 +132,8 @@ def get_specific_answers():
     return {
         "0_BOOST_USED": [0] * len(specific_replays["0_BOOST_USED"]),
         "BOOST_USED": [45, 100, 33],
-        "HITS": [4, 1],
-        "SHOTS": [4, 1]
+        "HITS": [4, 1, 3],
+        "SHOTS": [4, 1],
+        "PASSES": [1, 1, 1]
     }
 
