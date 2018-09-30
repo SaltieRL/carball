@@ -67,21 +67,27 @@ class BaseHit:
         collision_distances_data_frame['closest_player', 'name'] = None
         collision_distances_data_frame['closest_player', 'distance'] = None
         for hit_team_no in [0, 1]:
-            collision_distances_for_team = collision_distances_data_frame[
-                hit_team_no].loc[data_frame.ball['hit_team_no'] == hit_team_no]
+            try:
+                collision_distances_for_team = collision_distances_data_frame[
+                    hit_team_no].loc[data_frame.ball['hit_team_no'] == hit_team_no]
 
-            close_collision_distances_for_team = collision_distances_for_team[
-                (collision_distances_for_team < 300).any(axis=1)
-            ]
+                close_collision_distances_for_team = collision_distances_for_team[
+                    (collision_distances_for_team < 300).any(axis=1)
+                ]
 
-            collision_distances_data_frame['closest_player', 'distance'].fillna(
-                close_collision_distances_for_team.min(axis=1),
-                inplace=True
-            )
-            collision_distances_data_frame['closest_player', 'name'].fillna(
-                close_collision_distances_for_team.idxmin(axis=1),
-                inplace=True
-            )
+                collision_distances_data_frame['closest_player', 'distance'].fillna(
+                    close_collision_distances_for_team.min(axis=1),
+                    inplace=True
+                )
+                collision_distances_data_frame['closest_player', 'name'].fillna(
+                    close_collision_distances_for_team.idxmin(axis=1),
+                    inplace=True
+                )
+            except KeyError as e:
+                if e.args[0] == hit_team_no:
+                    logger.warning("Team %s did not hit the ball", str(hit_team_no))
+                else:
+                    raise e
 
         all_hits = {}
         hits_data = collision_distances_data_frame['closest_player'].dropna()

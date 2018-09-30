@@ -97,6 +97,8 @@ class BoostStat(BaseStat):
     def get_player_boost_collection(player_dataframe: pd.DataFrame) -> Dict[str, int]:
         try:
             value_counts = player_dataframe.boost_collect.value_counts()
+            if len(value_counts) == 0:
+                return {}
             return {
                 'big': int(value_counts[True]),
                 'small': int(value_counts[False])
