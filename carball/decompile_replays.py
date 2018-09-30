@@ -44,7 +44,8 @@ def decompile_replay(replay_path, output_path, overwrite=True):
                output_path]
         logger.debug(" ".join(cmd))
         subprocess.check_output(cmd)
-    _json = json.load(open(output_path, encoding="utf8"))
+    with open(output_path, encoding="utf8") as f:
+        _json = json.load(f)
     return _json
 
 
