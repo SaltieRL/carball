@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 position_column_names = ['pos_x', 'pos_y', 'pos_z']
 
+MIN_DRIBBLE_FRAME_DISTANCE = 10
+
 
 class BaseHit:
 
@@ -97,26 +99,7 @@ class BaseHit:
 
         all_hits = {}
         hits_data = collision_distances_data_frame['closest_player'].dropna()
-
-        hit_frames_to_keep = []
-        for row in hits_data.itertuples():
-            frame_number, player_name, collision_distance = row.Index, row.name, row.distance
-            # Remove frame numbers where there is a hit in the next or previous frame by the same player
-            # and player is closer in that (next or previous) hit frame.
-            try:
-                previous_frame_hit = hits_data.loc[frame_number - 1]
-                if previous_frame_hit.loc['name'] == player_name and previous_frame_hit.distance < collision_distance:
-                    continue
-            except KeyError:
-                pass
-            try:
-                next_frame_hit = hits_data.loc[frame_number + 1]
-                if next_frame_hit.loc['name'] == player_name and next_frame_hit.distance < collision_distance:
-                    continue
-            except KeyError:
-                pass
-
-            hit_frames_to_keep.append(frame_number)
+        hit_frames_to_keep = BaseHit.filter_out_duplicate_hits(hits_data)
 
         hits_data = hits_data.loc[hit_frames_to_keep]
 
@@ -139,6 +122,67 @@ class BaseHit:
         time_diff = time.time() - hit_creation_time
         logger.info('ball hit creation time: %s', time_diff * 1000)
         return all_hits
+
+    @staticmethod
+    def filter_out_duplicate_hits(hits_data):
+        """
+        Filters out duplicate hits by finding the min distance in a set of frames by the same person
+        That is less time than the MIN_DRIBBLE_FRAME_DISTANCE
+        :param hits_data: Suspected hits
+        :return: A reduced list that has removed duplicate hits.
+        """
+        hit_frames_to_keep = []
+        shifted_hits = hits_data.shift(1)
+        different_hits = list(hits_data[hits_data['name'] != shifted_hits['name']].index) + [int(hits_data.index[-1])]
+        if different_hits[0] != int(hits_data.index[0]):
+            different_hits = [hits_data.index[0]] + different_hits
+
+        for index in range(len(different_hits) - 1):
+            start_row_num = different_hits[index]
+            end_row_num = different_hits[index + 1]
+            hit_rows = hits_data.loc[start_row_num:end_row_num]
+
+            # ignore last frame in hit row for all but very last group
+            if index + 1 < len(different_hits) - 1:
+                hit_rows = hit_rows[:-1]
+
+            if len(hit_rows) == 1:
+                hit_frames_to_keep.append(start_row_num)
+            else:
+                min_distance = None
+                min_frame_value = None
+                starting_frame_number = 0
+                last_added_frame_number = 0
+                # go through a single person hit
+                for row in hit_rows.itertuples():
+                    frame_number, player_name, collision_distance = row.Index, row.name, row.distance
+
+                    if min_frame_value is None:
+                        min_frame_value = frame_number
+                        min_distance = collision_distance
+                        starting_frame_number = frame_number
+                        continue
+
+                    if frame_number - starting_frame_number > MIN_DRIBBLE_FRAME_DISTANCE:
+                        # Same person but a new hit reset distance checks
+                        hit_frames_to_keep.append(min_frame_value)
+                        last_added_frame_number = min_frame_value
+
+                        # reset for next shot
+                        min_frame_value = frame_number
+                        min_distance = collision_distance
+                        starting_frame_number = frame_number
+                        continue
+
+                    if collision_distance < min_distance:
+                        min_frame_value = frame_number
+                        min_distance = collision_distance
+
+                if last_added_frame_number != min_frame_value:
+                    hit_frames_to_keep.append(min_frame_value)
+
+            start_row_num += 1
+        return hit_frames_to_keep
 
     @staticmethod
     def get_hit_frame_numbers_by_ball_ang_vel(data_frame: pd.DataFrame) -> List[int]:
