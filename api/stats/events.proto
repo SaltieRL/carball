@@ -39,6 +39,9 @@ message Hit {
     // it starts at 0 and counts up,  -1 means no more kickoffs will happen.
     optional int32 goal_number = 21;
 
+    // True if this hit is detected as the first hit for a kickoff.
+    optional bool is_kickoff = 22;
+
     // pseudo stats
     // is_turnover = !(goal || dribble || pass)
 

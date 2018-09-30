@@ -26,8 +26,10 @@ def run_tests_on_list(unit_test_func: Callable, replay_list=None, answers=None):
         replay_list = get_full_replay_list()
 
     for index in range(len(replay_list)):
+        replay_url = replay_list[index]
+        print('running test on replay: ' + replay_url[replay_url.rfind('/') + 1:])
         answer = answers[index] if answers is not None and index < len(answers) else None
-        run_replay(replay_list[index], unit_test_func, answer=answer)
+        run_replay(replay_url, unit_test_func, answer=answer)
 
 
 def run_replay(url, unit_test_func: Callable, answer=None):
@@ -122,7 +124,7 @@ def get_specific_replays():
         "BOOST_USED": raw_map["12_BOOST_PAD_45_USED"] + raw_map["100_BOST_PAD_100_USED"] + raw_map["NO_BOOST_PAD_33_USED"],  # [45, 100, 33]
 
         # HITS
-        "HITS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"] + raw_map["KICKOFF_3_HITS"],
+        "HITS": raw_map["4_SHOTS"] + raw_map["KICKOFF_3_HITS"] + raw_map["12_BOOST_PAD_45_USED"] + raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
         "SHOTS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"],
         "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
     }
@@ -132,7 +134,7 @@ def get_specific_answers():
     return {
         "0_BOOST_USED": [0] * len(specific_replays["0_BOOST_USED"]),
         "BOOST_USED": [45, 100, 33],
-        "HITS": [4, 1, 3],
+        "HITS": [4, 3, 1, 2, 27, 2],
         "SHOTS": [4, 1],
         "PASSES": [1, 1, 1]
     }

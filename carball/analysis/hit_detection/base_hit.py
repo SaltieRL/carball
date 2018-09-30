@@ -20,7 +20,7 @@ class BaseHit:
 
     @staticmethod
     def get_hits_from_game(game: Game, proto_game: game_pb2, id_creation: Callable,
-                           data_frame: pd.DataFrame) -> Dict[int, Hit]:
+                           data_frame: pd.DataFrame, first_touch_frames: pd.Series) -> Dict[int, Hit]:
 
         start_time = time.time()
 
@@ -30,6 +30,12 @@ class BaseHit:
             team_dict[team.is_orange] = team
 
         hit_frame_numbers = BaseHit.get_hit_frame_numbers_by_ball_ang_vel(data_frame)
+
+        # add kickoff hits
+        for hit_frame in first_touch_frames:
+            hit_frame_numbers.append(hit_frame)
+
+        hit_frame_numbers.sort()
 
         hit_creation_time = time.time()
         logger.info('time to get get frame_numbers: %s', (hit_creation_time - start_time) * 1000)
@@ -127,6 +133,7 @@ class BaseHit:
             hit.ball_data.pos_x = float(ball_position['pos_x'])
             hit.ball_data.pos_y = float(ball_position['pos_y'])
             hit.ball_data.pos_z = float(ball_position['pos_z'])
+            hit.is_kickoff = hit.frame_number in first_touch_frames
             all_hits[frame_number] = hit
 
         time_diff = time.time() - hit_creation_time

@@ -74,7 +74,7 @@ class AnalysisManager:
         """
         self.get_game_time(proto_game, data_frame)
         clean_replay(game, data_frame, proto_game, player_map)
-        self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames)
+        self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.log_time("calculating hits")
         self.get_advanced_stats(game, proto_game, player_map, data_frame)
 
@@ -136,9 +136,9 @@ class AnalysisManager:
         return kickoff_frames, first_touch_frames
 
     def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                            data_frame, kickoff_frames):
+                            data_frame, kickoff_frames, first_touch_frames):
         logger.info("Looking for hits.")
-        hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frame)
+        hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frame, first_touch_frames)
         logger.info("Found %s hits." % len(hits))
 
         SaltieHit.get_saltie_hits_from_game(proto_game, hits, player_map, data_frame, kickoff_frames)
