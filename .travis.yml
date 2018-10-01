@@ -21,4 +21,7 @@ install:
 # command to run tests
 script:
 - python init.py
-- pytest --ignore=protobuf-2.6.1/
+- pytest --cov=./ --ignore=protobuf-2.6.1/
+
+after_success:
+- codecov
