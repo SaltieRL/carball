@@ -17,6 +17,7 @@ before_install:
 
 install:
 - pip install -r requirements.txt
+- pip install -r requirements-test.txt
 # command to run tests
 script:
 - python init.py
