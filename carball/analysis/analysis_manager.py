@@ -46,21 +46,35 @@ class AnalysisManager:
         self.log_time("creating metadata")
         data_frame = self.get_data_frames(self.game)
         self.log_time("getting frames")
-        kickoff_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frame)
+        kickoff_frames, first_touch_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frame)
         self.game.kickoff_frames = kickoff_frames
         self.log_time("getting kickoff")
-        if self.can_do_full_analysis():
-            self.perform_full_analysis(self.game, self.protobuf_game, player_map, data_frame, kickoff_frames)
+        if self.can_do_full_analysis(first_touch_frames):
+            self.perform_full_analysis(self.game, self.protobuf_game, player_map,
+                                       data_frame, kickoff_frames, first_touch_frames)
+        else:
+            self.protobuf_game.game_metadata.is_invalid_analysis = True
 
         # log before we add the dataframes
         # logger.debug(self.protobuf_game)
 
         self.store_frames(data_frame)
 
-    def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map, data_frame, kickoff_frames):
+    def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map,
+                              data_frame, kickoff_frames, first_touch_frames):
+        """
+        Performs the more in depth analysis on the game in addition to just metadata.
+        :param game:
+        :param proto_game:
+        :param player_map:
+        :param data_frame:
+        :param kickoff_frames:
+        :param first_touch_frames:
+        :return:
+        """
         self.get_game_time(proto_game, data_frame)
         clean_replay(game, data_frame, proto_game, player_map)
-        self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames)
+        self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.log_time("calculating hits")
         self.get_advanced_stats(game, proto_game, player_map, data_frame)
 
@@ -103,21 +117,28 @@ class AnalysisManager:
 
     def get_kickoff_frames(self, game: Game, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
         kickoff_frames = SaltieGame.get_kickoff_frames(game)
+        first_touch_frames = SaltieGame.get_first_touch_frames(game)
 
         for goal_number, goal in enumerate(game.goals):
             data_frame.loc[
             kickoff_frames[goal_number]: goal.frame_number, ('game', 'goal_number')
             ] = goal_number
 
-        # Set goal_number of frames that are post-last-goal to -1 (ie non None)
+        # Set goal_number of frames that are post last kickoff to -1 (ie non None)
         if len(kickoff_frames) > len(proto_game.game_metadata.goals):
             data_frame.loc[kickoff_frames[-1]:, ('game', 'goal_number')] = -1
-        return kickoff_frames
+
+        for index in range(min(len(kickoff_frames), len(first_touch_frames))):
+            kickoff = proto_game.game_stats.kickoffs.add()
+            kickoff.start_frame_number = kickoff_frames[index]
+            kickoff.end_frame_number = first_touch_frames[index]
+
+        return kickoff_frames, first_touch_frames
 
     def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                            data_frame, kickoff_frames):
+                            data_frame, kickoff_frames, first_touch_frames):
         logger.info("Looking for hits.")
-        hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frame)
+        hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frame, first_touch_frames)
         logger.info("Found %s hits." % len(hits))
 
         SaltieHit.get_saltie_hits_from_game(proto_game, hits, player_map, data_frame, kickoff_frames)
@@ -127,6 +148,10 @@ class AnalysisManager:
 
     def get_advanced_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                            data_frame: pd.DataFrame):
+        """
+        Calculates all stats that are beyond the basic event creation.
+        This is only active on valid goal frames.
+        """
         goal_frames = data_frame.game.goal_number.notnull()
         self.stats_manager.get_stats(game, proto_game, player_map, data_frame[goal_frames])
 
@@ -165,7 +190,7 @@ class AnalysisManager:
 
         return create_name
 
-    def can_do_full_analysis(self) -> bool:
+    def can_do_full_analysis(self, first_touch_frames) -> bool:
         # Analyse only if 1v1 or 2v2 or 3v3
         team_sizes = []
         for team in self.game.teams:
@@ -173,6 +198,9 @@ class AnalysisManager:
 
         if len(team_sizes) == 0:
             logger.warning("Not doing full analysis. No teams found")
+            return False
+        if len(first_touch_frames) == 0:
+            logger.warning("Not doing full analysis. No one touched the ball")
             return False
         # if any((team_size != team_sizes[0]) for team_size in team_sizes):
         #     logger.warning("Not doing full analysis. Not all team sizes are equal")

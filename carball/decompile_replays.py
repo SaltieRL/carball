@@ -4,11 +4,11 @@ import subprocess
 import logging
 import platform as pt
 
-from .analysis.analysis_manager import AnalysisManager
-from .extras.per_goal_analysis import PerGoalAnalysis
-from .json_parser.sanity_check.sanity_check import SanityChecker
-from .json_parser.game import Game
-from .controls.controls import ControlsCreator
+from carball.analysis.analysis_manager import AnalysisManager
+from carball.extras.per_goal_analysis import PerGoalAnalysis
+from carball.json_parser.sanity_check.sanity_check import SanityChecker
+from carball.json_parser.game import Game
+from carball.controls.controls import ControlsCreator
 
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,8 @@ def decompile_replay(replay_path, output_path, overwrite=True):
                output_path]
         logger.debug(" ".join(cmd))
         subprocess.check_output(cmd)
-    _json = json.load(open(output_path, encoding="utf8"))
+    with open(output_path, encoding="utf8") as f:
+        _json = json.load(f)
     return _json
 
 

@@ -173,7 +173,7 @@ class SaltieHit:
             total_next_hit_time += next_hit_time - start_time
 
             # aerials
-            if saltie_hit.ball_data.pos_z >= 800.0:
+            if saltie_hit.ball_data.pos_z >= 400.0:
                 saltie_hit.aerial = True
 
             # assist calculation

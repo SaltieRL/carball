@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class SaltieGame:
 
     @staticmethod
-    def get_kickoff_frames(game):
+    def get_first_touch_frames(game):
         if game.frames.loc[:, 'ball_has_been_hit'].any():
             ball_has_been_hit = game.frames.loc[:, 'ball_has_been_hit']
             last_frame_ball_has_been_hit = ball_has_been_hit.shift(1).rename('last_frame_ball_has_been_hit')
@@ -18,6 +18,26 @@ class SaltieGame:
 
             kickoff_frames = ball_hit_dataframe[(ball_hit_dataframe['ball_has_been_hit']) &
                                                 ~(ball_hit_dataframe['last_frame_ball_has_been_hit'])]
+        else:
+            logger.debug("No ball_has_been_hit?! Is this really old or what.")
+            hit_team_no = game.ball.loc[:, 'hit_team_no']
+            last_hit_team_no = hit_team_no.shift(1).rename('last_hit_team_no')
+            hit_team_no_dataframe = pd.concat([hit_team_no, last_hit_team_no], axis=1)
+            kickoff_frames = hit_team_no_dataframe[~(hit_team_no_dataframe['hit_team_no'].isnull()) &
+                                                   (hit_team_no_dataframe['last_hit_team_no'].isnull())]
+
+        return kickoff_frames.index.values
+
+    @staticmethod
+    def get_kickoff_frames(game):
+        if game.frames.loc[:, 'replicated_seconds_remaining'].any():
+            ball_has_been_hit = game.frames.loc[:, 'replicated_seconds_remaining']
+            last_frame_ball_has_been_hit = ball_has_been_hit.shift(1).rename('last_replicated_seconds_remaining')
+            ball_hit_dataframe = pd.concat([ball_has_been_hit, last_frame_ball_has_been_hit], axis=1)
+            ball_hit_dataframe.fillna(0, inplace=True)
+
+            kickoff_frames = ball_hit_dataframe[(ball_hit_dataframe['replicated_seconds_remaining'] == 0) &
+                                                (ball_hit_dataframe['last_replicated_seconds_remaining'] > 0)]
         else:
             logger.debug("No ball_has_been_hit?! Is this really old or what.")
             hit_team_no = game.ball.loc[:, 'hit_team_no']

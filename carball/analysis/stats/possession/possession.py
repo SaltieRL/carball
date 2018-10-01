@@ -29,7 +29,10 @@ class PossessionStat(BaseStat, HitStat):
         last_hit_possession = frame_possession_time_deltas.groupby('hit_team_no').sum()
 
         for index, stat in team_stat_list.items():
-            stat.possession.possession_time = float(last_hit_possession.delta.loc[index])
+            try:
+                stat.possession.possession_time = float(last_hit_possession.delta.loc[index])
+            except KeyError:
+                pass
 
     def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frame: pd.DataFrame):
         self.frame_possession_time_deltas = pd.concat(
