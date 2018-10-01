@@ -72,3 +72,6 @@ If you want to see the output format of the stats created you can look [here](ap
 
 Compile the proto files by running in this directory
 `setup.bat` (Windows) or `setup.sh` (Linux/mac)
+
+[![Build Status](https://travis-ci.org/SaltieRL/carball.svg?branch=master)](https://travis-ci.org/SaltieRL/carball)
+[![codecov](https://codecov.io/gh/SaltieRL/carball/branch/master/graph/badge.svg)](https://codecov.io/gh/SaltieRL/carball)
