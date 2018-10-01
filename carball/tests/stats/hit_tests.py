@@ -34,6 +34,51 @@ class HitTest(unittest.TestCase):
 
         run_analysis_test_on_replay(test, get_raw_replays()["3_KICKOFFS"])
 
+    def test_num_shots_detected(self):
+
+        def test(analysis: AnalysisManager, answer):
+
+            proto_game = analysis.get_protobuf_data()
+            hits = proto_game.game_stats.hits
+            shot_counter = 0
+            for hit in hits:
+                if hit.shot:
+                    shot_counter += 1
+
+            self.assertEqual(shot_counter, answer)
+
+        run_analysis_test_on_replay(test, get_specific_replays()["SHOTS"], get_specific_answers()["SHOTS"])
+
+    def test_num_passes_detected(self):
+
+        def test(analysis: AnalysisManager, answer):
+
+            proto_game = analysis.get_protobuf_data()
+            hits = proto_game.game_stats.hits
+            pass_counter = 0
+            for hit in hits:
+                if hit.pass_:
+                    pass_counter += 1
+
+            self.assertEqual(pass_counter, answer)
+
+        run_analysis_test_on_replay(test, get_specific_replays()["PASSES"], get_specific_answers()["PASSES"])
+
+    def test_num_aerials_detected(self):
+
+        def test(analysis: AnalysisManager, answer):
+
+            proto_game = analysis.get_protobuf_data()
+            hits = proto_game.game_stats.hits
+            aerial_counter = 0
+            for hit in hits:
+                if hit.aerial:
+                    aerial_counter += 1
+
+            self.assertEqual(aerial_counter, answer)
+
+        run_analysis_test_on_replay(test, get_specific_replays()["AERIALS"], get_specific_answers()["AERIALS"])
+
 
 if __name__ == '__main__':
     unittest.main()

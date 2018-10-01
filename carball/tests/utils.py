@@ -125,19 +125,25 @@ def get_specific_replays():
 
         # HITS
         "HITS": raw_map["4_SHOTS"] + raw_map["KICKOFF_3_HITS"] + raw_map["12_BOOST_PAD_45_USED"] +
-                raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
+                raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"] +
+                raw_map["1_NORMAL_SAVE"] + raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"],
                # + raw_map["PINCH_GROUND"],  TODO: Fix pinches to create 2 hits 1 for each person on same frame
-        "SHOTS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"],
+        "SHOTS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"] +
+                 raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE"],
         "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
+        "AERIALS": raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["HIGH_AIR_PASS"] + raw_map["MID_AIR_PASS"],
     }
 
 def get_specific_answers():
     specific_replays = get_specific_replays()
     return {
+        # Boost
         "0_BOOST_USED": [0] * len(specific_replays["0_BOOST_USED"]),
         "BOOST_USED": [45, 100, 33],
-        "HITS": [4, 3, 1, 2, 9, 2],
-        "SHOTS": [4, 1],
-        "PASSES": [1, 1, 1]
+        # Hits
+        "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4],
+        "SHOTS": [3, 0, 2, 1],
+        "PASSES": [1, 1, 1],
+        "AERIALS": [0, 1, 2, 0]
     }
 
