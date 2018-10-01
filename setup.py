@@ -1,7 +1,14 @@
+import json
+
 import setuptools
 from setuptools import setup
 import os
-from carball.analysis.analysis_manager import AnalysisManager
+
+with open(os.path.join('carball', 'analysis', 'PROTOBUF_VERSION'), 'r') as f:
+    PROTOBUF_VERSION = json.loads(f.read())
+
+subversion = 2
+version_string = '0.' + str(PROTOBUF_VERSION) + '.' + str(subversion)
 
 if os.path.isfile('README.md'):
     with open("README.md", "r") as readme_file:
@@ -9,8 +16,6 @@ if os.path.isfile('README.md'):
 else:
     long_description = ''
 
-subversion = 0
-version_string = '0.' + str(AnalysisManager.PROTOBUF_VERSION) + '.' + str(subversion)
 setup(
     name='carball',
     version=version_string,
