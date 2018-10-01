@@ -99,9 +99,9 @@ class BaseHit:
 
         all_hits = {}
         hits_data = collision_distances_data_frame['closest_player'].dropna()
-        hit_frames_to_keep = BaseHit.filter_out_duplicate_hits(hits_data)
-
-        hits_data = hits_data.loc[hit_frames_to_keep]
+        if len(hits_data) > 1:
+            hit_frames_to_keep = BaseHit.filter_out_duplicate_hits(hits_data)
+            hits_data = hits_data.loc[hit_frames_to_keep]
 
         for row in hits_data.itertuples():
             frame_number, player_name, collision_distance = row.Index, row.name, row.distance
@@ -133,9 +133,12 @@ class BaseHit:
         """
         hit_frames_to_keep = []
         shifted_hits = hits_data.shift(1)
-        different_hits = list(hits_data[hits_data['name'] != shifted_hits['name']].index) + [int(hits_data.index[-1])]
+        different_hits = list(hits_data[hits_data['name'] != shifted_hits['name']].index)
+        if different_hits[-1] != int(hits_data.index[-1]):
+            different_hits += [int(hits_data.index[-1])]
+
         if different_hits[0] != int(hits_data.index[0]):
-            different_hits = [hits_data.index[0]] + different_hits
+            different_hits = [int(hits_data.index[0])] + different_hits
 
         for index in range(len(different_hits) - 1):
             start_row_num = different_hits[index]
@@ -153,6 +156,7 @@ class BaseHit:
                 min_frame_value = None
                 starting_frame_number = 0
                 last_added_frame_number = 0
+                old_name = None
                 # go through a single person hit
                 for row in hit_rows.itertuples():
                     frame_number, player_name, collision_distance = row.Index, row.name, row.distance
@@ -161,9 +165,10 @@ class BaseHit:
                         min_frame_value = frame_number
                         min_distance = collision_distance
                         starting_frame_number = frame_number
+                        old_name = row.name
                         continue
 
-                    if frame_number - starting_frame_number > MIN_DRIBBLE_FRAME_DISTANCE:
+                    if frame_number - starting_frame_number > MIN_DRIBBLE_FRAME_DISTANCE or row.name != old_name:
                         # Same person but a new hit reset distance checks
                         hit_frames_to_keep.append(min_frame_value)
                         last_added_frame_number = min_frame_value
@@ -172,6 +177,7 @@ class BaseHit:
                         min_frame_value = frame_number
                         min_distance = collision_distance
                         starting_frame_number = frame_number
+                        old_name = row.name
                         continue
 
                     if collision_distance < min_distance:
