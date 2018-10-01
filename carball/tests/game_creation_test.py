@@ -33,6 +33,9 @@ class DBTest(unittest.TestCase):
                 ratio = (
                                 p.stats.positional_tendencies.time_in_front_ball + p.stats.positional_tendencies.time_behind_ball) / p.time_in_game
                 local.assertEqual(True, ratio > 0.99)
+                local.assertGreater(p.stats.positional_tendencies.time_in_front_ball, 0)
+                local.assertGreater(p.stats.positional_tendencies.time_behind_ball, 0)
+                local.assertGreater(p.time_in_game, 0)
 
         run_analysis_test_on_replay(test)
 
