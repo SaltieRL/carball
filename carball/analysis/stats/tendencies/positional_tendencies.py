@@ -71,7 +71,7 @@ class PositionalTendencies(BaseStat):
 
         player_ball_dataframes: Dict[str, pd.DataFrame] = {
             "player_data_frame": player_data_frame,
-            "ball_data_frame": player_data_frame,
+            "ball_data_frame": ball_data_frame,
         }
         if player.is_orange:
             player_ball_dataframes = self.get_flipped_dataframes(player_ball_dataframes)
