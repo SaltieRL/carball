@@ -29,8 +29,13 @@ class DBTest(unittest.TestCase):
         def test(analysis: AnalysisManager):
             local.assertIsNotNone(analysis.get_protobuf_data())
             local.assertEqual(False, analysis.get_protobuf_data().game_metadata.is_invalid_analysis)
+            for p in analysis.get_protobuf_data().players:
+                ratio = (
+                                p.stats.positional_tendencies.time_in_front_ball + p.stats.positional_tendencies.time_behind_ball) / p.time_in_game
+                local.assertEqual(True, ratio > 0.99)
 
         run_analysis_test_on_replay(test)
+
 
 if __name__ == '__main__':
     unittest.main()

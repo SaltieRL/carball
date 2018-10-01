@@ -5,6 +5,7 @@ from typing import Dict
 import pandas as pd
 import json
 import os
+
 script_path = os.path.abspath(__file__)
 with open(os.path.join(os.path.dirname(script_path), 'PROTOBUF_VERSION'), 'r') as f:
     PROTOBUF_VERSION = json.loads(f.read())
@@ -107,7 +108,8 @@ class AnalysisManager:
         protobuf_game.game_metadata.length = data_frame.game[data_frame.game.goal_number.notnull()].delta.sum()
         for player in protobuf_game.players:
             try:
-                player.time_in_game = data_frame[data_frame[player.name].pos_x.notnull()].game.delta.sum()
+                player.time_in_game = data_frame[
+                    data_frame[player.name].pos_x.notnull() & data_frame.game.goal_number.notnull()].game.delta.sum()
                 player.first_frame_in_game = data_frame[player.name].pos_x.first_valid_index()
             except:
                 player.time_in_game = 0
