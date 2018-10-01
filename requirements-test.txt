@@ -3,3 +3,4 @@ pytest
 requests
 pytest-cov
 coverage
+codecov
