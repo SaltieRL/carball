@@ -35,7 +35,8 @@ class BaseHit:
 
         # add kickoff hits
         for hit_frame in first_touch_frames:
-            hit_frame_numbers.append(hit_frame)
+            if hit_frame not in hit_frame_numbers:
+                hit_frame_numbers.append(hit_frame)
 
         hit_frame_numbers.sort()
 

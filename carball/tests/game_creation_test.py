@@ -28,6 +28,7 @@ class DBTest(unittest.TestCase):
 
         def test(analysis: AnalysisManager):
             local.assertIsNotNone(analysis.get_protobuf_data())
+            local.assertEqual(False, analysis.get_protobuf_data().game_metadata.is_invalid_analysis)
 
         run_analysis_test_on_replay(test)
 
