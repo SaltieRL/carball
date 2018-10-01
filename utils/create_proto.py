@@ -20,7 +20,12 @@ def get_proto():
     if is_windows():
         return os.path.join(proto_dir, 'protoc.exe')
     else:
-        return os.path.join(proto_dir, 'protoc')
+        import shutil
+        result = shutil.which('protoc')
+        if result is not None:
+            return result
+        else:
+            return os.path.join(proto_dir, 'protoc')
 
 
 def split_to_list(drive_and_path):
