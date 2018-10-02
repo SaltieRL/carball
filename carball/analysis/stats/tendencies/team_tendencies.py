@@ -12,9 +12,10 @@ from ....generated.api.player_pb2 import Player
 from ....generated.api.stats.team_stats_pb2 import TeamStats
 from ....json_parser.game import Game
 
-
 position_column_names = ['pos_x', 'pos_y', 'pos_z']
-MAX_CLUMP_DISTANCE = math.sqrt(8192**2 + 10240**2) / 8
+# MAX_CLUMP_DISTANCE = math.sqrt(8192**2 + 10240**2) / 8
+MAX_CLUMP_DISTANCE = 3278
+MIN_BOONDOCKS_DISTANCE = 7000
 
 
 class TeamTendencies(PositionalTendencies):
@@ -48,7 +49,7 @@ class TeamTendencies(PositionalTendencies):
 
     def calculate_displacements(self, team: Team, player_map: Dict[str, Player],
                                 center_of_mass: pd.DataFrame, data_frame: pd.DataFrame):
-        player_distances_data_frame, player_distance_times, _\
+        player_distances_data_frame, player_distance_times, _ \
             = BallDistanceStat.calculate_player_distance_to_location(player_map, data_frame, center_of_mass)
 
         average_distances = []
@@ -75,6 +76,15 @@ class TeamTendencies(PositionalTendencies):
         close_frames = max_distances < clump_distance
         time_clumped = max_distances_with_delta[close_frames]['delta'].sum()
         team.stats.center_of_mass.time_clumped = time_clumped
+
+        if len(team.player_ids) == 2:
+            boondocks_distance = MIN_BOONDOCKS_DISTANCE / 2
+        else:
+            boondocks_distance = MIN_BOONDOCKS_DISTANCE
+
+        boondocks_frames = max_distances > boondocks_distance
+        time_boondocks = max_distances_with_delta[boondocks_frames]['delta'].sum()
+        team.stats.center_of_mass.time_boondocks = time_boondocks
 
     def set_player_stats(self, player, player_distance_times, average_distance_from_center, team_size):
 
