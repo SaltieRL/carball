@@ -12,6 +12,8 @@ message CenterOfMass {
     // Time when max distance is below sqrt(8192^2 + 10240^2) / 4 = 3278
     // This is also 1/4th of field diagonal
     optional float time_clumped = 4;
+    // Time when max distance is above 7000
+    optional float time_boondocks = 5;
 }
 
 message TeamStats {
