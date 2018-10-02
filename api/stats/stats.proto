@@ -27,6 +27,9 @@ message PositionalTendencies {
 message Averages {
     optional float average_speed = 1;
     optional float average_hit_distance = 2;
+    // Average distance for this player from the team center
+    // Average distance for the ball to the field center
+    optional float average_distance_from_center = 3;
 }
 
 message HitCounts {

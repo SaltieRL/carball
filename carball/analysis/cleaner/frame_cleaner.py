@@ -33,5 +33,13 @@ def remove_invalid_players(game: Game, data_frame: pd.DataFrame, proto_game: gam
             del proto_players[i]
             i -= 1
             total_length -= 1
+
+            # remove player from team
+            for team in proto_game.teams:
+                for i in range(len(team.player_ids)):
+                    if team.player_ids[i] == player.id:
+                        del team.player_ids[i]
+                        break
         i += 1
+
     logger.warning('removed player: ' + str(invalid_players))

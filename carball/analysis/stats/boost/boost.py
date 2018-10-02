@@ -33,6 +33,7 @@ class BoostStat(BaseStat):
             proto_boost.time_full_boost = self.get_time_with_max_boost(data_frame, player_data_frame)
             proto_boost.time_low_boost = self.get_time_with_low_boost(data_frame, player_data_frame)
             proto_boost.time_no_boost = self.get_time_with_zero_boost(data_frame, player_data_frame)
+            proto_boost.average_boost_level = self.get_average_boost_level(player_data_frame)
 
             if 'boost_collect' not in player_data_frame:
                 logger.warning('%s did not collect any boost', player_key)
@@ -53,6 +54,10 @@ class BoostStat(BaseStat):
         _diff = -player_dataframe.boost.diff()
         boost_usage = _diff[_diff > 0].sum() / 255 * 100
         return boost_usage
+
+    @staticmethod
+    def get_average_boost_level(player_dataframe: pd.DataFrame) -> np.float64:
+        return player_dataframe.boost.mean(skipna=True)
 
     @classmethod
     def get_num_stolen_boosts(cls, player_dataframe: pd.DataFrame, is_orange):

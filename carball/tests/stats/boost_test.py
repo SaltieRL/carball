@@ -8,9 +8,7 @@ from carball.tests.utils import run_analysis_test_on_replay, get_specific_replay
 class BoostTest(unittest.TestCase):
 
     def test_1_small_pad_collected(self):
-
         def test(analysis: AnalysisManager):
-
             proto_game = analysis.get_protobuf_data()
             player = proto_game.players[0]
             boost = player.stats.boost
@@ -20,9 +18,7 @@ class BoostTest(unittest.TestCase):
         run_analysis_test_on_replay(test, get_specific_replays()["1_SMALL_PAD"])
 
     def test_1_large_pad_collected(self):
-
         def test(analysis: AnalysisManager):
-
             proto_game = analysis.get_protobuf_data()
             player = proto_game.players[0]
             boost = player.stats.boost
@@ -32,9 +28,7 @@ class BoostTest(unittest.TestCase):
         run_analysis_test_on_replay(test, get_specific_replays()["1_LARGE_PAD"])
 
     def test_0_boost_collected(self):
-
         def test(analysis: AnalysisManager):
-
             proto_game = analysis.get_protobuf_data()
             player = proto_game.players[0]
             boost = player.stats.boost
@@ -45,13 +39,13 @@ class BoostTest(unittest.TestCase):
         run_analysis_test_on_replay(test, get_specific_replays()["0_BOOST_COLLECTED"])
 
     def test_boost_used(self):
-
         def test(analysis: AnalysisManager, boost_value):
-
             proto_game = analysis.get_protobuf_data()
             player = proto_game.players[0]
             boost = player.stats.boost
-            self.assertAlmostEqual(boost.boost_usage, boost_value, delta=9) # TODO: Figgure out a way to calculate boost in a more accurate manner
+            self.assertAlmostEqual(boost.boost_usage, boost_value,
+                                   delta=9)  # TODO: Figgure out a way to calculate boost in a more accurate manner
+            # self.assertGreater(boost.average_boost_level, 0)
             print(analysis)
 
         run_analysis_test_on_replay(test, get_specific_replays()["BOOST_USED"] + get_specific_replays()["0_BOOST_USED"],
@@ -59,9 +53,7 @@ class BoostTest(unittest.TestCase):
                                             get_specific_answers()["0_BOOST_USED"])
 
     def test_0_used(self):
-
         def test(analysis: AnalysisManager, boost_value):
-
             proto_game = analysis.get_protobuf_data()
             player = proto_game.players[0]
             boost = player.stats.boost
