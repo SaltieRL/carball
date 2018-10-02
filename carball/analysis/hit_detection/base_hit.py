@@ -6,14 +6,13 @@ from typing import List, Dict, Callable
 import numpy as np
 import pandas as pd
 
+from carball.analysis.constants.basic_math import position_column_names, get_player_ball_displacements
 from .hitbox.hitbox import Hitbox
 from ...generated.api import game_pb2
 from ...generated.api.stats.events_pb2 import Hit
 from ...json_parser.game import Game
 
 logger = logging.getLogger(__name__)
-
-position_column_names = ['pos_x', 'pos_y', 'pos_z']
 
 MIN_DRIBBLE_FRAME_DISTANCE = 10
 
@@ -201,21 +200,6 @@ class BaseHit:
     @staticmethod
     def get_ball_data(data_frame: pd.DataFrame, hit: Hit):
         return data_frame.ball.loc[hit.frame_number, :]
-
-
-def get_player_ball_displacements(data_frame: pd.DataFrame, player_name: str) -> pd.DataFrame:
-    player_df = data_frame[player_name]
-    ball_df = data_frame['ball']
-
-    result = player_df[position_column_names] - ball_df[position_column_names]
-    return result
-
-
-def get_distance_from_displacements(data_frame: pd.DataFrame) -> pd.Series:
-    positions = data_frame[position_column_names]
-
-    summed = (positions ** 2).sum(axis=1, skipna=False)
-    return np.sqrt(summed)
 
 
 def get_rotation_matrices(data_frame: pd.DataFrame, player_name: str) -> pd.Series:

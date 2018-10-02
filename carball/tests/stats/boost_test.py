@@ -52,6 +52,7 @@ class BoostTest(unittest.TestCase):
             player = proto_game.players[0]
             boost = player.stats.boost
             self.assertAlmostEqual(boost.boost_usage, boost_value, delta=9) # TODO: Figgure out a way to calculate boost in a more accurate manner
+            self.assertGreater(boost.average_boost_level, 0)
             print(analysis)
 
         run_analysis_test_on_replay(test, get_specific_replays()["BOOST_USED"] + get_specific_replays()["0_BOOST_USED"],
