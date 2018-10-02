@@ -80,11 +80,22 @@ class TeamTendencies(PositionalTendencies):
 
         player.stats.averages.average_distance_from_center = average_distance_from_center
         player_id = player.id.id
+        distance = player.stats.distance
 
         if team_size > 2:
             try:
-                player.distance.time_closest_to_team_center = player_distance_times['closest_player'][player_id]
-                player.distance.time_furthest_from_team_center = player_distance_times['furthest_player'][player_id]
-            except (AttributeError, KeyError):
-                player.distance.time_closest_to_team_center = 0
-                player.distance.time_furthest_from_team_center = 0
+                distance.time_closest_to_team_center = player_distance_times['closest_player'][player_id]
+                distance.time_furthest_from_team_center = player_distance_times['furthest_player'][player_id]
+            except (AttributeError, KeyError) as e:
+                distance.time_closest_to_team_center = 0
+                distance.time_furthest_from_team_center = 0
+
+    def get_flipped_dataframes(self, data_frames: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
+        new_dataframes = {
+            _k: _v.copy() for _k, _v in data_frames.items()
+        }
+
+        for data_frame in new_dataframes.values():
+            data_frame.pos_y *= -1
+
+        return new_dataframes

@@ -92,8 +92,7 @@ class PositionalTendencies(BaseStat):
         deltas = data_frame.game.delta
         return deltas[boolean_index].sum()
 
-    @staticmethod
-    def get_flipped_dataframes(data_frames: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
+    def get_flipped_dataframes(self, data_frames: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
         new_dataframes = {
             _k: _v.copy() for _k, _v in data_frames.items()
         }
