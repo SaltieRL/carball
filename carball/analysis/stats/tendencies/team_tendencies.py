@@ -14,7 +14,8 @@ from ....json_parser.game import Game
 
 
 position_column_names = ['pos_x', 'pos_y', 'pos_z']
-MAX_CLUMP_DISTANCE = math.sqrt(8192**2 + 10240**2) / 8
+# MAX_CLUMP_DISTANCE = math.sqrt(8192**2 + 10240**2) / 8
+MAX_CLUMP_DISTANCE = 3278
 
 
 class TeamTendencies(PositionalTendencies):
