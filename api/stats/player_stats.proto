@@ -21,6 +21,7 @@ message Boost {
     optional float time_no_boost = 8;
     // Number of the large boosts taken on the enemy side
     optional int32 num_stolen_boosts = 9;
+    optional float average_boost_level = 10;
 }
 
 message Distance {
@@ -29,6 +30,9 @@ message Distance {
     optional float time_closest_to_ball = 3;
     optional float time_furthest_from_ball = 4;
     optional float time_close_to_ball = 5; // only when player is < 500 units away
+
+    optional float time_closest_to_team_center = 6;
+    optional float time_furthest_from_team_center = 7;
 }
 
 message PlayerStats {
