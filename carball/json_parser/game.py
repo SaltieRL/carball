@@ -14,7 +14,7 @@ from .game_info import GameInfo
 
 logger = logging.getLogger(__name__)
 
-BOOST_PER_SECOND = 80  # boost used per second out of 255
+BOOST_PER_SECOND = 80 * 1/.93  # boost used per second out of 255
 DATETIME_FORMATS = [
     '%Y-%m-%d %H-%M-%S',
     '%Y-%m-%d:%H-%M'

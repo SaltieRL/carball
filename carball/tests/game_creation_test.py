@@ -38,6 +38,7 @@ class DBTest(unittest.TestCase):
                 local.assertGreater(player.time_in_game, 0)
                 local.assertGreater(player.stats.speed.time_at_slow_speed, 0)
                 local.assertGreater(player.stats.boost.average_boost_level, 0)
+                local.assertGreater(player.stats.boost.wasted_collection, -1)
 
         run_analysis_test_on_replay(test)
 

@@ -12,21 +12,24 @@ from ....generated.api.player_pb2 import Player
 from ....generated.api.stats.player_stats_pb2 import PlayerStats
 from ....json_parser.game import Game
 
-
 logger = logging.getLogger(__name__)
 
 
 class BoostStat(BaseStat):
-
     field_constants = FieldConstants()
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
         for player_key, stats in player_stat_map.items():
+
             proto_boost = stats.boost
             player_name = player_map[player_key].name
             player_data_frame = data_frame[player_name]
+            player_data_frame['delta'] = game.frames.delta
             proto_boost.boost_usage = self.get_player_boost_usage(player_data_frame)
+
+            proto_boost.boost_usage = (80 * (1 / .93) * (
+                        player_data_frame.delta * player_data_frame.boost_active)).sum() / 255 * 100
 
             proto_boost.wasted_usage = self.get_player_boost_usage_max_speed(player_data_frame)
 
@@ -38,6 +41,19 @@ class BoostStat(BaseStat):
             if 'boost_collect' not in player_data_frame:
                 logger.warning('%s did not collect any boost', player_key)
             else:
+                # homemade wasted collection
+                # only bigs right now
+
+                previous_frames = player_data_frame.loc[
+                    player_data_frame.index[player_data_frame.boost_collect.fillna(False)] - 1]
+                wasted_big = previous_frames.boost.sum()
+
+                previous_frames = player_data_frame.loc[
+                    player_data_frame.index[~player_data_frame.boost_collect.fillna(True)] - 1]
+
+                delta = ((previous_frames.boost + 31) - 255)
+                wasted_small = delta[delta > 0].sum()
+
                 collection = self.get_player_boost_collection(player_data_frame)
                 proto_boost.wasted_collection = self.get_player_boost_waste(proto_boost.boost_usage, collection)
 
@@ -91,11 +107,11 @@ class BoostStat(BaseStat):
         return sum_deltas_by_truthy_data(data_frame, player_dataframe.boost > 252.45)  # 100% visible boost
 
     @staticmethod
-    def get_time_with_low_boost(data_frame: pd.DataFrame, player_dataframe: pd.DataFrame) -> np.float64: # less than 25
+    def get_time_with_low_boost(data_frame: pd.DataFrame, player_dataframe: pd.DataFrame) -> np.float64:  # less than 25
         return sum_deltas_by_truthy_data(data_frame, player_dataframe.boost < 63.75)  # 25 / 100 * 255
 
     @staticmethod
-    def get_time_with_zero_boost(data_frame: pd.DataFrame, player_dataframe: pd.DataFrame) -> np.float64: # at 0 boost
+    def get_time_with_zero_boost(data_frame: pd.DataFrame, player_dataframe: pd.DataFrame) -> np.float64:  # at 0 boost
         return sum_deltas_by_truthy_data(data_frame, player_dataframe.boost == 0)
 
     @staticmethod
