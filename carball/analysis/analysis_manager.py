@@ -162,6 +162,7 @@ class AnalysisManager:
         self.stats_manager.get_stats(game, proto_game, player_map, data_frame[goal_frames])
 
     def store_frames(self, data_frame: pd.DataFrame):
+        self.data_frame = data_frame
         self.df_bytes = PandasManager.safe_write_pandas_to_memory(data_frame)
 
     def write_proto_out_to_file(self, file):
@@ -178,6 +179,9 @@ class AnalysisManager:
         :return: The protobuf data created by the analysis
         """
         return self.protobuf_game
+
+    def get_data_frame(self) -> pd.DataFrame:
+        return self.data_frame
 
     def start_time(self):
         self.timer = time.time()

@@ -6,7 +6,8 @@ from typing import List, Dict, Callable
 import numpy as np
 import pandas as pd
 
-from carball.analysis.constants.basic_math import position_column_names, get_player_ball_displacements
+from carball.analysis.constants.basic_math import position_column_names, get_player_ball_displacements, \
+    positional_columns
 from .hitbox.hitbox import Hitbox
 from ...generated.api import game_pb2
 from ...generated.api.stats.events_pb2 import Hit
@@ -42,7 +43,7 @@ class BaseHit:
         hit_creation_time = time.time()
         logger.info('time to get get frame_numbers: %s', (hit_creation_time - start_time) * 1000)
 
-        positional_columns = ['pos_x', 'pos_y', 'pos_z', 'rot_x', 'rot_y', 'rot_z']
+
         hit_frames = data_frame.loc[hit_frame_numbers, (slice(None), positional_columns)]
         player_displacements = {player.name: get_player_ball_displacements(hit_frames, player.name)
                                 for player in game.players}

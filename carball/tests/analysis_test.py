@@ -56,6 +56,11 @@ def __test_replays(BASE_DIR):
                 id = analysis_manager.protobuf_game.game_metadata.id
                 with open(os.path.join(OUTPUT_DIR, id + 'game.json'), 'w') as f:
                     f.write(MessageToJson(analysis_manager.protobuf_game))
+                    bytes = PandasManager.write_pandas_to_buffer_for_tooling(analysis_manager.get_data_frame(),
+                                                           analysis_manager.get_protobuf_data().players)
+                    with open(pandas_path, 'wb') as fo:
+                        fo.write(bytes)
+
                 data_frame = PandasManager.safe_read_pandas_to_memory(BytesIO(analysis_manager.df_bytes))
                 logger.info('length of decoded pandas %i', len(data_frame))
             except subprocess.CalledProcessError as e:
