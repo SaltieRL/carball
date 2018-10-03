@@ -312,7 +312,6 @@ class Game:
                                 parties[leader] = [unique_id]
                         except KeyError:
                             logger.warning('Could not get party leader for actor id: ' + str(actor_id))
-                            assert 0 == 1
                     if actor_id not in player_dicts:
                         # add new player
                         player_dicts[actor_id] = player_dict
