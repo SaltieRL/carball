@@ -5,12 +5,12 @@ import "api/player_id.proto";
 package api.metadata;
 
 enum Playlist {
+	UNKNOWN = 0;
 	UNRANKED_DUELS = 1;
 	UNRANKED_DOUBLES = 2;
 	UNRANKED_STANDARD = 3;
 	UNRANKED_CHAOS = 4;
 	CUSTOM_LOBBY = 6;
-    UNKNOWN = 8; // TODO: find out what this actually is
 	RANKED_DUELS = 10;
 	RANKED_DOUBLES = 11;
 	RANKED_SOLO_STANDARD = 12;
