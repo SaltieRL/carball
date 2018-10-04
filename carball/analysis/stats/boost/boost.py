@@ -28,9 +28,6 @@ class BoostStat(BaseStat):
             player_data_frame['delta'] = game.frames.delta
             proto_boost.boost_usage = self.get_player_boost_usage(player_data_frame)
 
-            proto_boost.boost_usage = (80 * (1 / .93) * (
-                        player_data_frame.delta * player_data_frame.boost_active)).sum() / 255 * 100
-
             proto_boost.wasted_usage = self.get_player_boost_usage_max_speed(player_data_frame)
 
             proto_boost.time_full_boost = self.get_time_with_max_boost(data_frame, player_data_frame)
@@ -41,21 +38,23 @@ class BoostStat(BaseStat):
             if 'boost_collect' not in player_data_frame:
                 logger.warning('%s did not collect any boost', player_key)
             else:
-                # homemade wasted collection
-                # only bigs right now
 
                 previous_frames = player_data_frame.loc[
                     player_data_frame.index[player_data_frame.boost_collect.fillna(False)] - 1]
-                wasted_big = previous_frames.boost.sum()
+                # any boost in tank when big is collected is wasted
+                wasted_big = previous_frames.boost.sum() / 255 * 100
 
                 previous_frames = player_data_frame.loc[
                     player_data_frame.index[~player_data_frame.boost_collect.fillna(True)] - 1]
-
+                # delta is the +- of a full tank of boost they would have if there was no limit on boost
                 delta = ((previous_frames.boost + 31) - 255)
-                wasted_small = delta[delta > 0].sum()
+                # we only want when the delta > 0 since that is wasted boost
+                wasted_small = delta[delta > 0].sum() / 255 * 100
 
                 collection = self.get_player_boost_collection(player_data_frame)
-                proto_boost.wasted_collection = self.get_player_boost_waste(proto_boost.boost_usage, collection)
+                proto_boost.wasted_collection = wasted_big + wasted_small
+                proto_boost.wasted_big = wasted_big
+                proto_boost.wasted_small = wasted_small
 
                 if 'small' in collection and collection['small'] is not None:
                     proto_boost.num_small_boosts = collection['small']
@@ -67,9 +66,10 @@ class BoostStat(BaseStat):
 
     @staticmethod
     def get_player_boost_usage(player_dataframe: pd.DataFrame) -> np.float64:
-        _diff = -player_dataframe.boost.diff()
-        boost_usage = _diff[_diff > 0].sum() / 255 * 100
-        return boost_usage
+        return (80 * (1 / .93) * (player_dataframe.delta * player_dataframe.boost_active)).sum() / 255 * 100
+        # _diff = -player_dataframe.boost.diff()
+        # boost_usage = _diff[_diff > 0].sum() / 255 * 100
+        # return boost_usage
 
     @staticmethod
     def get_average_boost_level(player_dataframe: pd.DataFrame) -> np.float64:
