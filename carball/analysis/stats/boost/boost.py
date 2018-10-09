@@ -10,7 +10,7 @@ from ....analysis.stats.stats import BaseStat
 from ....generated.api import game_pb2
 from ....generated.api.player_pb2 import Player
 from ....generated.api.stats.player_stats_pb2 import PlayerStats
-from ....json_parser.game import Game
+from ....json_parser.game import Game, BOOST_PER_SECOND
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ class BoostStat(BaseStat):
 
     @staticmethod
     def get_player_boost_usage(player_dataframe: pd.DataFrame) -> np.float64:
-        return (80 * (1 / .93) * (player_dataframe.delta * player_dataframe.boost_active)).sum() / 255 * 100
+        return (BOOST_PER_SECOND * (player_dataframe.delta * player_dataframe.boost_active)).sum() / 255 * 100
         # _diff = -player_dataframe.boost.diff()
         # boost_usage = _diff[_diff > 0].sum() / 255 * 100
         # return boost_usage
