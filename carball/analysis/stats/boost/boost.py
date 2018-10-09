@@ -47,7 +47,7 @@ class BoostStat(BaseStat):
                 previous_frames = player_data_frame.loc[
                     player_data_frame.index[~player_data_frame.boost_collect.fillna(True)] - 1]
                 # delta is the +- of a full tank of boost they would have if there was no limit on boost
-                delta = ((previous_frames.boost + 31) - 255)
+                delta = ((previous_frames.boost + 30.5) - 255)
                 # we only want when the delta > 0 since that is wasted boost
                 wasted_small = delta[delta > 0].sum() / 255 * 100
 

@@ -51,6 +51,18 @@ class BoostTest(unittest.TestCase):
                                     answers=get_specific_answers()["BOOST_USED"] +
                                             get_specific_answers()["0_BOOST_USED"])
 
+    def test_boost_wasted_collection(self):
+        def test(analysis: AnalysisManager, boost_value):
+            proto_game = analysis.get_protobuf_data()
+            player = proto_game.players[0]
+            boost = player.stats.boost
+            self.assertAlmostEqual(boost.wasted_collection, boost_value, delta=1)
+            # self.assertGreater(boost.average_boost_level, 0)
+            print(analysis)
+
+        # run_analysis_test_on_replay(test, get_specific_replays()["BOOST_WASTED_COLLECTION"],
+        #                             answers=get_specific_answers()["BOOST_WASTED_COLLECTION"])
+
     def test_0_used(self):
         def test(analysis: AnalysisManager, boost_value):
             proto_game = analysis.get_protobuf_data()
