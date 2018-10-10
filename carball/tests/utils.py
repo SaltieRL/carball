@@ -130,6 +130,9 @@ def get_raw_replays():
         "USE_BOOST_AFTER_GOAL": [
             "https://cdn.discordapp.com/attachments/493849514680254468/497190907309850634/USE_BOOST_AFTER_GOAL.replay"
         ],
+        "FEATHERING_34x100_BO0ST_USED": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/499640872313290763/FEATHERING_34_X_100_BOOSTS_USED.replay"
+        ],
         # Kickoffs
         "STRAIGHT_KICKOFF_GOAL": [
             "https://cdn.discordapp.com/attachments/493849514680254468/495735301604376576/Straight_Kickoff_Goal.replay"],
@@ -170,7 +173,7 @@ def get_specific_replays():
                       raw_map["CALCULATE_USED_BOOST_DEMO_WITH_FLIPS"] +
                       raw_map["USE_BOOST_AFTER_GOAL"] +
                       raw_map["WASTED_BOOST_WHILE_SUPER_SONIC"],
-        "BOOST_FEATHERED": raw_map["MORE_THAN_100_BOOST"],
+        "BOOST_FEATHERED": raw_map["MORE_THAN_100_BOOST"] + raw_map["FEATHERING_34x100_BO0ST_USED"],
         "BOOST_WASTED_USAGE": raw_map["WASTED_BOOST_WHILE_SUPER_SONIC"],
         "BOOST_WASTED_COLLECTION": raw_map["MORE_THAN_100_BOOST"],
         # HITS
@@ -193,10 +196,18 @@ def get_specific_answers():
         "BOOST_USED": [45, 100, 33, 33.33 + 33.33 + 12.15, 33.33, 33.33, 0],
         "BOOST_WASTED_USAGE": [33.33],
         "BOOST_WASTED_COLLECTION": [6.2],
-        "BOOST_FEATHERED": [100.0],
+        "BOOST_FEATHERED": [100.0, 3490.0],
         # Hits
         "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4],
         "SHOTS": [3, 0, 2, 1],
         "PASSES": [1, 1, 1],
         "AERIALS": [0, 1, 2, 0]
     }
+
+
+def assertNearlyEqual(self, a, b, percent=2.0, msg=None):
+    if abs(a - b) > abs(percent / 100.0 * min(abs(a), abs(b))):
+        if msg is None:
+            self.fail("The given numbers %s and %s are not within %s percent of each other."%(a, b, percent))
+        else:
+            fail(msg)
