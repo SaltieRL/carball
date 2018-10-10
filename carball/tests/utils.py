@@ -173,7 +173,7 @@ def get_specific_replays():
                       raw_map["CALCULATE_USED_BOOST_DEMO_WITH_FLIPS"] +
                       raw_map["USE_BOOST_AFTER_GOAL"] +
                       raw_map["WASTED_BOOST_WHILE_SUPER_SONIC"],
-        "BOOST_FEATHERED": raw_map["MORE_THAN_100_BOOST", "FEATHERING_34x100_BO0ST_USED"],
+        "BOOST_FEATHERED": raw_map["MORE_THAN_100_BOOST"] + raw_map["FEATHERING_34x100_BO0ST_USED"],
         "BOOST_WASTED_USAGE": raw_map["WASTED_BOOST_WHILE_SUPER_SONIC"],
         "BOOST_WASTED_COLLECTION": raw_map["MORE_THAN_100_BOOST"],
         # HITS
