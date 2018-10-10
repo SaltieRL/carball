@@ -2,7 +2,7 @@ import unittest
 
 from carball.analysis.analysis_manager import AnalysisManager
 
-from carball.tests.utils import run_analysis_test_on_replay, get_specific_replays, get_specific_answers
+from carball.tests.utils import run_analysis_test_on_replay, get_specific_replays, get_specific_answers, assertNearlyEqual
 
 
 class BoostTest(unittest.TestCase):
@@ -57,7 +57,7 @@ class BoostTest(unittest.TestCase):
             player = proto_game.players[0]
             boost = player.stats.boost
             print("Predicted usage: {}, actual: {}".format(boost.boost_usage, boost_value))
-            self.assertAlmostEqual(boost.boost_usage, boost_value, delta=3)
+            assertNearlyEqual(self, boost.boost_usage, boost_value, percent=3)
             # self.assertGreater(boost.average_boost_level, 0)
 
         run_analysis_test_on_replay(test, get_specific_replays()["BOOST_FEATHERED"],
