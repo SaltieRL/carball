@@ -119,14 +119,17 @@ def get_raw_replays():
             "https://cdn.discordapp.com/attachments/493849514680254468/495735288254169109/NO_BOOST_PAD_33_USED.replay"],
         "12_AND_100_BOOST_PADS_0_USED": [
             "https://cdn.discordapp.com/attachments/493849514680254468/496071113768697859/12_AND_100_BOOST_PADS_0_USED.replay"],
-        "33_BOOST_WASTED_USAGE": [
+        "WASTED_BOOST_WHILE_SUPER_SONIC": [
             "https://cdn.discordapp.com/attachments/493849514680254468/497191273619259393/WASTED_BOOST_WHILE_SUPER_SONIC.replay"],
-        "79_BOOST_USED": [
+        "CALCULATE_USED_BOOST_WITH_DEMO": [
             "https://cdn.discordapp.com/attachments/493849514680254468/497189284651204609/CALCULATE_USED_BOOST_WITH_DEMO.replay"],
-        "BOOST_WITH_DEMO": [
+        "CALCULATE_USED_BOOST_DEMO_WITH_FLIPS": [
             "https://cdn.discordapp.com/attachments/493849514680254468/497189968397991937/CALCULATE_USED_BOOST_DEMO_WITH_FLIPS.replay"],
         "MORE_THAN_100_BOOST": [
             "https://cdn.discordapp.com/attachments/493849514680254468/497190406472204288/MORE_THAN_100_BOOST.replay"],
+        "USE_BOOST_AFTER_GOAL": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/497190907309850634/USE_BOOST_AFTER_GOAL.replay"
+        ],
         # Kickoffs
         "STRAIGHT_KICKOFF_GOAL": [
             "https://cdn.discordapp.com/attachments/493849514680254468/495735301604376576/Straight_Kickoff_Goal.replay"],
@@ -160,9 +163,15 @@ def get_specific_replays():
         "1_LARGE_PAD": raw_map["100_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_100_USED"],
         "0_BOOST_USED": raw_map["12_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_0_USED"] + raw_map[
             "NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"],
-        "BOOST_USED": raw_map["12_BOOST_PAD_45_USED"] + raw_map["100_BOOST_PAD_100_USED"] + raw_map[
-            "NO_BOOST_PAD_33_USED"] + raw_map["79_BOOST_USED"] + raw_map["BOOST_WITH_DEMO"],  # [45, 100, 33, 173]
-        "BOOST_WASTED_USAGE": raw_map["33_BOOST_WASTED_USAGE"],
+        "BOOST_USED": raw_map["12_BOOST_PAD_45_USED"] +
+                      raw_map["100_BOOST_PAD_100_USED"] +
+                      raw_map["NO_BOOST_PAD_33_USED"] +
+                      raw_map["CALCULATE_USED_BOOST_WITH_DEMO"] +
+                      raw_map["CALCULATE_USED_BOOST_DEMO_WITH_FLIPS"] +
+                      raw_map["USE_BOOST_AFTER_GOAL"] +
+                      raw_map["WASTED_BOOST_WHILE_SUPER_SONIC"],
+        "BOOST_FEATHERED": raw_map["MORE_THAN_100_BOOST"],
+        "BOOST_WASTED_USAGE": raw_map["WASTED_BOOST_WHILE_SUPER_SONIC"],
         "BOOST_WASTED_COLLECTION": raw_map["MORE_THAN_100_BOOST"],
         # HITS
         "HITS": raw_map["4_SHOTS"] + raw_map["KICKOFF_3_HITS"] + raw_map["12_BOOST_PAD_45_USED"] +
@@ -181,9 +190,10 @@ def get_specific_answers():
     return {
         # Boost
         "0_BOOST_USED": [0] * len(specific_replays["0_BOOST_USED"]),
-        "BOOST_USED": [45, 100, 33, 79, 33.33],
+        "BOOST_USED": [45, 100, 33, 33.33 + 33.33 + 12.15, 33.33, 33.33, 0],
         "BOOST_WASTED_USAGE": [33.33],
         "BOOST_WASTED_COLLECTION": [6.2],
+        "BOOST_FEATHERED": [100.0],
         # Hits
         "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4],
         "SHOTS": [3, 0, 2, 1],
