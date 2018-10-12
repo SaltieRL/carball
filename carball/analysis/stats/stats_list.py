@@ -1,5 +1,6 @@
 from typing import List
 
+from ...analysis.stats.tendencies.relative_position_tendencies import RelativeTendencies
 from ...analysis.stats.tendencies.team_tendencies import TeamTendencies
 from ...analysis.stats.tendencies.speed_tendencies import SpeedTendencies
 from ...analysis.stats.tendencies.averages import Averages
@@ -34,7 +35,8 @@ class StatsList:
     def get_team_stats() -> List[BaseStat]:
         """These are stats that end up being assigned to a specific team"""
         return [PossessionStat(),
-                TeamTendencies()]
+                TeamTendencies(),
+                RelativeTendencies()]
 
     @staticmethod
     def get_general_stats() ->List[BaseStat]:

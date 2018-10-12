@@ -1,8 +1,8 @@
-import math
 from typing import Dict, List
 
 import pandas as pd
 
+from carball.analysis.constants.basic_math import position_column_names
 from carball.analysis.constants.playlist import get_team_size_from_game
 from carball.analysis.stats.possession.ball_distances import BallDistanceStat
 from carball.generated.api.team_pb2 import Team
@@ -13,7 +13,6 @@ from ....generated.api.player_pb2 import Player
 from ....generated.api.stats.team_stats_pb2 import TeamStats
 from ....json_parser.game import Game
 
-position_column_names = ['pos_x', 'pos_y', 'pos_z']
 # MAX_CLUMP_DISTANCE = math.sqrt(8192**2 + 10240**2) / 8
 MAX_CLUMP_DISTANCE = 3278
 MIN_BOONDOCKS_DISTANCE = 7000
