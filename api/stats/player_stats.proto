@@ -35,6 +35,17 @@ message Distance {
     optional float time_furthest_from_team_center = 7;
 }
 
+message RelativePositioning {
+    // Uses same math as in front of ball and behind ball (y only)
+    optional float time_in_front_of_center_of_mass = 1;
+    optional float time_behind_center_of_mass = 2;
+
+    // Uses same math as in front of ball and behind ball (y only)
+    optional float time_most_forward_player = 3;
+    optional float time_most_back_player = 4;
+    optional float time_between_players = 5;
+}
+
 message PlayerStats {
     optional Boost boost = 1;
     optional Distance distance = 2;
@@ -45,6 +56,7 @@ message PlayerStats {
     repeated api.stats.CameraChange camera_changes = 7;
     optional Controller controller = 8;
     optional api.stats.Speed speed = 9;
+    optional RelativePositioning relative_positioning = 10;
 }
 
 message Controller {

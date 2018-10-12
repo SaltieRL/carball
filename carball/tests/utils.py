@@ -23,7 +23,7 @@ def save_locally(replay_object):
 
 def run_tests_on_list(unit_test_func: Callable, replay_list=None, answers=None):
     if replay_list is None:
-        replay_list = get_full_replay_list()
+        replay_list = get_complex_replay_list()
 
     for index in range(len(replay_list)):
         replay_url = replay_list[index]
@@ -69,13 +69,12 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
     run_tests_on_list(wrapper, replay_list, answers=answers)
 
 
-def get_full_replay_list():
+def get_complex_replay_list():
     """
     For full replays that have crashed or failed to be converted
     :return:
     """
     return [
-        'https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay',
         'https://cdn.discordapp.com/attachments/493849514680254468/496153554977816576/BOTS_JOINING_AND_LEAVING.replay',
         'https://cdn.discordapp.com/attachments/493849514680254468/496153569981104129/BOTS_NO_POSITION.replay',
         'https://cdn.discordapp.com/attachments/493849514680254468/496153605074845734/ZEROED_STATS.replay',
@@ -97,6 +96,7 @@ def get_raw_replays():
         "1_EPIC_SAVE": ["https://cdn.discordapp.com/attachments/493849514680254468/495735191537713153/1_EPIC_SAVE.replay"],
         "1_JUMP": ["https://cdn.discordapp.com/attachments/493849514680254468/495735203323576321/1_JUMP.replay"],
         "1_NORMAL_SAVE": ["https://cdn.discordapp.com/attachments/493849514680254468/495735215767945234/1_NORMAL_SAVE.replay"],
+
         # Boost
         "12_BOOST_PAD_0_USED": ["https://cdn.discordapp.com/attachments/493849514680254468/495735228422291456/12_BOOST_PAD_0_USED.replay"],
         "12_BOOST_PAD_45_USED": ["https://cdn.discordapp.com/attachments/493849514680254468/495735240321662986/12_BOOST_PAD_45_USED.replay"],
@@ -105,10 +105,12 @@ def get_raw_replays():
         "NO_BOOST_PAD_0_USED": ["https://cdn.discordapp.com/attachments/493849514680254468/495735276338020372/NO_BOOST_PAD_0_USED.replay"],
         "NO_BOOST_PAD_33_USED": ["https://cdn.discordapp.com/attachments/493849514680254468/495735288254169109/NO_BOOST_PAD_33_USED.replay"],
         "12_AND_100_BOOST_PADS_0_USED": ["https://cdn.discordapp.com/attachments/493849514680254468/496071113768697859/12_AND_100_BOOST_PADS_0_USED.replay"],
+
         # Kickoffs
         "STRAIGHT_KICKOFF_GOAL": ["https://cdn.discordapp.com/attachments/493849514680254468/495735301604376576/Straight_Kickoff_Goal.replay"],
         "KICKOFF_NO_TOUCH": ["https://cdn.discordapp.com/attachments/493849514680254468/496034430943756289/NO_KICKOFF.replay"],
         "3_KICKOFFS": ["https://cdn.discordapp.com/attachments/493849514680254468/496034443442782208/3_KICKOFFS_4_SHOTS.replay"],
+
         # hits
         "4_SHOTS": ["https://cdn.discordapp.com/attachments/493849514680254468/496034443442782208/3_KICKOFFS_4_SHOTS.replay"],
         "KICKOFF_3_HITS": ["https://cdn.discordapp.com/attachments/493849514680254468/496072257928691743/KICKOFF_3_HITS.replay"],
@@ -116,6 +118,9 @@ def get_raw_replays():
         "HIGH_AIR_PASS": ["https://cdn.discordapp.com/attachments/493849514680254468/495887164425633802/HIGH_AIR_PASS_GOAL.replay"],
         "GROUND_PASS": ["https://cdn.discordapp.com/attachments/493849514680254468/495887165570678794/GROUNDED_PASS_GOAL.replay"],
         "PINCH_GROUND": ["https://cdn.discordapp.com/attachments/493849514680254468/495887167932071947/PINCH_GROUNDED_GOAL.replay"],
+
+        # error cases
+        "UNICODE_ERROR": ["https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay"],
     }
 
 

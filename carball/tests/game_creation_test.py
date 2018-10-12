@@ -3,7 +3,7 @@ import unittest
 from carball.analysis.analysis_manager import AnalysisManager
 
 from ..json_parser.game import Game
-from ..tests.utils import run_tests_on_list, run_analysis_test_on_replay
+from ..tests.utils import run_tests_on_list, run_analysis_test_on_replay, get_raw_replays
 
 from .. import decompile_replays
 
@@ -23,7 +23,27 @@ class DBTest(unittest.TestCase):
 
         run_tests_on_list(test)
 
-    def test_analysis(self):
+    def test_full_replays(self):
+        local = self
+
+        def test(analysis: AnalysisManager):
+            local.assertIsNotNone(analysis.get_protobuf_data())
+            local.assertEqual(False, analysis.get_protobuf_data().game_metadata.is_invalid_analysis)
+            for player in analysis.get_protobuf_data().players:
+                ratio = (player.stats.positional_tendencies.time_in_front_ball +
+                         player.stats.positional_tendencies.time_behind_ball) / player.time_in_game
+                local.assertEqual(True, ratio > 0.99)
+                local.assertGreater(player.stats.positional_tendencies.time_in_front_ball, 0)
+                local.assertGreater(player.stats.positional_tendencies.time_behind_ball, 0)
+                local.assertGreater(player.time_in_game, 0)
+                local.assertGreater(player.stats.speed.time_at_slow_speed, 0)
+                local.assertGreater(player.stats.boost.average_boost_level, 0)
+                local.assertGreater(player.stats.relative_positioning.time_behind_center_of_mass, 0)
+                local.assertGreater(player.stats.relative_positioning.time_in_front_of_center_of_mass, 0)
+
+        run_analysis_test_on_replay(test)
+
+    def test_unicode_error(self):
         local = self
 
         def test(analysis: AnalysisManager):
@@ -39,7 +59,7 @@ class DBTest(unittest.TestCase):
                 local.assertGreater(player.stats.speed.time_at_slow_speed, 0)
                 local.assertGreater(player.stats.boost.average_boost_level, 0)
 
-        run_analysis_test_on_replay(test)
+        run_analysis_test_on_replay(test, get_raw_replays()['UNICODE_ERROR'])
 
 
 if __name__ == '__main__':

@@ -27,7 +27,9 @@ class PositionalTendencies(BaseStat):
             "third_1": self.field_constants.get_third_1,
             "third_2": self.field_constants.get_third_2,
             "ball_0": self.field_constants.get_ball_0,
-            "ball_1": self.field_constants.get_ball_1
+            "ball_1": self.field_constants.get_ball_1,
+            "wall": self.field_constants.get_wall_time,
+            "corner": self.field_constants.get_corner_time
         }
 
         self.map_ball_attributes_to_predicates = {
@@ -40,8 +42,11 @@ class PositionalTendencies(BaseStat):
             "third_1": self.field_constants.get_third_1,
             "third_2": self.field_constants.get_third_2,
             "ball_0": self.field_constants.get_ball_0,
-            "ball_1": self.field_constants.get_ball_1
+            "ball_1": self.field_constants.get_ball_1,
+            "wall": self.field_constants.get_wall_time,
+            "corner": self.field_constants.get_corner_time
         }
+
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
         for id, player in player_map.items():
@@ -109,6 +114,7 @@ class PositionalTendencies(BaseStat):
                            half_0: float, half_1: float,
                            third_0: float, third_1: float, third_2: float,
                            ball_0: float, ball_1: float,
+                           wall: float, corner: float
                            ):
         """
         :param proto: What object everything is getting set on
@@ -122,6 +128,8 @@ class PositionalTendencies(BaseStat):
         :param third_2: Time spent in attacking third
         :param ball_0: Time spent behind ball
         :param ball_1: Time spent ahead of ball
+        :param wall: Time spent near the wall
+        :param corner: Time spent near the corner
         """
         proto.time_on_ground = height_0
         proto.time_low_in_air = height_1
@@ -133,3 +141,5 @@ class PositionalTendencies(BaseStat):
         proto.time_in_attacking_third = third_2
         proto.time_behind_ball = ball_0
         proto.time_in_front_ball = ball_1
+        proto.time_near_wall = wall
+        proto.time_in_corner = corner
