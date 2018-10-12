@@ -148,7 +148,7 @@ def get_specific_answers():
         "0_BOOST_USED": [0] * len(specific_replays["0_BOOST_USED"]),
         "BOOST_USED": [45, 100, 33],
         # Hits
-        "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4, 58],
+        "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4, 50],
         "SHOTS": [3, 0, 2, 1],
         "PASSES": [1, 1, 1],
         "AERIALS": [0, 1, 2, 0]
