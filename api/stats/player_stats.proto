@@ -22,6 +22,10 @@ message Boost {
     // Number of the large boosts taken on the enemy side
     optional int32 num_stolen_boosts = 9;
     optional float average_boost_level = 10;
+    // Wasted boost from big boosts
+    optional float wasted_big = 11;
+    // Wasted boost from small boosts
+    optional float wasted_small = 12;
 }
 
 message Distance {
