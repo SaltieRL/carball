@@ -45,9 +45,9 @@ message RelativePositioning {
     optional float time_behind_center_of_mass = 2;
 
     // Uses same math as in front of ball and behind ball (y only)
-    optional float time_most_forward_player = 3;  // TODO: implement this
-    optional float time_most_back_player = 4;  // TODO: implement this
-    optional float time_between_players = 5;  // TODO: implement this
+    optional float time_most_forward_player = 3;
+    optional float time_most_back_player = 4;
+    optional float time_between_players = 5;
 }
 
 message PlayerStats {
