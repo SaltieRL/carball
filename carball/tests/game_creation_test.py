@@ -1,6 +1,7 @@
 import unittest
 
 from carball.analysis.analysis_manager import AnalysisManager
+from carball.analysis.constants.playlist import get_playlist_from_game, get_team_size_from_game
 
 from ..json_parser.game import Game
 from ..tests.utils import run_tests_on_list, run_analysis_test_on_replay, get_raw_replays
@@ -38,8 +39,6 @@ class DBTest(unittest.TestCase):
                 local.assertGreater(player.time_in_game, 0)
                 local.assertGreater(player.stats.speed.time_at_slow_speed, 0)
                 local.assertGreater(player.stats.boost.average_boost_level, 0)
-                local.assertGreater(player.stats.relative_positioning.time_behind_center_of_mass, 0)
-                local.assertGreater(player.stats.relative_positioning.time_in_front_of_center_of_mass, 0)
                 local.assertGreater(player.stats.boost.wasted_collection, -1)
 
         run_analysis_test_on_replay(test)
