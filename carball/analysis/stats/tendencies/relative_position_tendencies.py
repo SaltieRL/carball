@@ -39,17 +39,17 @@ class RelativeTendencies(TeamTendencies):
 
             for player_id in team.player_ids:
                 relative_position = player_map[player_id.id].stats.relative_positioning
-
+                player_name = player_map[player_id.id].name
                 try:
                     # flip first and last if you are orange
                     if team.is_orange:
-                        relative_position.time_most_back_player = position_distances_time['first_person'][player_id]
-                        relative_position.time_most_forward_player = position_distances_time['last_person'][player_id]
+                        relative_position.time_most_back_player = position_distances_time['first_person'][player_name]
+                        relative_position.time_most_forward_player = position_distances_time['last_person'][player_name]
                     else:
-                        relative_position.time_most_back_player = position_distances_time['last_person'][player_id]
-                        relative_position.time_most_forward_player = position_distances_time['first_person'][player_id]
+                        relative_position.time_most_back_player = position_distances_time['last_person'][player_name]
+                        relative_position.time_most_forward_player = position_distances_time['first_person'][player_name]
 
                     total_time = relative_position.time_most_back_player + relative_position.time_most_forward_player
                     relative_position.time_between_players = player_map[player_id.id].time_in_game - total_time
-                except (AttributeError, KeyError):
+                except (AttributeError, KeyError) as e:
                     pass
