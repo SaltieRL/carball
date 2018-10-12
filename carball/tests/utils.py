@@ -153,6 +153,8 @@ def get_raw_replays():
             "https://cdn.discordapp.com/attachments/493849514680254468/495887165570678794/GROUNDED_PASS_GOAL.replay"],
         "PINCH_GROUND": [
             "https://cdn.discordapp.com/attachments/493849514680254468/495887167932071947/PINCH_GROUNDED_GOAL.replay"],
+        "DEFAULT_3_ON_3_AROUND_58_HITS": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/496820586811621387/DEFAULT_3_ON_3_AROUND_58_HITS.replay"]
     }
 
 
@@ -179,7 +181,7 @@ def get_specific_replays():
         # HITS
         "HITS": raw_map["4_SHOTS"] + raw_map["KICKOFF_3_HITS"] + raw_map["12_BOOST_PAD_45_USED"] +
                 raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"] +
-                raw_map["1_NORMAL_SAVE"] + raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"],
+                raw_map["1_NORMAL_SAVE"] + raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["DEFAULT_3_ON_3_AROUND_58_HITS"],
         # + raw_map["PINCH_GROUND"],  TODO: Fix pinches to create 2 hits 1 for each person on same frame
         "SHOTS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"] +
                  raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE"],
@@ -198,7 +200,7 @@ def get_specific_answers():
         "BOOST_WASTED_COLLECTION": [6.2],
         "BOOST_FEATHERED": [100.0, 3490.0],
         # Hits
-        "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4],
+        "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4, 50],
         "SHOTS": [3, 0, 2, 1],
         "PASSES": [1, 1, 1],
         "AERIALS": [0, 1, 2, 0]

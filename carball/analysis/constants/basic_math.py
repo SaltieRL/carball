@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 position_column_names = ['pos_x', 'pos_y', 'pos_z']
-
+positional_columns = ['pos_x', 'pos_y', 'pos_z', 'rot_x', 'rot_y', 'rot_z']
 
 def get_player_ball_displacements(data_frame: pd.DataFrame, player_name: str) -> pd.DataFrame:
     player_df = data_frame[player_name]
