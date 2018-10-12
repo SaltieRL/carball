@@ -22,6 +22,8 @@ message PositionalTendencies {
     optional float time_in_attacking_third = 8;
     optional float time_behind_ball = 9;
     optional float time_in_front_ball = 10;
+    optional float time_near_wall = 11;
+    optional float time_in_corner = 12;
 }
 
 message Averages {

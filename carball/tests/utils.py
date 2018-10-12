@@ -23,7 +23,7 @@ def save_locally(replay_object):
 
 def run_tests_on_list(unit_test_func: Callable, replay_list=None, answers=None):
     if replay_list is None:
-        replay_list = get_full_replay_list()
+        replay_list = get_complex_replay_list()
 
     for index in range(len(replay_list)):
         replay_url = replay_list[index]
@@ -71,13 +71,12 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
     run_tests_on_list(wrapper, replay_list, answers=answers)
 
 
-def get_full_replay_list():
+def get_complex_replay_list():
     """
     For full replays that have crashed or failed to be converted
     :return:
     """
     return [
-        'https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay',
         'https://cdn.discordapp.com/attachments/493849514680254468/496153554977816576/BOTS_JOINING_AND_LEAVING.replay',
         'https://cdn.discordapp.com/attachments/493849514680254468/496153569981104129/BOTS_NO_POSITION.replay',
         'https://cdn.discordapp.com/attachments/493849514680254468/496153605074845734/ZEROED_STATS.replay',
@@ -104,6 +103,7 @@ def get_raw_replays():
         "1_JUMP": ["https://cdn.discordapp.com/attachments/493849514680254468/495735203323576321/1_JUMP.replay"],
         "1_NORMAL_SAVE": [
             "https://cdn.discordapp.com/attachments/493849514680254468/495735215767945234/1_NORMAL_SAVE.replay"],
+
         # Boost
         "12_BOOST_PAD_0_USED": [
             "https://cdn.discordapp.com/attachments/493849514680254468/495735228422291456/12_BOOST_PAD_0_USED.replay"],
@@ -133,6 +133,7 @@ def get_raw_replays():
         "FEATHERING_34x100_BO0ST_USED": [
             "https://cdn.discordapp.com/attachments/493849514680254468/499640872313290763/FEATHERING_34_X_100_BOOSTS_USED.replay"
         ],
+
         # Kickoffs
         "STRAIGHT_KICKOFF_GOAL": [
             "https://cdn.discordapp.com/attachments/493849514680254468/495735301604376576/Straight_Kickoff_Goal.replay"],
@@ -140,6 +141,7 @@ def get_raw_replays():
             "https://cdn.discordapp.com/attachments/493849514680254468/496034430943756289/NO_KICKOFF.replay"],
         "3_KICKOFFS": [
             "https://cdn.discordapp.com/attachments/493849514680254468/496034443442782208/3_KICKOFFS_4_SHOTS.replay"],
+
         # hits
         "4_SHOTS": [
             "https://cdn.discordapp.com/attachments/493849514680254468/496034443442782208/3_KICKOFFS_4_SHOTS.replay"],
@@ -154,7 +156,11 @@ def get_raw_replays():
         "PINCH_GROUND": [
             "https://cdn.discordapp.com/attachments/493849514680254468/495887167932071947/PINCH_GROUNDED_GOAL.replay"],
         "DEFAULT_3_ON_3_AROUND_58_HITS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/496820586811621387/DEFAULT_3_ON_3_AROUND_58_HITS.replay"]
+            "https://cdn.discordapp.com/attachments/493849514680254468/496820586811621387/DEFAULT_3_ON_3_AROUND_58_HITS.replay"],
+
+        # error cases
+        "UNICODE_ERROR": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay"],
     }
 
 
@@ -212,4 +218,4 @@ def assertNearlyEqual(self, a, b, percent=2.0, msg=None):
         if msg is None:
             self.fail("The given numbers %s and %s are not within %s percent of each other."%(a, b, percent))
         else:
-            fail(msg)
+            self.fail(msg)
