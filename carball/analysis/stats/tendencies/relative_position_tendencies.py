@@ -28,7 +28,7 @@ class RelativeTendencies(TeamTendencies):
 
             player_y_data_frame = pd.concat(player_y, axis=1)
             last_person = player_y_data_frame.idxmin(axis=1).rename('last_person')
-            first_person = player_y_data_frame.idxmin(axis=1).rename('first_person')
+            first_person = player_y_data_frame.idxmax(axis=1).rename('first_person')
 
             position_distances_time = pd.concat([
                 sum_deltas_by_player_name(data_frame, players_data_frame)
