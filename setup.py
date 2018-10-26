@@ -7,7 +7,7 @@ import os
 with open(os.path.join('carball', 'analysis', 'PROTOBUF_VERSION'), 'r') as f:
     PROTOBUF_VERSION = json.loads(f.read())
 
-subversion = 0
+subversion = 2
 version_string = '0.' + str(PROTOBUF_VERSION) + '.' + str(subversion)
 
 if os.path.isfile('README.md'):
