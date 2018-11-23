@@ -14,7 +14,7 @@ class DBTest(unittest.TestCase):
         local = self
 
         def test(replay, file_path):
-            json_object = decompile_replays.decompile_replay(replay, file_path)
+            json_object = decompile_replays.decompile_replay(replay, output_path=file_path)
             game = Game()
             game.initialize(loaded_json=json_object)
             info = game.game_info
