@@ -35,9 +35,7 @@ def decompile_replay(replay_path, output_path: str=None, overwrite=True):
         binary = [f for f in binaries if 'osx' in f][0]
     else:
         raise Exception('Unknown platform, unable to process replay file.')
-    print(output_path)
-    _json = run_rattletrap.decompile_replay(replay_path, output_path)
-    return _json
+    return run_rattletrap.decompile_replay(replay_path, output_path)
 
 
 def analyze_replay_file(replay_path: str, output_path: str=None, overwrite=True, controls: ControlsCreator=None,
