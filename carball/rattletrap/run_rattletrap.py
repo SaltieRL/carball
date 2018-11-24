@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
-def create_rattletrap_command(replay_path: str, output_path: str=None, overwrite: bool=True) -> List[str]:
+def create_rattletrap_command(replay_path: str, output_path: str, overwrite: bool=True) -> List[str]:
     """
     Takes a path to the replay and outputs the json of that replay.
 
@@ -30,7 +30,7 @@ def create_rattletrap_command(replay_path: str, output_path: str=None, overwrite
         raise Exception('Unknown platform, unable to process replay file.')
     cmd = [os.path.join(os.path.join(BASE_DIR, 'rattletrap'), '{}'.format(binary)), '--compact', '-i',
            replay_path]
-    if output_path is not None:
+    if output_path:
         output_dirs = os.path.dirname(output_path)
         if not os.path.isdir(output_dirs) and output_dirs != '':
             os.makedirs(output_dirs)
@@ -40,17 +40,20 @@ def create_rattletrap_command(replay_path: str, output_path: str=None, overwrite
     return cmd
 
 
-def run_rattletrap_command(command: List[str], output_path: str=None):
-    output = subprocess.check_output(command)
-    if output_path is not None:
+def run_rattletrap_command(command: List[str], output_path: str):
+    proc = subprocess.Popen(command, stdout=subprocess.PIPE)
+    output = proc.stdout.read()
+    if output:
+        output = output.decode('utf8')
+    if output_path:
         with open(output_path, encoding="utf8") as f:
             _json = json.load(f)
     else:
-        _json = json.load(output)
+        _json = json.loads(output)
     return _json
 
 
-def decompile_replay(replay_path: str, output_path: str=None, overwrite: bool=True):
+def decompile_replay(replay_path: str, output_path: str, overwrite: bool=True):
     """
     Takes a path to the replay and outputs the json of that replay.
 
