@@ -333,8 +333,12 @@ class Game:
                 if frame_number > self.goals[current_goal_number].frame_number:
                     # set all players to sleeping after goal
                     for car_actor_id in car_player_ids:
-                        current_actors[car_actor_id][
-                            REPLICATED_RB_STATE_KEY]['Sleeping'] = True
+                        try:
+                            car = current_actors[car_actor_id]
+                            car[REPLICATED_RB_STATE_KEY]['Sleeping'] = True
+                        except KeyError as e:
+                            # Ignore the case where the car does not have a REPLICATED_RB_STATE_KEY
+                            pass
                     current_goal_number += 1
             except IndexError:
                 # after last goal.
