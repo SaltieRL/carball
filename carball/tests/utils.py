@@ -62,7 +62,7 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
     """
 
     def wrapper(replay_file_path, json_file_path, answer=None):
-        analysis_manager = analyze_replay_file(replay_file_path, json_file_path)
+        analysis_manager = analyze_replay_file(replay_file_path)
         if answer is not None:
             unit_test_func(analysis_manager, answer)
         else:
