@@ -28,7 +28,7 @@ class StatsManager:
     def get_stats(self, game: Game, proto_game: game_pb2.Game,
                   player_map: Dict[str, Player], data_frame: pd.DataFrame):
         """
-        Calculates all advanced stats.
+        Calculates all basic stats.
         The stats are always calculated in this order:
             Player, Team, Game, Hit
         """
