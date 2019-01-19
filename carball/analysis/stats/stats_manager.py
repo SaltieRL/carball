@@ -4,6 +4,7 @@ from typing import Dict, List
 
 import pandas as pd
 
+from carball.analysis.stats.possessions import analyse_possessions
 from ...analysis.stats.stats_list import StatsList
 from ...generated.api import game_pb2
 from ...generated.api.player_pb2 import Player
@@ -12,12 +13,12 @@ from ...generated.api.stats.team_stats_pb2 import TeamStats
 from ...generated.api.team_pb2 import Team
 from ...json_parser.game import Game
 
-
 logger = logging.getLogger(__name__)
 
 
 def start_time():
     return time.time()
+
 
 def end_time(start):
     return (time.time() - start) * 1000
@@ -36,6 +37,8 @@ class StatsManager:
         self.calculate_team_stats(game, proto_game, proto_game.teams, player_map, data_frame)
         self.calculate_game_stats(game, proto_game, player_map, data_frame)
         self.calculate_hit_stats(game, proto_game, player_map, data_frame)
+
+        analyse_possessions(game, proto_game, player_map, data_frame)
 
     @staticmethod
     def calculate_player_stats(game: Game, proto_game: game_pb2.Game,
