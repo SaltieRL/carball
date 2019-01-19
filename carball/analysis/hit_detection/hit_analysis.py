@@ -199,6 +199,13 @@ class SaltieHit:
             simulation_time = time.time()
             total_simulation_time += simulation_time - stat_time
 
+            try:
+                if player_map[previous_saltie_hit.player_id.id].is_orange != player_map[saltie_hit.player_id.id].is_orange:
+                    if previous_saltie_hit.shot and not previous_saltie_hit.goal:
+                        saltie_hit.save = True
+            except NameError:
+                pass
+
         logger.debug('next time: %s', total_next_hit_time * 1000)
         logger.debug('stat time: %s', total_stat_time * 1000)
         logger.debug('sim  time: %s', total_simulation_time * 1000)
