@@ -24,8 +24,8 @@ class BoostStat(BaseStat):
 
             proto_boost = stats.boost
             player_name = player_map[player_key].name
-            player_data_frame = data_frame[player_name]
-            player_data_frame['delta'] = game.frames.delta
+            player_data_frame = data_frame[player_name].copy()
+            player_data_frame.loc[:, 'delta'] = game.frames.delta
             proto_boost.boost_usage = self.get_player_boost_usage(player_data_frame)
 
             proto_boost.wasted_usage = self.get_player_boost_usage_max_speed(player_data_frame)
