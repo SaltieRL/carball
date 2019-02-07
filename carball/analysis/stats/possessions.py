@@ -45,6 +45,10 @@ def analyse_possessions(game: Game, proto_game: game_pb2.Game,
         stats = PerPossessionStats(possessions)
         team_possession_stats_dict[team_is_orange] = stats
 
+    game.player_possessions_dict = player_possessions_dict
+    game.player_possession_stats_dict = player_possession_stats_dict
+    game.team_possessions_dict = team_possessions_dict
+    game.team_possession_stats_dict = team_possession_stats_dict
     pass
 
 
