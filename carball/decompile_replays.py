@@ -4,18 +4,19 @@ import subprocess
 import logging
 import platform as pt
 
-from .analysis.analysis_manager import AnalysisManager
-from .extras.per_goal_analysis import PerGoalAnalysis
-from .json_parser.sanity_check.sanity_check import SanityChecker
-from .json_parser.game import Game
-from .controls.controls import ControlsCreator
+from carball.analysis.analysis_manager import AnalysisManager
+from carball.extras.per_goal_analysis import PerGoalAnalysis
+from carball.json_parser.sanity_check.sanity_check import SanityChecker
+from carball.json_parser.game import Game
+from carball.controls.controls import ControlsCreator
+from carball.rattletrap import run_rattletrap
 
 
 logger = logging.getLogger(__name__)
 BASE_DIR = os.path.dirname(__file__)
 
 
-def decompile_replay(replay_path, output_path, overwrite=True):
+def decompile_replay(replay_path, output_path: str=None, overwrite=True):
     """
     Takes a path to the replay and outputs the json of that replay.
 
@@ -34,21 +35,10 @@ def decompile_replay(replay_path, output_path, overwrite=True):
         binary = [f for f in binaries if 'osx' in f][0]
     else:
         raise Exception('Unknown platform, unable to process replay file.')
-    output_dirs = os.path.dirname(output_path)
-    if not os.path.isdir(output_dirs) and output_dirs != '':
-        os.makedirs(output_dirs)
-    if overwrite or not os.path.isfile(output_path):
-        cmd = [os.path.join(os.path.join(BASE_DIR, 'rattletrap'), '{}'.format(binary)), '--compact', '-i',
-               replay_path,
-               '--output',
-               output_path]
-        logger.debug(" ".join(cmd))
-        subprocess.check_output(cmd)
-    _json = json.load(open(output_path, encoding="utf8"))
-    return _json
+    return run_rattletrap.decompile_replay(replay_path, output_path)
 
 
-def analyze_replay_file(replay_path: str, output_path: str, overwrite=True, controls: ControlsCreator=None,
+def analyze_replay_file(replay_path: str, output_path: str=None, overwrite=True, controls: ControlsCreator=None,
                         sanity_check: SanityChecker=None, analysis_per_goal=False):
     """
     Decompile and analyze a replay file.
@@ -61,7 +51,7 @@ def analyze_replay_file(replay_path: str, output_path: str, overwrite=True, cont
     :param analysis_per_goal: Runs the analysis per a goal instead of the replay as a whole
     :return: AnalysisManager of game with analysis.
     """
-    _json = decompile_replay(replay_path, output_path, overwrite=overwrite)
+    _json = decompile_replay(replay_path, output_path=output_path, overwrite=overwrite)
     game = Game()
     game.initialize(loaded_json=_json)
     # get_controls(game)  # TODO: enable and optimise.

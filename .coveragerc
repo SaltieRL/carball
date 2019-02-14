@@ -1,0 +1,12 @@
+[run]
+branch = True
+source = carball
+
+[report]
+exclude_lines =
+    if self.debug:
+    pragma: no cover
+    raise NotImplementedError
+    if __name__ == .__main__.:
+omit =
+    tests/*

@@ -3,7 +3,7 @@ Various tools for decompiling / analyzing Rocket League replays.
 
 ## Requirements
 
-- Python 3.5+
+- Python 3.6+
 - Windows, Mac or Linux
 
 ## Install
@@ -17,7 +17,7 @@ Decompile and analyze a replay:
 import carball
 
 manager = carball.analyze_replay_file('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', 
-                                      '9EB5E5814D73F55B51A1BD9664D4CBF3.json', 
+                                      output_path='9EB5E5814D73F55B51A1BD9664D4CBF3.json', 
                                       overwrite=True)
 proto_game = manager.get_protobuf_data()
 
@@ -29,7 +29,7 @@ Just decompile a replay to a JSON object:
 import carball
 
 _json = carball.decompile_replay('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', 
-                                '9EB5E5814D73F55B51A1BD9664D4CBF3.json', 
+                                output_path='9EB5E5814D73F55B51A1BD9664D4CBF3.json', 
                                 overwrite=True)
 ```
 
@@ -72,3 +72,6 @@ If you want to see the output format of the stats created you can look [here](ap
 
 Compile the proto files by running in this directory
 `setup.bat` (Windows) or `setup.sh` (Linux/mac)
+
+[![Build Status](https://travis-ci.org/SaltieRL/carball.svg?branch=master)](https://travis-ci.org/SaltieRL/carball)
+[![codecov](https://codecov.io/gh/SaltieRL/carball/branch/master/graph/badge.svg)](https://codecov.io/gh/SaltieRL/carball)

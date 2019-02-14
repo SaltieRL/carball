@@ -1,3 +1,8 @@
 twine
 pytest
 requests
+pytest-cov
+coverage
+codecov
+pep8
+autopep8

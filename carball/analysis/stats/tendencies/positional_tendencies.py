@@ -27,7 +27,9 @@ class PositionalTendencies(BaseStat):
             "third_1": self.field_constants.get_third_1,
             "third_2": self.field_constants.get_third_2,
             "ball_0": self.field_constants.get_ball_0,
-            "ball_1": self.field_constants.get_ball_1
+            "ball_1": self.field_constants.get_ball_1,
+            "wall": self.field_constants.get_wall_time,
+            "corner": self.field_constants.get_corner_time
         }
 
         self.map_ball_attributes_to_predicates = {
@@ -40,47 +42,53 @@ class PositionalTendencies(BaseStat):
             "third_1": self.field_constants.get_third_1,
             "third_2": self.field_constants.get_third_2,
             "ball_0": self.field_constants.get_ball_0,
-            "ball_1": self.field_constants.get_ball_1
+            "ball_1": self.field_constants.get_ball_1,
+            "wall": self.field_constants.get_wall_time,
+            "corner": self.field_constants.get_corner_time
         }
+
+    def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+        for id, player in player_map.items():
+            self.get_player_tendencies(player, data_frame)
 
     def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                        data_frame: pd.DataFrame):
         ball_data_frame = data_frame['ball']
 
-        # Use the same for most
-        player_ball_dataframes: Dict[str, pd.DataFrame] = {
-            "player_data_frame": ball_data_frame,
-            "ball_data_frame": ball_data_frame,
-        }
-
-        init_params = {
-            attr: self.get_duration_from_predicate(predicate, player_ball_dataframes, data_frame)
-            for attr, predicate in self.map_ball_attributes_to_predicates.items()
-        }
-        self.set_tendency_proto(proto_stat.ball_stats.positional_tendencies, **init_params)
-
-    def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
-
-        for id, player in player_map.items():
-            self.get_player_tendencies(player, data_frame)
+        self.get_tendencies(data_frame, ball_data_frame, ball_data_frame, False,
+                            proto_stat.ball_stats.positional_tendencies, self.map_ball_attributes_to_predicates)
 
     def get_player_tendencies(self, player: Player, data_frame: pd.DataFrame):
-        player_data_frame = data_frame[player.name]
-        ball_data_frame = data_frame['ball']
+        self.get_tendencies(data_frame, data_frame[player.name], data_frame['ball'],
+                            player.is_orange, player.stats.positional_tendencies,
+                            self.map_player_attributes_to_predicates)
 
+    def get_tendencies(self, data_frame: pd.DataFrame, player_data_frame: pd.DataFrame,
+                       ball_data_frame: pd.DataFrame, is_orange: bool,
+                       positional_tendencies: stats_pb2.PositionalTendencies,
+                       predicate_map: Dict[str, Callable]):
+        """
+        Calculates the tendencies for all of the stats
+        :param data_frame: The normal data frame
+        :param player_data_frame: The frame for the positions of the player
+        :param ball_data_frame: The frame for the positions of the ball
+        :param is_orange: If we need to flip the field for defense/offense
+        :param positional_tendencies: The proto field where everything is set
+        :param predicate_map: The map of checks to call
+        """
         player_ball_dataframes: Dict[str, pd.DataFrame] = {
             "player_data_frame": player_data_frame,
-            "ball_data_frame": player_data_frame,
+            "ball_data_frame": ball_data_frame,
         }
-        if player.is_orange:
+        if is_orange:
             player_ball_dataframes = self.get_flipped_dataframes(player_ball_dataframes)
 
         init_params = {
             attr: self.get_duration_from_predicate(predicate, player_ball_dataframes, data_frame)
-            for attr, predicate in self.map_player_attributes_to_predicates.items()
+            for attr, predicate in predicate_map.items()
         }
-        self.set_tendency_proto(player.stats.positional_tendencies, **init_params)
+        self.set_tendency_proto(positional_tendencies, **init_params)
 
     @staticmethod
     def get_duration_from_predicate(predicate: Callable,
@@ -89,8 +97,7 @@ class PositionalTendencies(BaseStat):
         deltas = data_frame.game.delta
         return deltas[boolean_index].sum()
 
-    @staticmethod
-    def get_flipped_dataframes(data_frames: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
+    def get_flipped_dataframes(self, data_frames: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
         new_dataframes = {
             _k: _v.copy() for _k, _v in data_frames.items()
         }
@@ -107,6 +114,7 @@ class PositionalTendencies(BaseStat):
                            half_0: float, half_1: float,
                            third_0: float, third_1: float, third_2: float,
                            ball_0: float, ball_1: float,
+                           wall: float, corner: float
                            ):
         """
         :param proto: What object everything is getting set on
@@ -120,6 +128,8 @@ class PositionalTendencies(BaseStat):
         :param third_2: Time spent in attacking third
         :param ball_0: Time spent behind ball
         :param ball_1: Time spent ahead of ball
+        :param wall: Time spent near the wall
+        :param corner: Time spent near the corner
         """
         proto.time_on_ground = height_0
         proto.time_low_in_air = height_1
@@ -131,3 +141,5 @@ class PositionalTendencies(BaseStat):
         proto.time_in_attacking_third = third_2
         proto.time_behind_ball = ball_0
         proto.time_in_front_ball = ball_1
+        proto.time_near_wall = wall
+        proto.time_in_corner = corner

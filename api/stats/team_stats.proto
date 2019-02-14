@@ -4,7 +4,20 @@ import "api/stats/stats.proto";
 
 package api.stats;
 
+// Stats that apply to the average position of the team as a whole
+message CenterOfMass {
+    optional api.stats.PositionalTendencies positional_tendencies = 1;
+    optional float average_distance_from_center = 2;  // How clumpy / spread out were they
+    optional float average_max_distance_from_center = 3; // A different way of seeing how spread out the team was
+    // Time when max distance is below sqrt(8192^2 + 10240^2) / 4 = 3278
+    // This is also 1/4th of field diagonal
+    optional float time_clumped = 4;
+    // Time when max distance is above 7000
+    optional float time_boondocks = 5;
+}
+
 message TeamStats {
     optional api.stats.Possession possession = 1;
     optional api.stats.HitCounts hit_counts = 2;
+    optional CenterOfMass center_of_mass = 3;
 }

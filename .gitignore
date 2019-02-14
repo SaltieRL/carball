@@ -5,3 +5,4 @@ venv/
 /**/generated/**/*.py
 output
 .env
+.coverage

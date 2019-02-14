@@ -14,7 +14,7 @@ from .game_info import GameInfo
 
 logger = logging.getLogger(__name__)
 
-BOOST_PER_SECOND = 80  # boost used per second out of 255
+BOOST_PER_SECOND = 80 * 1/.93  # boost used per second out of 255
 DATETIME_FORMATS = [
     '%Y-%m-%d %H-%M-%S',
     '%Y-%m-%d:%H-%M'
@@ -63,7 +63,10 @@ class Game:
         # set properties
         self.properties = self.replay['header']['body']['properties']['value']
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
-        self.map = self.find_actual_value(self.properties['MapName']['value'])
+        if 'MapName' in self.properties:
+            self.map = self.find_actual_value(self.properties['MapName']['value'])
+        else:
+            self.map = 'Unknown'
         self.name = self.find_actual_value(self.properties.get('ReplayName', None))
         self.match_type = self.find_actual_value(self.properties['MatchType']['value'])
         self.team_size = self.find_actual_value(self.properties['TeamSize']['value'])
@@ -122,6 +125,9 @@ class Game:
             return {'name': owner_name, 'id': None}
 
     def get_goals(self) -> List[Goal]:
+        if "Goals" not in self.properties:
+            return []
+
         goals = [g['value'] for g in self.properties["Goals"]["value"]["array"]]
 
         logger.info('Found %s goals.' % len(goals))
@@ -306,7 +312,6 @@ class Game:
                                 parties[leader] = [unique_id]
                         except KeyError:
                             logger.warning('Could not get party leader for actor id: ' + str(actor_id))
-                            assert 0 == 1
                     if actor_id not in player_dicts:
                         # add new player
                         player_dicts[actor_id] = player_dict
@@ -328,8 +333,12 @@ class Game:
                 if frame_number > self.goals[current_goal_number].frame_number:
                     # set all players to sleeping after goal
                     for car_actor_id in car_player_ids:
-                        current_actors[car_actor_id][
-                            REPLICATED_RB_STATE_KEY]['Sleeping'] = True
+                        try:
+                            car = current_actors[car_actor_id]
+                            car[REPLICATED_RB_STATE_KEY]['Sleeping'] = True
+                        except KeyError as e:
+                            # Ignore the case where the car does not have a REPLICATED_RB_STATE_KEY
+                            pass
                     current_goal_number += 1
             except IndexError:
                 # after last goal.
@@ -353,6 +362,8 @@ class Game:
 
                 frame_data['seconds_remaining'] = current_actors[soccar_game_event_actor_id].get(
                     "TAGame.GameEvent_Soccar_TA:SecondsRemaining", None)
+                frame_data['replicated_seconds_remaining'] = current_actors[soccar_game_event_actor_id].get(
+                    "TAGame.GameEvent_TA:ReplicatedGameStateTimeRemaining", None)
                 frame_data['is_overtime'] = current_actors[soccar_game_event_actor_id].get(
                     "TAGame.GameEvent_Soccar_TA:bOverTime", None)
                 frame_data['ball_has_been_hit'] = current_actors[soccar_game_event_actor_id].get(

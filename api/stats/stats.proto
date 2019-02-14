@@ -22,11 +22,16 @@ message PositionalTendencies {
     optional float time_in_attacking_third = 8;
     optional float time_behind_ball = 9;
     optional float time_in_front_ball = 10;
+    optional float time_near_wall = 11;
+    optional float time_in_corner = 12;
 }
 
 message Averages {
     optional float average_speed = 1;
     optional float average_hit_distance = 2;
+    // Average distance for this player from the team center
+    // Average distance for the ball to the field center
+    optional float average_distance_from_center = 3;
 }
 
 message HitCounts {
