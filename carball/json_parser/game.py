@@ -553,6 +553,21 @@ class Game:
                                 # it does not turn back false immediately although boost is only collected once.
                                 # using actor_id!=-1
                                 actor_data[REPLICATED_PICKUP_KEY]['pickup']["instigator_id"] = -1
+
+                    # rumble items
+                    elif actor_data['TypeName'].startswith('Archetypes.SpecialPickups.SpecialPickup_'):
+                        car_actor_id = actor_data.get('TAGame.CarComponent_TA:Vehicle', None)
+                        if car_actor_id is not None:
+                            if car_actor_id in current_car_ids_to_collect:
+                                player_actor_id = car_player_ids[car_actor_id]
+                                item_name = actor_data['TypeName'] \
+                                    .replace('Archetypes.SpecialPickups.SpecialPickup_', '')
+                                # item is active when this is odd
+                                item_active = actor_data.get(COMPONENT_REPLICATED_ACTIVE_KEY, 0) % 2 == 1
+
+                                player_ball_data[player_actor_id][frame_number]['power_up'] = item_name
+                                player_ball_data[player_actor_id][frame_number]['power_up_active'] = item_active
+
                 for player_actor_id in player_dicts:
                     actor_data = current_actors.get(player_actor_id, None)
                     if actor_data is None:
