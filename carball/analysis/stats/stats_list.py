@@ -13,6 +13,7 @@ from ...analysis.stats.possession.turnovers import TurnoverStat
 from ...analysis.stats.stats import BaseStat, HitStat
 from ...analysis.stats.tendencies.positional_tendencies import PositionalTendencies
 from ...analysis.stats.controls.controls import ControlsStat
+from ...analysis.stats.rumble.rumble import RumbleItemStat
 
 
 class StatsList:
@@ -28,7 +29,8 @@ class StatsList:
                 Averages(),
                 BallDistanceStat(),
                 ControlsStat(),
-                SpeedTendencies()
+                SpeedTendencies(),
+                RumbleItemStat()
                 ]
 
     @staticmethod
@@ -36,7 +38,8 @@ class StatsList:
         """These are stats that end up being assigned to a specific team"""
         return [PossessionStat(),
                 TeamTendencies(),
-                RelativeTendencies()]
+                RelativeTendencies(),
+                RumbleItemStat()]
 
     @staticmethod
     def get_general_stats() ->List[BaseStat]:

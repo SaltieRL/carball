@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package api.stats;
+
+message RumbleItemUsage {
+    optional int32 ball_freeze = 1;
+    optional int32 ball_grappling_hook = 2;
+    optional int32 ball_lasso = 3;
+    optional int32 ball_spring = 4;
+    optional int32 ball_velcro = 5;
+    optional int32 boost_override = 6;
+    optional int32 car_spring = 7;
+    optional int32 gravity_well = 8;
+    optional int32 strong_hit = 9;
+    optional int32 swapper = 10;
+    optional int32 tornado = 11;
+}

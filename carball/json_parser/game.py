@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from datetime import datetime
 from typing import List
 
@@ -562,6 +563,8 @@ class Game:
                                 player_actor_id = car_player_ids[car_actor_id]
                                 item_name = actor_data['TypeName'] \
                                     .replace('Archetypes.SpecialPickups.SpecialPickup_', '')
+                                # CamelCase to snake_case
+                                item_name = re.sub('([A-Z]+)', r'_\1', item_name).lower()[1:]
                                 # item is active when this is odd
                                 item_active = actor_data.get(COMPONENT_REPLICATED_ACTIVE_KEY, 0) % 2 == 1
 
