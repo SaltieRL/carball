@@ -15,6 +15,8 @@ from .game_info import GameInfo
 
 logger = logging.getLogger(__name__)
 
+COMPONENT_ACTIVE_KEY = "TAGame.CarComponent_TA:Active"
+COMPONENT_REPLICATED_ACTIVE_KEY = "TAGame.CarComponent_TA:ReplicatedActive"
 BOOST_PER_SECOND = 80 * 1/.93  # boost used per second out of 255
 DATETIME_FORMATS = [
     '%Y-%m-%d %H-%M-%S',
@@ -454,8 +456,6 @@ class Game:
                         player_ball_data['ball'][frame_number] = data_dict
 
                 for actor_id, actor_data in current_actors.items():
-                    COMPONENT_ACTIVE_KEY = "TAGame.CarComponent_TA:Active"
-                    COMPONENT_REPLICATED_ACTIVE_KEY = "TAGame.CarComponent_TA:ReplicatedActive"
                     if actor_data["TypeName"] == "TAGame.Default__CameraSettingsActor_TA" and \
                             "TAGame.CameraSettingsActor_TA:PRI" in actor_data:
                         player_actor_id = actor_data["TAGame.CameraSettingsActor_TA:PRI"]  # may need to try another key
@@ -555,21 +555,29 @@ class Game:
                                 # using actor_id!=-1
                                 actor_data[REPLICATED_PICKUP_KEY]['pickup']["instigator_id"] = -1
 
-                    # rumble items
+                # rumble items
+                for actor_id, actor_data in current_actors.items():
+                    # rumble item count down
+                    if actor_data["TypeName"] == "TAGame.Default__PRI_TA" and \
+                            "TAGame.PRI_TA:TimeTillItem" in actor_data:
+                        time_till_item = actor_data['TAGame.PRI_TA:TimeTillItem']
+                        if frame_number in player_ball_data[actor_id]:
+                            player_ball_data[actor_id][frame_number]['time_till_power_up'] = time_till_item
+
+                    # rumble item / activated
                     elif actor_data['TypeName'].startswith('Archetypes.SpecialPickups.SpecialPickup_'):
                         car_actor_id = actor_data.get('TAGame.CarComponent_TA:Vehicle', None)
-                        if car_actor_id is not None:
-                            if car_actor_id in current_car_ids_to_collect:
-                                player_actor_id = car_player_ids[car_actor_id]
-                                item_name = actor_data['TypeName'] \
-                                    .replace('Archetypes.SpecialPickups.SpecialPickup_', '')
-                                # CamelCase to snake_case
-                                item_name = re.sub('([A-Z]+)', r'_\1', item_name).lower()[1:]
-                                # item is active when this is odd
-                                item_active = actor_data.get(COMPONENT_REPLICATED_ACTIVE_KEY, 0) % 2 == 1
+                        if car_actor_id is not None and car_actor_id in current_car_ids_to_collect:
+                            player_actor_id = car_player_ids[car_actor_id]
+                            item_name = actor_data['TypeName'] \
+                                .replace('Archetypes.SpecialPickups.SpecialPickup_', '')
+                            # CamelCase to snake_case
+                            item_name = re.sub('([A-Z]+)', r'_\1', item_name).lower()[1:]
+                            # item is active when this is odd
+                            item_active = actor_data.get(COMPONENT_REPLICATED_ACTIVE_KEY, 0) % 2 == 1
 
-                                player_ball_data[player_actor_id][frame_number]['power_up'] = item_name
-                                player_ball_data[player_actor_id][frame_number]['power_up_active'] = item_active
+                            player_ball_data[player_actor_id][frame_number]['power_up'] = item_name
+                            player_ball_data[player_actor_id][frame_number]['power_up_active'] = item_active
 
                 for player_actor_id in player_dicts:
                     actor_data = current_actors.get(player_actor_id, None)

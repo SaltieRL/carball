@@ -95,7 +95,7 @@ def _get_power_up_stats(df: pd.DataFrame, game: Game):
     all_items = dict(_BASE)
 
     if 'power_up_active' in df and 'power_up' in df:
-        df = df[['power_up', 'power_up_active']]
+        df = df[['time_till_power_up', 'power_up', 'power_up_active']]
         df = _squash_power_up_df(df, game)
 
         used_items = df.groupby('power_up')['power_up'].size().to_dict()
@@ -112,7 +112,7 @@ def _squash_power_up_df(df: pd.DataFrame, game: Game):
     a = a.loc[(a.shift(1).isnull() ^ a.isnull()) | ~a.isnull()]
     a = a.loc[(a.shift(1) != a) | (a.shift(-1) != a)]
 
-    df = pd.concat([df['power_up'], a], axis=1, join='inner')
+    df = pd.concat([df[['time_till_power_up', 'power_up']], a], axis=1, join='inner')
 
     mask = []
     prev_false = False
