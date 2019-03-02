@@ -38,7 +38,7 @@ class RumbleItemStat(BaseStat):
             player_name = player_map[player_key].name
             player_data_frame = data_frame[player_name]
 
-            item_stats = _get_power_up_stats(player_data_frame, data_frame['ball'])
+            item_stats = _get_power_up_stats(player_data_frame, game)
 
             rumble_proto = stats.rumble_item_usage
 
@@ -91,12 +91,12 @@ class RumbleItemStat(BaseStat):
             rumble_proto.tornado += player_rumble_stats.tornado
 
 
-def _get_power_up_stats(df: pd.DataFrame, ball_df: pd.DataFrame):
+def _get_power_up_stats(df: pd.DataFrame, game: Game):
     all_items = dict(_BASE)
 
     if 'power_up_active' in df and 'power_up' in df:
         df = df[['power_up', 'power_up_active']]
-        df = _squash_power_up_df(df, ball_df)
+        df = _squash_power_up_df(df, game)
 
         used_items = df.groupby('power_up')['power_up'].size().to_dict()
 
@@ -107,7 +107,13 @@ def _get_power_up_stats(df: pd.DataFrame, ball_df: pd.DataFrame):
     return all_items
 
 
-def _squash_power_up_df(df: pd.DataFrame, ball_df: pd.DataFrame):
+def _squash_power_up_df(df: pd.DataFrame, game: Game):
+    a = df['power_up_active']
+    a = a.loc[(a.shift(1).isnull() ^ a.isnull()) | ~a.isnull()]
+    a = a.loc[(a.shift(1) != a) | (a.shift(-1) != a)]
+
+    df = pd.concat([df['power_up'], a], axis=1, join='inner')
+
     mask = []
     prev_false = False
     prev_power_up = None
@@ -118,7 +124,7 @@ def _squash_power_up_df(df: pd.DataFrame, ball_df: pd.DataFrame):
                 # When a spiked ball is frozen, there is not 'ball_freeze,True' row, it just gets deleted immediately
                 # Could also happen when the freeze is immediately broken
                 # in theory this should not happen with other power ups
-                ball_reset = _check_ball_reset(ball_df, i)
+                ball_reset = i in game.kickoff_frames
                 if not ball_reset:
                     mask[-1] = True
 
@@ -134,15 +140,3 @@ def _squash_power_up_df(df: pd.DataFrame, ball_df: pd.DataFrame):
             prev_power_up = row['power_up']
 
     return df[mask]
-
-
-def _check_ball_reset(ball_df: pd.DataFrame, index: int):
-    for i in range(index, index + 10):
-        if i >= len(ball_df):
-            return True
-
-        row = ball_df.loc[i]
-        if math.isnan(row['pos_x']) or row['pos_x'] == 0.0 and row['pos_y'] == 0.0:
-            return True
-
-    return False
