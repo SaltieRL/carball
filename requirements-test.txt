@@ -1,7 +1,7 @@
 twine
 pytest
 requests
-pytest-cov
+pytest-cov>=3.6
 coverage
 codecov
 pep8
