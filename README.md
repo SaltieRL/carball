@@ -9,6 +9,7 @@ Various tools for decompiling / analyzing Rocket League replays.
 ## Install
 
 `pip install carball`
+`python init.py`
 
 ## Examples / Usage
 
@@ -75,3 +76,17 @@ Compile the proto files by running in this directory
 
 [![Build Status](https://travis-ci.org/SaltieRL/carball.svg?branch=master)](https://travis-ci.org/SaltieRL/carball)
 [![codecov](https://codecov.io/gh/SaltieRL/carball/branch/master/graph/badge.svg)](https://codecov.io/gh/SaltieRL/carball)
+
+
+## Tips
+
+Linux set `python3.6` as `python`:
+```Python3
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
+```
+This assumes you already have 3.6 installed.
+
+Linux Error (Potential):
+`PermissionError: [Errno 13] Permission denied: 'carball/rattletrap/rattletrap-6.2.2-linux'`
+Fix:
+`chmod +x "carball/rattletrap/rattletrap-6.2.2-linux"`
