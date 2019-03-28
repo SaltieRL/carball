@@ -24,7 +24,7 @@ class EventsCreator:
         Creates all of the event protos.
         """
         self.create_hit_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
-        self.calculate_ball_carries()
+        # self.calculate_ball_carries()
 
     def create_hit_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                           data_frame, kickoff_frames, first_touch_frames):
