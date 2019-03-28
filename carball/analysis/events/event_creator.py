@@ -20,11 +20,17 @@ class EventsCreator:
 
     def create_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                       data_frame, kickoff_frames, first_touch_frames):
-        self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
+        """
+        Creates all of the event protos.
+        """
+        self.create_hit_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_ball_carries()
 
-    def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                            data_frame, kickoff_frames, first_touch_frames):
+    def create_hit_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                          data_frame, kickoff_frames, first_touch_frames):
+        """
+        Creates all of the events for hits
+        """
         logger.info("Looking for hits.")
         hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frame, first_touch_frames)
         logger.info("Found %s hits." % len(hits))
@@ -34,5 +40,6 @@ class EventsCreator:
 
         # self.stats = get_stats(self)
 
-    def calculate_ball_carries(self):
+    def calculate_ball_carries(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                               data_frame, kickoff_frames, first_touch_frames):
         pass

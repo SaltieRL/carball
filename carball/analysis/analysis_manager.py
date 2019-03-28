@@ -45,7 +45,6 @@ class AnalysisManager:
     def create_analysis(self):
         """
         Organizes all the different analysis that can occurs
-        :return:
         """
         self.start_time()
         player_map = self.get_game_metadata(self.game, self.protobuf_game)
@@ -66,17 +65,18 @@ class AnalysisManager:
 
         self.store_frames(data_frame)
 
-    def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map,
+    def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                               data_frame, kickoff_frames, first_touch_frames):
+
         """
         Performs the more in depth analysis on the game in addition to just metadata.
-        :param game:
-        :param proto_game:
-        :param player_map:
-        :param data_frame:
-        :param kickoff_frames:
-        :param first_touch_frames:
-        :return:
+
+        :param game: Contains all metadata about the game and any json data.
+        :param proto_game: The protobuf where all the stats are being stored.
+        :param player_map: A map of player name to Player protobuf.
+        :param data_frame: Contains the entire data from the game.
+        :param kickoff_frames: Contains data about the kickoffs.
+        :param first_touch_frames:  Contains data for frames where touches can actually occur.
         """
         self.get_game_time(proto_game, data_frame)
         clean_replay(game, data_frame, proto_game, player_map)
