@@ -79,3 +79,11 @@ message Kickoff {
     optional int32 start_frame_number = 1;
     optional int32 end_frame_number = 2;
 }
+
+// Events where the car carried the ball on its top.
+message BallCarry {
+    optional int32 start_frame_number = 1;
+    optional int32 end_frame_number = 2;
+    optional api.PlayerId dribbler = 3;
+    optional bool has_flick = 4; // True if the dribble ended in a flick
+}

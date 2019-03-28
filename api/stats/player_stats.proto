@@ -61,10 +61,20 @@ message PlayerStats {
     optional Controller controller = 8;
     optional api.stats.Speed speed = 9;
     optional RelativePositioning relative_positioning = 10;
+    optional CarryDribbles carry_dribbles = 11;
 }
 
 message Controller {
     optional bool is_keyboard = 1;
     optional float analogue_steering_input_percent = 2;
     optional float analogue_throttle_input_percent = 3;
+}
+
+// Stats for carrying
+message CarryDribbles {
+    optional int32 total_carries = 1;
+    optional float longest_carry = 2;
+    optional float average_carry_time = 3;
+    optional float average_carry_speed = 4; // Your speed while dribbling the ball
+    optional int32 total_flicks = 5;
 }
