@@ -3,9 +3,9 @@ from typing import Dict, Callable
 
 from carball.analysis.events.hit_detection.base_hit import BaseHit
 from carball.analysis.events.hit_detection.hit_analysis import SaltieHit
-from generated.api import game_pb2
-from json_parser.game import Game
-from generated.api.player_pb2 import Player
+from carball.generated.api import game_pb2
+from carball.generated.api.player_pb2 import Player
+from carball.json_parser.game import Game
 
 logger = logging.getLogger(__name__)
 
