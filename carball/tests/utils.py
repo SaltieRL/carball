@@ -159,9 +159,47 @@ def get_raw_replays():
         "DEFAULT_3_ON_3_AROUND_58_HITS": [
             "https://cdn.discordapp.com/attachments/493849514680254468/496820586811621387/DEFAULT_3_ON_3_AROUND_58_HITS.replay"],
 
+        # KBM
+        "1_MIN_KBM_1_MIN_XBO_CONTROLLER": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/502502758138642442/1_MIN_KBM_1_MIN_XBO_CONTROLLER.replay"],
+        "100_PERCENT_KBM": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/502502760986705921/100_PERCENT_KBM.replay"],
+
+        # camera controls
+        "BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/502509632334594059/BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF.replay"],
+        "BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/502509634477621249/BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON.replay"],
+        "BALLCAM_MIXED": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/502509636511858689/BALLCAM_MIXED.replay"],
+        "BALLCAM_ON_AT_DRIBBLE_ELSE_OFF": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/502509638453952526/BALLCAM_ON_AT_DRIBBLE_ELSE_OFF.replay"],
+        "BALLCAM_OFF_AT_DRIBBLE_ELSE_ON": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/502509640626470933/BALLCAM_OFF_AT_DRIBBLE_ELSE_ON.replay"],
+        "BALLCAM_OFF_ALWAYS": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/502509642807640064/BALLCAM_OFF_ALWAYS.replay"],
+        "BALLCAM_ON_ALWAYS": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/502509645093404683/BALLCAM_ON_ALWAYS.replay"],
+
+        # dribbles
+        "SKYBOT_DRIBBLE_INFO": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/560580395276566548/SKYBOT_DRIBBLE_INFO.replay"],
+
         # error cases
         "UNICODE_ERROR": [
             "https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay"],
+        "PLAYERNAME_BALL": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/503509417577152512/PLAYERNAME_BALL.replay"],
+        "PLAYERNAME_GAME": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/503509425882005506/PLAYERNAME_GAME.replay"],
+        "PLAYERNAME_TWO_PLAYERS_NAMED_SAME": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/503509429224865812/PLAYERNAME_TWO_PLAYERS_NAMED_SAME.replay"],
+        "PLAYERNAME_ZTTL": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/503509431342989313/PLAYERNAME_ZTTL.replay"],
+        "ISSUE_PLAYER_REJOIN": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/503512015629975553/ISSUE_PLAYER_REJOIN.replay"],
+        "OCE_RLCS_7_CARS": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/501630263881760798/OCE_RLCS_7_CARS.replay"],
     }
 
 
@@ -169,12 +207,12 @@ def get_specific_replays():
     raw_map = get_raw_replays()
     return {
         # BOOSTS
-        "0_BOOST_COLLECTED": raw_map["NO_BOOST_PAD_0_USED"] + raw_map["NO_BOOST_PAD_33_USED"] + raw_map[
-            "KICKOFF_NO_TOUCH"],
+        "0_BOOST_COLLECTED": raw_map["NO_BOOST_PAD_0_USED"] + raw_map["NO_BOOST_PAD_33_USED"] +
+                             raw_map["KICKOFF_NO_TOUCH"],
         "1_SMALL_PAD": raw_map["12_BOOST_PAD_0_USED"] + raw_map["12_BOOST_PAD_45_USED"],
         "1_LARGE_PAD": raw_map["100_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_100_USED"],
-        "0_BOOST_USED": raw_map["12_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_0_USED"] + raw_map[
-            "NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"],
+        "0_BOOST_USED": raw_map["12_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_0_USED"] +
+                        raw_map["NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"],
         "BOOST_USED": raw_map["12_BOOST_PAD_45_USED"] +
                       raw_map["100_BOOST_PAD_100_USED"] +
                       raw_map["NO_BOOST_PAD_33_USED"] +
@@ -188,12 +226,16 @@ def get_specific_replays():
         # HITS
         "HITS": raw_map["4_SHOTS"] + raw_map["KICKOFF_3_HITS"] + raw_map["12_BOOST_PAD_45_USED"] +
                 raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"] +
-                raw_map["1_NORMAL_SAVE"] + raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["DEFAULT_3_ON_3_AROUND_58_HITS"],
+                raw_map["1_NORMAL_SAVE"] + raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] +
+                raw_map["DEFAULT_3_ON_3_AROUND_58_HITS"],
         # + raw_map["PINCH_GROUND"],  TODO: Fix pinches to create 2 hits 1 for each person on same frame
         "SHOTS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"] +
                  raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE"],
         "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
         "AERIALS": raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["HIGH_AIR_PASS"] + raw_map["MID_AIR_PASS"],
+        "CANT_CRASH": raw_map["UNICODE_ERROR"] + raw_map["PLAYERNAME_BALL"] + raw_map["PLAYERNAME_GAME"] +
+                      raw_map["PLAYERNAME_TWO_PLAYERS_NAMED_SAME"] + raw_map["PLAYERNAME_ZTTL"] +
+                      raw_map["ISSUE_PLAYER_REJOIN"] + raw_map["ISSUE_PLAYER_REJOIN"],
     }
 
 
@@ -217,6 +259,6 @@ def get_specific_answers():
 def assertNearlyEqual(self, a, b, percent=2.0, msg=None):
     if abs(a - b) > abs(percent / 100.0 * min(abs(a), abs(b))):
         if msg is None:
-            self.fail("The given numbers %s and %s are not within %s percent of each other."%(a, b, percent))
+            self.fail("The given numbers %s and %s are not within %s percent of each other." % (a, b, percent))
         else:
             self.fail(msg)
