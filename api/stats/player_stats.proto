@@ -74,7 +74,8 @@ message Controller {
 message CarryDribbles {
     optional int32 total_carries = 1;
     optional float longest_carry = 2;
-    optional float average_carry_time = 3;
-    optional float average_carry_speed = 4; // Your speed while dribbling the ball
-    optional int32 total_flicks = 5;
+    optional float total_carry_time = 3;
+    optional float average_carry_time = 4;
+    optional float average_carry_speed = 5; // Your speed while dribbling the ball
+    optional int32 total_flicks = 6;
 }
