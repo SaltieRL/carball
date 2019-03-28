@@ -8,8 +8,9 @@ response = request.urlopen('https://api.github.com/repos/tfausak/rattletrap/rele
 js = json.loads(response.read())
 
 cur_ver = '0.0.0'
-binaries = [f for f in os.listdir('.') if not f.endswith('.py')]
-print(binaries)
+binaries = [f for f in os.listdir('.') if not f.endswith('.py') and os.path.isfile(f)]
+print (binaries)
+
 if len(binaries) > 0:
     cur_ver = binaries[0].split('-')[1]
 update = StrictVersion(js['name']) > StrictVersion(cur_ver)
