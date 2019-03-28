@@ -2,7 +2,7 @@ import os
 import shutil
 from tempfile import mkstemp
 
-from .create_proto import get_file_list
+from .create_proto import get_file_list, get_dir
 
 import_statement = 'import '
 
@@ -37,12 +37,20 @@ def analyze_file(deepness, file_path, top_level_import):
         print('not modified')
 
 
+def add_inits(top_level_dir):
+    proto_dir = [x[0] for x in os.walk(get_dir()) if top_level_dir in x[0] and '__pycache__' not in x[0]]
+    for directory in proto_dir:
+        with open(os.path.join(directory, '__init__.py'), 'w') as file:
+            print('creating', file.name)
+
+
 def convert_to_relative_imports(top_level_dir='generated', exclude_dir=None, top_level_import="api"):
     print('###FIXING IMPORTS###')
     file_list = get_file_list(top_level_dir, exclude_dir)
     for file in file_list:
         print('fixing file: ', file[1], end='\t')
         analyze_file(file[0], file[1], top_level_import)
+    add_inits(top_level_dir)
 
 
 # prevent_leaks("carball", "generated", "carball")
