@@ -66,7 +66,7 @@ class AnalysisManager:
         self.store_frames(data_frame)
 
     def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                              data_frame, kickoff_frames, first_touch_frames):
+                              data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series):
 
         """
         Performs the more in depth analysis on the game in addition to just metadata.

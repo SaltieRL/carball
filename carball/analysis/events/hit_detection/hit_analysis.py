@@ -131,7 +131,7 @@ class SaltieHit:
                        sorted_frames, hit_analytics_dict: Dict[int, Hit]):
         """
         Finds stats for all hits.
-        :param game:
+        :param data_frame:
         :param player_map:
         :param sorted_frames:
         :param hit_analytics_dict:

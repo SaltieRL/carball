@@ -84,6 +84,6 @@ message Kickoff {
 message BallCarry {
     optional int32 start_frame_number = 1;
     optional int32 end_frame_number = 2;
-    optional api.PlayerId dribbler = 3;
+    optional api.PlayerId player_id = 3;
     optional bool has_flick = 4; // True if the dribble ended in a flick
 }

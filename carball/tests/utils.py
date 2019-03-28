@@ -182,9 +182,11 @@ def get_raw_replays():
         "BALLCAM_ON_ALWAYS": [
             "https://cdn.discordapp.com/attachments/493849514680254468/502509645093404683/BALLCAM_ON_ALWAYS.replay"],
 
-        # dribbles
+        # Dribbles
         "SKYBOT_DRIBBLE_INFO": [
             "https://cdn.discordapp.com/attachments/493849514680254468/560580395276566548/SKYBOT_DRIBBLE_INFO.replay"],
+        "1_DRIBBLE": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/560745936691920898/1_DRIBBLE.replay"],
 
         # error cases
         "UNICODE_ERROR": [
@@ -238,8 +240,8 @@ def get_specific_replays():
                       raw_map["PLAYERNAME_TWO_PLAYERS_NAMED_SAME"] + raw_map["PLAYERNAME_ZTTL"] +
                       raw_map["ISSUE_PLAYER_REJOIN"] + raw_map["ISSUE_PLAYER_REJOIN"],
         "ZERO_DRIBBLE": raw_map["12_BOOST_PAD_45_USED"] + raw_map["KICKOFF_NO_TOUCH"],
-        "MORE_THAN_ZERO_DRIBBLE": raw_map["SKYBOT_DRIBBLE_INFO"] + raw_map["BALLCAM_ON_AT_DRIBBLE_ELSE_OFF"] +
-                                  raw_map["BALLCAM_OFF_AT_DRIBBLE_ELSE_ON"]
+        "MORE_THAN_ZERO_DRIBBLE": raw_map["1_DRIBBLE"] + raw_map["SKYBOT_DRIBBLE_INFO"] +
+                                  raw_map["BALLCAM_ON_AT_DRIBBLE_ELSE_OFF"] + raw_map["BALLCAM_OFF_AT_DRIBBLE_ELSE_ON"]
     }
 
 

@@ -1,6 +1,9 @@
 import logging
 from typing import Dict, Callable
 
+import pandas as pd
+
+from carball.analysis.events.carry_detection import CarryDetection
 from carball.analysis.events.hit_detection.base_hit import BaseHit
 from carball.analysis.events.hit_detection.hit_analysis import SaltieHit
 from carball.generated.api import game_pb2
@@ -19,15 +22,16 @@ class EventsCreator:
         self.id_creator = id_creator
 
     def create_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                      data_frame, kickoff_frames, first_touch_frames):
+                      data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series):
         """
         Creates all of the event protos.
         """
+        goal_frames = data_frame.game.goal_number.notnull()
         self.create_hit_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
-        # self.calculate_ball_carries()
+        self.calculate_ball_carries(game, proto_game, player_map, data_frame[goal_frames])
 
     def create_hit_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                          data_frame, kickoff_frames, first_touch_frames):
+                          data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series):
         """
         Creates all of the events for hits
         """
@@ -41,5 +45,10 @@ class EventsCreator:
         # self.stats = get_stats(self)
 
     def calculate_ball_carries(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                               data_frame, kickoff_frames, first_touch_frames):
-        pass
+                               data_frame: pd.DataFrame):
+        valid_frames = CarryDetection.filter_frames(data_frame)
+
+        for player in player_map:
+            dribble_frames = CarryDetection.player_close_frames(valid_frames, valid_frames[player_map[player].name])
+            CarryDetection.generate_dribble_events(dribble_frames, player_map[player].id, proto_game)
+            # find now continuous data of longer than a second.
