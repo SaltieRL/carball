@@ -1,18 +1,18 @@
 import logging
 import time
-from typing import Dict
+from typing import Dict, Callable
 
 import pandas as pd
 import json
 import os
+
+from analysis.event_creator import EventsCreator
 
 script_path = os.path.abspath(__file__)
 with open(os.path.join(os.path.dirname(script_path), 'PROTOBUF_VERSION'), 'r') as f:
     PROTOBUF_VERSION = json.loads(f.read())
 
 from ..analysis.cleaner.cleaner import clean_replay
-from ..analysis.hit_detection.base_hit import BaseHit
-from ..analysis.hit_detection.hit_analysis import SaltieHit
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame
 from ..analysis.saltie_game.metadata.ApiMutators import ApiMutators
 from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
@@ -38,6 +38,7 @@ class AnalysisManager:
         self.protobuf_game.version = PROTOBUF_VERSION
         self.id_creator = self.create_player_id_function(game)
         self.stats_manager = StatsManager()
+        self.events_creator = EventsCreator(self.id_creator)
         self.should_store_frames = False
         self.df_bytes = None
 
@@ -79,8 +80,8 @@ class AnalysisManager:
         """
         self.get_game_time(proto_game, data_frame)
         clean_replay(game, data_frame, proto_game, player_map)
-        self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
-        self.log_time("calculating hits")
+        self.events_creator.create_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
+        self.log_time("creating events")
         self.get_stats(game, proto_game, player_map, data_frame)
 
     def get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
@@ -141,17 +142,6 @@ class AnalysisManager:
 
         return kickoff_frames, first_touch_frames
 
-    def calculate_hit_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                            data_frame, kickoff_frames, first_touch_frames):
-        logger.info("Looking for hits.")
-        hits = BaseHit.get_hits_from_game(game, proto_game, self.id_creator, data_frame, first_touch_frames)
-        logger.info("Found %s hits." % len(hits))
-
-        SaltieHit.get_saltie_hits_from_game(proto_game, hits, player_map, data_frame, kickoff_frames)
-        logger.info("Analysed hits.")
-
-        # self.stats = get_stats(self)
-
     def get_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                   data_frame: pd.DataFrame):
         """
@@ -192,7 +182,7 @@ class AnalysisManager:
         logger.info("Time taken for %s is %s milliseconds", message, (end - self.timer) * 1000)
         self.timer = end
 
-    def create_player_id_function(self, game: Game):
+    def create_player_id_function(self, game: Game) -> Callable:
         name_map = {player.name: player.online_id for player in game.players}
 
         def create_name(proto_player_id, name):
