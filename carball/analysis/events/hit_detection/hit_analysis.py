@@ -5,13 +5,12 @@ from bisect import bisect_left
 import numpy as np
 import pandas as pd
 
-from ...generated.api import game_pb2
-from ...generated.api.player_pb2 import Player
-from ...generated.api.stats.events_pb2 import Hit
-from ...json_parser.game import Game
-from ...analysis.hit_detection.base_hit import BaseHit
-from ...analysis.simulator.ball_simulator import BallSimulator
-from ...analysis.simulator.map_constants import *
+from ....generated.api import game_pb2
+from ....generated.api.player_pb2 import Player
+from ....generated.api.stats.events_pb2 import Hit
+from carball.analysis.events.hit_detection.base_hit import BaseHit
+from carball.analysis.simulator.ball_simulator import BallSimulator
+from carball.analysis.simulator.map_constants import *
 
 
 logger = logging.getLogger(__name__)

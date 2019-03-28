@@ -1,11 +1,11 @@
 import logging
 from typing import Dict, Callable
 
-from ..analysis.hit_detection.base_hit import BaseHit
-from ..analysis.hit_detection.hit_analysis import SaltieHit
-from ..generated.api import game_pb2
-from ..json_parser.game import Game
-from ..generated.api.player_pb2 import Player
+from carball.analysis.events.hit_detection.base_hit import BaseHit
+from carball.analysis.events.hit_detection.hit_analysis import SaltieHit
+from generated.api import game_pb2
+from json_parser.game import Game
+from generated.api.player_pb2 import Player
 
 logger = logging.getLogger(__name__)
 
@@ -33,3 +33,6 @@ class EventsCreator:
         logger.info("Analysed hits.")
 
         # self.stats = get_stats(self)
+
+    def calculate_ball_carries(self):
+        pass

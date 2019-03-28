@@ -6,7 +6,6 @@ import pandas as pd
 import json
 import os
 
-from analysis.event_creator import EventsCreator
 
 script_path = os.path.abspath(__file__)
 with open(os.path.join(os.path.dirname(script_path), 'PROTOBUF_VERSION'), 'r') as f:
@@ -24,6 +23,7 @@ from ..analysis.utils.proto_manager import ProtobufManager
 from ..generated.api import game_pb2
 from ..generated.api.player_pb2 import Player
 from ..json_parser.game import Game
+from ..analysis.events.event_creator import EventsCreator
 
 logger = logging.getLogger(__name__)
 
