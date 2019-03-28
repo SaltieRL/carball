@@ -237,6 +237,9 @@ def get_specific_replays():
         "CANT_CRASH": raw_map["UNICODE_ERROR"] + raw_map["PLAYERNAME_BALL"] + raw_map["PLAYERNAME_GAME"] +
                       raw_map["PLAYERNAME_TWO_PLAYERS_NAMED_SAME"] + raw_map["PLAYERNAME_ZTTL"] +
                       raw_map["ISSUE_PLAYER_REJOIN"] + raw_map["ISSUE_PLAYER_REJOIN"],
+        "ZERO_DRIBBLE": raw_map["12_BOOST_PAD_45_USED"] + raw_map["KICKOFF_NO_TOUCH"],
+        "MORE_THAN_ZERO_DRIBBLE": raw_map["SKYBOT_DRIBBLE_INFO"] + raw_map["BALLCAM_ON_AT_DRIBBLE_ELSE_OFF"] +
+                                  raw_map["BALLCAM_OFF_AT_DRIBBLE_ELSE_ON"]
     }
 
 
