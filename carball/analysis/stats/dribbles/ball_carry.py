@@ -18,20 +18,45 @@ logger = logging.getLogger(__name__)
 class CarryStat(BaseStat):
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
-        for ball_carry in proto_game.game_stats.ball_carries:
-            player_stats = player_stat_map[ball_carry.player_id.id]
-            carry_stats = player_stats.carry_dribbles
-            carry_stats.total_carries += 1
+        for event_carry in proto_game.game_stats.ball_carries:
+            player_stats = player_stat_map[event_carry.player_id.id]
+            player_carry_stats = player_stats.carry_dribbles
+            player_carry_stats.total_carries += 1
 
             # time
-            carry_stats.total_carry_time += ball_carry.carry_time
-            if carry_stats.longest_carry < ball_carry.carry_time:
-                carry_stats.longest_carry = ball_carry.carry_time
+            player_carry_stats.total_carry_time += event_carry.carry_time
+            if player_carry_stats.longest_carry < event_carry.carry_time:
+                player_carry_stats.longest_carry = event_carry.carry_time
 
             # distance
-            carry_stats.total_carry_distance += ball_carry.distance_traveled
-            if carry_stats.furthest_carry < ball_carry.distance_traveled:
-                carry_stats.furthest_carry = ball_carry.distance_traveled
+            player_carry_stats.total_carry_distance += event_carry.distance_traveled
+            if player_carry_stats.furthest_carry < event_carry.distance_traveled:
+                player_carry_stats.furthest_carry = event_carry.distance_traveled
 
-            if carry_stats.fastest_carry_speed < ball_carry.carry_stats.average_carry_speed:
-                carry_stats.fastest_carry_speed = ball_carry.carry_stats.average_carry_speed
+            if player_carry_stats.fastest_carry_speed < event_carry.carry_stats.average_carry_speed:
+                player_carry_stats.fastest_carry_speed = event_carry.carry_stats.average_carry_speed
+            self.add_ball_stats(player_carry_stats.carry_stats, event_carry.carry_stats)
+
+        for player_key in player_stat_map:
+            player_carry_stats = player_stat_map[player_key].carry_dribbles
+            num_carries = player_carry_stats.total_carries
+            player_carry_stats.average_carry_time = player_carry_stats.total_carry_time / num_carries
+            self.average_ball_stats(player_carry_stats.carry_stats, num_carries)
+
+    def add_ball_stats(self, player_carry, event_carry):
+        player_carry.average_z_distance += event_carry.average_z_distance
+        player_carry.average_xy_distance += event_carry.average_xy_distance
+        player_carry.average_ball_z_velocity += event_carry.average_ball_z_velocity
+        player_carry.variance_xy_distance += event_carry.variance_xy_distance
+        player_carry.variance_z_distance += event_carry.variance_z_distance
+        player_carry.variance_ball_z_velocity += event_carry.variance_ball_z_velocity
+        player_carry.average_carry_speed += event_carry.average_carry_speed
+
+    def average_ball_stats(self, player_carry, num_carries):
+        player_carry.average_z_distance /= num_carries
+        player_carry.average_xy_distance /= num_carries
+        player_carry.average_ball_z_velocity /= num_carries
+        player_carry.variance_xy_distance /= num_carries
+        player_carry.variance_z_distance /= num_carries
+        player_carry.variance_ball_z_velocity /= num_carries
+        player_carry.average_carry_speed /= num_carries
