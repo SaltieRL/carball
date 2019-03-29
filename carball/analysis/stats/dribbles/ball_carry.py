@@ -36,6 +36,8 @@ class CarryStat(BaseStat):
         for player_key in player_stat_map:
             player_carry_stats = player_stat_map[player_key].ball_carries
             num_carries = player_carry_stats.total_carries
+            if num_carries == 0:
+                continue
             player_carry_stats.average_carry_time = player_carry_stats.total_carry_time / num_carries
             self.average_ball_stats(player_carry_stats.carry_stats, num_carries)
 
