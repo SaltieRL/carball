@@ -61,7 +61,7 @@ message PlayerStats {
     optional Controller controller = 8;
     optional api.stats.Speed speed = 9;
     optional RelativePositioning relative_positioning = 10;
-    optional CarryDribbles carry_dribbles = 11;
+    optional CarryDribbles ball_carries = 11;
 }
 
 message Controller {
@@ -81,5 +81,5 @@ message CarryDribbles {
     optional float fastest_carry_speed = 7; // Your speed along the ground while dribbling the ball
     optional float total_carry_distance = 8; // Just adding up the start/end distances.  It is NOT distance along path
 
-    optional CarryAvgVar carry_stats = 9;
+    optional DetailedCarryStats carry_stats = 9;
 }

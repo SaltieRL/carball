@@ -52,7 +52,7 @@ message Speed {
     optional float time_at_boost_speed = 3; // time when car is > 1410
 }
 
-message CarryAvgVar {
+message DetailedCarryStats {
     optional float average_z_distance = 1; // avg distance of ball z - player z
     optional float average_xy_distance = 2;
     optional float average_ball_z_velocity = 3;

@@ -14,8 +14,8 @@ class DribbleTests(unittest.TestCase):
             carries = proto_game.game_stats.ball_carries
             self.assertGreater(len(carries), 0)
             player = proto_game.players[0]
-            #self.assertGreater(player.stats.carry_dribbles.total_carries, 0)
-            #self.assertGreater(player.stats.carry_dribbles.total_carry_time, 0)
+            #self.assertGreater(player.stats.ball_carries.total_carries, 0)
+            #self.assertGreater(player.stats.ball_carries.total_carry_time, 0)
 
         run_analysis_test_on_replay(test, get_specific_replays()["MORE_THAN_ZERO_DRIBBLE"])
 

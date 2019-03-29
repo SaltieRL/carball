@@ -16,7 +16,7 @@ class CarryStat(BaseStat):
                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
         for event_carry in proto_game.game_stats.ball_carries:
             player_stats = player_stat_map[event_carry.player_id.id]
-            player_carry_stats = player_stats.carry_dribbles
+            player_carry_stats = player_stats.ball_carries
             player_carry_stats.total_carries += 1
 
             # time
@@ -34,7 +34,7 @@ class CarryStat(BaseStat):
             self.add_ball_stats(player_carry_stats.carry_stats, event_carry.carry_stats)
 
         for player_key in player_stat_map:
-            player_carry_stats = player_stat_map[player_key].carry_dribbles
+            player_carry_stats = player_stat_map[player_key].ball_carries
             num_carries = player_carry_stats.total_carries
             player_carry_stats.average_carry_time = player_carry_stats.total_carry_time / num_carries
             self.average_ball_stats(player_carry_stats.carry_stats, num_carries)

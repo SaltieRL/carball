@@ -91,5 +91,5 @@ message BallCarry {
     optional float distance_traveled = 6; // This is just the start/end distance traveled. It is NOT distance along path
 
     // Stats
-    optional CarryAvgVar carry_stats = 7;
+    optional DetailedCarryStats carry_stats = 7;
 }
