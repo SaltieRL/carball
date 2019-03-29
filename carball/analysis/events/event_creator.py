@@ -49,6 +49,5 @@ class EventsCreator:
         valid_frames = CarryDetection.filter_frames(data_frame)
 
         for player in player_map:
-            dribble_frames = CarryDetection.player_close_frames(valid_frames, valid_frames[player_map[player].name])
-            CarryDetection.generate_dribble_events(dribble_frames, player_map[player].id, proto_game)
+            CarryDetection.create_dribble_events(valid_frames, player_map[player], proto_game)
             # find now continuous data of longer than a second.

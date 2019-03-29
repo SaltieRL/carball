@@ -1,6 +1,7 @@
 syntax = "proto2";
 
 import "api/player_id.proto";
+import "api/stats/stats.proto";
 
 package api.stats;
 
@@ -86,4 +87,9 @@ message BallCarry {
     optional int32 end_frame_number = 2;
     optional api.PlayerId player_id = 3;
     optional bool has_flick = 4; // True if the dribble ended in a flick
+    optional float carry_time = 5;
+    optional float distance_traveled = 6; // This is just the start/end distance traveled. It is NOT distance along path
+
+    // Stats
+    optional CarryAvgVar carry_stats = 7;
 }

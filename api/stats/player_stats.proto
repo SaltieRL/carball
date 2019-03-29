@@ -73,9 +73,13 @@ message Controller {
 // Stats for carrying
 message CarryDribbles {
     optional int32 total_carries = 1;
-    optional float longest_carry = 2;
-    optional float total_carry_time = 3;
-    optional float average_carry_time = 4;
-    optional float average_carry_speed = 5; // Your speed while dribbling the ball
-    optional int32 total_flicks = 6;
+    optional int32 total_flicks = 2;
+    optional float longest_carry = 3;
+    optional float furthest_carry = 4;
+    optional float total_carry_time = 5;
+    optional float average_carry_time = 6;
+    optional float fastest_carry_speed = 7; // Your speed along the ground while dribbling the ball
+    optional float total_carry_distance = 8; // Just adding up the start/end distances.  It is NOT distance along path
+
+    optional CarryAvgVar carry_stats = 9;
 }

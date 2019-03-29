@@ -1,5 +1,6 @@
 from typing import List
 
+from ...analysis.stats.dribbles.ball_carry import CarryStat
 from ...analysis.stats.tendencies.relative_position_tendencies import RelativeTendencies
 from ...analysis.stats.tendencies.team_tendencies import TeamTendencies
 from ...analysis.stats.tendencies.speed_tendencies import SpeedTendencies
@@ -28,7 +29,8 @@ class StatsList:
                 Averages(),
                 BallDistanceStat(),
                 ControlsStat(),
-                SpeedTendencies()
+                SpeedTendencies(),
+                CarryStat()
                 ]
 
     @staticmethod
