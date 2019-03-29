@@ -1,16 +1,12 @@
 import logging
 from typing import Dict
 
-import numpy as np
 import pandas as pd
-from carball.analysis.constants.field_constants import FieldConstants
-
-from carball.analysis.stats.utils.pandas_utils import sum_deltas_by_truthy_data
 from ....analysis.stats.stats import BaseStat
 from ....generated.api import game_pb2
 from ....generated.api.player_pb2 import Player
 from ....generated.api.stats.player_stats_pb2 import PlayerStats
-from ....json_parser.game import Game, BOOST_PER_SECOND
+from ....json_parser.game import Game
 
 logger = logging.getLogger(__name__)
 

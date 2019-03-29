@@ -2,7 +2,7 @@ import pandas as pd
 
 from carball.analysis.constants.field_constants import BALL_SIZE
 from carball.generated.api import game_pb2
-from generated.api.player_pb2 import Player
+from carball.generated.api.player_pb2 import Player
 
 
 class CarryDetection:
