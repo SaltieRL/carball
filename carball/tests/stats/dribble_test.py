@@ -14,8 +14,8 @@ class DribbleTests(unittest.TestCase):
             carries = proto_game.game_stats.ball_carries
             self.assertGreater(len(carries), 0)
             player = proto_game.players[0]
-            #self.assertGreater(player.stats.ball_carries.total_carries, 0)
-            #self.assertGreater(player.stats.ball_carries.total_carry_time, 0)
+            self.assertGreater(player.stats.ball_carries.total_carries, 0)
+            self.assertGreater(player.stats.ball_carries.total_carry_time, 0)
 
         run_analysis_test_on_replay(test, get_specific_replays()["MORE_THAN_ZERO_DRIBBLE"])
 
@@ -28,12 +28,14 @@ class DribbleTests(unittest.TestCase):
 
         run_analysis_test_on_replay(test, get_specific_replays()["ZERO_DRIBBLE"])
 
-    def test_3_kickoffs(self):
+    def test_total_dribble_time(self):
         def test(analysis: AnalysisManager):
-
             proto_game = analysis.get_protobuf_data()
-            kickoffs = proto_game.game_stats.kickoffs
-            self.assertEqual(len(kickoffs), 3)
+            player = proto_game.players[0]
+            print(player)
+            self.assertAlmostEqual(player.stats.ball_carries.total_carry_time, 250, delta=1)
+
+        run_analysis_test_on_replay(test, get_raw_replays()["SKYBOT_DRIBBLE_INFO"])
 
 
 if __name__ == '__main__':
