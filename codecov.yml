@@ -24,3 +24,8 @@ comment:
   layout: "header, diff"
   behavior: default
   require_changes: no
+
+ingore:
+  - setup.py
+  - init.py
+  - utils/import_fixer.py
