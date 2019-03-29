@@ -304,7 +304,12 @@ class Game:
                             unique_id = str(
                                 actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][
                                     actor_type])
-                            leader = str(actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0][actor_type])
+                            leader_actor_type = list(
+                                actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0].keys()
+                            )[0]
+                            leader = str(
+                                actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0][leader_actor_type]
+                            )
                             if leader in parties:
                                 if unique_id not in parties[leader]:
                                     parties[leader].append(unique_id)
