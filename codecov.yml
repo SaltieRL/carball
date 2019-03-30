@@ -26,8 +26,8 @@ comment:
   require_changes: no
 
 ingore:
-  - setup.py
-  - init.py
-  - utils/import_fixer.py
-  - utils/create_proto.py
-  - carball/tests/utils.py
+  - ".*/tests/**/*"
+  - "setup.py"
+  - "init.py"
+  - "utils/import_fixer.py"
+  - "utils/create_proto.py"
