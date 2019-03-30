@@ -29,5 +29,4 @@ ingore:
   - ".*/tests/**/*"
   - "setup.py"
   - "init.py"
-  - "utils/import_fixer.py"
-  - "utils/create_proto.py"
+  - "utils/.*"
