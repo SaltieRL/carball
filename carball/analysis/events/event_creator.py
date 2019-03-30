@@ -46,8 +46,9 @@ class EventsCreator:
 
     def calculate_ball_carries(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                                data_frame: pd.DataFrame):
-        valid_frames = CarryDetection.filter_frames(data_frame)
+        carry_detection = CarryDetection()
+        carry_data = carry_detection.filter_frames(data_frame)
 
         for player in player_map:
-            CarryDetection.create_dribble_events(valid_frames, player_map[player], proto_game)
+            carry_detection.create_carry_events(carry_data, player_map[player], proto_game)
             # find now continuous data of longer than a second.
