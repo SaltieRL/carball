@@ -607,7 +607,7 @@ class Game:
             found_player = None
             for player in self.players:
                 # if player leaves early, won't be created (as not found in metadata's player_stats)
-                if _player_data['name'] == found_player.name:
+                if _player_data['name'] == player.name:
                     found_player = player
                     player_actor_id_player_dict[_player_actor_id] = found_player
                     found_player.parse_actor_data(_player_data)  # just add extra stuff
