@@ -124,10 +124,8 @@ class Player:
         self.party_leader = actor_data.get('TAGame.PRI_TA:PartyLeader', None)
         try:
             if self.party_leader is not None:
-                actor_type = \
-                    list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[
-                        0]
-                self.party_leader = str(self.party_leader['party_leader']['id'][0][actor_type])
+                leader_actor_type = list(self.party_leader['party_leader']['id'][0].keys())[0]
+                self.party_leader = str(self.party_leader['party_leader']['id'][0][leader_actor_type])
         except KeyError:
             logger.warning('Could not set player party leader for:', self.name)
             self.party_leader = None

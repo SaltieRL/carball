@@ -83,7 +83,8 @@ def get_complex_replay_list():
         'https://cdn.discordapp.com/attachments/493849514680254468/496180938968137749/FAKE_BOTS_SkyBot.replay',
         'https://cdn.discordapp.com/attachments/493849514680254468/497149910999891969/NEGATIVE_WASTED_COLLECTION.replay',
         'https://cdn.discordapp.com/attachments/493849514680254468/497191273619259393/WASTED_BOOST_WHILE_SUPER_SONIC.replay',
-        'https://cdn.discordapp.com/attachments/493849514680254468/501630263881760798/OCE_RLCS_7_CARS.replay'
+        'https://cdn.discordapp.com/attachments/493849514680254468/501630263881760798/OCE_RLCS_7_CARS.replay',
+        'https://cdn.discordapp.com/attachments/493849514680254468/561300088400379905/crossplatform_party.replay'
     ]
 
 
@@ -162,6 +163,8 @@ def get_raw_replays():
         # error cases
         "UNICODE_ERROR": [
             "https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay"],
+        "CROSSPLATFORM_PARTY_LEADER_ERROR": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/561300088400379905/crossplatform_party.replay"],
     }
 
 
