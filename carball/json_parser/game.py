@@ -604,20 +604,18 @@ class Game:
             if "TAGame.PRI_TA:MatchScore" not in _player_data:
                 logger.warning(f"Player {_player_data['name']} as player has no MatchScore.")
 
-            found_player = False
+            found_player = None
             for player in self.players:
                 # if player leaves early, won't be created (as not found in metadata's player_stats)
-                if _player_data['name'] == player.name:
-                    player_actor_id_player_dict[_player_actor_id] = player
-                    found_player = True
+                if _player_data['name'] == found_player.name:
+                    found_player = player
+                    player_actor_id_player_dict[_player_actor_id] = found_player
+                    found_player.parse_actor_data(_player_data)  # just add extra stuff
                     break
-            if found_player:
-                # just add extra stuff
-                player.parse_actor_data(_player_data)
-            else:
+            if found_player is None:
                 # player not in endgame stats, create new player
                 try:
-                    player = Player().create_from_actor_data(_player_data, self.teams)
+                    found_player = Player().create_from_actor_data(_player_data, self.teams)
                 except KeyError as e:
                     # KeyError: 'Engine.PlayerReplicationInfo:Team'
                     # in `team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]`
@@ -626,27 +624,27 @@ class Game:
                         logger.warning(f"Ignoring player: {_player_data['name']} as player has no team.")
                         continue
                     raise e
-                self.players.append(player)
-                player_actor_id_player_dict[_player_actor_id] = player
+                self.players.append(found_player)
+                player_actor_id_player_dict[_player_actor_id] = found_player
 
                 # check if any goals are playerless and belong to this newly-created player
                 for goal in self.goals:
-                    if not goal.player and goal.player_name == player.name:
-                        goal.player = player
+                    if not goal.player and goal.player_name == found_player.name:
+                        goal.player = found_player
 
-            player.parse_data(all_data['player_ball_data'][_player_actor_id])
+            found_player.parse_data(all_data['player_ball_data'][_player_actor_id])
             # camera_settings might not exist (see 0AF8AC734890E6D3995B829E474F9924)
-            player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}).get('cam_settings', {}))
+            found_player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}).get('cam_settings', {}))
 
             for team in self.teams:
-                if player.is_orange == team.is_orange:
-                    team.add_player(player)
+                if found_player.is_orange == team.is_orange:
+                    team.add_player(found_player)
 
             if clean_player_names:
-                cleaned_player_name = re.sub(r'[^\x00-\x7f]', r'', player.name).strip()  # Support ASCII only
-                if cleaned_player_name != player.name:
-                    logger.warning(f"Cleaned player name to ASCII-only. From: {player.name} to: {cleaned_player_name}")
-                    player.name = cleaned_player_name
+                cleaned_player_name = re.sub(r'[^\x00-\x7f]', r'', found_player.name).strip()  # Support ASCII only
+                if cleaned_player_name != found_player.name:
+                    logger.warning(f"Cleaned player name to ASCII-only. From: {found_player.name} to: {cleaned_player_name}")
+                    found_player.name = cleaned_player_name
 
         # GOAL - add player if not found earlier (ie player just created)
         for goal in self.goals:
