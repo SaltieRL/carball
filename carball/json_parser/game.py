@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from datetime import datetime
 from typing import List
 
@@ -49,7 +50,7 @@ class Game:
         self.demos = None
         self.parties = None
 
-    def initialize(self, file_path='', loaded_json=None):
+    def initialize(self, file_path='', loaded_json=None, parse_replay: bool = True, clean_player_names: bool = False):
         self.file_path = file_path
         if loaded_json is None:
             with open(file_path, 'r') as f:
@@ -93,10 +94,11 @@ class Game:
         self.players: List[Player] = self.create_players()
         self.goals: List[Goal] = self.get_goals()
         self.primary_player: dict = self.get_primary_player()
-        self.all_data = self.parse_replay()
 
-        self.parse_all_data(self.all_data)
-        logger.info("Finished parsing %s" % self)
+        if parse_replay:
+            self.all_data = self.parse_replay()
+            self.parse_all_data(self.all_data, clean_player_names)
+            logger.info("Finished parsing %s" % self)
 
     def __repr__(self):
         team_0_name = self.teams[0].name
@@ -580,7 +582,7 @@ class Game:
 
         return all_data
 
-    def parse_all_data(self, all_data) -> None:
+    def parse_all_data(self, all_data, clean_player_names: bool) -> None:
         """
         Finishes parsing after frame-parsing is done.
         E.g. Adds players not found in MatchStats metadata
@@ -639,6 +641,12 @@ class Game:
             for team in self.teams:
                 if player.is_orange == team.is_orange:
                     team.add_player(player)
+
+            if clean_player_names:
+                cleaned_player_name = re.sub(r'[^\x00-\x7f]', r'', player.name).strip()  # Support ASCII only
+                if cleaned_player_name != player.name:
+                    logger.warning(f"Cleaned player name to ASCII-only. From: {player.name} to: {cleaned_player_name}")
+                    player.name = cleaned_player_name
 
         # GOAL - add player if not found earlier (ie player just created)
         for goal in self.goals:

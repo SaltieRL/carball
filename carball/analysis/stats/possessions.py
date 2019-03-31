@@ -3,7 +3,7 @@ from typing import List, Dict, Tuple
 
 import pandas as pd
 
-from carball.analysis.stats.possession_based_stats import PerPossessionStats
+from carball.analysis.stats.possession_based_stats import get_per_possession_stats
 from carball.generated.api.stats.events_pb2 import Hit
 from ...generated.api import game_pb2
 from ...generated.api.player_pb2 import Player
@@ -16,6 +16,18 @@ def analyse_possessions(game: Game, proto_game: game_pb2.Game,
 
     for possessions in (player_possessions, team_possessions):
         add_possession_durations(possessions, game, proto_game, player_map, data_frame)
+
+    # Remove possessions that are 1-hit or <1s
+    player_possessions = [
+        player_possession for player_possession in player_possessions
+        if len(player_possession.hits) > 1 and player_possession.duration > 1
+    ]
+    team_possessions = [
+        team_possession for team_possession in team_possessions
+        if len(team_possession.hits) > 1 and team_possession.duration > 1
+    ]
+
+    for possessions in (player_possessions, team_possessions):
         add_possession_counts(possessions)
         add_possession_distances(possessions)
 
@@ -27,13 +39,13 @@ def analyse_possessions(game: Game, proto_game: game_pb2.Game,
             player_possessions_dict[player_id] = []
         player_possessions_dict[player_id].append(possession)
 
-    player_possession_stats_dict = {}
+    player_possession_stats_dict: Dict[str, List['PlayerPossession']] = {}
     for player_id, possessions in player_possessions_dict.items():
-        stats = PerPossessionStats(possessions)
+        stats = get_per_possession_stats(possessions)
         player_possession_stats_dict[player_id] = stats
 
     # Sort team_possessions by team
-    team_possessions_dict = {}
+    team_possessions_dict: Dict[bool, List['TeamPossession']] = {}
     for possession in team_possessions:
         team_is_orange = possession.is_orange
         if team_is_orange not in team_possessions_dict:
@@ -42,9 +54,18 @@ def analyse_possessions(game: Game, proto_game: game_pb2.Game,
 
     team_possession_stats_dict = {}
     for team_is_orange, possessions in team_possessions_dict.items():
-        stats = PerPossessionStats(possessions)
+        stats = get_per_possession_stats(possessions)
         team_possession_stats_dict[team_is_orange] = stats
 
+    for player_id, player in player_map.items():
+        player.stats.per_possession_stats.CopyFrom(player_possession_stats_dict[player_id])
+    for team in proto_game.teams:
+        team.stats.per_possession_stats.CopyFrom(team_possession_stats_dict[team.is_orange])
+
+    game.player_possessions_dict = player_possessions_dict
+    game.player_possession_stats_dict = player_possession_stats_dict
+    game.team_possessions_dict = team_possessions_dict
+    game.team_possession_stats_dict = team_possession_stats_dict
     pass
 
 
