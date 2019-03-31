@@ -58,9 +58,11 @@ def analyse_possessions(game: Game, proto_game: game_pb2.Game,
         team_possession_stats_dict[team_is_orange] = stats
 
     for player_id, player in player_map.items():
-        player.stats.per_possession_stats.CopyFrom(player_possession_stats_dict[player_id])
+        if player_id in player_possession_stats_dict:
+            player.stats.per_possession_stats.CopyFrom(player_possession_stats_dict[player_id])
     for team in proto_game.teams:
-        team.stats.per_possession_stats.CopyFrom(team_possession_stats_dict[team.is_orange])
+        if team.is_orange in team_possession_stats_dict:
+            team.stats.per_possession_stats.CopyFrom(team_possession_stats_dict[team.is_orange])
 
     game.player_possessions_dict = player_possessions_dict
     game.player_possession_stats_dict = player_possession_stats_dict
