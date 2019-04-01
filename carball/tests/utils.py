@@ -194,7 +194,7 @@ def get_specific_replays():
                  raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
         "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
         "AERIALS": raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["HIGH_AIR_PASS"] + raw_map["MID_AIR_PASS"],
-        "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"] + raw_map["0_SAVES"]
+        "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"]
     }
 
 
@@ -212,7 +212,7 @@ def get_specific_answers():
         "SHOTS": [3, 0, 2, 1],
         "PASSES": [1, 1, 1],
         "AERIALS": [0, 1, 2, 0],
-        "SAVES": [1, 0, 0],
+        "SAVES": [1, 0],
     }
 
 
