@@ -107,6 +107,10 @@ class CarryDetection:
         hit_list = proto_game.game_stats.hits
 
         # to expand you look at all hits before the start frame and check if they are valid for this purpose.
+
+
+        # Need to start cutting off dribbles if someone other than the player hits the ball and the player does not gain another hit on the ball before the dribble ends.
+
         """
         for frame_index in range(len(start_frames)):
             for i in range(starting_hit_index, len(hit_list)):
