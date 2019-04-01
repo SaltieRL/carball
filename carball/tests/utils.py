@@ -102,7 +102,7 @@ def get_raw_replays():
         "1_EPIC_SAVE": [
             "https://cdn.discordapp.com/attachments/493849514680254468/495735191537713153/1_EPIC_SAVE.replay"],
         "1_JUMP": ["https://cdn.discordapp.com/attachments/493849514680254468/495735203323576321/1_JUMP.replay"],
-        "1_NORMAL_SAVE": [
+        "1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST": [
             "https://cdn.discordapp.com/attachments/493849514680254468/495735215767945234/1_NORMAL_SAVE.replay"],
 
         # Boost
@@ -188,12 +188,13 @@ def get_specific_replays():
         # HITS
         "HITS": raw_map["4_SHOTS"] + raw_map["KICKOFF_3_HITS"] + raw_map["12_BOOST_PAD_45_USED"] +
                 raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"] +
-                raw_map["1_NORMAL_SAVE"] + raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["DEFAULT_3_ON_3_AROUND_58_HITS"],
+                raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"] + raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["DEFAULT_3_ON_3_AROUND_58_HITS"],
         # + raw_map["PINCH_GROUND"],  TODO: Fix pinches to create 2 hits 1 for each person on same frame
         "SHOTS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"] +
-                 raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE"],
+                 raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
         "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
         "AERIALS": raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["HIGH_AIR_PASS"] + raw_map["MID_AIR_PASS"],
+        "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"] + raw_map["0_SAVES"]
     }
 
 
@@ -210,7 +211,8 @@ def get_specific_answers():
         "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4, 50],
         "SHOTS": [3, 0, 2, 1],
         "PASSES": [1, 1, 1],
-        "AERIALS": [0, 1, 2, 0]
+        "AERIALS": [0, 1, 2, 0],
+        "SAVES": [1, 0, 0],
     }
 
 
