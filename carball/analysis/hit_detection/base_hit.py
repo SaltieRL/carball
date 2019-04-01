@@ -66,6 +66,7 @@ class BaseHit:
             for player in game.players
         ]
         collision_distances_data_frame = pd.concat(collision_distances, axis=1)
+        # TODO: Fix when no players detected. See issue #115
 
         player_name_to_team: Dict[str, int] = {player.name: int(player.team.is_orange) for player in game.players}
         columns = [(player_name_to_team[player_name], player_name)
