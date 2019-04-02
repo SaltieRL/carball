@@ -88,7 +88,7 @@ message BallCarry {
     optional api.PlayerId player_id = 3;
     optional bool has_flick = 4; // True if the dribble ended in a flick
     optional float carry_time = 5;
-    optional float distance_traveled = 6; // This is just the start/end distance traveled. It is NOT distance along path
+    optional float straight_line_distance = 6; // This is just the start/end distance traveled. It is NOT distance along path
 
     // Stats
     optional DetailedCarryStats carry_stats = 7;

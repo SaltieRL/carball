@@ -60,4 +60,5 @@ message DetailedCarryStats {
     optional float variance_z_distance = 5;
     optional float variance_ball_z_velocity = 6;
     optional float average_carry_speed = 7; // Your speed while dribbling the ball
+    optional float distance_along_path = 8; // Your speed while dribbling the ball
 }

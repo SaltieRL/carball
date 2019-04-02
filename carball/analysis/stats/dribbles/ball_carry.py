@@ -25,9 +25,9 @@ class CarryStat(BaseStat):
                 player_carry_stats.longest_carry = event_carry.carry_time
 
             # distance
-            player_carry_stats.total_carry_distance += event_carry.distance_traveled
-            if player_carry_stats.furthest_carry < event_carry.distance_traveled:
-                player_carry_stats.furthest_carry = event_carry.distance_traveled
+            player_carry_stats.total_carry_distance += event_carry.straight_line_distance
+            if player_carry_stats.furthest_carry < event_carry.straight_line_distance:
+                player_carry_stats.furthest_carry = event_carry.straight_line_distance
 
             if player_carry_stats.fastest_carry_speed < event_carry.carry_stats.average_carry_speed:
                 player_carry_stats.fastest_carry_speed = event_carry.carry_stats.average_carry_speed
@@ -49,6 +49,7 @@ class CarryStat(BaseStat):
         player_carry.variance_z_distance += event_carry.variance_z_distance
         player_carry.variance_ball_z_velocity += event_carry.variance_ball_z_velocity
         player_carry.average_carry_speed += event_carry.average_carry_speed
+        player_carry.distance_along_path += event_carry.distance_along_path
 
     def average_ball_stats(self, player_carry, num_carries):
         player_carry.average_z_distance /= num_carries
@@ -58,3 +59,4 @@ class CarryStat(BaseStat):
         player_carry.variance_z_distance /= num_carries
         player_carry.variance_ball_z_velocity /= num_carries
         player_carry.average_carry_speed /= num_carries
+        player_carry.distance_along_path /= num_carries

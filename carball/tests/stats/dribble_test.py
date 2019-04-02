@@ -33,7 +33,7 @@ class DribbleTests(unittest.TestCase):
             proto_game = analysis.get_protobuf_data()
             player = proto_game.players[0]
             print(player)
-            self.assertAlmostEqual(player.stats.ball_carries.total_carry_time, 250, delta=1)
+            self.assertAlmostEqual(player.stats.ball_carries.total_carry_time, 235, delta=1)
 
         run_analysis_test_on_replay(test, get_raw_replays()["SKYBOT_DRIBBLE_INFO"])
 

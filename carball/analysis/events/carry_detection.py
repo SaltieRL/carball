@@ -134,7 +134,7 @@ class CarryDetection:
 
         return player_carry_data
 
-    def get_distance(self, player_frames: pd.DataFrame, start: int, end: int) -> pd.DataFrame:
+    def get_straight_line_distance(self, player_frames: pd.DataFrame, start: int, end: int) -> pd.DataFrame:
         x1 = player_frames.pos_x[start]
         y1 = player_frames.pos_y[start]
 
@@ -168,7 +168,8 @@ class CarryDetection:
             ball_carry.end_frame_number = end_frames[i]
             ball_carry.player_id.id = player.id.id
             ball_carry.carry_time = total_time
-            ball_carry.distance_traveled = self.get_distance(player_frames, start_frames[i], end_frames[i])
+            ball_carry.straight_line_distance = self.get_straight_line_distance(player_frames,
+                                                                                start_frames[i], end_frames[i])
 
             z_distance = carry_frames.ball.pos_z - player_frames.pos_z
             xy_carry = xy_distance[start_frames[i]:end_frames[i]]
@@ -182,3 +183,5 @@ class CarryDetection:
             carry_stats.variance_z_distance = z_distance.var()
             carry_stats.variance_ball_z_velocity = carry_frames.ball.vel_z.var()
             carry_stats.average_carry_speed = ((player_frames.vel_x ** 2 + player_frames.vel_y ** 2) ** 0.5).mean()
+            carry_stats.distance_along_path = (player_frames.x[start_frames[i]:end_frames[i]].diff()**2 +
+                                               player_frames.y[start_frames[i]:end_frames[i]].diff()**2).sqrt()
