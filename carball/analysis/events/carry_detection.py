@@ -29,7 +29,7 @@ class CarryDetection:
         player_carry_data, xy_distance, player_frames = self.player_close_frames(carry_data.carry_frames,
                                                                             carry_data.carry_frames[player.name])
 
-        modified_carry_data = self.expand_carries(carry_data, player_carry_data, player, proto_game)
+        modified_carry_data = self.correct_carries(carry_data, player_carry_data, player, proto_game)
 
         self.add_carry_events(modified_carry_data, xy_distance, player_frames, player, proto_game)
 
@@ -92,11 +92,12 @@ class CarryDetection:
         player_carry_data.start_frames = merged_start
         player_carry_data.end_frames = merged_end
 
-    def expand_carries(self, carry_data: CarryData, player_carry_data: CarryData,
-                       player: Player, proto_game: game_pb2.Game) -> CarryData:
+    def correct_carries(self, carry_data: CarryData, player_carry_data: CarryData,
+                        player: Player, proto_game: game_pb2.Game) -> CarryData:
         """
-        Expands / merges carries based on hit list.
-        If nothing is modified then this returns valid_frames
+        This modifies carries to correct for certain situations at a better granularity.
+        For examples cases where one dribble was instead counted as 2.
+        cases where the dribble should stop counting.
         """
 
         self.merge_dribbles(carry_data, player_carry_data)
@@ -111,29 +112,25 @@ class CarryDetection:
 
         # Need to start cutting off dribbles if someone other than the player hits the ball and the player does not gain another hit on the ball before the dribble ends.
 
-        """
         for frame_index in range(len(start_frames)):
-            for i in range(starting_hit_index, len(hit_list)):
+            hit_number = 0
+            for i in range(hit_number, len(hit_list)):
                 if hit_list[i].frame_number < start_frames[frame_index]:
                     continue
-                if hit_list[i].frame_number > start_frames[frame_index]:
-                    # now we go backwards
-                    hit_number = i
-                    if hit_list[i].frame_number > end_frames[frame_index]:
-                        hit_number -= 1
-                    while (hit_number > 0 and hit_list[hit_number].player_id.id == player.id.id and
-                           hit_list[hit_number - 1].frame_number in valid_frames.index):
-                        hit_number -= 1
-                    # now we have the first hit that is in valid
-                    if hit_list[hit_number].frame_number < start_frames[frame_index]:
-                        # now we modify
-                        print('NEED MODIFICATION')
+                if hit_list[i].frame_number > end_frames[frame_index]:
+                    break
+
+                while hit_list[hit_number].frame_number < end_frames[frame_index]:
+                    if hit_list[hit_number].player_id.id != player.id.id:
+                        # We have an imposter dribble!
+                    hit_number += 1
+
 
             if starting_hit_index >= len(hit_list) - 1:
                 logger.warning("We have reached a point where dribbles should not exist anymore")
+                break
         # Look for the first carry frame and find all hits before it by the same player
-        pass
-        """
+
 
         return player_carry_data
 
