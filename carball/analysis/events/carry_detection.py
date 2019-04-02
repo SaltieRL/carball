@@ -37,7 +37,7 @@ class CarryDetection:
                             player_frames: pd.DataFrame) -> Tuple[CarryData, pd.DataFrame, pd.DataFrame]:
         """
         Filters out all frames that are not close enough to the player to be a valid carry.
-        Filters out dribbles that are too short
+        Filters out carries that are too short
         """
 
         xy_distance = ((player_frames.pos_x - valid_frames.ball.pos_x) ** 2 +
@@ -49,9 +49,9 @@ class CarryDetection:
         # look up hits.
         # any hits by the same player within a continous set of valid frames should count as carrys
 
-    def merge_dribbles(self, carry_data: CarryData, player_carry_data: CarryData):
+    def merge_carries(self, carry_data: CarryData, player_carry_data: CarryData):
         """
-        Merges separated dribbles that are still within the valid dribble set.
+        Merges separated carries that are still within the valid carry set.
         """
         start_frames = player_carry_data.start_frames
         end_frames = player_carry_data.end_frames
@@ -96,38 +96,38 @@ class CarryDetection:
                         player: Player, proto_game: game_pb2.Game) -> CarryData:
         """
         This modifies carries to correct for certain situations at a better granularity.
-        For examples cases where one dribble was instead counted as 2.
-        cases where the dribble should stop counting.
+        For examples cases where one carry was instead counted as 2.
+        cases where the carry should stop counting.
         """
 
-        self.merge_dribbles(carry_data, player_carry_data)
+        self.merge_carries(carry_data, player_carry_data)
         start_frames = player_carry_data.start_frames
         end_frames = player_carry_data.end_frames
 
         hit_list = proto_game.game_stats.hits
 
-        def valid_hit_number(hit_index, dribble_index):
-            return hit_list[hit_index].frame_number < end_frames[dribble_index] and hit_index < len(hit_list) - 1
+        def valid_hit_number(hit_index, carry_index):
+            return hit_list[hit_index].frame_number < end_frames[carry_index] and hit_index < len(hit_list) - 1
 
         hit_number = 0
-        for frame_index in range(len(start_frames)):
+        for carry_index in range(len(start_frames)):
             while hit_number < len(hit_list) - 1:
-                if hit_list[hit_number].frame_number < start_frames[frame_index]:
+                if hit_list[hit_number].frame_number < start_frames[carry_index]:
                     hit_number += 1
                     continue
-                if hit_list[hit_number].frame_number >= end_frames[frame_index]:
+                if hit_list[hit_number].frame_number >= end_frames[carry_index]:
                     break
 
-                while valid_hit_number(hit_number, frame_index):
+                while valid_hit_number(hit_number, carry_index):
                     if hit_list[hit_number].player_id.id != player.id.id:
-                        # We need to potentially change how the dribble occurred
+                        # We need to potentially change how the carry occurred
                         invalid_hit = hit_list[hit_number]
                         while hit_list[hit_number].player_id.id != player.id.id and valid_hit_number(hit_number,
-                                                                                                     frame_index):
+                                                                                                     carry_index):
                             hit_number += 1
-                        if hit_list[hit_number].frame_number >= end_frames[frame_index]:
-                            # The player never hits it again, end the dribble early.
-                            player_carry_data.end_frames[frame_index] = invalid_hit.frame_number
+                        if hit_list[hit_number].frame_number >= end_frames[carry_index]:
+                            # The player never hits it again, end the carry early.
+                            player_carry_data.end_frames[carry_index] = invalid_hit.frame_number
                     else:
                         hit_number += 1
 
@@ -147,6 +147,9 @@ class CarryDetection:
         return ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
 
     def creat_start_end_frames(self, carry_frames: pd.DataFrame) -> Tuple[List[int], List[int]]:
+        """
+        Returns the first and last frame of each carry
+        """
         carry_frame_index = carry_frames.index
         shifted = carry_frame_index.to_series().shift(fill_value=0)
         neg_shifted = carry_frame_index.to_series().shift(periods=-1, fill_value=0)
