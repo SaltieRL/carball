@@ -304,17 +304,21 @@ class Game:
                             unique_id = str(
                                 actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][
                                     actor_type])
-                            leader_actor_type = list(
-                                actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0].keys()
-                            )[0]
-                            leader = str(
-                                actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0][leader_actor_type]
-                            )
-                            if leader in parties:
-                                if unique_id not in parties[leader]:
-                                    parties[leader].append(unique_id)
-                            else:
-                                parties[leader] = [unique_id]
+                            # only find party leader if unique_id is not already a party leader
+                            # this avoids some processing time and avoids errors such as when during a value update
+                            # party_leader is set as 'system_id': 0
+                            if unique_id not in parties.keys():
+                                leader_actor_type = list(
+                                    actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0].keys()
+                                )[0]
+                                leader = str(
+                                    actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0][leader_actor_type]
+                                )
+                                if leader in parties:
+                                    if unique_id not in parties[leader]:
+                                        parties[leader].append(unique_id)
+                                else:
+                                    parties[leader] = [unique_id]
                         except KeyError:
                             logger.warning('Could not get party leader for actor id: ' + str(actor_id))
                     if actor_id not in player_dicts:
