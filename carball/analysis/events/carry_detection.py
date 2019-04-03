@@ -15,12 +15,16 @@ class CarryData:
         self.carry_frames = carry_frames
         self.end_frames = end_frames
         self.start_frames = start_frames
+        self.flicks = dict()
+
+    def add_flick(self, carry_index):
+        self.flicks[carry_index] = True
 
 
 class CarryDetection:
 
     def filter_frames(self, data_frame: pd.DataFrame) -> CarryData:
-        valid_frames = data_frame[(data_frame.ball.pos_z > (BALL_SIZE + 5)) & (data_frame.ball.pos_z < 500)]
+        valid_frames = data_frame[(data_frame.ball.pos_z > (BALL_SIZE + 4)) & (data_frame.ball.pos_z < 700)]
         return CarryData(valid_frames, *self.creat_start_end_frames(valid_frames))
 
     def create_carry_events(self, carry_data: CarryData, player: Player, proto_game: game_pb2.Game):
@@ -28,7 +32,7 @@ class CarryDetection:
         Gets all of the carry events and adds them to the protobuf for each individual player.
         """
         player_carry_data, xy_distance, player_frames = self.player_close_frames(carry_data.carry_frames,
-                                                                            carry_data.carry_frames[player.name])
+                                                                                 carry_data.carry_frames[player.name])
 
         modified_carry_data = self.correct_carries(carry_data, player_carry_data, player, proto_game)
 
@@ -43,12 +47,12 @@ class CarryDetection:
 
         xy_distance = ((player_frames.pos_x - valid_frames.ball.pos_x) ** 2 +
                        (player_frames.pos_y - valid_frames.ball.pos_y) ** 2) ** 0.5
-        carry_frames = valid_frames[(xy_distance < BALL_SIZE) & (player_frames.pos_z < valid_frames.ball.pos_z)]
+        carry_frames = valid_frames[(xy_distance < (BALL_SIZE * 1.1)) & (player_frames.pos_z < valid_frames.ball.pos_z)]
 
         player_carry_data = CarryData(valid_frames, *self.creat_start_end_frames(carry_frames))
         return player_carry_data, xy_distance, player_frames
         # look up hits.
-        # any hits by the same player within a continous set of valid frames should count as carrys
+        # any hits by the same player within a continuous set of valid frames should count as carries
 
     def correct_carries(self, carry_data: CarryData, player_carry_data: CarryData,
                         player: Player, proto_game: game_pb2.Game) -> CarryData:
@@ -76,39 +80,48 @@ class CarryDetection:
         def valid_hit_number(hit_index, carry_index):
             return hit_list[hit_index].frame_number < end_frames[carry_index] and hit_index < len(hit_list) - 1
 
-        hit_number = 0
+        hit_index = 0
         for carry_index in range(len(start_frames)):
-            while hit_number < len(hit_list) - 1:
-                if hit_list[hit_number].frame_number < start_frames[carry_index]:
-                    hit_number += 1
+            while hit_index < len(hit_list) - 1:
+                if hit_list[hit_index].frame_number < start_frames[carry_index]:
+                    hit_index += 1
                     continue
-                if hit_list[hit_number].frame_number >= end_frames[carry_index]:
+                if hit_list[hit_index].frame_number >= end_frames[carry_index]:
                     break
 
                 invalid_hit = None
                 last_player_hit = None
-                while valid_hit_number(hit_number, carry_index):
-                    if hit_list[hit_number].player_id.id != player.id.id:
+                while valid_hit_number(hit_index, carry_index):
+                    if hit_list[hit_index].player_id.id != player.id.id:
                         # We need to potentially change how the carry occurred
                         if invalid_hit is None:
-                            invalid_hit = hit_list[hit_number]
-                        while hit_list[hit_number].player_id.id != player.id.id and valid_hit_number(hit_number,
-                                                                                                     carry_index):
-                            hit_number += 1
-                        if hit_list[hit_number].frame_number >= end_frames[carry_index]:
+                            invalid_hit = hit_list[hit_index]
+                        while hit_list[hit_index].player_id.id != player.id.id and valid_hit_number(hit_index,
+                                                                                                    carry_index):
+                            hit_index += 1
+                        if hit_list[hit_index].frame_number >= end_frames[carry_index]:
                             # The player never hits it again, end the carry early.
                             player_carry_data.end_frames[carry_index] = invalid_hit.frame_number
                     else:
-                        hit_number += 1
-                    if valid_hit_number(hit_number - 1, carry_index) and hit_list[hit_number - 1].player_id.id == player.id.id:
-                        last_player_hit = hit_list[hit_number - 1]
+                        hit_index += 1
+                    if (valid_hit_number(hit_index - 1, carry_index) and
+                            hit_list[hit_index - 1].player_id.id == player.id.id):
+                        last_player_hit = hit_list[hit_index - 1]
                 if last_player_hit is None:
                     logger.error('The player never hit the ball during the "carry"')
                     end_frames[carry_index] = start_frames[carry_index]
                 else:
-                    last_player_hit
+                    most_recent_frame = max(last_player_hit.previous_hit_frame_number, start_frames[carry_index])
+                    dodge_data = player_carry_data.carry_frames[player.name].dodge_active
+                    dodge_data = dodge_data.loc[most_recent_frame:last_player_hit.frame_number]
+                    has_flicked = dodge_data.where(dodge_data % 2 == 1).last_valid_index()
+                    if has_flicked is not None:
+                        end_frames[carry_index] = has_flicked
+                        player_carry_data.add_flick(carry_index)
+                    else:
+                        end_frames[carry_index] = last_player_hit.frame_number
 
-            if hit_number >= len(hit_list) - 1:
+            if hit_index >= len(hit_list) - 1:
                 break
 
     def merge_carries(self, carry_data: CarryData, player_carry_data: CarryData):
@@ -125,9 +138,18 @@ class CarryDetection:
         previous_start = -1
         previous_end = 1
 
+        if len(start_frames) == 1:
+            # Only one potential carry in the indexes, need to convert to mutable list
+            player_carry_data.start_frames = [player_carry_data.start_frames[0]]
+            player_carry_data.end_frames = [player_carry_data.end_frames[0]]
+            return
+
+        # This is all wrong need to redo merging.
+
+        total_frame_number = 0
         for frame_index in range(len(start_frames) - 1):
-            total_frame_number = frame_index
-            while total_frame_number < len(carry_data.start_frames) and carry_data.start_frames[total_frame_number] < start_frames[frame_index]:
+            while (total_frame_number < len(carry_data.start_frames) and
+                   carry_data.start_frames[total_frame_number] < start_frames[frame_index]):
                 total_frame_number += 1
             if total_frame_number == len(carry_data.start_frames):
                 logger.warning("can not merge frames anymore.")
@@ -185,6 +207,7 @@ class CarryDetection:
             ball_carry.carry_time = total_time
             ball_carry.straight_line_distance = self.get_straight_line_distance(player_frames,
                                                                                 start_frames[i], end_frames[i])
+            ball_carry.has_flick = i in carry_data.flicks
 
             z_distance = carry_frames.ball.pos_z - player_frames.pos_z
             xy_carry = xy_distance[start_frames[i]:end_frames[i]]

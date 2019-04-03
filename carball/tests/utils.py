@@ -1,8 +1,9 @@
 import os
 import tempfile
-from typing import Callable
+from typing import Callable, Tuple, Iterable
 
 import requests
+import numpy as np
 from carball.decompile_replays import analyze_replay_file
 
 
@@ -19,6 +20,10 @@ def save_locally(replay_object):
 
     os.close(fd)
     return file_path
+
+
+def get_multiple_answers(answers: Iterable[str]) -> Iterable[Tuple[any]]:
+    return np.column_stack([get_specific_answers().get(key) for key in answers])
 
 
 def run_tests_on_list(unit_test_func: Callable, replay_list=None, answers=None):
@@ -64,7 +69,10 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
     def wrapper(replay_file_path, json_file_path, answer=None):
         analysis_manager = analyze_replay_file(replay_file_path)
         if answer is not None:
-            unit_test_func(analysis_manager, answer)
+            if isinstance(answer, (list, tuple, np.ndarray)):
+                unit_test_func(analysis_manager, *answer)
+            else:
+                unit_test_func(analysis_manager, answer)
         else:
             unit_test_func(analysis_manager)
 
@@ -187,6 +195,8 @@ def get_raw_replays():
             "https://cdn.discordapp.com/attachments/493849514680254468/560580395276566548/SKYBOT_DRIBBLE_INFO.replay"],
         "1_DRIBBLE": [
             "https://cdn.discordapp.com/attachments/493849514680254468/560745936691920898/1_DRIBBLE.replay"],
+        "3_DRIBBLE_2_FLICKS": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/562870542273871872/3_DRIBBLE_2_FLICKS.replay"],
 
         # error cases
         "UNICODE_ERROR": [
@@ -240,7 +250,7 @@ def get_specific_replays():
                       raw_map["PLAYERNAME_TWO_PLAYERS_NAMED_SAME"] + raw_map["PLAYERNAME_ZTTL"] +
                       raw_map["ISSUE_PLAYER_REJOIN"] + raw_map["ISSUE_PLAYER_REJOIN"],
         "ZERO_DRIBBLE": raw_map["12_BOOST_PAD_45_USED"] + raw_map["KICKOFF_NO_TOUCH"],
-        "MORE_THAN_ZERO_DRIBBLE": raw_map["1_DRIBBLE"] + raw_map["SKYBOT_DRIBBLE_INFO"]
+        "DRIBBLES": raw_map["3_DRIBBLE_2_FLICKS"] + raw_map["1_DRIBBLE"] + raw_map["SKYBOT_DRIBBLE_INFO"]
     }
 
 
@@ -257,7 +267,9 @@ def get_specific_answers():
         "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4, 50],
         "SHOTS": [3, 0, 2, 1],
         "PASSES": [1, 1, 1],
-        "AERIALS": [0, 1, 2, 0]
+        "AERIALS": [0, 1, 2, 0],
+        "DRIBBLES": [1, 3, 10],
+        "FLICKS": [0, 2, 10],
     }
 
 

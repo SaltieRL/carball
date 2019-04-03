@@ -18,6 +18,8 @@ class CarryStat(BaseStat):
             player_stats = player_stat_map[event_carry.player_id.id]
             player_carry_stats = player_stats.ball_carries
             player_carry_stats.total_carries += 1
+            if event_carry.has_flick:
+                player_carry_stats.total_flicks += 1
 
             # time
             player_carry_stats.total_carry_time += event_carry.carry_time
