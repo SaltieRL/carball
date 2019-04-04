@@ -168,6 +168,8 @@ def get_raw_replays():
             "https://cdn.discordapp.com/attachments/493849514680254468/561300088400379905/crossplatform_party.replay"],
         "PARTY_LEADER_SYSTEM_ID_0_ERROR": [
             'https://cdn.discordapp.com/attachments/493849514680254468/563036945635082260/PARTY_LEADER_SYSTEM_ID_0.replay'],
+        "PLAY_STATION_ONLY_PARTY": [
+            'https://cdn.discordapp.com/attachments/493849514680254468/563457368193761301/PLAY_STATION_ONLY_PARTY.replay'],
     }
 
 

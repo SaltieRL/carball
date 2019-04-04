@@ -14,7 +14,7 @@ from .game_info import GameInfo
 
 logger = logging.getLogger(__name__)
 
-BOOST_PER_SECOND = 80 * 1/.93  # boost used per second out of 255
+BOOST_PER_SECOND = 80 * 1 / .93  # boost used per second out of 255
 DATETIME_FORMATS = [
     '%Y-%m-%d %H-%M-%S',
     '%Y-%m-%d:%H-%M'
@@ -304,21 +304,64 @@ class Game:
                             unique_id = str(
                                 actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][
                                     actor_type])
-                            # only find party leader if unique_id is not already a party leader
-                            # this avoids some processing time and avoids errors such as when during a value update
-                            # party_leader is set as 'system_id': 0
-                            if unique_id not in parties.keys():
+
+                            # only process if party_leader id exists
+                            if "party_leader" in actor_data["TAGame.PRI_TA:PartyLeader"] and \
+                                    "id" in actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]:
                                 leader_actor_type = list(
                                     actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0].keys()
                                 )[0]
-                                leader = str(
-                                    actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0][leader_actor_type]
-                                )
-                                if leader in parties:
-                                    if unique_id not in parties[leader]:
+                                # special handling if leader actor type is play_station
+                                # for our use cases the following are equivalent:
+                                # "['someusername', [70, 76, 174, 206, 14, 206, 44, 0, 128, 0, 0, 0, 0, 0, 0, 0, 169, 39, 75, 227, 93, 88, 117, 152]]"
+                                # is equivalent to:
+                                # ['someusername', [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 169, 39, 75, 227, 93, 88, 117, 152]]
+                                if leader_actor_type == "play_station":
+                                    leader = str(
+                                        actor_data[
+                                            "TAGame.PRI_TA:PartyLeader"
+                                        ]["party_leader"]["id"][0][leader_actor_type]
+                                    )
+                                    leader_ps_name = actor_data[
+                                        "TAGame.PRI_TA:PartyLeader"
+                                    ]["party_leader"]["id"][0][leader_actor_type][0]
+                                    leader_ps_array = actor_data[
+                                        "TAGame.PRI_TA:PartyLeader"
+                                    ]["party_leader"]["id"][0][leader_actor_type][1]
+                                    parties_keys = parties.copy().keys()
+                                    for k in parties_keys:
+                                        if leader_ps_name in k:
+                                            k_ps_name = k[1:][:-1].split(', ', 1)[0].replace("'", "")
+                                            k_ps_array = [int(x) for x in
+                                                          k[1:][:-1].split(', ', 1)[1][1:][:-1].replace(", ",
+                                                                                                        ",").split(",")]
+                                            if k_ps_array[-10:] == leader_ps_array[-10:] and \
+                                                    k_ps_name == leader_ps_name:
+                                                if unique_id not in parties[k]:
+                                                    # check for correct ID when adding,
+                                                    # since we might have added an incorrect
+                                                    # ps id with leading zeroes before encountering
+                                                    # correct party leader without leading zeroes
+                                                    if leader_ps_array > k_ps_array:
+                                                        temp_party = parties.pop(k)
+                                                        parties[leader] = temp_party
+                                                        parties[leader].append(unique_id)
+                                                    else:
+                                                        parties[k].append(unique_id)
+                                                break
+                                    else:
+                                        parties[leader] = [unique_id]
+                                else:  # leader is not using play_station
+                                    leader = str(
+                                        actor_data[
+                                            "TAGame.PRI_TA:PartyLeader"
+                                        ]["party_leader"]["id"][0][leader_actor_type]
+                                    )
+                                    if leader in parties and unique_id not in parties[leader]:
                                         parties[leader].append(unique_id)
-                                else:
-                                    parties[leader] = [unique_id]
+                                    else:
+                                        parties[leader] = [unique_id]
+
                         except KeyError:
                             logger.warning('Could not get party leader for actor id: ' + str(actor_id))
                     if actor_id not in player_dicts:
