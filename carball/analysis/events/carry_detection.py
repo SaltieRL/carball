@@ -6,15 +6,17 @@ import pandas as pd
 from carball.analysis.constants.field_constants import BALL_SIZE
 from carball.generated.api import game_pb2
 from carball.generated.api.player_pb2 import Player
+from generated.api.stats import events_pb2
 
 logger = logging.getLogger(__name__)
 
 
+# noinspection PyTypeChecker
 class CarryData:
-    def __init__(self, carry_frames: pd.DataFrame, start_frames: List[int], end_frames: List[int]):
+    def __init__(self, carry_frames: pd.DataFrame, start_frames: pd.Index, end_frames: pd.Index):
         self.carry_frames = carry_frames
-        self.end_frames = end_frames
-        self.start_frames = start_frames
+        self.end_frames: List[int] = end_frames.values.tolist()
+        self.start_frames: List[int] = start_frames.values.tolist()
         self.flicks = dict()
 
     def add_flick(self, carry_index):
@@ -24,7 +26,8 @@ class CarryData:
 class CarryDetection:
 
     def filter_frames(self, data_frame: pd.DataFrame) -> CarryData:
-        valid_frames = data_frame[(data_frame.ball.pos_z > (BALL_SIZE + 4)) & (data_frame.ball.pos_z < 700)]
+        valid_frames = data_frame[(data_frame.ball.pos_z > (BALL_SIZE + 5)) & (data_frame.ball.pos_z < 600)]
+
         return CarryData(valid_frames, *self.creat_start_end_frames(valid_frames))
 
     def create_carry_events(self, carry_data: CarryData, player: Player, proto_game: game_pb2.Game):
@@ -47,7 +50,7 @@ class CarryDetection:
 
         xy_distance = ((player_frames.pos_x - valid_frames.ball.pos_x) ** 2 +
                        (player_frames.pos_y - valid_frames.ball.pos_y) ** 2) ** 0.5
-        carry_frames = valid_frames[(xy_distance < (BALL_SIZE * 1.1)) & (player_frames.pos_z < valid_frames.ball.pos_z)]
+        carry_frames = valid_frames[(xy_distance < (BALL_SIZE * 1.3)) & (player_frames.pos_z < valid_frames.ball.pos_z)]
 
         player_carry_data = CarryData(valid_frames, *self.creat_start_end_frames(carry_frames))
         return player_carry_data, xy_distance, player_frames
@@ -60,22 +63,53 @@ class CarryDetection:
         This modifies carries to correct for certain situations at a better granularity.
         """
 
+        self.add_hits(carry_data, player_carry_data, player, proto_game.game_stats.hits)
+
         self.merge_carries(carry_data, player_carry_data)
 
-        self.shorten_carries(player_carry_data, player, proto_game)
+        self.shorten_carries(player_carry_data, player, proto_game.game_stats.hits)
 
         # Look for the first carry frame and find all hits before it by the same player
 
         return player_carry_data
 
-    def shorten_carries(self, player_carry_data: CarryData, player: Player, proto_game: game_pb2.Game):
+    def add_hits(self, carry_data: CarryData, player_carry_data: CarryData, player: Player, hit_list: List[events_pb2.Hit]):
+        """
+        Adds in frames to the carry in the beginning for the first hit of the carry.
+        """
+        hit_index = 0
+        previous_end_frame = 0
+        valid_frame_index = 0
+        for frame_index in range(len(player_carry_data.start_frames)):
+
+            starting_frame = player_carry_data.start_frames[frame_index]
+            while (valid_frame_index < len(carry_data.end_frames) and
+                   carry_data.end_frames[valid_frame_index] < starting_frame):
+                valid_frame_index += 1
+            valid_start_frame = carry_data.start_frames[valid_frame_index]
+
+            # Get to the correct index before going backwards
+            while hit_list[hit_index].frame_number < starting_frame:
+                hit_index += 1
+
+            last_valid_hit = None
+            while (hit_index >= 0 and hit_list[hit_index].player_id.id == player.id.id and
+                   hit_list[hit_index].frame_number >= valid_start_frame and
+                   hit_list[hit_index].frame_number > previous_end_frame):
+                last_valid_hit = hit_list[hit_index]
+                hit_index -= 1
+            hit_index += 1
+
+            if last_valid_hit is not None and last_valid_hit.frame_number < starting_frame:
+                player_carry_data.start_frames[frame_index] = last_valid_hit.frame_number
+            previous_end_frame = player_carry_data.end_frames[frame_index]
+
+    def shorten_carries(self, player_carry_data: CarryData, player: Player, hit_list: List[events_pb2.Hit]):
         """
         Shortens carries in cases where the carry was ended by a player stealing the ball.
         """
         start_frames = player_carry_data.start_frames
         end_frames = player_carry_data.end_frames
-
-        hit_list = proto_game.game_stats.hits
 
         def valid_hit_number(hit_index, carry_index):
             return hit_list[hit_index].frame_number < end_frames[carry_index] and hit_index < len(hit_list) - 1
@@ -118,7 +152,7 @@ class CarryDetection:
                     if has_flicked is not None:
                         end_frames[carry_index] = has_flicked
                         player_carry_data.add_flick(carry_index)
-                    else:
+                    elif last_player_hit.frame_number > start_frames[carry_index]:
                         end_frames[carry_index] = last_player_hit.frame_number
 
             if hit_index >= len(hit_list) - 1:
@@ -146,6 +180,22 @@ class CarryDetection:
 
         # This is all wrong need to redo merging.
 
+        player_frame_index = 0
+        for frame_index in range(len(carry_data.end_frames)):
+            end_frame = carry_data.end_frames[frame_index]
+            carry_start = start_frames[player_frame_index]
+            carry_end = None
+            while player_frame_index < len(start_frames) and start_frames[player_frame_index] < end_frame:
+                carry_end = end_frames[player_frame_index]
+                player_frame_index += 1
+            if carry_end is not None:
+                merged_start.append(carry_start)
+                merged_end.append(carry_end)
+
+            if player_frame_index == len(start_frames):
+                player_frame_index -= 1
+
+        """
         total_frame_number = 0
         for frame_index in range(len(start_frames) - 1):
             while (total_frame_number < len(carry_data.start_frames) and
@@ -174,6 +224,7 @@ class CarryDetection:
         if previous_start != -1:
             merged_start.append(previous_start)
             merged_end.append(previous_end)
+        """
         player_carry_data.start_frames = merged_start
         player_carry_data.end_frames = merged_end
 
@@ -184,8 +235,8 @@ class CarryDetection:
         carry_frame_index = carry_frames.index
         shifted = carry_frame_index.to_series().shift(fill_value=0)
         neg_shifted = carry_frame_index.to_series().shift(periods=-1, fill_value=0)
-        start_frames = carry_frame_index[abs(carry_frame_index - shifted) > 3]
-        end_frames = carry_frame_index[abs(carry_frame_index - neg_shifted) > 3]
+        start_frames = carry_frame_index[abs(carry_frame_index - shifted) >= 2]
+        end_frames = carry_frame_index[abs(carry_frame_index - neg_shifted) >= 2]
         return start_frames, end_frames
 
     def add_carry_events(self, carry_data: CarryData,

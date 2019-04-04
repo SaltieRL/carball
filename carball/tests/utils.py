@@ -250,7 +250,7 @@ def get_specific_replays():
                       raw_map["PLAYERNAME_TWO_PLAYERS_NAMED_SAME"] + raw_map["PLAYERNAME_ZTTL"] +
                       raw_map["ISSUE_PLAYER_REJOIN"] + raw_map["ISSUE_PLAYER_REJOIN"],
         "ZERO_DRIBBLE": raw_map["12_BOOST_PAD_45_USED"] + raw_map["KICKOFF_NO_TOUCH"],
-        "DRIBBLES": raw_map["3_DRIBBLE_2_FLICKS"] + raw_map["1_DRIBBLE"] + raw_map["SKYBOT_DRIBBLE_INFO"]
+        "DRIBBLES": raw_map["1_DRIBBLE"] + raw_map["3_DRIBBLE_2_FLICKS"] + raw_map["SKYBOT_DRIBBLE_INFO"]
     }
 
 
