@@ -1,0 +1,46 @@
+syntax = "proto2";
+
+import "api/stats/stats.proto";
+import "api/player_id.proto";
+import "api/stats/events.proto";
+
+package api.stats;
+
+enum KickoffType {
+  // 3s
+  DDO=0; DDG=1; DOO=2; DOG=3; OOG=4;
+  // 2s
+  DD=5; DO=6; OO=7; OG=8; DG=9;
+  // 1s
+  D=10; O=11; G=12;
+  // ??
+  U=13;
+};
+enum KickoffPosition {
+  DIAGONAL=0; OFFCENTER=1; GOALIE=2; OTHER=3;
+};
+enum TouchPosition {
+UNKNOWN=0; BOOST=1; BALL=2; AFK=3; GOAL=4; CHEAT=5;
+};
+
+message kPlayer {
+optional api.PlayerId player = 1;
+optional KickoffPosition kpos = 2;
+optional TouchPosition tpos = 3;
+optional float boost = 4;
+repeated float jumps = 5;
+optional float ballTime = 6;
+optional float boostTime = 7;
+};
+
+message Touch {
+repeated kPlayer players = 1; // info about each player at the point of the touch
+optional bool kickoffgoal = 2;  // if a goal is scored in the 15 seconds following this touch
+optional bool orangeTeamGoal = 3;
+};
+message KickoffStats {
+  optional int32 startframe = 1;
+  optional int32 touchframe = 2;
+  optional KickoffType type = 3;
+  optional Touch touch = 4;
+}
