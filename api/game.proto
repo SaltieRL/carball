@@ -3,7 +3,6 @@ syntax = "proto2";
 import "api/metadata/game_metadata.proto";
 import "api/metadata/mutators.proto";
 import "api/stats/game_stats.proto";
-import "api/stats/kickoff.proto";
 import "api/player.proto";
 import "api/team.proto";
 import "api/party.proto";
@@ -19,6 +18,5 @@ message Game {
     // Version info just a normal increasing number
     optional int32 version = 6;
     optional api.metadata.Mutators mutators = 7;
-    repeated api.stats.KickoffStats kickoff_stats = 8;
     extensions 100 to 199;
 }

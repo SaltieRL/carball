@@ -1,8 +1,6 @@
 syntax = "proto2";
 
-import "api/stats/stats.proto";
 import "api/player_id.proto";
-import "api/stats/events.proto";
 
 package api.stats;
 
@@ -23,7 +21,7 @@ enum TouchPosition {
 UNKNOWN=0; BOOST=1; BALL=2; AFK=3; GOAL=4; CHEAT=5;
 };
 
-message kPlayer {
+message KickoffPlayer {
 optional api.PlayerId player = 1;
 optional KickoffPosition kpos = 2;
 optional TouchPosition tpos = 3;
@@ -34,7 +32,7 @@ optional float boostTime = 7;
 };
 
 message Touch {
-repeated kPlayer players = 1; // info about each player at the point of the touch
+repeated KickoffPlayer players = 1; // info about each player at the point of the touch
 optional bool kickoffgoal = 2;  // if a goal is scored in the 15 seconds following this touch
 optional bool orangeTeamGoal = 3;
 };
