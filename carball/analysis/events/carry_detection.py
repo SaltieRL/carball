@@ -19,8 +19,8 @@ class CarryData:
         self.start_frames: List[int] = start_frames.values.tolist()
         self.flicks = dict()
 
-    def add_flick(self, carry_index):
-        self.flicks[carry_index] = True
+    def add_flick(self, carry_index: int, is_successful: bool):
+        self.flicks[carry_index] = is_successful
 
 
 class CarryDetection:
@@ -146,12 +146,18 @@ class CarryDetection:
                     end_frames[carry_index] = start_frames[carry_index]
                 else:
                     most_recent_frame = max(last_player_hit.previous_hit_frame_number, start_frames[carry_index])
-                    dodge_data = player_carry_data.carry_frames[player.name].dodge_active
+                    carry_frames = player_carry_data.carry_frames
+                    dodge_data = carry_frames[player.name].dodge_active
                     dodge_data = dodge_data.loc[most_recent_frame:last_player_hit.frame_number]
                     has_flicked = dodge_data.where(dodge_data % 2 == 1).last_valid_index()
                     if has_flicked is not None:
+                        ending = min(max(last_player_hit.frame_number + 10, end_frames[carry_index]), has_flicked + 20)
+                        is_going_up = carry_frames.ball.pos_z[last_player_hit.frame_number:ending].is_monotonic
                         end_frames[carry_index] = has_flicked
-                        player_carry_data.add_flick(carry_index)
+                        if is_going_up:
+                            player_carry_data.add_flick(carry_index, True)
+                        else:
+                            player_carry_data.add_flick(carry_index, False)
                     elif last_player_hit.frame_number > start_frames[carry_index]:
                         end_frames[carry_index] = last_player_hit.frame_number
 
@@ -168,9 +174,6 @@ class CarryDetection:
 
         merged_start = []
         merged_end = []
-
-        previous_start = -1
-        previous_end = 1
 
         if len(start_frames) == 1:
             # Only one potential carry in the indexes, need to convert to mutable list
@@ -195,36 +198,6 @@ class CarryDetection:
             if player_frame_index == len(start_frames):
                 player_frame_index -= 1
 
-        """
-        total_frame_number = 0
-        for frame_index in range(len(start_frames) - 1):
-            while (total_frame_number < len(carry_data.start_frames) and
-                   carry_data.start_frames[total_frame_number] < start_frames[frame_index]):
-                total_frame_number += 1
-            if total_frame_number == len(carry_data.start_frames):
-                logger.warning("can not merge frames anymore.")
-                break
-
-            end_frame = end_frames[frame_index]
-            next_start = start_frames[frame_index + 1]
-            if (end_frame < carry_data.start_frames[total_frame_number] < next_start or
-                    end_frame < carry_data.end_frames[total_frame_number] < next_start):
-                if previous_start != -1:
-                    merged_start.append(previous_start)
-                    merged_end.append(previous_end)
-                    previous_start = -1
-                else:
-                    merged_start.append(start_frames[frame_index])
-                    merged_end.append(end_frames[frame_index])
-            else:
-                if previous_start == -1:
-                    previous_start = start_frames[frame_index]
-                previous_end = end_frames[frame_index + 1]
-
-        if previous_start != -1:
-            merged_start.append(previous_start)
-            merged_end.append(previous_end)
-        """
         player_carry_data.start_frames = merged_start
         player_carry_data.end_frames = merged_end
 
@@ -256,9 +229,9 @@ class CarryDetection:
             ball_carry.end_frame_number = end_frames[i]
             ball_carry.player_id.id = player.id.id
             ball_carry.carry_time = total_time
+            ball_carry.has_flick = i in carry_data.flicks and carry_data.flicks[i]
             ball_carry.straight_line_distance = self.get_straight_line_distance(player_frames,
                                                                                 start_frames[i], end_frames[i])
-            ball_carry.has_flick = i in carry_data.flicks
 
             z_distance = carry_frames.ball.pos_z - player_frames.pos_z
             xy_carry = xy_distance[start_frames[i]:end_frames[i]]

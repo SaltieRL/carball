@@ -268,8 +268,8 @@ def get_specific_answers():
         "SHOTS": [3, 0, 2, 1],
         "PASSES": [1, 1, 1],
         "AERIALS": [0, 1, 2, 0],
-        "DRIBBLES": [1, 3, 10],
-        "FLICKS": [0, 2, 10],
+        "DRIBBLES": [1, 3, 50],
+        "FLICKS": [0, 1, 0],
     }
 
 
