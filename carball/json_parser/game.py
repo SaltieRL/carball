@@ -1,7 +1,7 @@
 import json
 import logging
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 
 import pandas as pd
 
@@ -283,101 +283,12 @@ class Game:
                         break
 
             # find players and ball
-            for actor_id, actor_data in current_actors.items():
-                if actor_data["TypeName"] == "TAGame.Default__PRI_TA" \
-                        and "Engine.PlayerReplicationInfo:PlayerName" in actor_data:
-
-                    player_dict = {
-                        'name': actor_data["Engine.PlayerReplicationInfo:PlayerName"],
-                    }
-                    # Conditionally add ['team'] key to player_dict
-                    player_team = actor_data.get("Engine.PlayerReplicationInfo:Team", None)
-                    if player_team is not None and player_team != -1:
-                        player_dict['team'] = player_team
-
-                    if "TAGame.PRI_TA:PartyLeader" in actor_data:
-                        try:
-                            actor_type = \
-                                list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id'][
-                                         'remote_id'].keys())[
-                                    0]
-                            unique_id = str(
-                                actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][
-                                    actor_type])
-
-                            # only process if party_leader id exists
-                            if "party_leader" in actor_data["TAGame.PRI_TA:PartyLeader"] and \
-                                    "id" in actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]:
-                                leader_actor_type = list(
-                                    actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0].keys()
-                                )[0]
-                                # special handling if leader actor type is play_station
-                                # for our use cases the following are equivalent:
-                                # "['someusername', [70, 76, 174, 206, 14, 206, 44, 0, 128, 0, 0, 0, 0, 0, 0, 0, 169, 39, 75, 227, 93, 88, 117, 152]]"
-                                # is equivalent to:
-                                # ['someusername', [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 169, 39, 75, 227, 93, 88, 117, 152]]
-                                if leader_actor_type == "play_station":
-                                    leader = str(
-                                        actor_data[
-                                            "TAGame.PRI_TA:PartyLeader"
-                                        ]["party_leader"]["id"][0][leader_actor_type]
-                                    )
-                                    leader_ps_name = actor_data[
-                                        "TAGame.PRI_TA:PartyLeader"
-                                    ]["party_leader"]["id"][0][leader_actor_type][0]
-                                    leader_ps_array = actor_data[
-                                        "TAGame.PRI_TA:PartyLeader"
-                                    ]["party_leader"]["id"][0][leader_actor_type][1]
-                                    parties_keys = parties.copy().keys()
-                                    for k in parties_keys:
-                                        if leader_ps_name in k:
-                                            k_ps_name = k[1:][:-1].split(', ', 1)[0].replace("'", "")
-                                            k_ps_array = [int(x) for x in
-                                                          k[1:][:-1].split(', ', 1)[1][1:][:-1].replace(", ",
-                                                                                                        ",").split(",")]
-                                            if k_ps_array[-10:] == leader_ps_array[-10:] and \
-                                                    k_ps_name == leader_ps_name:
-                                                if unique_id not in parties[k]:
-                                                    # check for correct ID when adding,
-                                                    # since we might have added an incorrect
-                                                    # ps id with leading zeroes before encountering
-                                                    # correct party leader without leading zeroes
-                                                    if leader_ps_array > k_ps_array:
-                                                        temp_party = parties.pop(k)
-                                                        parties[leader] = temp_party
-                                                        parties[leader].append(unique_id)
-                                                    else:
-                                                        parties[k].append(unique_id)
-                                                break
-                                    else:
-                                        parties[leader] = [unique_id]
-                                else:  # leader is not using play_station
-                                    leader = str(
-                                        actor_data[
-                                            "TAGame.PRI_TA:PartyLeader"
-                                        ]["party_leader"]["id"][0][leader_actor_type]
-                                    )
-                                    if leader in parties and unique_id not in parties[leader]:
-                                        parties[leader].append(unique_id)
-                                    else:
-                                        parties[leader] = [unique_id]
-
-                        except KeyError:
-                            logger.warning('Could not get party leader for actor id: ' + str(actor_id))
-                    if actor_id not in player_dicts:
-                        # add new player
-                        player_dicts[actor_id] = player_dict
-
-                        logger.debug('Found player actor: %s (id: %s)' % (player_dict['name'], actor_id))
-                        player_ball_data[actor_id] = {}
-                    else:
-                        # update player_dicts
-                        for _k, _v in {**actor_data, **player_dict}.items():
-                            player_dicts[actor_id][_k] = _v
-                elif actor_data["ClassName"] == "TAGame.Team_Soccar_TA":
-                    team_dicts[actor_id] = actor_data
-                    team_dicts[actor_id]['colour'] = 'blue' if actor_data[
-                                                                   "TypeName"] == "Archetypes.Teams.Team0" else 'orange'
+            players_and_teams_data = self.parse_players_and_teams(current_actors, parties, player_dicts,
+                                                                  player_ball_data, team_dicts)
+            parties = players_and_teams_data["parties"]
+            player_dicts = players_and_teams_data["player_dicts"]
+            player_ball_data = players_and_teams_data["player_ball_data"]
+            team_dicts = players_and_teams_data["team_dicts"]
 
             # stop data collection after goal
             REPLICATED_RB_STATE_KEY = "TAGame.RBActor_TA:ReplicatedRBState"
@@ -479,7 +390,7 @@ class Game:
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Basketball" or \
-                        actor_data["TypeName"] == "Archetypes.Ball.Ball_BasketBall":
+                            actor_data["TypeName"] == "Archetypes.Ball.Ball_BasketBall":
                         if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
                             continue
                         self.ball_type = mutators.BASKETBALL
@@ -631,6 +542,100 @@ class Game:
         }
 
         return all_data
+
+    def parse_players_and_teams(self, current_actors, parties, player_dicts, player_ball_data, team_dicts) -> Dict:
+        """
+              :return: players_and_team_data = {
+                  'parties': parties,
+                  'player_dicts': player_dicts,
+                  'player_ball_data': player_ball_data,
+                  'team_dicts': team_dicts,
+              }
+        """
+
+        for actor_id, actor_data in current_actors.items():
+            if actor_data["TypeName"] == "TAGame.Default__PRI_TA" \
+                    and "Engine.PlayerReplicationInfo:PlayerName" in actor_data:
+
+                player_dict = {
+                    'name': actor_data["Engine.PlayerReplicationInfo:PlayerName"],
+                }
+                # Conditionally add ['team'] key to player_dict
+                player_team = actor_data.get("Engine.PlayerReplicationInfo:Team", None)
+                if player_team is not None and player_team != -1:
+                    player_dict['team'] = player_team
+
+                if "TAGame.PRI_TA:PartyLeader" in actor_data:
+                    try:
+                        actor_type = \
+                            list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id'][
+                                     'remote_id'].keys())[
+                                0]
+
+                        # handle UniqueID for plays_station and switch
+                        if actor_type == "play_station" or actor_type == "psy_net":
+                            actor_name = actor_data["Engine.PlayerReplicationInfo:PlayerName"]
+                            for player_stat in self.properties['PlayerStats']['value']["array"]:
+                                if actor_name == player_stat['value']['Name']['value']['str']:
+                                    unique_id = str(player_stat['value']['OnlineID']['value']['q_word'])
+                        else:
+                            unique_id = str(
+                                actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][actor_type])
+
+                        # only process if party_leader id exists
+                        if "party_leader" in actor_data["TAGame.PRI_TA:PartyLeader"] and \
+                                "id" in actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]:
+                            leader_actor_type = list(
+                                actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0].keys()
+                            )[0]
+                            if leader_actor_type == "play_station" or leader_actor_type == "psy_net":
+                                leader_name = actor_data[
+                                    "TAGame.PRI_TA:PartyLeader"
+                                ]["party_leader"]["id"][0][leader_actor_type][0]
+
+                                for player_stat in self.properties['PlayerStats']['value']["array"]:
+                                    if leader_name == player_stat['value']['Name']['value']['str']:
+                                        leader = str(player_stat['value']['OnlineID']['value']['q_word'])
+
+                            else:  # leader is not using play_station nor switch (ie. xbox or steam)
+                                leader = str(
+                                    actor_data[
+                                        "TAGame.PRI_TA:PartyLeader"
+                                    ]["party_leader"]["id"][0][leader_actor_type]
+                                )
+
+                            if leader in parties:
+                                if unique_id not in parties[leader]:
+                                    parties[leader].append(unique_id)
+                            else:
+                                parties[leader] = [unique_id]
+
+                    except KeyError:
+                        logger.warning('Could not get party leader for actor id: ' + str(actor_id))
+
+                if actor_id not in player_dicts:
+                    # add new player
+                    player_dicts[actor_id] = player_dict
+
+                    logger.debug('Found player actor: %s (id: %s)' % (player_dict['name'], actor_id))
+                    player_ball_data[actor_id] = {}
+                else:
+                    # update player_dicts
+                    for _k, _v in {**actor_data, **player_dict}.items():
+                        player_dicts[actor_id][_k] = _v
+            elif actor_data["ClassName"] == "TAGame.Team_Soccar_TA":
+                team_dicts[actor_id] = actor_data
+                team_dicts[actor_id]['colour'] = 'blue' if actor_data[
+                                                               "TypeName"] == "Archetypes.Teams.Team0" else 'orange'
+
+        players_and_team_data = {
+            'parties': parties,
+            'player_dicts': player_dicts,
+            'player_ball_data': player_ball_data,
+            'team_dicts': team_dicts
+        }
+
+        return players_and_team_data
 
     def parse_all_data(self, all_data) -> None:
         """
