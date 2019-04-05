@@ -4,21 +4,51 @@ import "api/player_id.proto";
 
 package api.stats;
 
-enum KickoffType {
-  // 3s
-  DDO=0; DDG=1; DOO=2; DOG=3; OOG=4;
-  // 2s
-  DD=5; DO=6; OO=7; OG=8; DG=9;
-  // 1s
-  D=10; O=11; G=12;
-  // ??
-  U=13;
-};
 enum KickoffPosition {
-  DIAGONAL=0; OFFCENTER=1; GOALIE=2; OTHER=3;
+  // Kickoff positions for individual cars in standard arenas
+  // Diagonal, facing the ball
+  DIAGONAL=0;
+  // Back near the goal, but off the center line and slightly forward
+  OFFCENTER=1;
+  // Directly on the center line by the goal
+  GOALIE=2;
+  UNKNOWN_KICKOFF_POS=3;
+};
+enum KickoffType {
+  // Configuration of team at kickoff
+  // Compositions of the KickoffPosition types
+  // 3s
+  THREES_DIAG_DIAG_OFFCENT=0;
+  THREES_DIAG_DIAG_GOAL=1;
+  THREES_DIAG_OFFCENT_OFFCENT=2;
+  THREES_DIAG_OFFCENT_GOAL=3;
+  THREES_OFFCENT_OFFCENT_GOAL=4;
+  // 2s
+  TWOS_DIAG_DIAG=5;
+  TWOS_DIAG_OFFCENT=6;
+  TWOS_OFFCENT_OFFCENT=7;
+  TWOS_OFFCENT_GOAL=8;
+  TWOS_DIAG_GOAL=9;
+  // 1s
+  DUEL_DIAG=10;
+  DUEL_OFFCENT=11;
+  DUEL_GOAL=12;
+  // ??
+  UNKNOWN_KICKOFF_TYPE=13;
 };
 enum TouchPosition {
-UNKNOWN=0; BOOST=1; BALL=2; AFK=3; GOAL=4; CHEAT=5;
+  // Going for the big boost in the corner
+  BOOST=0;
+  // Going for the ball
+  BALL=1;
+  // Zero movement
+  AFK=2;
+  // Hanging out in the goal
+  GOAL=3;
+  // Cheating up close to the middle line
+  CHEAT=4;
+  // Middle big boost or some other degenerate strategy
+  UNKNOWN_TOUCH_POS=5;
 };
 
 message KickoffPlayer {

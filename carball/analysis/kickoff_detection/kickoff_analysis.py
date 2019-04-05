@@ -81,37 +81,37 @@ class BaseKickoff:
             # 3's
             if diagonals == 4:
                 if offcenter == 2:
-                    return kickoff.DDO
+                    return kickoff.THREES_DIAG_DIAG_OFFCENT
                 if goalies == 2:
-                    return kickoff.DDG
+                    return kickoff.THREES_DIAG_DIAG_GOAL
             if diagonals == 2:
                 if offcenter == 4:
-                    return kickoff.DOO
+                    return kickoff.THREES_DIAG_OFFCENT_OFFCENT
                 if offcenter == 2:
-                    return kickoff.DOG
+                    return kickoff.THREES_DIAG_OFFCENT_GOAL
             if offcenter == 4:
-                return kickoff.OOG
+                return kickoff.THREES_OFFCENT_OFFCENT_GOAL
         if len(players) == 4:
             if diagonals == 4:
-                return kickoff.DD
+                return kickoff.TWOS_DIAG_DIAG
             if diagonals == 2:
                 if offcenter == 2:
-                    return kickoff.DO
+                    return kickoff.TWOS_DIAG_OFFCENT
                 if goalies == 2:
-                    return kickoff.DG
+                    return kickoff.TWOS_DIAG_GOAL
             if offcenter == 4:
-                return kickoff.OO
+                return kickoff.TWOS_OFFCENT_OFFCENT
             if offcenter == 2:
                 if goalie == 2:
-                    return kickoff.OG
+                    return kickoff.TWOS_OFFCENT_GOAL
         if len(players) == 2:
             if diagonals == 2:
-                return kickoff.D
+                return kickoff.DUEL_DIAG
             if offcenter == 2:
-                return kickoff.O
+                return kickoff.DUEL_OFFCENT
             if goalies == 2:
-                return kickoff.G
-        return kickoff.U
+                return kickoff.DUEL_GOAL
+        return kickoff.UNKNOWN_KICKOFF_TYPE
 
     @staticmethod
     def get_kickoff_position(player_class: Player, data_frame: pd.DataFrame, frame: int):
@@ -125,7 +125,7 @@ class BaseKickoff:
            return kickoff.OFFCENTER
          if abs(abs(player_df['pos_x'][frame])) < 4:
            return kickoff.GOALIE
-         return kickoff.UNKNOWN
+         return kickoff.UNKNOWN_KICKOFF_POS
 
     @staticmethod
     def get_dist(data_frame: pd.DataFrame, player: str, frame: int):
@@ -156,4 +156,4 @@ class BaseKickoff:
              return kickoff.GOAL
          if (x <500) and (y < 3600):
              return kickoff.CHEAT
-         return kickoff.UNKNOWN
+         return kickoff.UNKNOWN_TOUCH_POS
