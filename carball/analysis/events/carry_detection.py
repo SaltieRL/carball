@@ -2,6 +2,7 @@ import logging
 from typing import Tuple, List
 
 import pandas as pd
+import numpy as np
 
 from carball.analysis.constants.field_constants import BALL_SIZE
 from carball.generated.api import game_pb2
@@ -37,6 +38,10 @@ class CarryDetection:
         player_carry_data, xy_distance, player_frames = self.player_close_frames(carry_data.carry_frames,
                                                                                  carry_data.carry_frames[player.name])
 
+        if len(player_carry_data.start_frames) == 0:
+            # No dribbles no go
+            return
+
         modified_carry_data = self.correct_carries(carry_data, player_carry_data, player, proto_game)
 
         self.add_carry_events(modified_carry_data, xy_distance, player_frames, player, proto_game)
@@ -48,12 +53,21 @@ class CarryDetection:
         Filters out carries that are too short
         """
 
-        xy_distance = ((player_frames.pos_x - valid_frames.ball.pos_x) ** 2 +
-                       (player_frames.pos_y - valid_frames.ball.pos_y) ** 2) ** 0.5
-        carry_frames = valid_frames[(xy_distance < (BALL_SIZE * 1.3)) & (player_frames.pos_z < valid_frames.ball.pos_z)]
+        null_values = player_frames.pos_x.isnull()
+        true_valid_frames = valid_frames
+        true_player_frames = player_frames
+        if null_values.values.any():
+            index = player_frames.index[null_values]
+            true_valid_frames = valid_frames.drop(index=index)
+            true_player_frames = player_frames.drop(index=index)
 
-        player_carry_data = CarryData(valid_frames, *self.creat_start_end_frames(carry_frames))
-        return player_carry_data, xy_distance, player_frames
+        xy_distance = ((true_player_frames.pos_x - true_valid_frames.ball.pos_x) ** 2 +
+                       (true_player_frames.pos_y - true_valid_frames.ball.pos_y) ** 2) ** 0.5
+        carry_frames = true_valid_frames[(xy_distance < (BALL_SIZE * 1.3)) &
+                                         (true_player_frames.pos_z < true_valid_frames.ball.pos_z)]
+
+        player_carry_data = CarryData(true_valid_frames, *self.creat_start_end_frames(carry_frames))
+        return player_carry_data, xy_distance, true_player_frames
         # look up hits.
         # any hits by the same player within a continuous set of valid frames should count as carries
 
@@ -90,6 +104,8 @@ class CarryDetection:
 
             # Get to the correct index before going backwards
             while hit_list[hit_index].frame_number < starting_frame:
+                if hit_index == len(hit_list) - 1:
+                    break
                 hit_index += 1
 
             last_valid_hit = None
@@ -98,7 +114,8 @@ class CarryDetection:
                    hit_list[hit_index].frame_number > previous_end_frame):
                 last_valid_hit = hit_list[hit_index]
                 hit_index -= 1
-            hit_index += 1
+            if last_valid_hit is not None:
+                hit_index += 1
 
             if last_valid_hit is not None and last_valid_hit.frame_number < starting_frame:
                 player_carry_data.start_frames[frame_index] = last_valid_hit.frame_number
@@ -175,6 +192,9 @@ class CarryDetection:
         merged_start = []
         merged_end = []
 
+        if len(start_frames) == 0:
+            return
+
         if len(start_frames) == 1:
             # Only one potential carry in the indexes, need to convert to mutable list
             player_carry_data.start_frames = [player_carry_data.start_frames[0]]
@@ -189,14 +209,13 @@ class CarryDetection:
             carry_start = start_frames[player_frame_index]
             carry_end = None
             while player_frame_index < len(start_frames) and start_frames[player_frame_index] < end_frame:
-                carry_end = end_frames[player_frame_index]
                 player_frame_index += 1
             if carry_end is not None:
                 merged_start.append(carry_start)
                 merged_end.append(carry_end)
 
-            if player_frame_index == len(start_frames):
-                player_frame_index -= 1
+            if player_frame_index >= len(start_frames):
+                break
 
         player_carry_data.start_frames = merged_start
         player_carry_data.end_frames = merged_end
