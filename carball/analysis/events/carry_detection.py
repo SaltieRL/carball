@@ -6,7 +6,7 @@ import pandas as pd
 from carball.analysis.constants.field_constants import BALL_SIZE
 from carball.generated.api import game_pb2
 from carball.generated.api.player_pb2 import Player
-from generated.api.stats import events_pb2
+from carball.generated.api.stats import events_pb2
 
 logger = logging.getLogger(__name__)
 
