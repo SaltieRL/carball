@@ -38,6 +38,14 @@ class DribbleTests(unittest.TestCase):
 
         run_analysis_test_on_replay(test, get_raw_replays()["SKYBOT_DRIBBLE_INFO"])
 
+    def test_zero_dribbles(self):
+        def test(analysis: AnalysisManager):
+            proto_game = analysis.get_protobuf_data()
+            carries = proto_game.game_stats.ball_carries
+            self.assertEqual(len(carries), 0)
+
+        run_analysis_test_on_replay(test, get_raw_replays()["KICKOFF_NO_TOUCH"])
+
 
 if __name__ == '__main__':
     unittest.main()
