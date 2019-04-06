@@ -639,7 +639,7 @@ class Game:
 
         return players_and_team_data
 
-    def parse_all_data(self, all_data) -> None:
+    def parse_all_data(self, all_data, clean_player_names: bool) -> None:
         """
         Finishes parsing after frame-parsing is done.
         E.g. Adds players not found in MatchStats metadata
