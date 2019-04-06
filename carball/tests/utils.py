@@ -83,7 +83,9 @@ def get_complex_replay_list():
         'https://cdn.discordapp.com/attachments/493849514680254468/496180938968137749/FAKE_BOTS_SkyBot.replay',
         'https://cdn.discordapp.com/attachments/493849514680254468/497149910999891969/NEGATIVE_WASTED_COLLECTION.replay',
         'https://cdn.discordapp.com/attachments/493849514680254468/497191273619259393/WASTED_BOOST_WHILE_SUPER_SONIC.replay',
-        'https://cdn.discordapp.com/attachments/493849514680254468/501630263881760798/OCE_RLCS_7_CARS.replay'
+        'https://cdn.discordapp.com/attachments/493849514680254468/501630263881760798/OCE_RLCS_7_CARS.replay',
+        'https://cdn.discordapp.com/attachments/493849514680254468/561300088400379905/crossplatform_party.replay',
+        'https://cdn.discordapp.com/attachments/493849514680254468/563036945635082260/PARTY_LEADER_SYSTEM_ID_0.replay',
     ]
 
 
@@ -159,9 +161,20 @@ def get_raw_replays():
         "DEFAULT_3_ON_3_AROUND_58_HITS": [
             "https://cdn.discordapp.com/attachments/493849514680254468/496820586811621387/DEFAULT_3_ON_3_AROUND_58_HITS.replay"],
 
+        # parties
+        "PLAY_STATION_ONLY_PARTY": [
+            'https://cdn.discordapp.com/attachments/493849514680254468/563457368193761301/PLAY_STATION_ONLY_PARTY.replay'],
+
+        "XBOX_PARTY": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/563831620222844928/XBOX_PARTY.replay"
+        ],
         # error cases
         "UNICODE_ERROR": [
             "https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay"],
+        "CROSSPLATFORM_PARTY_LEADER_ERROR": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/561300088400379905/crossplatform_party.replay"],
+        "PARTY_LEADER_SYSTEM_ID_0_ERROR": [
+            'https://cdn.discordapp.com/attachments/493849514680254468/563036945635082260/PARTY_LEADER_SYSTEM_ID_0.replay'],
     }
 
 
@@ -188,7 +201,8 @@ def get_specific_replays():
         # HITS
         "HITS": raw_map["4_SHOTS"] + raw_map["KICKOFF_3_HITS"] + raw_map["12_BOOST_PAD_45_USED"] +
                 raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"] +
-                raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"] + raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["DEFAULT_3_ON_3_AROUND_58_HITS"],
+                raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"] + raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] +
+                raw_map["DEFAULT_3_ON_3_AROUND_58_HITS"],
         # + raw_map["PINCH_GROUND"],  TODO: Fix pinches to create 2 hits 1 for each person on same frame
         "SHOTS": raw_map["4_SHOTS"] + raw_map["12_BOOST_PAD_45_USED"] +
                  raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
@@ -219,6 +233,6 @@ def get_specific_answers():
 def assertNearlyEqual(self, a, b, percent=2.0, msg=None):
     if abs(a - b) > abs(percent / 100.0 * min(abs(a), abs(b))):
         if msg is None:
-            self.fail("The given numbers %s and %s are not within %s percent of each other."%(a, b, percent))
+            self.fail("The given numbers %s and %s are not within %s percent of each other." % (a, b, percent))
         else:
             self.fail(msg)
