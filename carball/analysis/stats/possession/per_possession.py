@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import Counter, defaultdict
 from typing import List, Dict, Tuple
 
 import pandas as pd
@@ -14,6 +14,15 @@ from ....json_parser.game import Game
 
 
 class PerPossessionStat(BaseStat):
+    possession_hit_fields = [
+        'pass_', 'passed',
+        'dribble', 'dribble_continuation',
+        'shot', 'goal',
+        'assist', 'assisted',
+        'save',
+        'aerial',
+    ]
+
     def __init__(self):
         super().__init__()
         self.initialized = False
@@ -63,27 +72,22 @@ class PerPossessionStat(BaseStat):
             team_possession for team_possession in _team_possessions
             if len(team_possession.hits) > 1 and team_possession.duration > 1
         ]
-        self.logger.info(f"Found {len(self.player_possessions)} player possessions and {len(self.team_possessions)} team possessions.")
+        self.logger.info(f"Found {len(self.player_possessions)} player possessions and "
+                         f"{len(self.team_possessions)} team possessions.")
 
         for possessions in (self.player_possessions, self.team_possessions):
             self.add_possession_counts(possessions)
             self.add_possession_distances(possessions)
 
         # Sort player_possessions by player
-        self.player_possessions_dict = {}
+        self.player_possessions_dict = defaultdict(list)
         for possession in self.player_possessions:
-            player_id = possession.player_id
-            if player_id not in self.player_possessions_dict:
-                self.player_possessions_dict[player_id] = []
-            self.player_possessions_dict[player_id].append(possession)
+            self.player_possessions_dict[possession.player_id].append(possession)
 
         # Sort team_possessions by team
-        self.team_possessions_dict: Dict[bool, List['TeamPossession']] = {}
+        self.team_possessions_dict: Dict[bool, List['TeamPossession']] = defaultdict(list)
         for possession in self.team_possessions:
-            team_is_orange = possession.is_orange
-            if team_is_orange not in self.team_possessions_dict:
-                self.team_possessions_dict[team_is_orange] = []
-            self.team_possessions_dict[team_is_orange].append(possession)
+            self.team_possessions_dict[possession.is_orange].append(possession)
 
         self.initialized = True
 
@@ -168,19 +172,11 @@ class PerPossessionStat(BaseStat):
             possession_duration = possession_times[1] - possession_times[0]
             possession.duration = possession_duration
 
-    @staticmethod
-    def add_possession_counts(possessions: List['BasePossession']):
-        fields = [
-            'pass_', 'passed',
-            'dribble', 'dribble_continuation',
-            'shot', 'goal',
-            'assist', 'assisted',
-            'save',
-            'aerial',
-        ]
+    @classmethod
+    def add_possession_counts(cls, possessions: List['BasePossession']):
         for possession in possessions:
             for hit in possession.hits:
-                for field in fields:
+                for field in cls.possession_hit_fields:
                     if getattr(hit, field):
                         possession.counts[field] += 1
 
@@ -201,16 +197,8 @@ class PerPossessionStat(BaseStat):
         average_duration = sum(durations) / len(durations)
 
         average_counts = {}
-        fields = [
-            'pass_', 'passed',
-            'dribble', 'dribble_continuation',
-            'shot', 'goal',
-            'assist', 'assisted',
-            'save',
-            'aerial',
-        ]
 
-        for field in fields:
+        for field in cls.possession_hit_fields:
             sum_ = sum([possession.counts[field] for possession in possessions])
             average_counts[field] = sum_ / count
 
