@@ -92,8 +92,8 @@ class PerPossessionStat(BaseStat):
             team_stat_list[team_is_orange].per_possession_stats.CopyFrom(stats)
 
     @staticmethod
-    def get_possessions(proto_game: game_pb2.Game, player_map: Dict[str, Player]) \
-            -> Tuple[List['PlayerPossession'], List['TeamPossession']]:
+    def get_possessions(proto_game: game_pb2.Game,
+                        player_map: Dict[str, Player]) -> Tuple[List['PlayerPossession'], List['TeamPossession']]:
         hits = proto_game.game_stats.hits
 
         player_possessions: List[PlayerPossession] = []
