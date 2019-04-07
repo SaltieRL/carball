@@ -33,29 +33,6 @@ class PerPossessionStat(BaseStat):
         self.player_possessions_dict = {}
         self.team_possessions_dict = {}
 
-    def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
-        if not self.initialized:
-            self.initialize(proto_game, player_map, data_frame)
-
-        player_possession_stats_dict: Dict[str, List['PlayerPossession']] = {}
-        for player_id, possessions in self.player_possessions_dict.items():
-            stats = self.get_per_possession_stats(possessions)
-
-            player_stat_map[player_id].per_possession_stats.CopyFrom(stats)
-
-            player_possession_stats_dict[player_id] = stats
-
-        for player_id, player_stats in player_stat_map.items():
-            if player_id in player_possession_stats_dict:
-                player_stats.per_possession_stats.CopyFrom(player_possession_stats_dict[player_id])
-
-    def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game, proto_game: game_pb2.Game,
-                            player_map: Dict[str, Player], data_frame: pd.DataFrame):
-        for team_is_orange, possessions in self.team_possessions_dict.items():
-            stats = self.get_per_possession_stats(possessions)
-            team_stat_list[team_is_orange].per_possession_stats.CopyFrom(stats)
-
     def initialize(self, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                    data_frame: pd.DataFrame):
         _player_possessions, _team_possessions = self.get_possessions(proto_game, player_map)
@@ -90,6 +67,29 @@ class PerPossessionStat(BaseStat):
             self.team_possessions_dict[possession.is_orange].append(possession)
 
         self.initialized = True
+
+    def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+        if not self.initialized:
+            self.initialize(proto_game, player_map, data_frame)
+
+        player_possession_stats_dict: Dict[str, List['PlayerPossession']] = {}
+        for player_id, possessions in self.player_possessions_dict.items():
+            stats = self.get_per_possession_stats(possessions)
+
+            player_stat_map[player_id].per_possession_stats.CopyFrom(stats)
+
+            player_possession_stats_dict[player_id] = stats
+
+        for player_id, player_stats in player_stat_map.items():
+            if player_id in player_possession_stats_dict:
+                player_stats.per_possession_stats.CopyFrom(player_possession_stats_dict[player_id])
+
+    def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game, proto_game: game_pb2.Game,
+                            player_map: Dict[str, Player], data_frame: pd.DataFrame):
+        for team_is_orange, possessions in self.team_possessions_dict.items():
+            stats = self.get_per_possession_stats(possessions)
+            team_stat_list[team_is_orange].per_possession_stats.CopyFrom(stats)
 
     @staticmethod
     def get_possessions(proto_game: game_pb2.Game, player_map: Dict[str, Player]) \
