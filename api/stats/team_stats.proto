@@ -1,6 +1,7 @@
 syntax = "proto2";
 
 import "api/stats/stats.proto";
+import "api/stats/per_possession_stats.proto";
 
 package api.stats;
 
@@ -20,4 +21,5 @@ message TeamStats {
     optional api.stats.Possession possession = 1;
     optional api.stats.HitCounts hit_counts = 2;
     optional CenterOfMass center_of_mass = 3;
+    optional PerPossessionStats per_possession_stats = 4;
 }
