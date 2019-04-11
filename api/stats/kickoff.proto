@@ -51,14 +51,21 @@ enum TouchPosition {
   UNKNOWN_TOUCH_POS=5;
 };
 
+message PlayerPositionData {
+    optional float pos_x = 1;
+    optional float pos_y = 2;
+    optional float pos_z = 3;
+}
+
 message KickoffPlayer {
 optional api.PlayerId player = 1;
 optional KickoffPosition kpos = 2;
 optional TouchPosition tpos = 3;
-optional float boost = 4;
-repeated float jumps = 5;
-optional float ball_time = 6;
-optional float boost_time = 7;
+optional PlayerPositionData ppos = 4;
+optional float boost = 5;
+repeated float jumps = 6;
+optional float ball_dist = 7;
+optional float boost_time = 8;
 };
 
 message Touch {

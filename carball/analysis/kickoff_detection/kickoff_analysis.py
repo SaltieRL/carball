@@ -22,14 +22,6 @@ logger = logging.getLogger(__name__)
 
 class BaseKickoff:
 
-    def is_kickoff(data_frame, index):
-        ball_position = data_frame.ball.loc[index, position_column_names]
-        if ((ball_position.pos_x == 0.0) and
-            (ball_position.pos_y == 0.0)): #z=92.74
-          return True
-        else:
-          return False
-
     @staticmethod
     def get_kickoffs_from_game(game: Game, proto_game: game_pb2, id_creation:Callable,
                                player_map: Dict[str, Player],
@@ -49,6 +41,12 @@ class BaseKickoff:
                 kPlayer.kpos = BaseKickoff.get_kickoff_position(player, data_frame, frame)
                 kPlayer.tpos = BaseKickoff.get_touch_position(player, data_frame, frame, end_frame)
                 kPlayer.boost = data_frame[player.name]['boost'][end_frame]
+                ball_dist =  BaseKickoff.get_dist(data_frame, player.name, end_frame)
+                if ball_dist < 700:
+                    kPlayer.ball_dist  = BaseKickoff.get_dist(data_frame, player.name, end_frame)
+                    kPlayer.ppos.pos_x = data_frame[player.name]['pos_x'][end_frame]
+                    kPlayer.ppos.pos_y = data_frame[player.name]['pos_y'][end_frame]
+                    kPlayer.ppos.pos_z = data_frame[player.name]['pos_z'][end_frame]
                 BaseKickoff.set_jumps(kPlayer, player, data_frame, frame, end_frame)
             cur_kickoff.type = BaseKickoff.get_kickoff_type(cur_kickoff.touch.players)
             kickoffs[frame] = cur_kickoff
@@ -58,18 +56,12 @@ class BaseKickoff:
     def set_jumps(kPlayer, player, data_frame, frame, end_frame):
         jump_active_df        = data_frame[player.name]['jump_active']
         double_jump_active_df = data_frame[player.name]['double_jump_active']
-        time = 0.0
-        first_ball = True
         # check the kickoff frames (and then some) for jumps & big boost collection
         for f in range(frame, end_frame + 20):
-            time = time + data_frame['game']['delta'][f]
-            if first_ball and BaseKickoff.get_dist(data_frame, player.name, f) < 700:
-                kPlayer.ball_time = time
-                first_ball = False
             if data_frame[player.name]['boost_collect'][f] == True:
-                kPlayer.boost_time = time
+                kPlayer.boost_time = data_frame['game']['delta'][frame:f].sum()
             if jump_active_df[f] != jump_active_df[f-1] or double_jump_active_df[f] != double_jump_active_df[f-1]:
-                kPlayer.jumps.append(time)
+                kPlayer.jumps.append(data_frame['game']['delta'][frame:f].sum())
 
     @staticmethod
     def get_kickoff_type(players: list):
