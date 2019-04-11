@@ -157,7 +157,7 @@ class AnalysisManager:
     def calculate_kickoff_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                             data_frame, kickoff_frames, first_touch_frames):
         logger.info("Looking for kickoffs.")
-        kickoffs = BaseKickoff.get_kickoffs_from_game(game, proto_game, self.id_creator, player_map, data_frame, kickoff_frames)
+        kickoffs = BaseKickoff.get_kickoffs_from_game(game, proto_game, self.id_creator, player_map, data_frame, kickoff_frames, first_touch_frames)
         logger.info("Found %s kickoffs." % len(kickoffs.keys()))
 
     def get_advanced_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],

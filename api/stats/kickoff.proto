@@ -57,18 +57,19 @@ optional KickoffPosition kpos = 2;
 optional TouchPosition tpos = 3;
 optional float boost = 4;
 repeated float jumps = 5;
-optional float ballTime = 6;
-optional float boostTime = 7;
+optional float ball_time = 6;
+optional float boost_time = 7;
 };
 
 message Touch {
 repeated KickoffPlayer players = 1; // info about each player at the point of the touch
-optional bool kickoffgoal = 2;  // if a goal is scored in the 15 seconds following this touch
-optional bool orangeTeamGoal = 3;
+optional float kickoff_goal = 2;  // time until next goal
+optional bool orange_team_goal = 3;
 };
 message KickoffStats {
-  optional int32 startframe = 1;
-  optional int32 touchframe = 2;
-  optional KickoffType type = 3;
-  optional Touch touch = 4;
+  optional int32 start_frame = 1;
+  optional int32 touch_frame = 2;
+  optional float touch_time = 3;
+  optional KickoffType type = 4;
+  optional Touch touch = 5;
 }

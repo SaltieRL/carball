@@ -33,16 +33,16 @@ class BaseKickoff:
     @staticmethod
     def get_kickoffs_from_game(game: Game, proto_game: game_pb2, id_creation:Callable,
                                player_map: Dict[str, Player],
-                               data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame) -> Dict[int, KickoffStats]:
+                               data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame,
+                               first_touch_frames: pd.DataFrame) -> Dict[int, KickoffStats]:
         kickoffs = dict()
-        for frame in kickoff_frames:
+        for index,frame in enumerate(kickoff_frames):
             cur_kickoff = proto_game.game_stats.kickoff_stats.add()
-            end_frame = frame
-            while BaseKickoff.is_kickoff(data_frame, end_frame):
-                end_frame = end_frame + 1
+            end_frame = first_touch_frames[index]
             cur_kickoff.touch
-            cur_kickoff.startframe = frame
-            cur_kickoff.touchframe = end_frame
+            cur_kickoff.start_frame = frame
+            cur_kickoff.touch_frame = end_frame
+            cur_kickoff.touch_time  = data_frame['game']['delta'][frame:end_frame].sum()
             for player in player_map.values():
                 kPlayer = cur_kickoff.touch.players.add()
                 kPlayer.player.id = player.id.id
@@ -64,10 +64,10 @@ class BaseKickoff:
         for f in range(frame, end_frame + 20):
             time = time + data_frame['game']['delta'][f]
             if first_ball and BaseKickoff.get_dist(data_frame, player.name, f) < 700:
-                kPlayer.ballTime = time
+                kPlayer.ball_time = time
                 first_ball = False
             if data_frame[player.name]['boost_collect'][f] == True:
-                kPlayer.boostTime = time
+                kPlayer.boost_time = time
             if jump_active_df[f] != jump_active_df[f-1] or double_jump_active_df[f] != double_jump_active_df[f-1]:
                 kPlayer.jumps.append(time)
 
