@@ -44,7 +44,7 @@ class AnalysisManager:
 
     def create_analysis(self):
         """
-        Organizes all the different analsysis that can occurs
+        Organizes all the different analysis that can occurs
         :return:
         """
         self.start_time()
@@ -83,7 +83,7 @@ class AnalysisManager:
         self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_kickoff_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.log_time("calculating hits")
-        self.get_advanced_stats(game, proto_game, player_map, data_frame)
+        self.get_stats(game, proto_game, player_map, data_frame)
 
     def get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
 
@@ -160,8 +160,8 @@ class AnalysisManager:
         kickoffs = BaseKickoff.get_kickoffs_from_game(game, proto_game, self.id_creator, player_map, data_frame, kickoff_frames, first_touch_frames)
         logger.info("Found %s kickoffs." % len(kickoffs.keys()))
 
-    def get_advanced_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                           data_frame: pd.DataFrame):
+    def get_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                  data_frame: pd.DataFrame):
         """
         Calculates all stats that are beyond the basic event creation.
         This is only active on valid goal frames.
