@@ -12,12 +12,12 @@ from ...generated.api.stats.team_stats_pb2 import TeamStats
 from ...generated.api.team_pb2 import Team
 from ...json_parser.game import Game
 
-
 logger = logging.getLogger(__name__)
 
 
 def start_time():
     return time.time()
+
 
 def end_time(start):
     return (time.time() - start) * 1000
@@ -28,7 +28,7 @@ class StatsManager:
     def get_stats(self, game: Game, proto_game: game_pb2.Game,
                   player_map: Dict[str, Player], data_frame: pd.DataFrame):
         """
-        Calculates all advanced stats.
+        Calculates all basic stats.
         The stats are always calculated in this order:
             Player, Team, Game, Hit
         """

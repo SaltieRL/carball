@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package api.stats;
+
+message AverageCounts {
+    optional float pass_ = 1;
+    optional float passed = 2;
+    optional float dribble = 3;
+    optional float dribble_continuation = 4;
+    optional float shot = 5;
+    optional float goal = 6;
+    optional float assist = 7;
+    optional float assisted = 8;
+    optional float save = 9;
+    optional float aerial = 10;
+}
+
+message PerPossessionStats {
+    optional AverageCounts average_counts = 1;
+    optional float average_duration = 2;
+    optional float average_hits = 3;
+    optional int32 count = 4;
+}

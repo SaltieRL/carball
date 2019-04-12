@@ -2,7 +2,7 @@ import json
 import logging
 import re
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 
 import pandas as pd
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 COMPONENT_ACTIVE_KEY = "TAGame.CarComponent_TA:Active"
 COMPONENT_REPLICATED_ACTIVE_KEY = "TAGame.CarComponent_TA:ReplicatedActive"
-BOOST_PER_SECOND = 80 * 1/.93  # boost used per second out of 255
+BOOST_PER_SECOND = 80 * 1 / .93  # boost used per second out of 255
 DATETIME_FORMATS = [
     '%Y-%m-%d %H-%M-%S',
     '%Y-%m-%d:%H-%M'
@@ -52,7 +52,7 @@ class Game:
         self.demos = None
         self.parties = None
 
-    def initialize(self, file_path='', loaded_json=None):
+    def initialize(self, file_path='', loaded_json=None, parse_replay: bool = True, clean_player_names: bool = False):
         self.file_path = file_path
         if loaded_json is None:
             with open(file_path, 'r') as f:
@@ -96,10 +96,11 @@ class Game:
         self.players: List[Player] = self.create_players()
         self.goals: List[Goal] = self.get_goals()
         self.primary_player: dict = self.get_primary_player()
-        self.all_data = self.parse_replay()
 
-        self.parse_all_data(self.all_data)
-        logger.info("Finished parsing %s" % self)
+        if parse_replay:
+            self.all_data = self.parse_replay()
+            self.parse_all_data(self.all_data, clean_player_names)
+            logger.info("Finished parsing %s" % self)
 
     def __repr__(self):
         team_0_name = self.teams[0].name
@@ -286,49 +287,12 @@ class Game:
                         break
 
             # find players and ball
-            for actor_id, actor_data in current_actors.items():
-                if actor_data["TypeName"] == "TAGame.Default__PRI_TA" \
-                        and "Engine.PlayerReplicationInfo:PlayerName" in actor_data:
-
-                    player_dict = {
-                        'name': actor_data["Engine.PlayerReplicationInfo:PlayerName"],
-                    }
-                    # Conditionally add ['team'] key to player_dict
-                    player_team = actor_data.get("Engine.PlayerReplicationInfo:Team", None)
-                    if player_team is not None and player_team != -1:
-                        player_dict['team'] = player_team
-
-                    if "TAGame.PRI_TA:PartyLeader" in actor_data:
-                        try:
-                            actor_type = \
-                                list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id'][
-                                         'remote_id'].keys())[
-                                    0]
-                            unique_id = str(
-                                actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][
-                                    actor_type])
-                            leader = str(actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0][actor_type])
-                            if leader in parties:
-                                if unique_id not in parties[leader]:
-                                    parties[leader].append(unique_id)
-                            else:
-                                parties[leader] = [unique_id]
-                        except KeyError:
-                            logger.warning('Could not get party leader for actor id: ' + str(actor_id))
-                    if actor_id not in player_dicts:
-                        # add new player
-                        player_dicts[actor_id] = player_dict
-
-                        logger.debug('Found player actor: %s (id: %s)' % (player_dict['name'], actor_id))
-                        player_ball_data[actor_id] = {}
-                    else:
-                        # update player_dicts
-                        for _k, _v in {**actor_data, **player_dict}.items():
-                            player_dicts[actor_id][_k] = _v
-                elif actor_data["ClassName"] == "TAGame.Team_Soccar_TA":
-                    team_dicts[actor_id] = actor_data
-                    team_dicts[actor_id]['colour'] = 'blue' if actor_data[
-                                                                   "TypeName"] == "Archetypes.Teams.Team0" else 'orange'
+            players_and_teams_data = self.parse_players_and_teams(current_actors, parties, player_dicts,
+                                                                  player_ball_data, team_dicts)
+            parties = players_and_teams_data["parties"]
+            player_dicts = players_and_teams_data["player_dicts"]
+            player_ball_data = players_and_teams_data["player_ball_data"]
+            team_dicts = players_and_teams_data["team_dicts"]
 
             # stop data collection after goal
             REPLICATED_RB_STATE_KEY = "TAGame.RBActor_TA:ReplicatedRBState"
@@ -430,7 +394,7 @@ class Game:
                         data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
                         player_ball_data['ball'][frame_number] = data_dict
                     elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Basketball" or \
-                        actor_data["TypeName"] == "Archetypes.Ball.Ball_BasketBall":
+                            actor_data["TypeName"] == "Archetypes.Ball.Ball_BasketBall":
                         if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
                             continue
                         self.ball_type = mutators.BASKETBALL
@@ -606,7 +570,101 @@ class Game:
 
         return all_data
 
-    def parse_all_data(self, all_data) -> None:
+    def parse_players_and_teams(self, current_actors, parties, player_dicts, player_ball_data, team_dicts) -> Dict:
+        """
+              :return: players_and_team_data = {
+                  'parties': parties,
+                  'player_dicts': player_dicts,
+                  'player_ball_data': player_ball_data,
+                  'team_dicts': team_dicts,
+              }
+        """
+
+        for actor_id, actor_data in current_actors.items():
+            if actor_data["TypeName"] == "TAGame.Default__PRI_TA" \
+                    and "Engine.PlayerReplicationInfo:PlayerName" in actor_data:
+
+                player_dict = {
+                    'name': actor_data["Engine.PlayerReplicationInfo:PlayerName"],
+                }
+                # Conditionally add ['team'] key to player_dict
+                player_team = actor_data.get("Engine.PlayerReplicationInfo:Team", None)
+                if player_team is not None and player_team != -1:
+                    player_dict['team'] = player_team
+
+                if "TAGame.PRI_TA:PartyLeader" in actor_data:
+                    try:
+                        actor_type = \
+                            list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id'][
+                                     'remote_id'].keys())[
+                                0]
+
+                        # handle UniqueID for plays_station and switch
+                        if actor_type == "play_station" or actor_type == "psy_net":
+                            actor_name = actor_data["Engine.PlayerReplicationInfo:PlayerName"]
+                            for player_stat in self.properties['PlayerStats']['value']["array"]:
+                                if actor_name == player_stat['value']['Name']['value']['str']:
+                                    unique_id = str(player_stat['value']['OnlineID']['value']['q_word'])
+                        else:
+                            unique_id = str(
+                                actor_data['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][actor_type])
+
+                        # only process if party_leader id exists
+                        if "party_leader" in actor_data["TAGame.PRI_TA:PartyLeader"] and \
+                                "id" in actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]:
+                            leader_actor_type = list(
+                                actor_data["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0].keys()
+                            )[0]
+                            if leader_actor_type == "play_station" or leader_actor_type == "psy_net":
+                                leader_name = actor_data[
+                                    "TAGame.PRI_TA:PartyLeader"
+                                ]["party_leader"]["id"][0][leader_actor_type][0]
+
+                                for player_stat in self.properties['PlayerStats']['value']["array"]:
+                                    if leader_name == player_stat['value']['Name']['value']['str']:
+                                        leader = str(player_stat['value']['OnlineID']['value']['q_word'])
+
+                            else:  # leader is not using play_station nor switch (ie. xbox or steam)
+                                leader = str(
+                                    actor_data[
+                                        "TAGame.PRI_TA:PartyLeader"
+                                    ]["party_leader"]["id"][0][leader_actor_type]
+                                )
+
+                            if leader in parties:
+                                if unique_id not in parties[leader]:
+                                    parties[leader].append(unique_id)
+                            else:
+                                parties[leader] = [unique_id]
+
+                    except KeyError:
+                        logger.warning('Could not get party leader for actor id: ' + str(actor_id))
+
+                if actor_id not in player_dicts:
+                    # add new player
+                    player_dicts[actor_id] = player_dict
+
+                    logger.debug('Found player actor: %s (id: %s)' % (player_dict['name'], actor_id))
+                    player_ball_data[actor_id] = {}
+                else:
+                    # update player_dicts
+                    for _k, _v in {**actor_data, **player_dict}.items():
+                        player_dicts[actor_id][_k] = _v
+            elif actor_data["ClassName"] == "TAGame.Team_Soccar_TA":
+                team_dicts[actor_id] = actor_data
+                team_dicts[actor_id]['colour'] = 'blue' if actor_data[
+                                                               "TypeName"] == "Archetypes.Teams.Team0" else 'orange'
+
+        players_and_team_data = {
+            'parties': parties,
+            'player_dicts': player_dicts,
+            'player_ball_data': player_ball_data,
+            'team_dicts': team_dicts
+        }
+
+        return players_and_team_data
+
+    def parse_all_data(self, all_data, clean_player_names: bool) -> None:
         """
         Finishes parsing after frame-parsing is done.
         E.g. Adds players not found in MatchStats metadata
@@ -628,20 +686,18 @@ class Game:
             if "TAGame.PRI_TA:MatchScore" not in _player_data:
                 logger.warning(f"Player {_player_data['name']} as player has no MatchScore.")
 
-            found_player = False
+            found_player = None
             for player in self.players:
                 # if player leaves early, won't be created (as not found in metadata's player_stats)
                 if _player_data['name'] == player.name:
-                    player_actor_id_player_dict[_player_actor_id] = player
-                    found_player = True
+                    found_player = player
+                    player_actor_id_player_dict[_player_actor_id] = found_player
+                    found_player.parse_actor_data(_player_data)  # just add extra stuff
                     break
-            if found_player:
-                # just add extra stuff
-                player.parse_actor_data(_player_data)
-            else:
+            if found_player is None:
                 # player not in endgame stats, create new player
                 try:
-                    player = Player().create_from_actor_data(_player_data, self.teams)
+                    found_player = Player().create_from_actor_data(_player_data, self.teams)
                 except KeyError as e:
                     # KeyError: 'Engine.PlayerReplicationInfo:Team'
                     # in `team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]`
@@ -650,21 +706,27 @@ class Game:
                         logger.warning(f"Ignoring player: {_player_data['name']} as player has no team.")
                         continue
                     raise e
-                self.players.append(player)
-                player_actor_id_player_dict[_player_actor_id] = player
+                self.players.append(found_player)
+                player_actor_id_player_dict[_player_actor_id] = found_player
 
                 # check if any goals are playerless and belong to this newly-created player
                 for goal in self.goals:
-                    if not goal.player and goal.player_name == player.name:
-                        goal.player = player
+                    if not goal.player and goal.player_name == found_player.name:
+                        goal.player = found_player
 
-            player.parse_data(all_data['player_ball_data'][_player_actor_id])
+            found_player.parse_data(all_data['player_ball_data'][_player_actor_id])
             # camera_settings might not exist (see 0AF8AC734890E6D3995B829E474F9924)
-            player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}).get('cam_settings', {}))
+            found_player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}).get('cam_settings', {}))
 
             for team in self.teams:
-                if player.is_orange == team.is_orange:
-                    team.add_player(player)
+                if found_player.is_orange == team.is_orange:
+                    team.add_player(found_player)
+
+            if clean_player_names:
+                cleaned_player_name = re.sub(r'[^\x00-\x7f]', r'', found_player.name).strip()  # Support ASCII only
+                if cleaned_player_name != found_player.name:
+                    logger.warning(f"Cleaned player name to ASCII-only. From: {found_player.name} to: {cleaned_player_name}")
+                    found_player.name = cleaned_player_name
 
         # GOAL - add player if not found earlier (ie player just created)
         for goal in self.goals:
