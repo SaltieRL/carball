@@ -64,7 +64,7 @@ message PlayerStats {
     optional api.stats.Speed speed = 9;
     optional RelativePositioning relative_positioning = 10;
     optional api.stats.PerPossessionStats per_possession_stats = 11;
-    optional api.stats.RumbleItemUsage rumble_item_usage = 11;
+    optional api.stats.RumbleItemUsage rumble_item_usage = 12;
 }
 
 message Controller {
