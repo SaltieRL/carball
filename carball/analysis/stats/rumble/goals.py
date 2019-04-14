@@ -21,7 +21,7 @@ class PreRumbleGoals(BaseStat):
 
         item_get_frames = sorted(set(map(lambda event: event.frame_number_get, proto_game.game_stats.rumble_items)))
 
-        for goal in game.goals:
+        for goal in proto_game.game_metadata.goals:
             # kick off frame before the goal
             kickoff_frame = next(frame for frame in reversed(game.kickoff_frames) if frame < goal.frame_number)
 
@@ -31,6 +31,7 @@ class PreRumbleGoals(BaseStat):
             if next_get_frame > goal.frame_number:
                 # goal before rumble items
                 pre_power_up_goals[goal.player_team] += 1
+                goal.pre_rumble_items = True
 
         team_stat_list[0].rumble_stats.pre_item_goals = pre_power_up_goals[0]
         team_stat_list[1].rumble_stats.pre_item_goals = pre_power_up_goals[1]
