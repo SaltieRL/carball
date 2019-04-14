@@ -15,6 +15,7 @@ from carball.analysis.stats.tendencies.relative_position_tendencies import Relat
 from carball.analysis.stats.tendencies.speed_tendencies import SpeedTendencies
 from carball.analysis.stats.tendencies.team_tendencies import TeamTendencies
 from carball.analysis.stats.rumble.rumble import RumbleItemStat
+from carball.analysis.stats.rumble.goals import PreRumbleGoals
 
 
 class StatsList:
@@ -43,7 +44,8 @@ class StatsList:
                 TeamTendencies(),
                 RelativeTendencies(),
                 PerPossessionStat(),
-                RumbleItemStat()
+                RumbleItemStat(),
+                PreRumbleGoals()
                 ]
 
     @staticmethod

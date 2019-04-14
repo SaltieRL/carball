@@ -2,6 +2,11 @@ syntax = "proto2";
 
 package api.stats;
 
+message RumbleStats {
+    optional RumbleItems rumble_items = 1;
+    optional int32 pre_item_goals = 2;
+}
+
 message RumbleItems {
     optional RumbleItemsUsage ball_freeze = 1;
     optional RumbleItemsUsage ball_grappling_hook = 2;

@@ -55,8 +55,8 @@ class RumbleItemStat(BaseStat):
         orange_events = list(filter(lambda x: x.player_id.id in orange_ids, proto_game.game_stats.rumble_items))
         blue_events = list(filter(lambda x: x.player_id.id in blue_ids, proto_game.game_stats.rumble_items))
 
-        orange_rumble_proto = team_stat_list[1].rumble_items
-        blue_rumble_proto = team_stat_list[0].rumble_items
+        orange_rumble_proto = team_stat_list[1].rumble_stats.rumble_items
+        blue_rumble_proto = team_stat_list[0].rumble_stats.rumble_items
 
         _calculate_rumble_stats(orange_rumble_proto, orange_events, data_frame['game'])
         _calculate_rumble_stats(blue_rumble_proto, blue_events, data_frame['game'])
