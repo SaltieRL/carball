@@ -23,5 +23,5 @@ message TeamStats {
     optional api.stats.HitCounts hit_counts = 2;
     optional CenterOfMass center_of_mass = 3;
     optional PerPossessionStats per_possession_stats = 4;
-    optional api.stats.RumbleItemUsage rumble_item_usage = 5;
+    optional api.stats.RumbleItems rumble_items = 5;
 }

@@ -82,7 +82,7 @@ message Kickoff {
 
 message RumbleItemEvent {
     optional int32 frame_number_get = 1;
-    optional int32 frame_number_use = 2;
+    optional int32 frame_number_use = 2 [default = -1];
     optional string item = 3;
     optional api.PlayerId player_id = 4;
     optional api.PlayerId victim_id = 5; // TODO Not implemented, including ball target as things like plunger can fail
