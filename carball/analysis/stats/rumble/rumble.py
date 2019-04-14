@@ -32,7 +32,7 @@ class RumbleItemStat(BaseStat):
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
-        if game.game_info.playlist not in [RANKED_RUMBLE, UNRANKED_RUMBLE]:
+        if not is_rumble_enabled(game):
             return
 
         for player_key, stats in player_stat_map.items():
@@ -46,7 +46,7 @@ class RumbleItemStat(BaseStat):
 
     def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game, proto_game: game_pb2.Game,
                             player_map: Dict[str, Player], data_frame: pd.DataFrame):
-        if game.game_info.playlist not in [RANKED_RUMBLE, UNRANKED_RUMBLE]:
+        if not is_rumble_enabled(game):
             return
 
         orange_ids = list(map(lambda x: x.id.id, filter(lambda x: x.is_orange, player_map.values())))
@@ -60,6 +60,17 @@ class RumbleItemStat(BaseStat):
 
         _calculate_rumble_stats(orange_rumble_proto, orange_events, data_frame['game'])
         _calculate_rumble_stats(blue_rumble_proto, blue_events, data_frame['game'])
+
+
+def is_rumble_enabled(game: Game) -> bool:
+    """
+    Check whether rumble is enabled or not.
+
+    :param game: parsed game object
+    :return: True if rumble
+    """
+    return game.game_info.playlist in [RANKED_RUMBLE, UNRANKED_RUMBLE] or \
+           game.game_info.rumble_mutator.startswith('Archetypes.Mutators.SubRules.ItemsMode_')
 
 
 def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rumble_item_events) \

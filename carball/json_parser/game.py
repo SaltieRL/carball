@@ -565,6 +565,7 @@ class Game:
             'cameras_data': cameras_data,
             'demos_data': demos_data,
             'game_info_actor': game_info_actor,
+            'soccar_game_event_actor': current_actors[soccar_game_event_actor_id],
             'parties': parties
         }
 
@@ -672,7 +673,9 @@ class Game:
         :return:
         """
         # GAME INFO
-        self.game_info = GameInfo().parse_game_info_actor(all_data['game_info_actor'])
+        self.game_info = GameInfo().parse_game_info_actor(all_data['game_info_actor'],
+                                                          all_data['soccar_game_event_actor'],
+                                                          self.replay['content']['body']['objects'])
 
         # TEAMS
         self.teams = []

@@ -7,14 +7,14 @@ from carball.generated.api import game_pb2
 from carball.generated.api.player_pb2 import Player
 from carball.generated.api.stats.team_stats_pb2 import TeamStats
 from carball.json_parser.game import Game
-from carball.generated.api.metadata.game_metadata_pb2 import RANKED_RUMBLE, UNRANKED_RUMBLE
+from carball.analysis.stats.rumble.rumble import is_rumble_enabled
 
 
 class PreRumbleGoals(BaseStat):
 
     def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game, proto_game: game_pb2.Game,
                             player_map: Dict[str, Player], data_frame: pd.DataFrame):
-        if game.game_info.playlist not in [RANKED_RUMBLE, UNRANKED_RUMBLE]:
+        if not is_rumble_enabled(game):
             return
 
         pre_power_up_goals = (0, 0)
