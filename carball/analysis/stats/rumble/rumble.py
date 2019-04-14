@@ -38,21 +38,23 @@ class RumbleItemStat(BaseStat):
             player_name = player_map[player_key].name
             player_data_frame = data_frame[player_name]
 
-            item_stats = _get_power_up_stats(player_data_frame, game)
+            _get_power_up_events(player_map[player_key], player_data_frame, game, proto_game.game_stats.rumble_items)
 
             rumble_proto = stats.rumble_item_usage
 
-            rumble_proto.ball_freeze = item_stats['ball_freeze']
-            rumble_proto.ball_grappling_hook = item_stats['ball_grappling_hook']
-            rumble_proto.ball_lasso = item_stats['ball_lasso']
-            rumble_proto.ball_spring = item_stats['ball_spring']
-            rumble_proto.ball_velcro = item_stats['ball_velcro']
-            rumble_proto.boost_override = item_stats['boost_override']
-            rumble_proto.car_spring = item_stats['car_spring']
-            rumble_proto.gravity_well = item_stats['gravity_well']
-            rumble_proto.strong_hit = item_stats['strong_hit']
-            rumble_proto.swapper = item_stats['swapper']
-            rumble_proto.tornado = item_stats['tornado']
+            pass
+
+            # rumble_proto.ball_freeze = item_stats['ball_freeze']
+            # rumble_proto.ball_grappling_hook = item_stats['ball_grappling_hook']
+            # rumble_proto.ball_lasso = item_stats['ball_lasso']
+            # rumble_proto.ball_spring = item_stats['ball_spring']
+            # rumble_proto.ball_velcro = item_stats['ball_velcro']
+            # rumble_proto.boost_override = item_stats['boost_override']
+            # rumble_proto.car_spring = item_stats['car_spring']
+            # rumble_proto.gravity_well = item_stats['gravity_well']
+            # rumble_proto.strong_hit = item_stats['strong_hit']
+            # rumble_proto.swapper = item_stats['swapper']
+            # rumble_proto.tornado = item_stats['tornado']
 
     def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game, proto_game: game_pb2.Game,
                             player_map: Dict[str, Player], data_frame: pd.DataFrame):
@@ -91,52 +93,60 @@ class RumbleItemStat(BaseStat):
             rumble_proto.tornado += player_rumble_stats.tornado
 
 
-def _get_power_up_stats(df: pd.DataFrame, game: Game):
-    all_items = dict(_BASE)
+def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rumble_item_events):
+    """
+    Finds the item get and item use events
 
+    :param player: Player info protobuf. Get's the id from here
+    :param df: player dataframe, assumes the frames between goal and kickoff are already discarded
+    :param game: game object
+    :param proto_rumble_item_events: protobuf repeated api.stats.RumbleItemEvent
+    """
     if 'power_up_active' in df and 'power_up' in df:
         df = df[['time_till_power_up', 'power_up', 'power_up_active']]
-        df = _squash_power_up_df(df, game)
 
-        used_items = df.groupby('power_up')['power_up'].size().to_dict()
+        ranges = [(game.kickoff_frames[i], game.kickoff_frames[i + 1]) for i in range(len(game.kickoff_frames) - 1)]
+        data_frames = map(lambda x: df.loc[x[0]:x[1] - 1], ranges)
+        data_frames = list(map(_squash_power_up_df, data_frames))
 
-        all_items.update(used_items)
+        for data_frame in data_frames:
 
-    all_items['ball_lasso'] += all_items.pop('batarang')
+            prev_row = data_frame.iloc[0]
+            proto_current_item = None
 
-    return all_items
+            for i, row in data_frame.iloc[1:].iterrows():
+                if math.isnan(prev_row['power_up_active']):
+                    if row['power_up_active'] == False:
+                        # Rumble item get event
+                        proto_current_item = proto_rumble_item_events.add()
+                        proto_current_item.frame_number_get = i
+                        proto_current_item.item = row['power_up']
+                        proto_current_item.player_id.id = player.id.id
+
+                elif prev_row['power_up_active'] == False:
+                    if row['power_up_active'] == True:
+                        # Rumble item use event
+                        proto_current_item.frame_number_use = i
+                        proto_current_item = None
+                    elif math.isnan(row['power_up_active']) and prev_row['power_up'] == 'ball_freeze':
+                        # When a spiked ball is frozen, there is not 'ball_freeze,True' row, it just gets deleted
+                        # immediately
+                        # Could also happen when the freeze is immediately broken
+                        # in theory this should not happen with other power ups?
+                        proto_current_item.frame_number_use = i
+                        proto_current_item = None
+
+                prev_row = row
 
 
-def _squash_power_up_df(df: pd.DataFrame, game: Game):
+def _squash_power_up_df(df: pd.DataFrame):
+    """
+    Remove all the rows with repeated 'power_up_active'. The frames are kept whenever the value is changed.
+    """
     a = df['power_up_active']
-    a = a.loc[(a.shift(1).isnull() ^ a.isnull()) | ~a.isnull()]
+    a = a.loc[(a.shift(-1).isnull() ^ a.isnull()) | (a.shift(1).isnull() ^ a.isnull()) | ~a.isnull()]
     a = a.loc[(a.shift(1) != a) | (a.shift(-1) != a)]
 
     df = pd.concat([df[['time_till_power_up', 'power_up']], a], axis=1, join='inner')
 
-    mask = []
-    prev_false = False
-    prev_power_up = None
-
-    for i, row in df.iterrows():
-        if math.isnan(row['power_up_active']):
-            if prev_false and prev_power_up == 'ball_freeze':
-                # When a spiked ball is frozen, there is not 'ball_freeze,True' row, it just gets deleted immediately
-                # Could also happen when the freeze is immediately broken
-                # in theory this should not happen with other power ups
-                ball_reset = i in game.kickoff_frames
-                if not ball_reset:
-                    mask[-1] = True
-
-            mask.append(False)
-            prev_false = False
-        elif not row['power_up_active']:
-            mask.append(False)
-            prev_false = True
-            prev_power_up = row['power_up']
-        else:
-            mask.append(prev_false)
-            prev_false = False
-            prev_power_up = row['power_up']
-
-    return df[mask]
+    return df
