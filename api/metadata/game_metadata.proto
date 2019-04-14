@@ -38,6 +38,7 @@ message Goal {
     optional int32 frame_number = 1;
     optional api.PlayerId player_id = 2;
     optional bool pre_rumble_items = 3;
+    optional string used_rumble_item = 4;
 }
 
 message Demo {

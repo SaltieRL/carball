@@ -35,3 +35,26 @@ class PreRumbleGoals(BaseStat):
 
         team_stat_list[0].rumble_stats.pre_item_goals = pre_power_up_goals[0]
         team_stat_list[1].rumble_stats.pre_item_goals = pre_power_up_goals[1]
+
+
+class ItemGoals(BaseStat):
+
+    def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                       data_frame: pd.DataFrame):
+        if not is_rumble_enabled(game):
+            return
+
+        game_df = data_frame['game']
+
+        for goal in proto_game.game_metadata.goals:
+            # time of the goal
+            goal_time = game_df.loc[goal.frame_number]['time']
+
+            # get the frame number 3 seconds before the goal
+            start_frame = game_df.loc[game_df['time'] >= goal_time - 3].index[0]
+
+            player_df = data_frame[player_map[goal.player_id.id].name]
+            player_df = player_df.loc[start_frame:goal.frame_number]
+
+            if player_df['power_up_active'].any():
+                goal.used_rumble_item = player_df.loc[player_df['power_up_active'] == True].iloc[0]['power_up']
