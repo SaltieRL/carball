@@ -8,7 +8,7 @@ from carball.generated.api.player_pb2 import Player
 from carball.generated.api.stats.player_stats_pb2 import PlayerStats
 from carball.generated.api.stats.team_stats_pb2 import TeamStats
 from carball.generated.api.stats.events_pb2 import RumbleItemEvent
-from carball.generated.api.stats.rumble_pb2 import PowerUp, RumbleStats
+from carball.generated.api.stats.rumble_pb2 import PowerUp, RumbleStats, BALL_LASSO
 from carball.json_parser.game import Game
 from carball.analysis.stats.stats import BaseStat
 from carball.generated.api.metadata.game_metadata_pb2 import RANKED_RUMBLE, UNRANKED_RUMBLE
@@ -86,7 +86,8 @@ def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rum
                         # Rumble item get event
                         proto_current_item = proto_rumble_item_events.add()
                         proto_current_item.frame_number_get = i
-                        proto_current_item.item = 'ball_lasso' if row['power_up'] == 'batarang' else row['power_up']
+                        proto_current_item.item = BALL_LASSO if row['power_up'] == 'batarang' else \
+                            PowerUp.Value(row['power_up'].upper())
                         proto_current_item.player_id.id = player.id.id
 
                 elif prev_row['power_up_active'] == False:
@@ -131,22 +132,22 @@ def _calculate_rumble_stats(rumble_proto: RumbleStats, events: List[RumbleItemEv
     :param events: list of rumble events
     :param game_df: game dataframe, used for getting the time delta
     """
-    for power_up in PowerUp.keys():
-        item_stats = _calculate_rumble_stats_for_power_up(events, power_up.lower(), game_df)
+    for power_up in PowerUp.values():
+        item_stats = _calculate_rumble_stats_for_power_up(events, power_up, game_df)
 
         rumble_item_proto = rumble_proto.rumble_items.add()
-        rumble_item_proto.item = PowerUp.Value(power_up)
+        rumble_item_proto.item = power_up
         rumble_item_proto.used = item_stats['used']
         rumble_item_proto.unused = item_stats['unused']
         rumble_item_proto.average_hold = item_stats['average_hold']
 
 
-def _calculate_rumble_stats_for_power_up(events: List[RumbleItemEvent], power_up: str, game_df: pd.DataFrame) -> Dict:
+def _calculate_rumble_stats_for_power_up(events: List[RumbleItemEvent], power_up: int, game_df: pd.DataFrame) -> Dict:
     """
     Calculate rumble statistics (used, unused, average hold) based on rumble events.
 
     :param events: list of rumble events
-    :param power_up: name of the power up
+    :param power_up: power up enum
     :param game_df: game dataframe, used for getting the time delta
     :return: stats
     """
