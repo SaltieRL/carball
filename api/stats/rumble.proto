@@ -2,27 +2,28 @@ syntax = "proto2";
 
 package api.stats;
 
+enum PowerUp {
+    BALL_FREEZE = 1;
+    BALL_GRAPPLING_HOOK = 2;
+    BALL_LASSO = 3;
+    BALL_SPRING = 4;
+    BALL_VELCRO = 5;
+    BOOST_OVERRIDE = 6;
+    CAR_SPRING = 7;
+    GRAVITY_WELL = 8;
+    STRONG_HIT = 9;
+    SWAPPER = 10;
+    TORNADO = 11;
+}
+
 message RumbleStats {
-    optional RumbleItems rumble_items = 1;
+    repeated RumbleItemsUsage rumble_items = 1;
     optional int32 pre_item_goals = 2;
 }
 
-message RumbleItems {
-    optional RumbleItemsUsage ball_freeze = 1;
-    optional RumbleItemsUsage ball_grappling_hook = 2;
-    optional RumbleItemsUsage ball_lasso = 3;
-    optional RumbleItemsUsage ball_spring = 4;
-    optional RumbleItemsUsage ball_velcro = 5;
-    optional RumbleItemsUsage boost_override = 6;
-    optional RumbleItemsUsage car_spring = 7;
-    optional RumbleItemsUsage gravity_well = 8;
-    optional RumbleItemsUsage strong_hit = 9;
-    optional RumbleItemsUsage swapper = 10;
-    optional RumbleItemsUsage tornado = 11;
-}
-
 message RumbleItemsUsage {
-    optional int32 used = 1;
-    optional int32 unused = 2;
-    optional float average_hold = 3;
+    optional PowerUp item = 1;
+    optional int32 used = 2;
+    optional int32 unused = 3;
+    optional float average_hold = 4;
 }

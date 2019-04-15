@@ -8,24 +8,10 @@ from carball.generated.api.player_pb2 import Player
 from carball.generated.api.stats.player_stats_pb2 import PlayerStats
 from carball.generated.api.stats.team_stats_pb2 import TeamStats
 from carball.generated.api.stats.events_pb2 import RumbleItemEvent
-from carball.generated.api.stats.rumble_pb2 import RumbleItems
+from carball.generated.api.stats.rumble_pb2 import PowerUp, RumbleStats
 from carball.json_parser.game import Game
 from carball.analysis.stats.stats import BaseStat
 from carball.generated.api.metadata.game_metadata_pb2 import RANKED_RUMBLE, UNRANKED_RUMBLE
-
-POWER_UPS = [
-    'ball_freeze',
-    'ball_grappling_hook',
-    'ball_lasso',
-    'ball_spring',
-    'ball_velcro',
-    'boost_override',
-    'car_spring',
-    'gravity_well',
-    'strong_hit',
-    'swapper',
-    'tornado'
-]
 
 
 class RumbleItemStat(BaseStat):
@@ -42,7 +28,7 @@ class RumbleItemStat(BaseStat):
             events = _get_power_up_events(player_map[player_key], player_data_frame, game,
                                           proto_game.game_stats.rumble_items)
 
-            _calculate_rumble_stats(stats.rumble_items, events, data_frame['game'])
+            _calculate_rumble_stats(stats.rumble_stats, events, data_frame['game'])
 
     def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game, proto_game: game_pb2.Game,
                             player_map: Dict[str, Player], data_frame: pd.DataFrame):
@@ -55,11 +41,8 @@ class RumbleItemStat(BaseStat):
         orange_events = list(filter(lambda x: x.player_id.id in orange_ids, proto_game.game_stats.rumble_items))
         blue_events = list(filter(lambda x: x.player_id.id in blue_ids, proto_game.game_stats.rumble_items))
 
-        orange_rumble_proto = team_stat_list[1].rumble_stats.rumble_items
-        blue_rumble_proto = team_stat_list[0].rumble_stats.rumble_items
-
-        _calculate_rumble_stats(orange_rumble_proto, orange_events, data_frame['game'])
-        _calculate_rumble_stats(blue_rumble_proto, blue_events, data_frame['game'])
+        _calculate_rumble_stats(team_stat_list[1].rumble_stats, orange_events, data_frame['game'])
+        _calculate_rumble_stats(team_stat_list[0].rumble_stats, blue_events, data_frame['game'])
 
 
 def is_rumble_enabled(game: Game) -> bool:
@@ -140,7 +123,7 @@ def _squash_power_up_df(df: pd.DataFrame):
     return df
 
 
-def _calculate_rumble_stats(rumble_proto: RumbleItems, events: List[RumbleItemEvent], game_df: pd.DataFrame):
+def _calculate_rumble_stats(rumble_proto: RumbleStats, events: List[RumbleItemEvent], game_df: pd.DataFrame):
     """
     Calculate rumble stats for all items
 
@@ -148,10 +131,11 @@ def _calculate_rumble_stats(rumble_proto: RumbleItems, events: List[RumbleItemEv
     :param events: list of rumble events
     :param game_df: game dataframe, used for getting the time delta
     """
-    for power_up in POWER_UPS:
-        item_stats = _calculate_rumble_stats_for_power_up(events, power_up, game_df)
+    for power_up in PowerUp.keys():
+        item_stats = _calculate_rumble_stats_for_power_up(events, power_up.lower(), game_df)
 
-        rumble_item_proto = getattr(rumble_proto, power_up)
+        rumble_item_proto = rumble_proto.rumble_items.add()
+        rumble_item_proto.item = PowerUp.Value(power_up)
         rumble_item_proto.used = item_stats['used']
         rumble_item_proto.unused = item_stats['unused']
         rumble_item_proto.average_hold = item_stats['average_hold']
