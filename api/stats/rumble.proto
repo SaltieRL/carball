@@ -3,9 +3,11 @@ syntax = "proto2";
 package api.stats;
 
 enum PowerUp {
+    option allow_alias = true;
     BALL_FREEZE = 1;
     BALL_GRAPPLING_HOOK = 2;
     BALL_LASSO = 3;
+    BATARANG = 3;
     BALL_SPRING = 4;
     BALL_VELCRO = 5;
     BOOST_OVERRIDE = 6;

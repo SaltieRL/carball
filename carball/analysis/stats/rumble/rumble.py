@@ -86,8 +86,7 @@ def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rum
                         # Rumble item get event
                         proto_current_item = proto_rumble_item_events.add()
                         proto_current_item.frame_number_get = i
-                        proto_current_item.item = BALL_LASSO if row['power_up'] == 'batarang' else \
-                            PowerUp.Value(row['power_up'].upper())
+                        proto_current_item.item = PowerUp.Value(row['power_up'].upper())
                         proto_current_item.player_id.id = player.id.id
 
                 elif prev_row['power_up_active'] == False:
