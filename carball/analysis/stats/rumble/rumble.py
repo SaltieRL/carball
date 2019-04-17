@@ -72,10 +72,15 @@ def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rum
         df = df[['time_till_power_up', 'power_up', 'power_up_active']]
 
         ranges = [(game.kickoff_frames[i], game.kickoff_frames[i + 1]) for i in range(len(game.kickoff_frames) - 1)]
+        ranges.append((game.kickoff_frames[-1], df.index[-1]))
         data_frames = map(lambda x: df.loc[x[0]:x[1] - 1], ranges)
         data_frames = map(_squash_power_up_df, data_frames)
 
         for data_frame in data_frames:
+
+            if len(data_frame) == 0:
+                # goal before items
+                continue
 
             prev_row = data_frame.iloc[0]
             proto_current_item = None
