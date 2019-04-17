@@ -59,9 +59,9 @@ message PlayerPositionData {
 
 message KickoffPlayer {
 optional api.PlayerId player = 1;
-optional KickoffPosition kpos = 2;
-optional TouchPosition tpos = 3;
-optional PlayerPositionData ppos = 4;
+optional KickoffPosition kickoff_position = 2;
+optional TouchPosition touch_position = 3;
+optional PlayerPositionData player_position = 4;
 optional float boost = 5;
 repeated float jumps = 6;
 optional float ball_dist = 7;

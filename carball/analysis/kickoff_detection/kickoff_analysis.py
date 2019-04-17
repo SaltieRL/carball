@@ -38,15 +38,14 @@ class BaseKickoff:
             for player in player_map.values():
                 kPlayer = cur_kickoff.touch.players.add()
                 kPlayer.player.id = player.id.id
-                kPlayer.kpos = BaseKickoff.get_kickoff_position(player, data_frame, frame)
-                kPlayer.tpos = BaseKickoff.get_touch_position(player, data_frame, frame, end_frame)
+                kPlayer.kickoff_position = BaseKickoff.get_kickoff_position(player, data_frame, frame)
+                kPlayer.touch_position = BaseKickoff.get_touch_position(player, data_frame, frame, end_frame)
                 kPlayer.boost = data_frame[player.name]['boost'][end_frame]
                 ball_dist =  BaseKickoff.get_dist(data_frame, player.name, end_frame)
-                if ball_dist < 700:
-                    kPlayer.ball_dist  = BaseKickoff.get_dist(data_frame, player.name, end_frame)
-                    kPlayer.ppos.pos_x = data_frame[player.name]['pos_x'][end_frame]
-                    kPlayer.ppos.pos_y = data_frame[player.name]['pos_y'][end_frame]
-                    kPlayer.ppos.pos_z = data_frame[player.name]['pos_z'][end_frame]
+                kPlayer.ball_dist  = BaseKickoff.get_dist(data_frame, player.name, end_frame)
+                kPlayer.player_position.pos_x = data_frame[player.name]['pos_x'][end_frame]
+                kPlayer.player_position.pos_y = data_frame[player.name]['pos_y'][end_frame]
+                kPlayer.player_position.pos_z = data_frame[player.name]['pos_z'][end_frame]
                 BaseKickoff.set_jumps(kPlayer, player, data_frame, frame, end_frame)
             cur_kickoff.type = BaseKickoff.get_kickoff_type(cur_kickoff.touch.players)
             kickoffs[frame] = cur_kickoff
@@ -66,9 +65,9 @@ class BaseKickoff:
     @staticmethod
     def get_kickoff_type(players: list):
         #
-        diagonals = [player.kpos for player in players].count(0)
-        offcenter = [player.kpos for player in players].count(1)
-        goalies   = [player.kpos for player in players].count(2)
+        diagonals = [player.kickoff_position for player in players].count(0)
+        offcenter = [player.kickoff_position for player in players].count(1)
+        goalies   = [player.kickoff_position for player in players].count(2)
         if len(players) == 6:
             # 3's
             if diagonals == 4:
