@@ -29,3 +29,8 @@ message RumbleItemsUsage {
     optional int32 unused = 3;
     optional float average_hold = 4;
 }
+
+message RumbleGoalInfo {
+    optional bool pre_item = 1;
+    optional PowerUp used_item = 2;
+}

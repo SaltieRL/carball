@@ -1,6 +1,7 @@
 syntax = "proto2";
 
 import "api/player_id.proto";
+import "api/stats/rumble.proto";
 
 package api.metadata;
 
@@ -37,8 +38,7 @@ message GameScore {
 message Goal {
     optional int32 frame_number = 1;
     optional api.PlayerId player_id = 2;
-    optional bool pre_rumble_items = 3;
-    optional string used_rumble_item = 4;
+    optional api.stats.RumbleGoalInfo rumble_info = 3;
 }
 
 message Demo {

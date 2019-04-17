@@ -6,6 +6,7 @@ from carball.analysis.stats.stats import BaseStat
 from carball.generated.api import game_pb2
 from carball.generated.api.player_pb2 import Player
 from carball.generated.api.stats.team_stats_pb2 import TeamStats
+from carball.generated.api.stats.rumble_pb2 import PowerUp
 from carball.json_parser.game import Game
 from carball.analysis.stats.rumble.rumble import is_rumble_enabled
 
@@ -31,7 +32,7 @@ class PreRumbleGoals(BaseStat):
             if next_get_frame > goal.frame_number:
                 # goal before rumble items
                 pre_power_up_goals[goal.player_team] += 1
-                goal.pre_rumble_items = True
+                goal.rumble_info.pre_items = True
 
         team_stat_list[0].rumble_stats.pre_item_goals = pre_power_up_goals[0]
         team_stat_list[1].rumble_stats.pre_item_goals = pre_power_up_goals[1]
@@ -57,4 +58,5 @@ class ItemGoals(BaseStat):
             player_df = player_df.loc[start_frame:goal.frame_number]
 
             if player_df['power_up_active'].any():
-                goal.used_rumble_item = player_df.loc[player_df['power_up_active'] == True].iloc[0]['power_up']
+                goal.rumble_info.used_item = PowerUp.Value(player_df.loc[player_df['power_up_active'] == True]
+                                                           .iloc[0]['power_up'].upper())
