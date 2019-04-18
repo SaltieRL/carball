@@ -84,15 +84,20 @@ def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rum
 
             prev_row = data_frame.iloc[0]
             proto_current_item = None
+            demoed = False
 
             for i, row in data_frame.iloc[1:].iterrows():
                 if math.isnan(prev_row['power_up_active']):
                     if row['power_up_active'] == False:
-                        # Rumble item get event
-                        proto_current_item = proto_rumble_item_events.add()
-                        proto_current_item.frame_number_get = i
-                        proto_current_item.item = PowerUp.Value(row['power_up'].upper())
-                        proto_current_item.player_id.id = player.id.id
+                        if not demoed:
+                            # Rumble item get event
+                            proto_current_item = proto_rumble_item_events.add()
+                            proto_current_item.frame_number_get = i
+                            proto_current_item.item = PowerUp.Value(row['power_up'].upper())
+                            proto_current_item.player_id.id = player.id.id
+                        else:
+                            # back from the dead
+                            demoed = False
 
                     if row['power_up_active'] == True:
                         # immediately used items (mostly bots)
@@ -114,12 +119,16 @@ def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rum
                         proto_current_item.frame_number_use = i
                         events.append(proto_current_item)
                         proto_current_item = None
+                    elif math.isnan(row['power_up_active']):
+                        # happens when player is demoed
+                        demoed = True
 
                 prev_row = row
 
             if proto_current_item is not None:
                 # unused item
                 events.append(proto_current_item)
+                proto_current_item = None
 
     return events
 
