@@ -62,3 +62,133 @@ class RumbleTest(unittest.TestCase):
             self.assertAlmostEquals(spike_stats.average_hold, 11.87916, 5)
 
         run_analysis_test_on_replay(test, get_raw_replays()["RUMBLE_HOLD_TIME"])
+
+    def test_item_count(self):
+        def test(analysis: AnalysisManager):
+            proto_game = analysis.get_protobuf_data()
+
+            self.assert_rumble_item_counts(proto_game.players[0].stats.rumble_stats, [
+                {'item': BALL_FREEZE, 'used': 1, 'unused': 0},
+                {'item': BALL_GRAPPLING_HOOK, 'used': 1, 'unused': 0},
+                {'item': BALL_LASSO, 'used': 1, 'unused': 0},
+                {'item': BALL_SPRING, 'used': 2, 'unused': 0},
+                {'item': BALL_VELCRO, 'used': 0, 'unused': 1},
+                {'item': BOOST_OVERRIDE, 'used': 2, 'unused': 0},
+                {'item': CAR_SPRING, 'used': 1, 'unused': 1},
+                {'item': GRAVITY_WELL, 'used': 2, 'unused': 0},
+                {'item': STRONG_HIT, 'used': 2, 'unused': 0},
+                {'item': SWAPPER, 'used': 1, 'unused': 0},
+                {'item': TORNADO, 'used': 0, 'unused': 0}
+            ])
+
+            self.assert_rumble_item_counts(proto_game.players[1].stats.rumble_stats, [
+                {'item': BALL_FREEZE, 'used': 2, 'unused': 0},
+                {'item': BALL_GRAPPLING_HOOK, 'used': 1, 'unused': 1},
+                {'item': BALL_LASSO, 'used': 1, 'unused': 0},
+                {'item': BALL_SPRING, 'used': 1, 'unused': 0},
+                {'item': BALL_VELCRO, 'used': 0, 'unused': 1},
+                {'item': BOOST_OVERRIDE, 'used': 2, 'unused': 0},
+                {'item': CAR_SPRING, 'used': 0, 'unused': 1},
+                {'item': GRAVITY_WELL, 'used': 2, 'unused': 0},
+                {'item': STRONG_HIT, 'used': 1, 'unused': 0},
+                {'item': SWAPPER, 'used': 2, 'unused': 0},
+                {'item': TORNADO, 'used': 0, 'unused': 1}
+            ])
+
+            self.assert_rumble_item_counts(proto_game.players[2].stats.rumble_stats, [
+                {'item': BALL_FREEZE, 'used': 1, 'unused': 0},
+                {'item': BALL_GRAPPLING_HOOK, 'used': 0, 'unused': 0},
+                {'item': BALL_LASSO, 'used': 2, 'unused': 0},
+                {'item': BALL_SPRING, 'used': 1, 'unused': 0},
+                {'item': BALL_VELCRO, 'used': 1, 'unused': 1},
+                {'item': BOOST_OVERRIDE, 'used': 1, 'unused': 1},
+                {'item': CAR_SPRING, 'used': 0, 'unused': 0},
+                {'item': GRAVITY_WELL, 'used': 2, 'unused': 0},
+                {'item': STRONG_HIT, 'used': 2, 'unused': 0},
+                {'item': SWAPPER, 'used': 1, 'unused': 1},
+                {'item': TORNADO, 'used': 1, 'unused': 0}
+            ])
+
+            self.assert_rumble_item_counts(proto_game.players[3].stats.rumble_stats, [
+                {'item': BALL_FREEZE, 'used': 0, 'unused': 1},
+                {'item': BALL_GRAPPLING_HOOK, 'used': 1, 'unused': 1},
+                {'item': BALL_LASSO, 'used': 1, 'unused': 0},
+                {'item': BALL_SPRING, 'used': 1, 'unused': 0},
+                {'item': BALL_VELCRO, 'used': 1, 'unused': 0},
+                {'item': BOOST_OVERRIDE, 'used': 2, 'unused': 0},
+                {'item': CAR_SPRING, 'used': 2, 'unused': 0},
+                {'item': GRAVITY_WELL, 'used': 1, 'unused': 0},
+                {'item': STRONG_HIT, 'used': 1, 'unused': 0},
+                {'item': SWAPPER, 'used': 2, 'unused': 0},
+                {'item': TORNADO, 'used': 0, 'unused': 0}
+            ])
+
+            self.assert_rumble_item_counts(proto_game.players[4].stats.rumble_stats, [
+                {'item': BALL_FREEZE, 'used': 2, 'unused': 0},
+                {'item': BALL_GRAPPLING_HOOK, 'used': 2, 'unused': 0},
+                {'item': BALL_LASSO, 'used': 2, 'unused': 0},
+                {'item': BALL_SPRING, 'used': 0, 'unused': 0},
+                {'item': BALL_VELCRO, 'used': 1, 'unused': 0},
+                {'item': BOOST_OVERRIDE, 'used': 2, 'unused': 0},
+                {'item': CAR_SPRING, 'used': 1, 'unused': 0},
+                {'item': GRAVITY_WELL, 'used': 2, 'unused': 0},
+                {'item': STRONG_HIT, 'used': 1, 'unused': 0},
+                {'item': SWAPPER, 'used': 1, 'unused': 1},
+                {'item': TORNADO, 'used': 0, 'unused': 0}
+            ])
+
+            self.assert_rumble_item_counts(proto_game.players[5].stats.rumble_stats, [
+                {'item': BALL_FREEZE, 'used': 2, 'unused': 0},
+                {'item': BALL_GRAPPLING_HOOK, 'used': 2, 'unused': 0},
+                {'item': BALL_LASSO, 'used': 2, 'unused': 0},
+                {'item': BALL_SPRING, 'used': 1, 'unused': 0},
+                {'item': BALL_VELCRO, 'used': 1, 'unused': 0},
+                {'item': BOOST_OVERRIDE, 'used': 1, 'unused': 0},
+                {'item': CAR_SPRING, 'used': 2, 'unused': 0},
+                {'item': GRAVITY_WELL, 'used': 0, 'unused': 0},
+                {'item': STRONG_HIT, 'used': 2, 'unused': 0},
+                {'item': SWAPPER, 'used': 1, 'unused': 1},
+                {'item': TORNADO, 'used': 1, 'unused': 0}
+            ])
+
+            self.assert_rumble_item_counts(proto_game.teams[0].stats.rumble_stats, [
+                {'item': BALL_FREEZE, 'used': 2, 'unused': 1},
+                {'item': BALL_GRAPPLING_HOOK, 'used': 2, 'unused': 1},
+                {'item': BALL_LASSO, 'used': 4, 'unused': 0},
+                {'item': BALL_SPRING, 'used': 4, 'unused': 0},
+                {'item': BALL_VELCRO, 'used': 2, 'unused': 2},
+                {'item': BOOST_OVERRIDE, 'used': 5, 'unused': 1},
+                {'item': CAR_SPRING, 'used': 3, 'unused': 1},
+                {'item': GRAVITY_WELL, 'used': 5, 'unused': 0},
+                {'item': STRONG_HIT, 'used': 5, 'unused': 0},
+                {'item': SWAPPER, 'used': 4, 'unused': 1},
+                {'item': TORNADO, 'used': 1, 'unused': 0}
+            ])
+
+            self.assert_rumble_item_counts(proto_game.teams[1].stats.rumble_stats, [
+                {'item': BALL_FREEZE, 'used': 6, 'unused': 0},
+                {'item': BALL_GRAPPLING_HOOK, 'used': 5, 'unused': 1},
+                {'item': BALL_LASSO, 'used': 5, 'unused': 0},
+                {'item': BALL_SPRING, 'used': 2, 'unused': 0},
+                {'item': BALL_VELCRO, 'used': 2, 'unused': 1},
+                {'item': BOOST_OVERRIDE, 'used': 5, 'unused': 0},
+                {'item': CAR_SPRING, 'used': 3, 'unused': 1},
+                {'item': GRAVITY_WELL, 'used': 4, 'unused': 0},
+                {'item': STRONG_HIT, 'used': 4, 'unused': 0},
+                {'item': SWAPPER, 'used': 4, 'unused': 2},
+                {'item': TORNADO, 'used': 1, 'unused': 1}
+            ])
+
+        run_analysis_test_on_replay(test, get_raw_replays()["RUMBLE_FULL"])
+
+    def assert_rumble_item_counts(self, rumble_stats_proto, expected):
+        result_stats = list(map(proto_to_dict, rumble_stats_proto.rumble_items))
+        self.assertCountEqual(result_stats, expected)
+
+
+def proto_to_dict(item_proto):
+    return {
+        'item': item_proto.item,
+        'used': item_proto.used,
+        'unused': item_proto.unused
+    }

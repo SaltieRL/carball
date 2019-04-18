@@ -189,6 +189,9 @@ def get_raw_replays():
         "RUMBLE_HOLD_TIME": [
             "https://cdn.discordapp.com/attachments/493849514680254468/568554413283868702/RUMBLE_HOLD_TIME.replay"
         ],
+        "RUMBLE_FULL": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/568555561160015889/RUMBLE_FULL.replay"
+        ],
     }
 
 
