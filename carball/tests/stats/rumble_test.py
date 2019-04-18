@@ -48,3 +48,17 @@ class RumbleTest(unittest.TestCase):
             self.assertEquals(freeze_stats.used, 1)
 
         run_analysis_test_on_replay(test, get_raw_replays()["RUMBLE_FREEZE_VS_SPIKE"])
+
+    def test_hold_time(self):
+        def test(analysis: AnalysisManager):
+            proto_game = analysis.get_protobuf_data()
+
+            spike_stats = next(filter(lambda x: x.item == BALL_VELCRO,
+                                      proto_game.players[0].stats.rumble_stats.rumble_items))
+            self.assertAlmostEquals(spike_stats.average_hold, 11.87916, 5)
+
+            spike_stats = next(filter(lambda x: x.item == BALL_VELCRO,
+                                      proto_game.teams[0].stats.rumble_stats.rumble_items))
+            self.assertAlmostEquals(spike_stats.average_hold, 11.87916, 5)
+
+        run_analysis_test_on_replay(test, get_raw_replays()["RUMBLE_HOLD_TIME"])

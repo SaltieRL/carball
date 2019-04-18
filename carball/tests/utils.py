@@ -186,6 +186,9 @@ def get_raw_replays():
         "RUMBLE_FREEZE_VS_SPIKE": [
             "https://cdn.discordapp.com/attachments/493849514680254468/568546468777033773/RUMBLE_FREEZE_VS_SPIKE.replay"
         ],
+        "RUMBLE_HOLD_TIME": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/568554413283868702/RUMBLE_HOLD_TIME.replay"
+        ],
     }
 
 
