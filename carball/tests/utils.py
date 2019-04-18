@@ -180,6 +180,9 @@ def get_raw_replays():
         "RUMBLE_PRE_ITEM_GOALS": [
             "https://cdn.discordapp.com/attachments/493849514680254468/568540280937250836/RUMBLE_PRE_ITEM_GOALS.replay"
         ],
+        "RUMBLE_ITEM_GOALS": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/568542870441558017/RUMBLE_ITEM_GOALS.replay"
+        ],
     }
 
 

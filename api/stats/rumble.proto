@@ -32,5 +32,6 @@ message RumbleItemsUsage {
 
 message RumbleGoalInfo {
     optional bool pre_items = 1;
-    optional PowerUp used_item = 2;
+    optional bool scored_with_item = 2;
+    optional PowerUp used_item = 3;
 }

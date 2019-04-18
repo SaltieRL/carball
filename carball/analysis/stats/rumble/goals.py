@@ -60,5 +60,8 @@ class ItemGoals(BaseStat):
             player_df = player_df.loc[start_frame:goal.frame_number]
 
             if player_df['power_up_active'].any():
+                goal.rumble_info.scored_with_item = True
                 goal.rumble_info.used_item = PowerUp.Value(player_df.loc[player_df['power_up_active'] == True]
                                                            .iloc[0]['power_up'].upper())
+            else:
+                goal.rumble_info.scored_with_item = False
