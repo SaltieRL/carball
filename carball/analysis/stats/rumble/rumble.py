@@ -132,6 +132,10 @@ def _squash_power_up_df(df: pd.DataFrame):
     a = a.loc[(a.shift(-1).isnull() ^ a.isnull()) | (a.shift(1).isnull() ^ a.isnull()) | ~a.isnull()]
     a = a.loc[(a.shift(1) != a) | (a.shift(-1) != a)]
 
+    # Drop any false values that come after true values
+    while len(a.loc[(a.shift(1) == True) & (a == False)]) > 0:
+        a = a.loc[(a.shift(1) != True) | (a != False)]
+
     df = pd.concat([df[['time_till_power_up', 'power_up']], a], axis=1, join='inner')
 
     return df
