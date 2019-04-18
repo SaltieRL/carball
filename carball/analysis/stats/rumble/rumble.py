@@ -53,7 +53,8 @@ def is_rumble_enabled(game: Game) -> bool:
     :return: True if rumble
     """
     return game.game_info.playlist in [RANKED_RUMBLE, UNRANKED_RUMBLE] or \
-           game.game_info.rumble_mutator.startswith('Archetypes.Mutators.SubRules.ItemsMode')
+           (game.game_info.rumble_mutator is not None and
+            game.game_info.rumble_mutator.startswith('Archetypes.Mutators.SubRules.ItemsMode'))
 
 
 def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rumble_item_events) \
