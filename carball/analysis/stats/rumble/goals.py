@@ -27,9 +27,9 @@ class PreRumbleGoals(BaseStat):
             kickoff_frame = next(frame for frame in reversed(game.kickoff_frames) if frame < goal.frame_number)
 
             # first item get frame after kick off
-            next_get_frame = next(frame for frame in item_get_frames if frame > kickoff_frame)
+            next_get_frame = next((frame for frame in item_get_frames if frame > kickoff_frame), -1)
 
-            if next_get_frame > goal.frame_number:
+            if next_get_frame > goal.frame_number or next_get_frame == -1:
                 # goal before rumble items
                 pre_power_up_goals[player_map[goal.player_id.id].is_orange] += 1
                 goal.rumble_info.pre_items = True
