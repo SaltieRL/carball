@@ -8,7 +8,7 @@ from carball.generated.api.player_pb2 import Player
 from carball.generated.api.stats.player_stats_pb2 import PlayerStats
 from carball.generated.api.stats.team_stats_pb2 import TeamStats
 from carball.generated.api.stats.events_pb2 import RumbleItemEvent
-from carball.generated.api.stats.rumble_pb2 import PowerUp, RumbleStats, BALL_LASSO
+from carball.generated.api.stats.rumble_pb2 import PowerUp, RumbleStats
 from carball.json_parser.game import Game
 from carball.analysis.stats.stats import BaseStat
 from carball.generated.api.metadata.game_metadata_pb2 import RANKED_RUMBLE, UNRANKED_RUMBLE
@@ -93,6 +93,15 @@ def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rum
                         proto_current_item.frame_number_get = i
                         proto_current_item.item = PowerUp.Value(row['power_up'].upper())
                         proto_current_item.player_id.id = player.id.id
+
+                    if row['power_up_active'] == True:
+                        # immediately used items (mostly bots)
+                        tmp_item = proto_rumble_item_events.add()
+                        tmp_item.frame_number_get = i
+                        tmp_item.frame_number_use = i
+                        tmp_item.item = PowerUp.Value(row['power_up'].upper())
+                        tmp_item.player_id.id = player.id.id
+                        events.append(tmp_item)
 
                 elif prev_row['power_up_active'] == False:
                     if row['power_up_active'] == True or \
