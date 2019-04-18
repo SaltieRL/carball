@@ -183,6 +183,9 @@ def get_raw_replays():
         "RUMBLE_ITEM_GOALS": [
             "https://cdn.discordapp.com/attachments/493849514680254468/568542870441558017/RUMBLE_ITEM_GOALS.replay"
         ],
+        "RUMBLE_FREEZE_VS_SPIKE": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/568546468777033773/RUMBLE_FREEZE_VS_SPIKE.replay"
+        ],
     }
 
 
