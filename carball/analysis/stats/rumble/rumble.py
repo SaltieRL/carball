@@ -149,7 +149,7 @@ def _calculate_rumble_stats(rumble_proto: RumbleStats, events: List[RumbleItemEv
     :param events: list of rumble events
     :param game_df: game dataframe, used for getting the time delta
     """
-    for power_up in PowerUp.values():
+    for power_up in set(PowerUp.values()):
         item_stats = _calculate_rumble_stats_for_power_up(events, power_up, game_df)
 
         rumble_item_proto = rumble_proto.rumble_items.add()
