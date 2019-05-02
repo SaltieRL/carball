@@ -32,9 +32,9 @@ class PreRumbleGoals(BaseStat):
             if next_get_frame > goal.frame_number or next_get_frame == -1:
                 # goal before rumble items
                 pre_power_up_goals[player_map[goal.player_id.id].is_orange] += 1
-                goal.rumble_info.pre_items = True
+                goal.extra_mode_info.pre_items = True
             else:
-                goal.rumble_info.pre_items = False
+                goal.extra_mode_info.pre_items = False
 
         team_stat_list[0].rumble_stats.pre_item_goals = pre_power_up_goals[0]
         team_stat_list[1].rumble_stats.pre_item_goals = pre_power_up_goals[1]
@@ -60,8 +60,8 @@ class ItemGoals(BaseStat):
             player_df = player_df.loc[start_frame:goal.frame_number]
 
             if player_df['power_up_active'].any():
-                goal.rumble_info.scored_with_item = True
-                goal.rumble_info.used_item = PowerUp.Value(player_df.loc[player_df['power_up_active'] == True]
+                goal.extra_mode_info.scored_with_item = True
+                goal.extra_mode_info.used_item = PowerUp.Value(player_df.loc[player_df['power_up_active'] == True]
                                                            .iloc[0]['power_up'].upper())
             else:
-                goal.rumble_info.scored_with_item = False
+                goal.extra_mode_info.scored_with_item = False
