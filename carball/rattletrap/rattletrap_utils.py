@@ -17,5 +17,5 @@ def get_rattletrap_binaries(path):
 
 
 def download_rattletrap():
-    from rattletrap.check_rattletrap_version import update_rattletrap
+    from carball.rattletrap.check_rattletrap_version import update_rattletrap
     update_rattletrap()
