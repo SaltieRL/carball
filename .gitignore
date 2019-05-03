@@ -6,3 +6,4 @@ venv/
 output
 .env
 .coverage
+*.iml
