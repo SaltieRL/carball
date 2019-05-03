@@ -3,7 +3,7 @@ from urllib import request
 import json
 from distutils.version import StrictVersion
 
-from rattletrap.rattletrap_utils import get_rattletrap_binaries, get_rattletrap_path
+from carball.rattletrap.rattletrap_utils import get_rattletrap_binaries, get_rattletrap_path
 
 
 def update_rattletrap():
