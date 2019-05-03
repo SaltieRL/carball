@@ -1,20 +1,19 @@
-import inspect
 import os
 from urllib import request
 import json
-import fnmatch
 from distutils.version import StrictVersion
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
+from rattletrap.rattletrap_utils import get_rattletrap_binaries, get_rattletrap_path
+
 
 def update_rattletrap():
+    path = get_rattletrap_path()
     print('updating rattletrap in path', path)
     files = os.listdir(path)
     print('files in path', files)
 
     cur_ver = '0.0.0'
-    binaries = [f for f in files if not f.endswith('.py') and fnmatch.fnmatch(f, "*rattletrap*")]
+    binaries = get_rattletrap_binaries(path)
     print('existing found', binaries)
 
     response = request.urlopen('https://api.github.com/repos/tfausak/rattletrap/releases/latest')

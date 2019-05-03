@@ -1,3 +1,4 @@
+import inspect
 import logging
 import os
 import subprocess
@@ -5,8 +6,9 @@ import json
 import platform as pt
 from typing import List
 
+from rattletrap.rattletrap_utils import get_rattletrap_binaries, download_rattletrap, get_rattletrap_path
+
 logger = logging.getLogger(__name__)
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 def create_rattletrap_command(replay_path: str, output_path: str, overwrite: bool=True) -> List[str]:
@@ -18,7 +20,12 @@ def create_rattletrap_command(replay_path: str, output_path: str, overwrite: boo
     :param overwrite: True if we should recreate the json even if it already exists.
     :return: The json created from rattle trap.
     """
-    binaries = [f for f in os.listdir(os.path.join(BASE_DIR, 'rattletrap')) if not f.endswith('.py')]
+    rattletrap_path = get_rattletrap_path()
+    binaries = get_rattletrap_binaries(rattletrap_path)
+    if len(binaries) == 0:
+        logger.warning("Need to redownload rattletrap")
+        download_rattletrap()
+        binaries = get_rattletrap_binaries(rattletrap_path)
     platform = pt.system()
     if platform == 'Windows':
         binary = [f for f in binaries if f.endswith('.exe')][0]
@@ -28,7 +35,9 @@ def create_rattletrap_command(replay_path: str, output_path: str, overwrite: boo
         binary = [f for f in binaries if 'osx' in f][0]
     else:
         raise Exception('Unknown platform, unable to process replay file.')
-    cmd = [os.path.join(os.path.join(BASE_DIR, 'rattletrap'), '{}'.format(binary)), '--compact', '-i',
+    if binary is None:
+        print('no binary!')
+    cmd = [os.path.join(rattletrap_path, '{}'.format(binary)), '--compact', '-i',
            replay_path]
     if output_path:
         output_dirs = os.path.dirname(output_path)
