@@ -6,7 +6,7 @@ import json
 import platform as pt
 from typing import List
 
-from rattletrap.rattletrap_utils import get_rattletrap_binaries, download_rattletrap, get_rattletrap_path
+from carball.rattletrap.rattletrap_utils import get_rattletrap_binaries, download_rattletrap, get_rattletrap_path
 
 logger = logging.getLogger(__name__)
 
