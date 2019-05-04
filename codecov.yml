@@ -8,8 +8,15 @@ coverage:
   range: "70...100"
 
   status:
-    project: yes
-    patch: yes
+    project:
+      default:
+        threshold: 1
+      carball:
+        threshold: 0.5
+        paths:
+          - "!carball/tests"
+          - carball/*
+    patch: off
     changes: no
 
 parsers:
