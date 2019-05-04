@@ -15,8 +15,7 @@ coverage:
         paths:
           - "!carball/tests"
           - carball/*
-    patch:
-      target: 75%
+    patch: off
     changes: yes
 
 parsers:
