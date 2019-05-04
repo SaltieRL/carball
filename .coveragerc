@@ -10,3 +10,5 @@ exclude_lines =
     if __name__ == .__main__.:
 omit =
     tests/*
+    carball/tests/*
+    utils/tests/*
