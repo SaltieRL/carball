@@ -12,3 +12,5 @@ omit =
     tests/*
     carball/tests/*
     utils/tests/*
+    init.py
+    setup.py

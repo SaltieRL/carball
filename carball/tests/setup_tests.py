@@ -2,14 +2,25 @@ import os
 import unittest
 
 from carball.rattletrap.rattletrap_utils import get_rattletrap_binaries, get_rattletrap_path, download_rattletrap
+from carball.rattletrap.run_rattletrap import create_rattletrap_command
 
 
 class setup_tests(unittest.TestCase):
-    def test_rattle(self):
+
+    def cleanup(self):
+        path = get_rattletrap_path()
         binaries = get_rattletrap_binaries(get_rattletrap_path())
 
         # clean out existing
         for binary in binaries:
-            os.remove(binary)
+            os.remove(os.path.join(path, binary))
+
+    def test_rattle(self):
+        self.cleanup()
 
         download_rattletrap()
+
+    def test_create_rattletrap_command(self):
+        self.cleanup()
+
+        create_rattletrap_command('file.replay', 'outputdir')

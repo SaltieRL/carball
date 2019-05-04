@@ -12,11 +12,13 @@ coverage:
       default:
         threshold: 1
       carball:
+        threshold: 1
         paths:
           - "!carball/tests"
           - carball/*
 
-    patch: yes
+    patch:
+      target: 75
     changes: no
 
 parsers:
