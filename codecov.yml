@@ -8,7 +8,14 @@ coverage:
   range: "70...100"
 
   status:
-    project: yes
+    project:
+      default:
+        threshold: 1
+      carball:
+        paths:
+          - "!carball/tests"
+          - carball/*
+
     patch: yes
     changes: no
 
