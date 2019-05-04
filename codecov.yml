@@ -12,14 +12,12 @@ coverage:
       default:
         threshold: 1
       carball:
-        threshold: 1
         paths:
           - "!carball/tests"
           - carball/*
-
     patch:
-      target: 75
-    changes: no
+      target: 75%
+    changes: yes
 
 parsers:
   gcov:

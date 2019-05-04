@@ -6,7 +6,8 @@ import json
 import platform as pt
 from typing import List
 
-from carball.rattletrap.rattletrap_utils import get_rattletrap_binaries, download_rattletrap, get_rattletrap_path
+from carball.rattletrap.rattletrap_utils import get_rattletrap_binaries, download_rattletrap, get_rattletrap_path, \
+    get_binary_for_platform
 
 logger = logging.getLogger(__name__)
 
@@ -26,15 +27,7 @@ def create_rattletrap_command(replay_path: str, output_path: str, overwrite: boo
         logger.warning("Need to redownload rattletrap")
         download_rattletrap()
         binaries = get_rattletrap_binaries(rattletrap_path)
-    platform = pt.system()
-    if platform == 'Windows':
-        binary = [f for f in binaries if f.endswith('.exe')][0]
-    elif platform == 'Linux':
-        binary = [f for f in binaries if 'linux' in f][0]
-    elif platform == 'Darwin':
-        binary = [f for f in binaries if 'osx' in f][0]
-    else:
-        raise Exception('Unknown platform, unable to process replay file.')
+    binary = get_binary_for_platform(pt.system(), binaries)
     if binary is None:
         print('no binary!')
     cmd = [os.path.join(rattletrap_path, '{}'.format(binary)), '--compact', '-i',

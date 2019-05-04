@@ -26,9 +26,16 @@ class setup_tests(unittest.TestCase):
 
         create_rattletrap_command('file.replay', 'outputdir')
 
+        # check post download
+        create_rattletrap_command('file.replay', 'outputdir2')
+
     def test_direct_check_version(self):
         self.cleanup()
         update_rattletrap()
 
         #skip update
         update_rattletrap()
+
+    def test_get_correct_version_from_platform(self):
+        path = get_rattletrap_path()
+        binaries = get_rattletrap_binaries(get_rattletrap_path())
