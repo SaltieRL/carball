@@ -1,6 +1,9 @@
 def initalize_rattletrap():
     from carball.rattletrap.check_rattletrap_version import update_rattletrap
-    update_rattletrap()
+    try:
+        update_rattletrap()
+    except e:
+        print('Issue adding rattletrap')
 
 def initialize_project():
     from utils.create_proto import create_proto_files
