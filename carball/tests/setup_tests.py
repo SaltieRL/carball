@@ -3,6 +3,7 @@ import unittest
 
 from carball.rattletrap.rattletrap_utils import get_rattletrap_binaries, get_rattletrap_path, download_rattletrap
 from carball.rattletrap.run_rattletrap import create_rattletrap_command
+from carball.rattletrap.check_rattletrap_version import update_rattletrap
 
 
 class setup_tests(unittest.TestCase):
@@ -24,3 +25,10 @@ class setup_tests(unittest.TestCase):
         self.cleanup()
 
         create_rattletrap_command('file.replay', 'outputdir')
+
+    def test_direct_check_version(self):
+        self.cleanup()
+        update_rattletrap()
+
+        #skip update
+        update_rattletrap()
