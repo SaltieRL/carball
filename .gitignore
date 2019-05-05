@@ -8,3 +8,6 @@ output
 .coverage
 rattletrap*
 *.iml
+build/
+carball.egg*
+dist/
