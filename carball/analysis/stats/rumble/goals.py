@@ -6,7 +6,7 @@ from carball.analysis.stats.stats import BaseStat
 from carball.generated.api import game_pb2
 from carball.generated.api.player_pb2 import Player
 from carball.generated.api.stats.team_stats_pb2 import TeamStats
-from carball.generated.api.stats.rumble_pb2 import PowerUp
+from carball.generated.api.stats.extra_mode_stats_pb2 import PowerUp
 from carball.json_parser.game import Game
 from carball.analysis.stats.rumble.rumble import is_rumble_enabled
 
