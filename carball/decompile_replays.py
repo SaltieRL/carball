@@ -1,6 +1,4 @@
-import json
 import os
-import subprocess
 import logging
 import platform as pt
 
@@ -25,16 +23,6 @@ def decompile_replay(replay_path, output_path: str=None, overwrite=True):
     :param overwrite: True if we should recreate the json even if it already exists.
     :return: The json created from rattle trap.
     """
-    binaries = [f for f in os.listdir(os.path.join(BASE_DIR, 'rattletrap')) if not f.endswith('.py')]
-    platform = pt.system()
-    if platform == 'Windows':
-        binary = [f for f in binaries if f.endswith('.exe')][0]
-    elif platform == 'Linux':
-        binary = [f for f in binaries if 'linux' in f][0]
-    elif platform == 'Darwin':
-        binary = [f for f in binaries if 'osx' in f][0]
-    else:
-        raise Exception('Unknown platform, unable to process replay file.')
     return run_rattletrap.decompile_replay(replay_path, output_path)
 
 

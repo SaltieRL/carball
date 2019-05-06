@@ -26,3 +26,10 @@ class GetProtoTests(unittest.TestCase):
 
         protoc_path = get_proto()
         self.assertTrue(protoc_path.endswith('protoc'))
+
+    def test_create_do_protos(self):
+        from utils.create_proto import create_proto_files
+        from utils.import_fixer import convert_to_relative_imports
+
+        create_proto_files()
+        convert_to_relative_imports()

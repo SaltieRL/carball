@@ -1,12 +1,11 @@
 import unittest
 
 from carball.analysis.analysis_manager import AnalysisManager
-from carball.analysis.constants.playlist import get_playlist_from_game, get_team_size_from_game
 
-from ..json_parser.game import Game
-from ..tests.utils import run_tests_on_list, run_analysis_test_on_replay, get_raw_replays
+from carball.json_parser.game import Game
+from carball.tests.utils import run_tests_on_list, run_analysis_test_on_replay, get_raw_replays
 
-from .. import decompile_replays
+from carball import decompile_replays
 
 
 class DBTest(unittest.TestCase):

@@ -6,3 +6,5 @@ venv/
 output
 .env
 .coverage
+rattletrap*
+*.iml
