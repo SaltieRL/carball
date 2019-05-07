@@ -23,7 +23,7 @@ def update_rattletrap():
         github_ver = StrictVersion(cur_ver)
         copyfile(os.path.join(get_rattletrap_path(), 'cloud_parser'),
                  os.path.join(get_rattletrap_path(), 'rattletrap-linux'))
-        os.chmod('rattletrap-linux', 0o777)
+        os.chmod(os.path.join(get_rattletrap_path(), 'rattletrap-linux'), 0o777)
         return
 
     if len(binaries) > 0:
