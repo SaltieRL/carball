@@ -1,9 +1,8 @@
+import json
 import os
-import stat
+from distutils.version import StrictVersion
 from shutil import copyfile
 from urllib import request
-import json
-from distutils.version import StrictVersion
 
 from carball.rattletrap.rattletrap_utils import get_rattletrap_binaries, get_rattletrap_path
 
@@ -24,7 +23,7 @@ def update_rattletrap():
         github_ver = StrictVersion(cur_ver)
         copyfile(os.path.join(get_rattletrap_path(), 'cloud_parser'),
                  os.path.join(get_rattletrap_path(), 'rattletrap-linux'))
-        os.chmod('rattletrap-linux', stat.S_IXOTH)
+        os.chmod('rattletrap-linux', 0o777)
         return
 
     if len(binaries) > 0:
