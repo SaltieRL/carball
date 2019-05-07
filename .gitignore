@@ -6,7 +6,7 @@ venv/
 output
 .env
 .coverage
-rattletrap*
+rattletrap-*
 *.iml
 build/
 carball.egg*
