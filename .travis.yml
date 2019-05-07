@@ -1,7 +1,6 @@
 language: python
 python:
-- "3.6"
-
+- '3.6'
 addons:
   apt:
     sources:
@@ -9,19 +8,23 @@ addons:
     packages:
     - libstdc++6
     - gcc-4.8
-
-# command to install dependencies
 before_install:
 - chmod 777 ./.travis/install-protoc.sh
-- ./.travis/install-protoc.sh 2.6.1
-
+- "./.travis/install-protoc.sh 2.6.1"
 install:
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
-# command to run tests
 script:
 - python init.py
 - pytest --cov=./ --ignore=protobuf-2.6.1/
-
 after_success:
 - codecov
+deploy:
+  skip_cleanup: true
+  provider: pypi
+  user: PYPI_LOGIN
+  password:
+    secure: UwhFtUaTEhUkH7DxBLGJPO8voFibNgrO8O8/ezRvTc44+TJARo+sK42RFpQemRE9Z+aKNIoJNlsfo0Dic8/XHX1EoRIOrEngdpv4DdJIxvZeqZ6G3R+drnpwnSGI8foqZ+mDoylzPE4iTniZrK30rsbznrUv1OXvMxgCM5fb+/cfXSRlEtr+U5baoYt1hPB03lPhSJDKWT+LEWsA/4dt2FmCqKBbnTo62bt/ZOryN5K6z2cUXgSF6jMzEMnqC5uXQF5H24tL3v3L07Q06pkbRqP39VdzFlxf/LvE+QjpkGn1VVZCoxO9XWO/7RYCnAmso1dl2z1yfk1m/9w11uxE5izCuazFQnoFb8vIzCckpIOo7jIEAxmdWmKUERkyUaX5+iy6J+4eyC8VuGAB8pAsSDrbpUL94MqlhH12nElxsoiBspQhnaDu+d4V5r/t4BUna5pIrM4VJ4sh0dZlNuBa7nABewan17+VWU577PwN6f28Cnv3DlylskazU41mB8Rth6G30gHZmi36LbC1FxaB5QIa9Tgbh1yZwqbNO5VX2aBXaAzsnXsf1IKv0JEPRliZowApkOXRUeHCDQfwiDbvL0IK9FycG5BtLhtsXqyRPhT09ISxC48R5+P2+bgyoYrBwbinw57D0KJMpIXbuTEoDiztlfJS8p98DhEI+Jcm4Tc=
+  on:
+    tags: true
+    branch: master
