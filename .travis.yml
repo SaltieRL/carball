@@ -1,6 +1,7 @@
 language: python
 python:
 - '3.6'
+- '3.7'
 addons:
   apt:
     sources:
@@ -8,6 +9,13 @@ addons:
     packages:
     - libstdc++6
     - gcc-4.8
+
+cache:
+  pip
+  directories:
+    carball/generated/binaries
+
+
 before_install:
 - chmod 777 ./.travis/install-protoc.sh
 - "./.travis/install-protoc.sh 2.6.1"
@@ -28,6 +36,7 @@ deploy:
     on:
       repo: SaltieRL/carball
       branch: master
+      tags: true
     skip_cleanup: true
   - provider: pypi
     user: PYPI_LOGIN
@@ -36,3 +45,5 @@ deploy:
     on:
       repo: SaltieRL/carball
       branch: master
+      tags: true
+      python: 3.6
