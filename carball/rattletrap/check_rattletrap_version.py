@@ -21,8 +21,9 @@ def update_rattletrap():
         print('Unable to download rattletrap copying backup')
         # unable to download a new rattletrap version so we should just copy our own
         github_ver = StrictVersion(cur_ver)
-        copyfile(os.path.join(get_rattletrap_path(), 'cloud_parser-6.3.0'),
-                 os.path.join(get_rattletrap_path(), 'rattletrap-6.3.0-linux'))
+        copyfile(os.path.join(get_rattletrap_path(), 'cloud_parser'),
+                 os.path.join(get_rattletrap_path(), 'rattletrap-linux'))
+        return
 
     if len(binaries) > 0:
         cur_ver = binaries[0].split('-')[1]
