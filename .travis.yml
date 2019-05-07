@@ -28,9 +28,9 @@ script:
 after_success:
 - codecov
 
-before_deploy:
-  - chmod 777 ./.travis/update_version.sh
-  - "./.travis/update_version.sh "
+#before_deploy:
+#  - chmod 777 ./.travis/update_version.sh
+#  - "./.travis/update_version.sh "
 
 deploy:
   - provider: releases
