@@ -175,6 +175,23 @@ def get_raw_replays():
             "https://cdn.discordapp.com/attachments/493849514680254468/561300088400379905/crossplatform_party.replay"],
         "PARTY_LEADER_SYSTEM_ID_0_ERROR": [
             'https://cdn.discordapp.com/attachments/493849514680254468/563036945635082260/PARTY_LEADER_SYSTEM_ID_0.replay'],
+
+        # rumble
+        "RUMBLE_PRE_ITEM_GOALS": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/568540280937250836/RUMBLE_PRE_ITEM_GOALS.replay"
+        ],
+        "RUMBLE_ITEM_GOALS": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/568542870441558017/RUMBLE_ITEM_GOALS.replay"
+        ],
+        "RUMBLE_FREEZE_VS_SPIKE": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/568546468777033773/RUMBLE_FREEZE_VS_SPIKE.replay"
+        ],
+        "RUMBLE_HOLD_TIME": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/568554413283868702/RUMBLE_HOLD_TIME.replay"
+        ],
+        "RUMBLE_FULL": [
+            "https://cdn.discordapp.com/attachments/493849514680254468/568555561160015889/RUMBLE_FULL.replay"
+        ],
     }
 
 
