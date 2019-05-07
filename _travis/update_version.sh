@@ -1,7 +1,11 @@
 #!/bin/sh
 
 modify_file() {
-echo $TRAVIS_TAG > 
+
+TRAVIS_TAG=0.6.15
+FILE=CARBALL_VERSION
+
+echo ${TRAVIS_TAG##*.} > ${FILE}
 
 }
 setup_git() {
@@ -20,6 +24,7 @@ upload_files() {
   git push --quiet --set-upstream origin-pages gh-pages
 }
 
+modify_file
 setup_git
 commit_website_files
 upload_files

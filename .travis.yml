@@ -19,8 +19,8 @@ cache:
 
 
 before_install:
-- chmod 777 ./.travis/install-protoc.sh
-- "./.travis/install-protoc.sh 2.6.1"
+- chmod 777 ./_travis/install-protoc.sh
+- "./_travis/install-protoc.sh 2.6.1"
 install:
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
@@ -31,8 +31,8 @@ after_success:
 - codecov
 
 #before_deploy:
-#  - chmod 777 ./.travis/update_version.sh
-#  - "./.travis/update_version.sh "
+#  - chmod 777 ./_travis/update_version.sh
+#  - "./_travis/update_version.sh "
 
 deploy:
   - provider: releases
@@ -42,6 +42,7 @@ deploy:
     on:
       repo: SaltieRL/carball
       branch: master
+      type: push
       tags: true
     skip_cleanup: true
   - provider: pypi
@@ -51,5 +52,5 @@ deploy:
     on:
       repo: SaltieRL/carball
       branch: master
-      tags: true
       python: 3.6
+      type: push
