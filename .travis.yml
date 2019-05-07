@@ -11,9 +11,9 @@ addons:
     - gcc-4.8
 
 cache:
-  pip
-  directories:
-    carball/generated/binaries
+  - pip
+  - directories:
+      carball/generated/binaries
 
 
 before_install:
