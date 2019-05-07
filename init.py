@@ -2,7 +2,7 @@ def initalize_rattletrap():
     from carball.rattletrap.check_rattletrap_version import update_rattletrap
     try:
         update_rattletrap()
-    except e:
+    except:
         print('Issue adding rattletrap')
 
 def initialize_project():

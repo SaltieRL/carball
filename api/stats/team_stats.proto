@@ -2,6 +2,7 @@ syntax = "proto2";
 
 import "api/stats/stats.proto";
 import "api/stats/per_possession_stats.proto";
+import "api/stats/extra_mode_stats.proto";
 
 package api.stats;
 
@@ -22,4 +23,5 @@ message TeamStats {
     optional api.stats.HitCounts hit_counts = 2;
     optional CenterOfMass center_of_mass = 3;
     optional PerPossessionStats per_possession_stats = 4;
+    optional api.stats.RumbleStats rumble_stats = 5;
 }
