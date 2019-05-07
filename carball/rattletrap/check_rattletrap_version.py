@@ -1,4 +1,5 @@
 import os
+import stat
 from shutil import copyfile
 from urllib import request
 import json
@@ -23,6 +24,7 @@ def update_rattletrap():
         github_ver = StrictVersion(cur_ver)
         copyfile(os.path.join(get_rattletrap_path(), 'cloud_parser'),
                  os.path.join(get_rattletrap_path(), 'rattletrap-linux'))
+        os.chmod('rattletrap-linux', stat.S_IXOTH)
         return
 
     if len(binaries) > 0:
