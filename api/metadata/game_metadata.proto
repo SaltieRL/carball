@@ -1,6 +1,7 @@
 syntax = "proto2";
 
 import "api/player_id.proto";
+import "api/stats/extra_mode_stats.proto";
 
 package api.metadata;
 
@@ -37,6 +38,7 @@ message GameScore {
 message Goal {
     optional int32 frame_number = 1;
     optional api.PlayerId player_id = 2;
+    optional api.stats.ExtraModeGoalInfo extra_mode_info = 3;
 }
 
 message Demo {

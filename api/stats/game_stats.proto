@@ -11,5 +11,6 @@ message GameStats {
     repeated api.stats.Bump bumps = 3;
     optional api.stats.BallStats ball_stats = 4;
     repeated api.stats.Kickoff kickoffs = 5;
-    repeated api.stats.BallCarry ball_carries = 6;
+    repeated api.stats.RumbleItemEvent rumble_items = 6;
+    repeated api.stats.BallCarry ball_carries = 7;
 }

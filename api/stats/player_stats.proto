@@ -3,6 +3,7 @@ syntax = "proto2";
 import "api/stats/stats.proto";
 import "api/stats/events.proto";
 import "api/stats/per_possession_stats.proto";
+import "api/stats/extra_mode_stats.proto";
 
 package api.stats;
 
@@ -63,7 +64,8 @@ message PlayerStats {
     optional api.stats.Speed speed = 9;
     optional RelativePositioning relative_positioning = 10;
     optional api.stats.PerPossessionStats per_possession_stats = 11;
-    optional CarryDribbles ball_carries = 12;
+    optional api.stats.RumbleStats rumble_stats = 12;
+    optional CarryDribbles ball_carries = 13;
 }
 
 message Controller {

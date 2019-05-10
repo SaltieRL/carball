@@ -1,5 +1,9 @@
 import os
 import unittest
+import urllib
+from unittest.mock import Mock, patch
+
+from requests import HTTPError
 
 from carball.rattletrap.rattletrap_utils import get_rattletrap_binaries, get_rattletrap_path, download_rattletrap
 from carball.rattletrap.run_rattletrap import create_rattletrap_command
@@ -39,3 +43,11 @@ class setup_tests(unittest.TestCase):
     def test_get_correct_version_from_platform(self):
         path = get_rattletrap_path()
         binaries = get_rattletrap_binaries(get_rattletrap_path())
+
+    @patch("urllib.request.urlopen")
+    def test_403_error(self, mock_urlopen):
+        mock_urlopen.side_effect = HTTPError()
+
+        update_rattletrap()
+
+        self.cleanup()

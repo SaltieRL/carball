@@ -2,6 +2,7 @@ syntax = "proto2";
 
 import "api/player_id.proto";
 import "api/stats/stats.proto";
+import "api/stats/extra_mode_stats.proto";
 
 package api.stats;
 
@@ -92,4 +93,12 @@ message BallCarry {
 
     // Stats
     optional DetailedCarryStats carry_stats = 7;
+}
+
+message RumbleItemEvent {
+    optional int32 frame_number_get = 1;
+    optional int32 frame_number_use = 2 [default = -1];
+    optional api.stats.PowerUp item = 3;
+    optional api.PlayerId player_id = 4;
+    optional api.PlayerId victim_id = 5; // TODO Not implemented, including ball target as things like plunger can fail
 }
