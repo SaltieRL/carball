@@ -16,7 +16,11 @@ class FrameParser(object):
         self.frame_data = {
             'frames_data': {}
         }
-        self.all_data = {'game_info_actor': None}
+        self.all_data = {
+            'frames_data': [],
+            'game_info_actor': None
+        }
+        self.soccar_game_event_actor = None
         self.actors = {}
 
     def parse_frames(self):
@@ -96,8 +100,8 @@ class FrameParser(object):
             for actor_id in updated_actors:
                 handlers[actor_id].update(self.actors[actor_id], time, delta)
 
-            # for key, value in self.frame_data.items():
-            #     self.pre_df[key].append(value.copy())
+            for key, value in self.frame_data.items():
+                self.all_data[key].append(value.copy())
 
             for actor_id, handler in handlers.items():
                 actor = self.actors[actor_id]

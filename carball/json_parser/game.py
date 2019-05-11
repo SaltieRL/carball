@@ -12,7 +12,7 @@ from .goal import Goal
 from .player import Player
 from .team import Team
 from .game_info import GameInfo
-from .json_parser import FrameParser
+from .frame_parser import FrameParser
 
 logger = logging.getLogger(__name__)
 
@@ -214,7 +214,6 @@ class Game:
 
         frames = self.replay_data
         frames_data = {}
-        soccar_game_event_actor_id = None
         frame_number = 0
         current_goal_number = 0
 
@@ -311,24 +310,6 @@ class Game:
                     'time': frame["time"],
                     'delta': frame["delta"],
                 }
-                if soccar_game_event_actor_id is None:
-                    # set soccar_game_event_actor_id
-                    for actor_id, actor_data in current_actors.items():
-                        if actor_data["TypeName"] == "Archetypes.GameEvent.GameEvent_Soccar" \
-                                or "TAGame.GameEvent_Soccar_TA:SecondsRemaining" in actor_data:
-                            # TODO: Investigate if there's a less hacky way to detect GameActors with not TypeName
-                            soccar_game_event_actor_id = actor_id
-                            break
-
-                frame_data['seconds_remaining'] = current_actors[soccar_game_event_actor_id].get(
-                    "TAGame.GameEvent_Soccar_TA:SecondsRemaining", None)
-                frame_data['replicated_seconds_remaining'] = current_actors[soccar_game_event_actor_id].get(
-                    "TAGame.GameEvent_TA:ReplicatedGameStateTimeRemaining", None)
-                frame_data['is_overtime'] = current_actors[soccar_game_event_actor_id].get(
-                    "TAGame.GameEvent_Soccar_TA:bOverTime", None)
-                frame_data['ball_has_been_hit'] = current_actors[soccar_game_event_actor_id].get(
-                    "TAGame.GameEvent_Soccar_TA:bBallHasBeenHit", None)
-                frames_data[frame_number] = frame_data
 
                 # car and player stuff
                 for actor_id, actor_data in current_actors.items():
@@ -557,11 +538,11 @@ class Game:
             'player_ball_data': player_ball_data,
             'player_dicts': player_dicts,
             'team_dicts': team_dicts,
-            'frames_data': frames_data,
+            'frames_data': parser.all_data['frames_data'],
             'cameras_data': cameras_data,
             'demos_data': demos_data,
             'game_info_actor': parser.all_data['game_info_actor'],
-            'soccar_game_event_actor': current_actors[soccar_game_event_actor_id],
+            'soccar_game_event_actor': parser.soccar_game_event_actor,
             'parties': parties
         }
 
@@ -736,7 +717,7 @@ class Game:
         self.ball = pd.DataFrame.from_dict(self.all_data['player_ball_data']['ball'], orient='index')
 
         # FRAMES
-        self.frames = pd.DataFrame.from_dict(self.all_data['frames_data'], orient='index')
+        self.frames = pd.DataFrame(self.all_data['frames_data'])
 
         # DEMOS
         self.demos = []
