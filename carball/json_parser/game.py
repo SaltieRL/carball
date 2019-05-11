@@ -359,40 +359,6 @@ class Game:
                                               player_dicts[victim_player_id]['name']))
                                 actor_data.pop("TAGame.Car_TA:ReplicatedDemolish")
 
-                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Default":
-                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
-                            continue
-                        self.ball_type = mutators.DEFAULT
-                        # RBState = actor_data.get(REPLICATED_RB_STATE_KEY, {})
-                        # ball_is_sleeping = RBState.get('Sleeping', True)
-                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
-                        player_ball_data['ball'][frame_number] = data_dict
-                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Basketball" or \
-                            actor_data["TypeName"] == "Archetypes.Ball.Ball_BasketBall":
-                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
-                            continue
-                        self.ball_type = mutators.BASKETBALL
-                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
-                        player_ball_data['ball'][frame_number] = data_dict
-                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Puck":
-                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
-                            continue
-                        self.ball_type = mutators.PUCK
-                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
-                        player_ball_data['ball'][frame_number] = data_dict
-                    elif actor_data["TypeName"] == "Archetypes.Ball.CubeBall":
-                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
-                            continue
-                        self.ball_type = mutators.CUBEBALL
-                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
-                        player_ball_data['ball'][frame_number] = data_dict
-                    elif actor_data["TypeName"] == "Archetypes.Ball.Ball_Breakout":
-                        if actor_data.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
-                            continue
-                        self.ball_type = mutators.BREAKOUT
-                        data_dict = BallActor.get_data_dict(actor_data, version=self.replay_version)
-                        player_ball_data['ball'][frame_number] = data_dict
-
                 for actor_id, actor_data in current_actors.items():
                     if actor_data["TypeName"] == "TAGame.Default__CameraSettingsActor_TA" and \
                             "TAGame.CameraSettingsActor_TA:PRI" in actor_data:
@@ -533,6 +499,8 @@ class Game:
 
         parser = FrameParser(self.replay_data, self)
         parser.parse_frames()
+
+        player_ball_data['ball'] = parser.all_data['player_ball_data']['ball']
 
         all_data = {
             'player_ball_data': player_ball_data,
@@ -714,7 +682,7 @@ class Game:
                 goal.player = goal.get_player(self)
 
         # BALL
-        self.ball = pd.DataFrame.from_dict(self.all_data['player_ball_data']['ball'], orient='index')
+        self.ball = pd.DataFrame(self.all_data['player_ball_data']['ball'])
 
         # FRAMES
         self.frames = pd.DataFrame(self.all_data['frames_data'])

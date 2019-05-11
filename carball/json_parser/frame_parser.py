@@ -14,10 +14,12 @@ class FrameParser(object):
         self.game = game
         self.replay_version = game.replay_version
         self.frame_data = {
-            'frames_data': {}
+            'frames_data': {},
+            'ball_data': {}
         }
         self.all_data = {
             'frames_data': [],
+            'ball_data': [],
             'game_info_actor': None
         }
         self.soccar_game_event_actor = None
@@ -106,6 +108,12 @@ class FrameParser(object):
             for actor_id, handler in handlers.items():
                 actor = self.actors[actor_id]
                 handler.post_process_frame(actor, time, delta)
+
+        player_ball_data = {
+            'ball': self.all_data['ball_data']
+        }
+
+        self.all_data['player_ball_data'] = player_ball_data
 
 
 def find_actual_value(value_dict: dict) -> dict or int or bool or str:
