@@ -12,6 +12,7 @@ from .goal import Goal
 from .player import Player
 from .team import Team
 from .game_info import GameInfo
+from .json_parser import FrameParser
 
 logger = logging.getLogger(__name__)
 
@@ -220,7 +221,6 @@ class Game:
         cameras_data = {}  # player_actor_id: actor_data
         demos_data = []  # frame_number: demolish_data
 
-        game_info_actor = None
         parties = {}
         # loop through frames
         for i, frame in enumerate(frames):
@@ -278,13 +278,6 @@ class Game:
                     # update stuff in current_actors
                     for _k, _v in actual_update.items():
                         current_actors[actor_id][_k] = _v
-
-            # server metadata
-            if game_info_actor is None:
-                for actor_id, actor_data in current_actors.items():
-                    if actor_data['TypeName'].endswith(':GameReplicationInfoArchetype'):
-                        game_info_actor = actor_data
-                        break
 
             # find players and ball
             players_and_teams_data = self.parse_players_and_teams(current_actors, parties, player_dicts,
@@ -557,6 +550,9 @@ class Game:
             current_car_ids_to_collect = []  # reset ids for next frame
             frame_number += 1
 
+        parser = FrameParser(self.replay_data, self)
+        parser.parse_frames()
+
         all_data = {
             'player_ball_data': player_ball_data,
             'player_dicts': player_dicts,
@@ -564,7 +560,7 @@ class Game:
             'frames_data': frames_data,
             'cameras_data': cameras_data,
             'demos_data': demos_data,
-            'game_info_actor': game_info_actor,
+            'game_info_actor': parser.all_data['game_info_actor'],
             'soccar_game_event_actor': current_actors[soccar_game_event_actor_id],
             'parties': parties
         }
