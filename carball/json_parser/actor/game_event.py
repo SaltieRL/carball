@@ -10,9 +10,12 @@ class GameEventHandler(BaseActorHandler):
 
     def update(self, actor, frame_number, time, delta):
         self.parser.soccar_game_event_actor = actor
-        frame_data = self.parser.frame_data['frames_data']
-        frame_data['seconds_remaining'] = actor.get('TAGame.GameEvent_Soccar_TA:SecondsRemaining', None)
-        frame_data['replicated_seconds_remaining'] = \
-            actor.get('TAGame.GameEvent_TA:ReplicatedGameStateTimeRemaining', None)
-        frame_data['is_overtime'] = actor.get('TAGame.GameEvent_Soccar_TA:bOverTime', None)
-        frame_data['ball_has_been_hit'] = actor.get('TAGame.GameEvent_Soccar_TA:bBallHasBeenHit', None)
+        frame_data = {
+            'time': time,
+            'delta': delta,
+            'seconds_remaining': actor.get('TAGame.GameEvent_Soccar_TA:SecondsRemaining', None),
+            'replicated_seconds_remaining': actor.get('TAGame.GameEvent_TA:ReplicatedGameStateTimeRemaining', None),
+            'is_overtime': actor.get('TAGame.GameEvent_Soccar_TA:bOverTime', None),
+            'ball_has_been_hit': actor.get('TAGame.GameEvent_Soccar_TA:bBallHasBeenHit', None)
+        }
+        self.parser.frames_data[frame_number] = frame_data

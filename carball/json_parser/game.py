@@ -501,16 +501,16 @@ class Game:
         parser.parse_frames()
 
         player_ball_data = parser.player_data
-        player_ball_data['ball'] = parser.all_data['player_ball_data']['ball']
+        player_ball_data['ball'] = parser.ball_data
 
         all_data = {
             'player_ball_data': player_ball_data,
             'player_dicts': parser.player_dicts,
             'team_dicts': parser.team_dicts,
-            'frames_data': parser.all_data['frames_data'],
+            'frames_data': parser.frames_data,
             'cameras_data': parser.cameras_data,
             'demos_data': parser.demos_data,
-            'game_info_actor': parser.all_data['game_info_actor'],
+            'game_info_actor': parser.game_info_actor,
             'soccar_game_event_actor': parser.soccar_game_event_actor,
             'parties': parser.parties
         }
@@ -683,10 +683,10 @@ class Game:
                 goal.player = goal.get_player(self)
 
         # BALL
-        self.ball = pd.DataFrame(self.all_data['player_ball_data']['ball'])
+        self.ball = pd.DataFrame.from_dict(self.all_data['player_ball_data']['ball'], orient='index')
 
         # FRAMES
-        self.frames = pd.DataFrame(self.all_data['frames_data'])
+        self.frames = pd.DataFrame.from_dict(self.all_data['frames_data'], orient='index')
 
         # DEMOS
         self.demos = []

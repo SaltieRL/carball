@@ -12,17 +12,12 @@ class FrameParser(object):
         self.replay_frames = replay_frames
         self.game = game
         self.replay_version = game.replay_version
-        self.frame_data = {
-            'frames_data': {},
-            'ball_data': {}
-        }
-        self.all_data = {
-            'frames_data': [],
-            'ball_data': [],
-            'game_info_actor': None
-        }
+
+        self.game_info_actor = None
         self.soccar_game_event_actor = None
 
+        self.frames_data = {}
+        self.ball_data = {}
         self.player_data = {}
 
         self.parties = {}
@@ -51,9 +46,6 @@ class FrameParser(object):
         for i, frame in enumerate(self.replay_frames):
             time = frame['time']
             delta = frame['delta']
-
-            self.frame_data['frames_data']['time'] = time
-            self.frame_data['frames_data']['delta'] = delta
 
             destroyed_actors.clear()
 
@@ -104,20 +96,7 @@ class FrameParser(object):
             for handler_tuple in sorted_handlers:
                 handler_tuple[2].update(self.actors[handler_tuple[0]], i, time, delta)
 
-            for key, value in self.frame_data.items():
-                self.all_data[key].append(value.copy())
-
-            # for actor_id, handler in handlers.items():
-            #     actor = self.actors[actor_id]
-            #     handler.post_process_frame(actor, time, delta)
-
             self.current_car_ids_to_collect.clear()
-
-        player_ball_data = {
-            'ball': self.all_data['ball_data']
-        }
-
-        self.all_data['player_ball_data'] = player_ball_data
 
 
 def find_actual_value(value_dict: dict) -> dict or int or bool or str:

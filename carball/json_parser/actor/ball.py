@@ -19,11 +19,10 @@ class BallHandler(BaseActorHandler):
 
     def update(self, actor, frame_number, time, delta):
         if actor.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
-            self.parser.frame_data['ball_data']['ball'].clear()
             return
 
         if self.parser.game.ball_type is None:
             self.parser.game.ball_type = BALL_TYPES.get(actor['TypeName'], mutators.DEFAULT)
 
         ball_data = BallActor.get_data_dict(actor, self.parser.replay_version)
-        self.parser.frame_data['ball_data'] = ball_data
+        self.parser.ball_data[frame_number] = ball_data

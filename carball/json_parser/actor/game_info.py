@@ -9,5 +9,5 @@ class GameInfoHandler(BaseActorHandler):
         return actor['TypeName'].endswith(':GameReplicationInfoArchetype')
 
     def update(self, actor, frame_number, time, delta):
-        if self.parser.all_data['game_info_actor'] is None:
-            self.parser.all_data['game_info_actor'] = actor
+        if self.parser.game_info_actor is None:
+            self.parser.game_info_actor = actor

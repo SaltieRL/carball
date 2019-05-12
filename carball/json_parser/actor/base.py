@@ -19,6 +19,3 @@ class BaseActorHandler(object):
 
     def destroy(self, actor, time, delta):
         pass
-
-    def post_process_frame(self, actor, time, delta):
-        pass
