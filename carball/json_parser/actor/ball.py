@@ -17,7 +17,7 @@ class BallHandler(BaseActorHandler):
     def can_handle(cls, actor):
         return actor['TypeName'].startswith('Archetypes.Ball.')
 
-    def update(self, actor, time, delta):
+    def update(self, actor, frame_number, time, delta):
         if actor.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
             self.parser.frame_data['ball_data']['ball'].clear()
             return

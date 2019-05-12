@@ -13,7 +13,7 @@ class BaseActorHandler(object):
     def __init__(self, parser):
         self.parser = parser
 
-    def update(self, actor, time, delta):
+    def update(self, actor, frame_number, time, delta):
         pass
 
     def destroy(self, actor, time, delta):

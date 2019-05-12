@@ -35,6 +35,8 @@ class FrameParser(object):
 
         self.demos_data = []  # frame_number: demolish_data
 
+        self.current_car_ids_to_collect = []
+
         self.actors = {}
 
     def parse_frames(self):
@@ -112,7 +114,7 @@ class FrameParser(object):
 
             # apply the update handlers
             for actor_id in updated_actors:
-                handlers[actor_id].update(self.actors[actor_id], time, delta)
+                handlers[actor_id].update(self.actors[actor_id], i, time, delta)
 
             for key, value in self.frame_data.items():
                 self.all_data[key].append(value.copy())

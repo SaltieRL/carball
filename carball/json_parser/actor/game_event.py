@@ -8,7 +8,7 @@ class GameEventHandler(BaseActorHandler):
     def can_handle(cls, actor):
         return actor['ClassName'].startswith('TAGame.GameEvent_Soccar_TA')
 
-    def update(self, actor, time, delta):
+    def update(self, actor, frame_number, time, delta):
         self.parser.soccar_game_event_actor = actor
         frame_data = self.parser.frame_data['frames_data']
         frame_data['seconds_remaining'] = actor.get('TAGame.GameEvent_Soccar_TA:SecondsRemaining', None)

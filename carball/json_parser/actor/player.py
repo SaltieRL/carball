@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 class PlayerHandler(BaseActorHandler):
     type_name = 'TAGame.Default__PRI_TA'
 
-    def update(self, actor, time, delta):
+    def update(self, actor, frame_number, time, delta):
         if 'Engine.PlayerReplicationInfo:PlayerName' not in actor:
             return
 
