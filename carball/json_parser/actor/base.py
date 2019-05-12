@@ -1,10 +1,11 @@
-REPLICATED_ACTIVE_KEY = 'TAGame.CarComponent_TA:ReplicatedActive'
+COMPONENT_REPLICATED_ACTIVE_KEY = 'TAGame.CarComponent_TA:ReplicatedActive'
 REPLICATED_RB_STATE_KEY = 'TAGame.RBActor_TA:ReplicatedRBState'
-ACTIVE_KEY = 'TAGame.CarComponent_TA:Active'
+COMPONENT_ACTIVE_KEY = 'TAGame.CarComponent_TA:Active'
 
 
 class BaseActorHandler(object):
     type_name = None
+    priority = 1000
 
     @classmethod
     def can_handle(cls, actor):

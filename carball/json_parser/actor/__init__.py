@@ -4,3 +4,4 @@ from .ball import BallHandler
 from .player import PlayerHandler
 from .team import TeamHandler
 from .car import CarHandler
+from .jump import JumpHandler, DodgeHandler, DoubleJumpHandler

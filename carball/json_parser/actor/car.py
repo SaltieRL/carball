@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 class CarHandler(BaseActorHandler):
     type_name = 'Archetypes.Car.Car_Default'
+    priority = 600
 
     def update(self, actor, frame_number, time, delta):
         if 'Engine.Pawn:PlayerReplicationInfo' not in actor:
@@ -28,7 +29,7 @@ class CarHandler(BaseActorHandler):
 
             data_dict = CarActor.get_data_dict(actor, version=self.parser.replay_version)
             # save data from here
-            self.parser.player_data[player_actor_id] = data_dict
+            self.parser.player_data[player_actor_id][frame_number].update(data_dict)
 
         # get demo data
         if 'TAGame.Car_TA:ReplicatedDemolish' in actor:

@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 
 class PlayerHandler(BaseActorHandler):
     type_name = 'TAGame.Default__PRI_TA'
+    priority = 500
 
     def update(self, actor, frame_number, time, delta):
         if 'Engine.PlayerReplicationInfo:PlayerName' not in actor:
@@ -74,6 +75,10 @@ class PlayerHandler(BaseActorHandler):
 
             logger.debug('Found player actor: %s (id: %s)' % (player_dict['name'], actor_id))
             self.parser.player_data[actor_id] = {}
+
+        self.parser.player_data[actor_id][frame_number] = {
+            'ping':  actor.get("Engine.PlayerReplicationInfo:Ping", None)
+        }
 
         # update player_dicts
         for _k, _v in {**actor, **player_dict}.items():

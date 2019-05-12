@@ -1,5 +1,4 @@
 import inspect
-import pandas as pd
 from carball.json_parser import actor
 
 
@@ -48,7 +47,6 @@ class FrameParser(object):
 
         prev_time = None
 
-        updated_actors = set()
         destroyed_actors = set()
 
         for i, frame in enumerate(self.replay_frames):
@@ -64,7 +62,6 @@ class FrameParser(object):
             self.frame_data['frames_data']['time'] = time
             self.frame_data['frames_data']['delta'] = delta
 
-            updated_actors.clear()
             destroyed_actors.clear()
 
             for replication in frame['replications']:
@@ -83,7 +80,7 @@ class FrameParser(object):
                                           type_handler_objects), None)
 
                     if handler is not None:
-                        handlers[actor_id] = handler(self)
+                        handlers[actor_id] = handler.priority, handler(self)
 
                 elif actor_status == 'updated':
                     if actor_id not in self.actors:
@@ -94,9 +91,6 @@ class FrameParser(object):
                     for prop in replication['value']['updated']:
                         actor[prop['name']] = find_actual_value(prop['value'])
 
-                    if actor_id in handlers:
-                        updated_actors.add(actor_id)
-
                 elif actor_status == 'destroyed':
                     if actor_id in handlers:
                         destroyed_actors.add(actor_id)
@@ -106,22 +100,23 @@ class FrameParser(object):
                 actor = self.actors.get(actor_id, None)
                 if actor is not None:
                     handler = handlers.pop(actor_id)
-                    handler.destroy(actor, time, delta)
+                    handler[1].destroy(actor, time, delta)
 
             # remove the destroyed actors
             for actor_id in destroyed_actors:
                 self.actors.pop(actor_id, None)
 
             # apply the update handlers
-            for actor_id in updated_actors:
-                handlers[actor_id].update(self.actors[actor_id], i, time, delta)
+            sorted_handlers = sorted(map(lambda x: (x[0], x[1][0], x[1][1]), handlers.items()), key=lambda x: x[1])
+            for handler_tuple in sorted_handlers:
+                handler_tuple[2].update(self.actors[handler_tuple[0]], i, time, delta)
 
             for key, value in self.frame_data.items():
                 self.all_data[key].append(value.copy())
 
-            for actor_id, handler in handlers.items():
-                actor = self.actors[actor_id]
-                handler.post_process_frame(actor, time, delta)
+            # for actor_id, handler in handlers.items():
+            #     actor = self.actors[actor_id]
+            #     handler.post_process_frame(actor, time, delta)
 
         player_ball_data = {
             'ball': self.all_data['ball_data']
