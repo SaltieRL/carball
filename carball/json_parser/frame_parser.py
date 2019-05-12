@@ -45,19 +45,11 @@ class FrameParser(object):
         self.actors = {}
         handlers = {}
 
-        prev_time = None
-
         destroyed_actors = set()
 
         for i, frame in enumerate(self.replay_frames):
             time = frame['time']
-            delta = 0.0
-
-            if prev_time is not None:
-                # the delta in the file is inaccurate
-                delta = time - prev_time
-
-            prev_time = time
+            delta = frame['delta']
 
             self.frame_data['frames_data']['time'] = time
             self.frame_data['frames_data']['delta'] = delta
