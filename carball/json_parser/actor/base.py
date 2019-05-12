@@ -1,5 +1,5 @@
 REPLICATED_ACTIVE_KEY = 'TAGame.CarComponent_TA:ReplicatedActive'
-REPLICATED_RB_STATE = 'TAGame.RBActor_TA:ReplicatedRBState'
+REPLICATED_RB_STATE_KEY = 'TAGame.RBActor_TA:ReplicatedRBState'
 ACTIVE_KEY = 'TAGame.CarComponent_TA:Active'
 
 

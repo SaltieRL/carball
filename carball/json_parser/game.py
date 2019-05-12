@@ -504,8 +504,8 @@ class Game:
 
         all_data = {
             'player_ball_data': player_ball_data,
-            'player_dicts': player_dicts,
-            'team_dicts': team_dicts,
+            'player_dicts': parser.player_dicts,
+            'team_dicts': parser.team_dicts,
             'frames_data': parser.all_data['frames_data'],
             'cameras_data': cameras_data,
             'demos_data': demos_data,

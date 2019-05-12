@@ -23,6 +23,18 @@ class FrameParser(object):
             'game_info_actor': None
         }
         self.soccar_game_event_actor = None
+
+        self.player_data = {}
+
+        self.parties = {}
+        self.player_dicts = {}
+        self.team_dicts = {}
+
+        self.player_car_ids = {}  # player_actor_id: car_actor_id
+        self.car_player_ids = {}  # car_actor_id: player_actor_id
+
+        self.demos_data = []  # frame_number: demolish_data
+
         self.actors = {}
 
     def parse_frames(self):
