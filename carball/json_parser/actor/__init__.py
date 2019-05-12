@@ -7,3 +7,4 @@ from .car import CarHandler
 from .jump import JumpHandler, DodgeHandler, DoubleJumpHandler
 from .boost import BoostHandler, BoostPickupHandler
 from .camera import CameraSettingsHandler
+from .rumble import RumbleItemHandler
