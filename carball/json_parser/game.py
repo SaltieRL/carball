@@ -2,23 +2,18 @@ import json
 import logging
 import re
 from datetime import datetime
-from typing import List, Dict
+from typing import List
 
 import pandas as pd
 
-from .actor_parsing import BallActor, CarActor
-from carball.generated.api.game_pb2 import mutators_pb2 as mutators
 from .goal import Goal
 from .player import Player
 from .team import Team
 from .game_info import GameInfo
-from .frame_parser import FrameParser
+from .frame_parser import parse_frames
 
 logger = logging.getLogger(__name__)
 
-COMPONENT_ACTIVE_KEY = "TAGame.CarComponent_TA:Active"
-COMPONENT_REPLICATED_ACTIVE_KEY = "TAGame.CarComponent_TA:ReplicatedActive"
-BOOST_PER_SECOND = 80 * 1 / .93  # boost used per second out of 255
 DATETIME_FORMATS = [
     '%Y-%m-%d %H-%M-%S',
     '%Y-%m-%d:%H-%M'
@@ -99,7 +94,7 @@ class Game:
         self.primary_player: dict = self.get_primary_player()
 
         if parse_replay:
-            self.all_data = self.parse_replay()
+            self.all_data = parse_frames(self)
             self.parse_all_data(self.all_data, clean_player_names)
             logger.info("Finished parsing %s" % self)
 
@@ -163,60 +158,6 @@ class Game:
                     return value
         else:
             return value_dict
-
-    def parse_replay(self):
-        """
-        :return: all_data = {
-            'player_ball_data': player_ball_data,
-            'player_dicts': player_dicts,
-            'team_dicts': team_dicts,
-            'frames_data': frames_data,
-            'cameras_data': cameras_data
-            'demos_data': demos_data
-        }
-
-        player_ball_data format:
-        {
-        'ball': {frame_number: {pos_x, pos_y ...}, f_no2: {...} ...,}
-        player_actor_id: {
-            frame_number: {
-                pos_x, pos_y ...,
-                throttle, steer, ...,
-                ping, ball_cam
-            },
-            f_no2: {...} ...,
-        }
-
-        currently implemented:
-            inputs: posx, posy, posz, rotx, roty, rotz, vx, vy, vz, angvx, angy, angvz, boost_amt
-            outputs: throttle, steer, handbrake, boost, jump, doublejump, dodge
-
-        player_dicts  = {player_actor_id : {actor_data}, player_actor_id_2: {actor_data_2}}
-        team_dicts = {team_actor_id: {actor_data, 'colour':'blue'/'orange', also includes name}
-        frames_data = {frame_number: {time, delta, seconds_remaining, is_overtime, ball_has_been_hit}
-        cameras_data = {player_actor_id: actor_data}
-        demos_data = {frame_number: demolish_data}
-
-        """
-        parser = FrameParser(self.replay_data, self)
-        parser.parse_frames()
-
-        player_ball_data = parser.player_data
-        player_ball_data['ball'] = parser.ball_data
-
-        all_data = {
-            'player_ball_data': player_ball_data,
-            'player_dicts': parser.player_dicts,
-            'team_dicts': parser.team_dicts,
-            'frames_data': parser.frames_data,
-            'cameras_data': parser.cameras_data,
-            'demos_data': parser.demos_data,
-            'game_info_actor': parser.game_info_actor,
-            'soccar_game_event_actor': parser.soccar_game_event_actor,
-            'parties': parser.parties
-        }
-
-        return all_data
 
     def parse_all_data(self, all_data, clean_player_names: bool) -> None:
         """

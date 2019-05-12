@@ -8,6 +8,59 @@ def _get_handlers():
     return list(map(lambda x: x[1], inspect.getmembers(actor, inspect.isclass)))
 
 
+def parse_frames(game):
+    """
+    :return: all_data = {
+        'player_ball_data': player_ball_data,
+        'player_dicts': player_dicts,
+        'team_dicts': team_dicts,
+        'frames_data': frames_data,
+        'cameras_data': cameras_data
+        'demos_data': demos_data
+    }
+
+    player_ball_data format:
+    {
+    'ball': {frame_number: {pos_x, pos_y ...}, f_no2: {...} ...,}
+    player_actor_id: {
+        frame_number: {
+            pos_x, pos_y ...,
+            throttle, steer, ...,
+            ping, ball_cam
+        },
+        f_no2: {...} ...,
+    }
+
+    currently implemented:
+        inputs: posx, posy, posz, rotx, roty, rotz, vx, vy, vz, angvx, angy, angvz, boost_amt
+        outputs: throttle, steer, handbrake, boost, jump, doublejump, dodge
+
+    player_dicts  = {player_actor_id : {actor_data}, player_actor_id_2: {actor_data_2}}
+    team_dicts = {team_actor_id: {actor_data, 'colour':'blue'/'orange', also includes name}
+    frames_data = {frame_number: {time, delta, seconds_remaining, is_overtime, ball_has_been_hit}
+    cameras_data = {player_actor_id: actor_data}
+    demos_data = {frame_number: demolish_data}
+
+    """
+    parser = FrameParser(game.replay_data, game)
+    parser.parse_frames()
+
+    player_ball_data = parser.player_data
+    player_ball_data['ball'] = parser.ball_data
+
+    return {
+        'player_ball_data': player_ball_data,
+        'player_dicts': parser.player_dicts,
+        'team_dicts': parser.team_dicts,
+        'frames_data': parser.frames_data,
+        'cameras_data': parser.cameras_data,
+        'demos_data': parser.demos_data,
+        'game_info_actor': parser.game_info_actor,
+        'soccar_game_event_actor': parser.soccar_game_event_actor,
+        'parties': parser.parties
+    }
+
+
 class FrameParser(object):
 
     def __init__(self, replay_frames, game):
