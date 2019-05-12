@@ -1,6 +1,8 @@
 import inspect
 from carball.json_parser import actor
 
+REPLICATED_RB_STATE_KEY = 'TAGame.RBActor_TA:ReplicatedRBState'
+
 
 def _get_handlers():
     return list(map(lambda x: x[1], inspect.getmembers(actor, inspect.isclass)))
@@ -30,6 +32,7 @@ class FrameParser(object):
         self.cameras_data = {}  # player_actor_id: actor_data
         self.demos_data = []  # frame_number: demolish_data
 
+        # stores car_actor_ids to collect data for at each frame
         self.current_car_ids_to_collect = []
 
         self.actors = {}
@@ -42,6 +45,8 @@ class FrameParser(object):
         handlers = {}
 
         destroyed_actors = set()
+
+        current_goal_number = 0
 
         for i, frame in enumerate(self.replay_frames):
             time = frame['time']
@@ -90,6 +95,22 @@ class FrameParser(object):
             # remove the destroyed actors
             for actor_id in destroyed_actors:
                 self.actors.pop(actor_id, None)
+
+            # stop data collection after goal
+            try:
+                if i > self.game.goals[current_goal_number].frame_number:
+                    # set all players to sleeping after goal
+                    for car_actor_id in self.car_player_ids:
+                        try:
+                            car = self.actors[car_actor_id]
+                            car[REPLICATED_RB_STATE_KEY]['Sleeping'] = True
+                        except KeyError as e:
+                            # Ignore the case where the car does not have a REPLICATED_RB_STATE_KEY
+                            pass
+                    current_goal_number += 1
+            except IndexError:
+                # after last goal.
+                pass
 
             # apply the update handlers
             sorted_handlers = sorted(map(lambda x: (x[0], x[1][0], x[1][1]), handlers.items()), key=lambda x: x[1])
