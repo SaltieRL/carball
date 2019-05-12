@@ -304,7 +304,7 @@ class Game:
                 pass
 
             # gather data at this frame
-            if _f_delta != 0:
+            if True:
                 # frame stuff
                 frame_data = {
                     'time': frame["time"],
@@ -500,6 +500,7 @@ class Game:
         parser = FrameParser(self.replay_data, self)
         parser.parse_frames()
 
+        player_ball_data = parser.player_data
         player_ball_data['ball'] = parser.all_data['player_ball_data']['ball']
 
         all_data = {
@@ -511,7 +512,7 @@ class Game:
             'demos_data': parser.demos_data,
             'game_info_actor': parser.all_data['game_info_actor'],
             'soccar_game_event_actor': parser.soccar_game_event_actor,
-            'parties': parties
+            'parties': parser.parties
         }
 
         return all_data

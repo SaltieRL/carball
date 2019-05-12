@@ -90,3 +90,7 @@ class PlayerHandler(BaseActorHandler):
                 self.parser.cameras_data[actor_id] = actor['TAGame.PRI_TA:CameraSettings']
             ball_cam = actor.get('TAGame.CameraSettingsActor_TA:bUsingSecondaryCamera', None)
             self.parser.player_data[actor_id][frame_number]['ball_cam'] = ball_cam
+
+        if 'TAGame.PRI_TA:TimeTillItem' in actor:
+            time_till_item = actor['TAGame.PRI_TA:TimeTillItem']
+            self.parser.player_data[actor_id][frame_number]['time_till_power_up'] = time_till_item

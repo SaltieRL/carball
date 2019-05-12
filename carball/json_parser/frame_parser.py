@@ -111,6 +111,8 @@ class FrameParser(object):
             #     actor = self.actors[actor_id]
             #     handler.post_process_frame(actor, time, delta)
 
+            self.current_car_ids_to_collect.clear()
+
         player_ball_data = {
             'ball': self.all_data['ball_data']
         }
