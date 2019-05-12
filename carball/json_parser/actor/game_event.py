@@ -5,10 +5,10 @@ class GameEventHandler(BaseActorHandler):
     type_name = 'Archetypes.GameEvent.GameEvent_Soccar'
 
     @classmethod
-    def can_handle(cls, actor):
+    def can_handle(cls, actor: dict) -> bool:
         return actor['ClassName'].startswith('TAGame.GameEvent_Soccar_TA')
 
-    def update(self, actor, frame_number, time, delta):
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         self.parser.soccar_game_event_actor = actor
         frame_data = {
             'time': time,

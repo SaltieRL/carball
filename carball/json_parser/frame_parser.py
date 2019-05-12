@@ -75,6 +75,7 @@ class FrameParser(object):
         self.ball_data = {}
         self.player_data = {}
 
+        # dictionaries to contain data in frames
         self.parties = {}
         self.player_dicts = {}
         self.team_dicts = {}
@@ -140,13 +141,9 @@ class FrameParser(object):
 
             # apply destroy handlers
             for actor_id in destroyed_actors:
-                actor = self.actors.get(actor_id, None)
-                if actor is not None:
-                    handler = handlers.pop(actor_id)
-                    handler[1].destroy(actor, time, delta)
-
-            # remove the destroyed actors
-            for actor_id in destroyed_actors:
+                handlers.pop(actor_id, None)
+                self.player_car_ids.pop(actor_id, None)
+                self.car_player_ids.pop(actor_id, None)
                 self.actors.pop(actor_id, None)
 
             # stop data collection after goal

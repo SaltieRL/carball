@@ -8,7 +8,7 @@ class PlayerHandler(BaseActorHandler):
     type_name = 'TAGame.Default__PRI_TA'
     priority = 500
 
-    def update(self, actor, frame_number, time, delta):
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         if 'Engine.PlayerReplicationInfo:PlayerName' not in actor:
             return
 

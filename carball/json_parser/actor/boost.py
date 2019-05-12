@@ -7,7 +7,7 @@ REPLICATED_PICKUP_KEY = 'TAGame.VehiclePickup_TA:ReplicatedPickupData'
 class BoostHandler(BaseActorHandler):
     type_name = 'Archetypes.CarComponents.CarComponent_Boost'
 
-    def update(self, actor, frame_number, time, delta):
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         car_actor_id = actor.get('TAGame.CarComponent_TA:Vehicle', None)
 
         if car_actor_id is None or car_actor_id not in self.parser.current_car_ids_to_collect:
@@ -35,10 +35,10 @@ class BoostHandler(BaseActorHandler):
 class BoostPickupHandler(BaseActorHandler):
 
     @classmethod
-    def can_handle(cls, actor):
+    def can_handle(cls, actor: dict) -> bool:
         return actor['ClassName'] == 'TAGame.VehiclePickup_Boost_TA'
 
-    def update(self, actor, frame_number, time, delta):
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         if REPLICATED_PICKUP_KEY in actor and \
                 actor[REPLICATED_PICKUP_KEY] != -1 and \
                 'instigator_id' in actor[REPLICATED_PICKUP_KEY]['pickup']:

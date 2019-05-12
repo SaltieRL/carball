@@ -9,7 +9,7 @@ class CarHandler(BaseActorHandler):
     type_name = 'Archetypes.Car.Car_Default'
     priority = 600
 
-    def update(self, actor, frame_number, time, delta):
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         if 'Engine.Pawn:PlayerReplicationInfo' not in actor:
             return
 

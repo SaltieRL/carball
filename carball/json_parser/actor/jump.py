@@ -3,11 +3,11 @@ from .base import *
 
 class ActiveHandler(BaseActorHandler):
 
-    def __init__(self, parser, data_key):
+    def __init__(self, parser: object, data_key: str):
         super().__init__(parser)
         self.data_key = data_key
 
-    def update(self, actor, frame_number, time, delta):
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         car_actor_id = actor.get('TAGame.CarComponent_TA:Vehicle', None)
         if car_actor_id is not None:
             if car_actor_id in self.parser.current_car_ids_to_collect:
@@ -21,19 +21,19 @@ class ActiveHandler(BaseActorHandler):
 class JumpHandler(ActiveHandler):
     type_name = 'Archetypes.CarComponents.CarComponent_Jump'
 
-    def __init__(self, parser):
+    def __init__(self, parser: object):
         super().__init__(parser, 'jump_active')
 
 
 class DoubleJumpHandler(ActiveHandler):
     type_name = 'Archetypes.CarComponents.CarComponent_DoubleJump'
 
-    def __init__(self, parser):
+    def __init__(self, parser: object):
         super().__init__(parser, 'double_jump_active')
 
 
 class DodgeHandler(ActiveHandler):
     type_name = 'Archetypes.CarComponents.CarComponent_Dodge'
 
-    def __init__(self, parser):
+    def __init__(self, parser: object):
         super().__init__(parser, 'dodge_active')

@@ -5,9 +5,9 @@ class GameInfoHandler(BaseActorHandler):
     priority = 1
 
     @classmethod
-    def can_handle(cls, actor):
+    def can_handle(cls, actor: dict) -> bool:
         return actor['TypeName'].endswith(':GameReplicationInfoArchetype')
 
-    def update(self, actor, frame_number, time, delta):
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         if self.parser.game_info_actor is None:
             self.parser.game_info_actor = actor

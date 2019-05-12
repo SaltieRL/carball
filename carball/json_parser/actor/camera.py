@@ -4,7 +4,7 @@ from .base import *
 class CameraSettingsHandler(BaseActorHandler):
     type_name = 'TAGame.Default__CameraSettingsActor_TA'
 
-    def update(self, actor, frame_number, time, delta):
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         if 'TAGame.CameraSettingsActor_TA:PRI' not in actor:
             return
 

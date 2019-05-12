@@ -14,10 +14,10 @@ BALL_TYPES = {
 class BallHandler(BaseActorHandler):
 
     @classmethod
-    def can_handle(cls, actor):
+    def can_handle(cls, actor: dict) -> bool:
         return actor['TypeName'].startswith('Archetypes.Ball.')
 
-    def update(self, actor, frame_number, time, delta):
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         if actor.get('TAGame.RBActor_TA:bIgnoreSyncing', False):
             return
 
