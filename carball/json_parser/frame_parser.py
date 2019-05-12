@@ -1,11 +1,29 @@
-import inspect
-from carball.json_parser import actor
+from .actor import *
 
 REPLICATED_RB_STATE_KEY = 'TAGame.RBActor_TA:ReplicatedRBState'
 
+_HANDLERS = [
+    GameInfoHandler,
+    GameEventHandler,
+    BallHandler,
+    PlayerHandler,
+    TeamHandler,
+    CarHandler,
+    JumpHandler,
+    DodgeHandler,
+    DoubleJumpHandler,
+    BoostHandler,
+    BoostPickupHandler,
+    CameraSettingsHandler,
+    RumbleItemHandler
+]
 
-def _get_handlers():
-    return list(map(lambda x: x[1], inspect.getmembers(actor, inspect.isclass)))
+# These handlers will also handle frames with a delta of 0 to match the old implementation
+# TODO check if this is needed
+_0_DELTA_HANDLERS = [
+    GameInfoHandler,
+    PlayerHandler
+]
 
 
 def parse_frames(game):
@@ -93,8 +111,6 @@ class FrameParser(object):
 
     def parse_frames(self):
 
-        type_handler_objects = _get_handlers()
-
         self.actors = {}
         handlers = {}
 
@@ -121,10 +137,10 @@ class FrameParser(object):
                     }
 
                     handler = next(filter(lambda handler_cls: handler_cls.can_handle(self.actors[actor_id]),
-                                          type_handler_objects), None)
+                                          _HANDLERS), None)
 
                     if handler is not None:
-                        handlers[actor_id] = handler.priority, handler(self)
+                        handlers[actor_id] = handler.priority, handler(self), handler in _0_DELTA_HANDLERS
 
                 elif actor_status == 'updated':
                     if actor_id not in self.actors:
@@ -163,9 +179,13 @@ class FrameParser(object):
                 pass
 
             # apply the update handlers
-            sorted_handlers = sorted(map(lambda x: (x[0], x[1][0], x[1][1]), handlers.items()), key=lambda x: x[1])
+            sorted_handlers = sorted(map(lambda x: (x[0],) + x[1], handlers.items()), key=lambda x: x[1])
             for handler_tuple in sorted_handlers:
-                handler_tuple[2].update(self.actors[handler_tuple[0]], i, time, delta)
+                handler = handler_tuple[2]
+
+                # skip 0 delta frames, except for these two handlers (matches old implementation)
+                if handler_tuple[3] or delta != 0:
+                    handler_tuple[2].update(self.actors[handler_tuple[0]], i, time, delta)
 
             self.current_car_ids_to_collect.clear()
 
