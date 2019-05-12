@@ -77,9 +77,16 @@ class PlayerHandler(BaseActorHandler):
             self.parser.player_data[actor_id] = {}
 
         self.parser.player_data[actor_id][frame_number] = {
-            'ping':  actor.get("Engine.PlayerReplicationInfo:Ping", None)
+            'ping': actor.get("Engine.PlayerReplicationInfo:Ping", None)
         }
 
         # update player_dicts
         for _k, _v in {**actor, **player_dict}.items():
             self.parser.player_dicts[actor_id][_k] = _v
+
+        if 'TAGame.PRI_TA:CameraSettings' in actor:
+            # oldstyle camera settings
+            if actor_id not in self.parser.cameras_data:
+                self.parser.cameras_data[actor_id] = actor['TAGame.PRI_TA:CameraSettings']
+            ball_cam = actor.get('TAGame.CameraSettingsActor_TA:bUsingSecondaryCamera', None)
+            self.parser.player_data[actor_id][frame_number]['ball_cam'] = ball_cam

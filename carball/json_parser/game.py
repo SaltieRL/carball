@@ -507,8 +507,8 @@ class Game:
             'player_dicts': parser.player_dicts,
             'team_dicts': parser.team_dicts,
             'frames_data': parser.all_data['frames_data'],
-            'cameras_data': cameras_data,
-            'demos_data': demos_data,
+            'cameras_data': parser.cameras_data,
+            'demos_data': parser.demos_data,
             'game_info_actor': parser.all_data['game_info_actor'],
             'soccar_game_event_actor': parser.soccar_game_event_actor,
             'parties': parties

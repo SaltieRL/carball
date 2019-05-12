@@ -6,3 +6,4 @@ from .team import TeamHandler
 from .car import CarHandler
 from .jump import JumpHandler, DodgeHandler, DoubleJumpHandler
 from .boost import BoostHandler, BoostPickupHandler
+from .camera import CameraSettingsHandler

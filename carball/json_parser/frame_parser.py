@@ -32,6 +32,7 @@ class FrameParser(object):
         self.player_car_ids = {}  # player_actor_id: car_actor_id
         self.car_player_ids = {}  # car_actor_id: player_actor_id
 
+        self.cameras_data = {}  # player_actor_id: actor_data
         self.demos_data = []  # frame_number: demolish_data
 
         self.current_car_ids_to_collect = []
