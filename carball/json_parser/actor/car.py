@@ -24,7 +24,6 @@ class CarHandler(BaseActorHandler):
         car_is_sleeping = RBState.get("rigid_body_state", {}).get('sleeping', True)
         # only collect data if car is driving and not sleeping
         if not car_is_sleeping:
-            # TODO move to parser
             self.parser.current_car_ids_to_collect.append(actor['Id'])
 
             data_dict = CarActor.get_data_dict(actor, version=self.parser.replay_version)
