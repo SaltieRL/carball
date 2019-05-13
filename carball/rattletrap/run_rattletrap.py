@@ -45,8 +45,17 @@ def create_rattletrap_command(replay_path: str, output_path: str, overwrite: boo
 
 
 def run_rattletrap_command(command: List[str], output_path: str):
-    proc = subprocess.Popen(command, stdout=subprocess.PIPE)
-    output = proc.stdout.read()
+    proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = proc.communicate()
+
+    if proc.returncode != 0:
+        # an error happened!
+        err_msg = "%s. Code: %s" % (error.strip(), proc.returncode)
+        raise Exception(err_msg)
+    elif len(error):
+        err_msg = "%s. Code: %s" % (error.strip(), proc.returncode)
+        raise Exception(err_msg)
+
     if output:
         output = output.decode('utf8')
     if output_path:
