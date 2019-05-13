@@ -6,3 +6,7 @@ venv/
 output
 .env
 .coverage
+rattletrap-*
+*.iml
+
+!/carball/tests/replays/
