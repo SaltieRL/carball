@@ -8,3 +8,5 @@ output
 .coverage
 rattletrap-*
 *.iml
+
+!/carball/tests/replays/
