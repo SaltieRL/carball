@@ -131,6 +131,9 @@ def get_raw_replays():
         "RUMBLE_FREEZE_VS_SPIKE": ["RUMBLE_FREEZE_VS_SPIKE.replay"],
         "RUMBLE_HOLD_TIME": ["RUMBLE_HOLD_TIME.replay"],
         "RUMBLE_FULL": ["RUMBLE_FULL.replay"],
+
+        # ratteltrap errors
+        "BROKEN_REPLAY": ["INVALID_FILE.replay"]
     }
 
 
@@ -165,7 +168,8 @@ def get_specific_replays():
         "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
         "AERIALS": raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["HIGH_AIR_PASS"] + raw_map["MID_AIR_PASS"],
         "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
-        "OFFLINE": raw_map["3_KICKOFFS"]
+        "OFFLINE": raw_map["3_KICKOFFS"],
+        "BROKEN_REPLAYS": raw_map["BROKEN_REPLAY"]
     }
 
 

@@ -11,6 +11,9 @@ from carball.rattletrap.rattletrap_utils import get_rattletrap_binaries, downloa
 logger = logging.getLogger(__name__)
 
 
+class RattleTrapException(Exception):
+    pass
+
 def create_rattletrap_command(replay_path: str, output_path: str, overwrite: bool = True, rattletrap_path: str = None) \
         -> List[str]:
     """
@@ -51,10 +54,10 @@ def run_rattletrap_command(command: List[str], output_path: str):
     if proc.returncode != 0:
         # an error happened!
         err_msg = "%s. Code: %s" % (error.strip(), proc.returncode)
-        raise Exception(err_msg)
+        raise RattleTrapException(err_msg)
     elif len(error):
         err_msg = "%s. Code: %s" % (error.strip(), proc.returncode)
-        raise Exception(err_msg)
+        raise RattleTrapException(err_msg)
 
     if output:
         output = output.decode('utf8')
