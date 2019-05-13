@@ -4,7 +4,7 @@ from typing import Callable
 
 from carball.decompile_replays import analyze_replay_file
 
-REPLAYS_FOLDER = 'carball/tests/replays/'
+REPLAYS_FOLDER = os.path.join(os.path.dirname(__file__), 'replays')
 
 
 def run_tests_on_list(unit_test_func: Callable, replay_list=None, answers=None):
@@ -26,7 +26,7 @@ def run_replay(replay_file, unit_test_func: Callable, answer=None):
     :param answer: data that can be passed to the replay to help judge it
     :return:
     """
-    file = REPLAYS_FOLDER + replay_file
+    file = os.path.join(REPLAYS_FOLDER, replay_file)
 
     fd, file_path = tempfile.mkstemp()
     os.close(fd)
@@ -164,7 +164,8 @@ def get_specific_replays():
                  raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
         "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
         "AERIALS": raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["HIGH_AIR_PASS"] + raw_map["MID_AIR_PASS"],
-        "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"]
+        "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
+        "OFFLINE": raw_map["3_KICKOFFS"]
     }
 
 
