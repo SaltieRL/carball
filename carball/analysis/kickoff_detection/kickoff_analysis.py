@@ -55,10 +55,15 @@ class BaseKickoff:
     def set_jumps(kPlayer, player, data_frame, frame, end_frame):
         jump_active_df        = data_frame[player.name]['jump_active']
         double_jump_active_df = data_frame[player.name]['double_jump_active']
+        boost = False
+        if 'boost_collect' in data_frame[player.name].keys():
+            boost = True
+            collected_boost_df    = data_frame[player.name]['boost_collect']
         # check the kickoff frames (and then some) for jumps & big boost collection
         for f in range(frame, end_frame + 20):
-            if data_frame[player.name]['boost_collect'][f] == True:
-                kPlayer.boost_time = data_frame['game']['delta'][frame:f].sum()
+            if boost:
+                if collected_boost_df[f] == True:
+                    kPlayer.boost_time = data_frame['game']['delta'][frame:f].sum()
             if jump_active_df[f] != jump_active_df[f-1] or double_jump_active_df[f] != double_jump_active_df[f-1]:
                 kPlayer.jumps.append(data_frame['game']['delta'][frame:f].sum())
 
@@ -93,7 +98,7 @@ class BaseKickoff:
             if offcenter == 4:
                 return kickoff.TWOS_OFFCENT_OFFCENT
             if offcenter == 2:
-                if goalie == 2:
+                if goalies == 2:
                     return kickoff.TWOS_OFFCENT_GOAL
         if len(players) == 2:
             if diagonals == 2:
