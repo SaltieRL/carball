@@ -1,10 +1,10 @@
 import json
+import os
 
 import setuptools
 from setuptools import setup
 from setuptools.command.develop import develop
 from setuptools.command.install import install
-import os
 
 with open(os.path.join('carball', 'analysis', 'PROTOBUF_VERSION'), 'r') as f:
     PROTOBUF_VERSION = json.loads(f.read())
@@ -21,14 +21,17 @@ else:
 
 class PostDevelopCommand(develop):
     """Post-installation for development mode."""
+
     def run(self):
         from init import initialize_project
         initialize_project()
         # this needs to be last
         develop.run(self)
 
+
 class PostInstallCommand(install):
     """Post-installation for installation mode."""
+
     def run(self):
         from init import initialize_project
         initialize_project()
@@ -50,6 +53,7 @@ setup(
     description='Rocket League replay parsing and analysis.',
     long_description=long_description,
     exclude_package_data={'': ['.gitignore', '.git/*', '.git/**/*', 'replays/*']},
+    long_description_content_type='text/markdown',
     cmdclass={
         'develop': PostDevelopCommand,
         'install': PostInstallCommand,
