@@ -4,7 +4,6 @@ from typing import Dict, List
 from bisect import bisect_left
 import numpy as np
 import pandas as pd
-import pdb
 
 from ...generated.api import game_pb2
 from ...generated.api.player_pb2 import Player
