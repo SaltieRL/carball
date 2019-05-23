@@ -176,6 +176,10 @@ class SaltieHit:
             if saltie_hit.ball_data.pos_z >= 400.0:
                 saltie_hit.aerial = True
 
+            # clears
+            if True:
+                saltie_hit.clear = True
+
             # assist calculation
             if saltie_hit.goal and last_passing_hit is not None:
                 saltie_hit.assisted = True
