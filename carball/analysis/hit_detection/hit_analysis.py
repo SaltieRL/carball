@@ -4,6 +4,7 @@ from typing import Dict, List
 from bisect import bisect_left
 import numpy as np
 import pandas as pd
+import pdb
 
 from ...generated.api import game_pb2
 from ...generated.api.player_pb2 import Player
@@ -128,6 +129,52 @@ class SaltieHit:
             logger.warning('Goal is not shot: %s', saltie_hit)
 
     @staticmethod
+    def get_clear(data_frame: pd.DataFrame, saltie_hit: Hit, next_saltie_hit: Hit,  player_map: Dict[str, Player]):
+        """
+        Finds clears based on distance travelled and positions.
+        :param game:
+        :param saltie_hit:
+        :param next_saltie_hit:
+        :param player_map:
+        """
+        CLEAR_BUFFER = 400
+        FIELD_LENGTH = 5120
+        defending = False
+        upfield_hit = False
+        player =  player_map[saltie_hit.player_id.id]
+
+        # get y-pos of player to determine if they are in their defending third
+        frame = saltie_hit.frame_number
+        y_pos = data_frame[player.name].iloc[frame]['pos_y']
+        if player.is_orange and y_pos > FIELD_LENGTH/3 + CLEAR_BUFFER:
+            defending = True
+        if not player.is_orange and y_pos < (-1)*FIELD_LENGTH/3 - CLEAR_BUFFER:
+            defending = True
+
+        # determine if hit passed the buffer to be considered a clear
+        if next_saltie_hit is not None:
+            # find next hit, determine if this hit went far enough
+            next_y = next_saltie_hit.ball_data.pos_y
+            if player.is_orange and next_y < FIELD_LENGTH/3 - CLEAR_BUFFER:
+                upfield_hit = True
+            if not player.is_orange and next_y > (-1)*FIELD_LENGTH/3 + CLEAR_BUFFER:
+                upfield_hit = True
+        else:
+            # a big hit to end the game should also count as a clear
+            distance = saltie_hit.distance
+            if distance > CLEAR_BUFFER:
+                upfield_hit = True
+
+        saltie_hit.clear = defending and upfield_hit
+
+        # uncomment the lines below to print the timestamps of each clear
+        #timestamp = data_frame.game.iloc[frame]['seconds_remaining']
+        #minutes_left = int(timestamp / 60)
+        #seconds_left = timestamp % 60
+        #if saltie_hit.clear:
+            #print("{0}:{1}".format(minutes_left, seconds_left))
+
+    @staticmethod
     def find_hit_stats(data_frame: pd.DataFrame, player_map: Dict[str, Player],
                        sorted_frames, hit_analytics_dict: Dict[int, Hit]):
         """
@@ -176,10 +223,6 @@ class SaltieHit:
             if saltie_hit.ball_data.pos_z >= 400.0:
                 saltie_hit.aerial = True
 
-            # clears
-            if True:
-                saltie_hit.clear = True
-
             # assist calculation
             if saltie_hit.goal and last_passing_hit is not None:
                 saltie_hit.assisted = True
@@ -199,6 +242,7 @@ class SaltieHit:
             saltie_hit.distance_to_goal = SaltieHit.get_distance_to_goal(data_frame, saltie_hit, player_map)
 
             SaltieHit.get_shot(data_frame, saltie_hit, player_map)
+            SaltieHit.get_clear(data_frame, saltie_hit, next_saltie_hit, player_map)
 
             simulation_time = time.time()
             total_simulation_time += simulation_time - stat_time
