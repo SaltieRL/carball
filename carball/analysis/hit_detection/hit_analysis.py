@@ -12,6 +12,7 @@ from ...json_parser.game import Game
 from ...analysis.hit_detection.base_hit import BaseHit
 from ...analysis.simulator.ball_simulator import BallSimulator
 from ...analysis.simulator.map_constants import *
+from ...analysis.constants.field_constants import * 
 
 
 logger = logging.getLogger(__name__)
@@ -137,34 +138,31 @@ class SaltieHit:
         :param player_map:
         """
         CLEAR_BUFFER = 400
-        FIELD_LENGTH = 5120
-        defending = False
-        upfield_hit = False
         player =  player_map[saltie_hit.player_id.id]
 
-        # get y-pos of player to determine if they are in their defending third
+        # get y-pos of ball to determine if the hit occurs in a player's defending third
         frame = saltie_hit.frame_number
-        y_pos = data_frame[player.name].iloc[frame]['pos_y']
-        if player.is_orange and y_pos > FIELD_LENGTH/3 + CLEAR_BUFFER:
-            defending = True
-        if not player.is_orange and y_pos < (-1)*FIELD_LENGTH/3 - CLEAR_BUFFER:
-            defending = True
+        y_pos = saltie_hit.ball_data.pos_y
+        defending_on_orange = (player.is_orange and y_pos > (STANDARD_FIELD_LENGTH_HALF/3 + CLEAR_BUFFER))
+        defending_on_blue = (not player.is_orange and y_pos < ((-1)*STANDARD_FIELD_LENGTH_HALF/3 - CLEAR_BUFFER))
+
+        # make sure the player is in their own defending third
+        if not (defending_on_orange or defending_on_blue):
+            return
 
         # determine if hit passed the buffer to be considered a clear
         if next_saltie_hit is not None:
             # find next hit, determine if this hit went far enough
             next_y = next_saltie_hit.ball_data.pos_y
-            if player.is_orange and next_y < FIELD_LENGTH/3 - CLEAR_BUFFER:
-                upfield_hit = True
-            if not player.is_orange and next_y > (-1)*FIELD_LENGTH/3 + CLEAR_BUFFER:
-                upfield_hit = True
+            if player.is_orange and next_y < (STANDARD_FIELD_LENGTH_HALF/3 - CLEAR_BUFFER):
+                saltie_hit.clear = True
+            if not player.is_orange and next_y > ((-1)*STANDARD_FIELD_LENGTH_HALF/3 + CLEAR_BUFFER):
+                saltie_hit.clear = True
         else:
             # a big hit to end the game should also count as a clear
             distance = saltie_hit.distance
             if distance > CLEAR_BUFFER:
-                upfield_hit = True
-
-        saltie_hit.clear = defending and upfield_hit
+                saltie_hit.clear = True
 
     @staticmethod
     def find_hit_stats(data_frame: pd.DataFrame, player_map: Dict[str, Player],
