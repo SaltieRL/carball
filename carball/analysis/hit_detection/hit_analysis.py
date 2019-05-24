@@ -12,7 +12,7 @@ from ...json_parser.game import Game
 from ...analysis.hit_detection.base_hit import BaseHit
 from ...analysis.simulator.ball_simulator import BallSimulator
 from ...analysis.simulator.map_constants import *
-from ...analysis.constants.field_constants import * 
+from ...analysis.constants.field_constants import *
 
 
 logger = logging.getLogger(__name__)
@@ -154,9 +154,9 @@ class SaltieHit:
         if next_saltie_hit is not None:
             # find next hit, determine if this hit went far enough
             next_y = next_saltie_hit.ball_data.pos_y
-            if player.is_orange and next_y < (STANDARD_FIELD_LENGTH_HALF/3 - CLEAR_BUFFER):
-                saltie_hit.clear = True
-            if not player.is_orange and next_y > ((-1)*STANDARD_FIELD_LENGTH_HALF/3 + CLEAR_BUFFER):
+            orange_reached_neutral_third = (player.is_orange and next_y < (STANDARD_FIELD_LENGTH_HALF/3 - CLEAR_BUFFER))
+            blue_reached_neutral_third = (not player.is_orange and next_y > ((-1)*STANDARD_FIELD_LENGTH_HALF/3 + CLEAR_BUFFER))
+            if orange_reached_neutral_third or blue_reached_neutral_third:
                 saltie_hit.clear = True
         else:
             # a big hit to end the game should also count as a clear
