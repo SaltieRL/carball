@@ -166,13 +166,6 @@ class SaltieHit:
 
         saltie_hit.clear = defending and upfield_hit
 
-        # uncomment the lines below to print the timestamps of each clear
-        #timestamp = data_frame.game.iloc[frame]['seconds_remaining']
-        #minutes_left = int(timestamp / 60)
-        #seconds_left = timestamp % 60
-        #if saltie_hit.clear:
-            #print("{0}:{1}".format(minutes_left, seconds_left))
-
     @staticmethod
     def find_hit_stats(data_frame: pd.DataFrame, player_map: Dict[str, Player],
                        sorted_frames, hit_analytics_dict: Dict[int, Hit]):
