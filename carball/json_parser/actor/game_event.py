@@ -2,7 +2,6 @@ from .base import *
 
 
 class GameEventHandler(BaseActorHandler):
-    type_name = 'Archetypes.GameEvent.GameEvent_Soccar'
 
     @classmethod
     def can_handle(cls, actor: dict) -> bool:
