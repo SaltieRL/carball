@@ -52,7 +52,8 @@ def get_array(file, chunk):
     numpy_bytes = file.read(starting_byte)
     fake_file = io.BytesIO(numpy_bytes)
     try:
-        result = np.load(fake_file, fix_imports=False)
+        # explicitly allow pickle loading. thanks numpy for changing this without telling anyone
+        result = np.load(fake_file, fix_imports=False, allow_pickle=True)
     except OSError:
         raise EOFError('NumPy parsing error')
     return result, starting_byte

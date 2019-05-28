@@ -12,6 +12,7 @@ from ...json_parser.game import Game
 from ...analysis.hit_detection.base_hit import BaseHit
 from ...analysis.simulator.ball_simulator import BallSimulator
 from ...analysis.simulator.map_constants import *
+from ...analysis.constants.field_constants import *
 
 
 logger = logging.getLogger(__name__)
@@ -128,6 +129,42 @@ class SaltieHit:
             logger.warning('Goal is not shot: %s', saltie_hit)
 
     @staticmethod
+    def get_clear(data_frame: pd.DataFrame, saltie_hit: Hit, next_saltie_hit: Hit,  player_map: Dict[str, Player]):
+        """
+        Finds clears based on distance travelled and positions.
+        :param game:
+        :param saltie_hit:
+        :param next_saltie_hit:
+        :param player_map:
+        """
+        CLEAR_BUFFER = 400
+        player =  player_map[saltie_hit.player_id.id]
+
+        # get y-pos of ball to determine if the hit occurs in a player's defending third
+        frame = saltie_hit.frame_number
+        y_pos = saltie_hit.ball_data.pos_y
+        defending_on_orange = (player.is_orange and y_pos > (STANDARD_FIELD_LENGTH_HALF/3 + CLEAR_BUFFER))
+        defending_on_blue = (not player.is_orange and y_pos < ((-1)*STANDARD_FIELD_LENGTH_HALF/3 - CLEAR_BUFFER))
+
+        # make sure the player is in their own defending third
+        if not (defending_on_orange or defending_on_blue):
+            return
+
+        # determine if hit passed the buffer to be considered a clear
+        if next_saltie_hit is not None:
+            # find next hit, determine if this hit went far enough
+            next_y = next_saltie_hit.ball_data.pos_y
+            orange_reached_neutral_third = (player.is_orange and next_y < (STANDARD_FIELD_LENGTH_HALF/3 - CLEAR_BUFFER))
+            blue_reached_neutral_third = (not player.is_orange and next_y > ((-1)*STANDARD_FIELD_LENGTH_HALF/3 + CLEAR_BUFFER))
+            if orange_reached_neutral_third or blue_reached_neutral_third:
+                saltie_hit.clear = True
+        else:
+            # a big hit to end the game should also count as a clear
+            distance = saltie_hit.distance
+            if distance > CLEAR_BUFFER:
+                saltie_hit.clear = True
+
+    @staticmethod
     def find_hit_stats(data_frame: pd.DataFrame, player_map: Dict[str, Player],
                        sorted_frames, hit_analytics_dict: Dict[int, Hit]):
         """
@@ -195,6 +232,7 @@ class SaltieHit:
             saltie_hit.distance_to_goal = SaltieHit.get_distance_to_goal(data_frame, saltie_hit, player_map)
 
             SaltieHit.get_shot(data_frame, saltie_hit, player_map)
+            SaltieHit.get_clear(data_frame, saltie_hit, next_saltie_hit, player_map)
 
             simulation_time = time.time()
             total_simulation_time += simulation_time - stat_time

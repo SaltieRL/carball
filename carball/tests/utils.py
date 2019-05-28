@@ -115,6 +115,8 @@ def get_raw_replays():
         "GROUND_PASS": ["GROUNDED_PASS_GOAL.replay"],
         "PINCH_GROUND": ["PINCH_GROUNDED_GOAL.replay"],
         "DEFAULT_3_ON_3_AROUND_58_HITS": ["DEFAULT_3_ON_3_AROUND_58_HITS.replay"],
+        "1_CLEAR": ["1_CLEAR.replay"],
+        "2_CLEARS": ["2_CLEARS.replay"],
 
         # parties
         "PLAY_STATION_ONLY_PARTY": ['PLAY_STATION_ONLY_PARTY.replay'],
@@ -169,7 +171,8 @@ def get_specific_replays():
         "AERIALS": raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["HIGH_AIR_PASS"] + raw_map["MID_AIR_PASS"],
         "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
         "OFFLINE": raw_map["3_KICKOFFS"],
-        "BROKEN_REPLAYS": raw_map["BROKEN_REPLAY"]
+        "BROKEN_REPLAYS": raw_map["BROKEN_REPLAY"],
+        "CLEARS": raw_map['1_CLEAR'] + raw_map['2_CLEARS']
     }
 
 
@@ -188,6 +191,7 @@ def get_specific_answers():
         "PASSES": [1, 1, 1],
         "AERIALS": [0, 1, 2, 0],
         "SAVES": [1, 0],
+        "CLEARS": [1, 2]
     }
 
 
