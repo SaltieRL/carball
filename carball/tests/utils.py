@@ -2,7 +2,6 @@ import os
 import tempfile
 from typing import Callable, Tuple, Iterable
 
-import requests
 import numpy as np
 from carball.decompile_replays import analyze_replay_file
 
@@ -128,50 +127,32 @@ def get_raw_replays():
         "2_CLEARS": ["2_CLEARS.replay"],
 
         # KBM
-        "1_MIN_KBM_1_MIN_XBO_CONTROLLER": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/502502758138642442/1_MIN_KBM_1_MIN_XBO_CONTROLLER.replay"],
-        "100_PERCENT_KBM": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/502502760986705921/100_PERCENT_KBM.replay"],
+        "1_MIN_KBM_1_MIN_XBO_CONTROLLER": ["1_MIN_KBM_1_MIN_XBO_CONTROLLER.replay"],
+        "100_PERCENT_KBM": ["100_PERCENT_KBM.replay"],
 
         # camera controls
-        "BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/502509632334594059/BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF.replay"],
-        "BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/502509634477621249/BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON.replay"],
-        "BALLCAM_MIXED": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/502509636511858689/BALLCAM_MIXED.replay"],
-        "BALLCAM_ON_AT_DRIBBLE_ELSE_OFF": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/502509638453952526/BALLCAM_ON_AT_DRIBBLE_ELSE_OFF.replay"],
-        "BALLCAM_OFF_AT_DRIBBLE_ELSE_ON": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/502509640626470933/BALLCAM_OFF_AT_DRIBBLE_ELSE_ON.replay"],
-        "BALLCAM_OFF_ALWAYS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/502509642807640064/BALLCAM_OFF_ALWAYS.replay"],
-        "BALLCAM_ON_ALWAYS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/502509645093404683/BALLCAM_ON_ALWAYS.replay"],
+        "BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF": ["BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF.replay"],
+        "BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON": ["BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON.replay"],
+        "BALLCAM_MIXED": ["BALLCAM_MIXED.replay"],
+        "BALLCAM_ON_AT_DRIBBLE_ELSE_OFF": ["BALLCAM_ON_AT_DRIBBLE_ELSE_OFF.replay"],
+        "BALLCAM_OFF_AT_DRIBBLE_ELSE_ON": ["BALLCAM_OFF_AT_DRIBBLE_ELSE_ON.replay"],
+        "BALLCAM_OFF_ALWAYS": ["BALLCAM_OFF_ALWAYS.replay"],
+        "BALLCAM_ON_ALWAYS": ["BALLCAM_ON_ALWAYS.replay"],
 
         # Dribbles
-        "SKYBOT_DRIBBLE_INFO": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/560580395276566548/SKYBOT_DRIBBLE_INFO.replay"],
-        "1_DRIBBLE": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/560745936691920898/1_DRIBBLE.replay"],
-        "3_DRIBBLE_2_FLICKS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/562870542273871872/3_DRIBBLE_2_FLICKS.replay"],
+        "SKYBOT_DRIBBLE_INFO": ["SKYBOT_DRIBBLE_INFO.replay"],
+        "1_DRIBBLE": ["1_DRIBBLE.replay"],
+        "3_DRIBBLE_2_FLICKS": ["3_DRIBBLE_2_FLICKS.replay"],
 
         # parties
         "PLAY_STATION_ONLY_PARTY": ['PLAY_STATION_ONLY_PARTY.replay'],
         # error cases
-        "PLAYERNAME_BALL": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/503509417577152512/PLAYERNAME_BALL.replay"],
-        "PLAYERNAME_GAME": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/503509425882005506/PLAYERNAME_GAME.replay"],
-        "PLAYERNAME_TWO_PLAYERS_NAMED_SAME": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/503509429224865812/PLAYERNAME_TWO_PLAYERS_NAMED_SAME.replay"],
-        "PLAYERNAME_ZTTL": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/503509431342989313/PLAYERNAME_ZTTL.replay"],
-        "ISSUE_PLAYER_REJOIN": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/503512015629975553/ISSUE_PLAYER_REJOIN.replay"],
-        "OCE_RLCS_7_CARS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/501630263881760798/OCE_RLCS_7_CARS.replay"],
+        "PLAYERNAME_BALL": ["PLAYERNAME_BALL.replay"],
+        "PLAYERNAME_GAME": ["PLAYERNAME_GAME.replay"],
+        "PLAYERNAME_TWO_PLAYERS_NAMED_SAME": ["PLAYERNAME_TWO_PLAYERS_NAMED_SAME.replay"],
+        "PLAYERNAME_ZTTL": ["PLAYERNAME_ZTTL.replay"],
+        "ISSUE_PLAYER_REJOIN": ["ISSUE_PLAYER_REJOIN.replay"],
+        "OCE_RLCS_7_CARS": ["OCE_RLCS_7_CARS.replay"],
         "XBOX_PARTY": ["XBOX_PARTY.replay"],
         # error cases
         "UNICODE_ERROR": ["UnicodeEncodeError.replay"],
