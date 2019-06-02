@@ -3,7 +3,7 @@ from typing import Dict, Callable
 
 import pandas as pd
 
-from analysis.kickoff_detection.kickoff_analysis import BaseKickoff
+from carball.analysis.events.kickoff_detection.kickoff_analysis import BaseKickoff
 from carball.analysis.events.carry_detection import CarryDetection
 from carball.analysis.events.hit_detection.base_hit import BaseHit
 from carball.analysis.events.hit_detection.hit_analysis import SaltieHit
