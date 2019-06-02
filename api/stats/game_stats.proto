@@ -2,6 +2,7 @@ syntax = "proto2";
 
 import "api/stats/events.proto";
 import "api/stats/ball_stats.proto";
+import "api/stats/kickoff.proto";
 package api.stats;
 
 
@@ -12,5 +13,6 @@ message GameStats {
     optional api.stats.BallStats ball_stats = 4;
     repeated api.stats.Kickoff kickoffs = 5;
     repeated api.stats.RumbleItemEvent rumble_items = 6;
-    repeated api.stats.BallCarry ball_carries = 7;
+    repeated api.stats.KickoffStats kickoff_stats = 7;
+    repeated api.stats.BallCarry ball_carries = 8;
 }

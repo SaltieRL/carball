@@ -12,6 +12,7 @@ with open(os.path.join(os.path.dirname(script_path), 'PROTOBUF_VERSION'), 'r') a
     PROTOBUF_VERSION = json.loads(f.read())
 
 from ..analysis.cleaner.cleaner import clean_replay
+from ..analysis.kickoff_detection.kickoff_analysis import BaseKickoff
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame
 from ..analysis.saltie_game.metadata.ApiMutators import ApiMutators
 from ..analysis.saltie_game.metadata.ApiPlayer import ApiPlayer
