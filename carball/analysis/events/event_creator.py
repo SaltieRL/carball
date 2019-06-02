@@ -3,6 +3,7 @@ from typing import Dict, Callable
 
 import pandas as pd
 
+from analysis.kickoff_detection.kickoff_analysis import BaseKickoff
 from carball.analysis.events.carry_detection import CarryDetection
 from carball.analysis.events.hit_detection.base_hit import BaseHit
 from carball.analysis.events.hit_detection.hit_analysis import SaltieHit
@@ -28,7 +29,14 @@ class EventsCreator:
         """
         goal_frames = data_frame.game.goal_number.notnull()
         self.create_hit_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
+        self.calculate_kickoff_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_ball_carries(game, proto_game, player_map, data_frame[goal_frames])
+
+    def calculate_kickoff_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                                data_frame, kickoff_frames, first_touch_frames):
+        logger.info("Looking for kickoffs.")
+        kickoffs = BaseKickoff.get_kickoffs_from_game(game, proto_game, self.id_creator, player_map, data_frame, kickoff_frames, first_touch_frames)
+        logger.info("Found %s kickoffs." % len(kickoffs.keys()))
 
     def create_hit_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                           data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series):
