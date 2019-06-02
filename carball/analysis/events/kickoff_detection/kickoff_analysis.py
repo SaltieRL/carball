@@ -1,20 +1,12 @@
 import logging
-import time
-from typing import Dict, List, Callable
-from bisect import bisect_left
-import numpy as np
+from typing import Dict, Callable
 import pandas as pd
 
-from carball.analysis.constants.basic_math import position_column_names
-from ...generated.api import game_pb2
-from ...generated.api.player_pb2 import Player
-from ...generated.api.stats.events_pb2 import Hit
-from ...generated.api.stats.kickoff_pb2 import KickoffStats
-from ...generated.api.stats import kickoff_pb2 as kickoff
-from ...json_parser.game import Game
-from ...analysis.hit_detection.base_hit import BaseHit
-from ...analysis.simulator.ball_simulator import BallSimulator
-from ...analysis.simulator.map_constants import *
+from carball.generated.api import game_pb2
+from carball.generated.api.player_pb2 import Player
+from carball.generated.api.stats.kickoff_pb2 import KickoffStats
+from carball.generated.api.stats import kickoff_pb2 as kickoff
+from carball.json_parser.game import Game
 
 
 logger = logging.getLogger(__name__)
@@ -41,7 +33,6 @@ class BaseKickoff:
                 kPlayer.kickoff_position = BaseKickoff.get_kickoff_position(player, data_frame, frame)
                 kPlayer.touch_position = BaseKickoff.get_touch_position(player, data_frame, frame, end_frame)
                 kPlayer.boost = data_frame[player.name]['boost'][end_frame]
-                ball_dist =  BaseKickoff.get_dist(data_frame, player.name, end_frame)
                 kPlayer.ball_dist  = BaseKickoff.get_dist(data_frame, player.name, end_frame)
                 kPlayer.player_position.pos_x = data_frame[player.name]['pos_x'][end_frame]
                 kPlayer.player_position.pos_y = data_frame[player.name]['pos_y'][end_frame]
@@ -111,17 +102,15 @@ class BaseKickoff:
 
     @staticmethod
     def get_kickoff_position(player_class: Player, data_frame: pd.DataFrame, frame: int):
-         player = player_class.name
-         #print("gonna check " + player)
-         player_df = data_frame[player]
-         #print(get_pos(df, player, frame))
-         if abs(abs(player_df['pos_x'][frame]) - 2050) < 100:
-           return kickoff.DIAGONAL
-         if abs(abs(player_df['pos_x'][frame]) - 256) < 100:
-           return kickoff.OFFCENTER
-         if abs(abs(player_df['pos_x'][frame])) < 4:
-           return kickoff.GOALIE
-         return kickoff.UNKNOWN_KICKOFF_POS
+        player = player_class.name
+        player_df = data_frame[player]
+        if abs(abs(player_df['pos_x'][frame]) - 2050) < 100:
+            return kickoff.DIAGONAL
+        if abs(abs(player_df['pos_x'][frame]) - 256) < 100:
+            return kickoff.OFFCENTER
+        if abs(abs(player_df['pos_x'][frame])) < 4:
+            return kickoff.GOALIE
+        return kickoff.UNKNOWN_KICKOFF_POS
 
     @staticmethod
     def get_dist(data_frame: pd.DataFrame, player: str, frame: int):
@@ -138,18 +127,17 @@ class BaseKickoff:
 
     @staticmethod
     def get_touch_position(player: Player, data_frame: pd.DataFrame, k_frame: int, end_frame: int):
-         #print(get_pos(df, player, frame))
-         player_df = data_frame[player.name]
-         x = abs(player_df['pos_x'][end_frame])
-         y = abs(player_df['pos_y'][end_frame])
-         if BaseKickoff.get_dist(data_frame, player.name, end_frame) < 700:
-             return kickoff.BALL
-         if BaseKickoff.get_afk(data_frame, player.name, end_frame, k_frame):
-             return kickoff.AFK
-         if (x > 2200) and (y > 3600):
-             return kickoff.BOOST
-         if (x <500) and (y > 3600):
-             return kickoff.GOAL
-         if (x <500) and (y < 3600):
-             return kickoff.CHEAT
-         return kickoff.UNKNOWN_TOUCH_POS
+        player_df = data_frame[player.name]
+        x = abs(player_df['pos_x'][end_frame])
+        y = abs(player_df['pos_y'][end_frame])
+        if BaseKickoff.get_dist(data_frame, player.name, end_frame) < 700:
+            return kickoff.BALL
+        if BaseKickoff.get_afk(data_frame, player.name, end_frame, k_frame):
+            return kickoff.AFK
+        if (x > 2200) and (y > 3600):
+            return kickoff.BOOST
+        if (x <500) and (y > 3600):
+            return kickoff.GOAL
+        if (x <500) and (y < 3600):
+            return kickoff.CHEAT
+        return kickoff.UNKNOWN_TOUCH_POS
