@@ -82,6 +82,19 @@ class HitTest(unittest.TestCase):
 
         run_analysis_test_on_replay(test, get_specific_replays()["AERIALS"], get_specific_answers()["AERIALS"])
 
+    def test_num_clears_detected(self):
+        def test(analysis: AnalysisManager, answer):
+            proto_game = analysis.get_protobuf_data()
+            hits = proto_game.game_stats.hits
+            clear_counter = 0
+            for hit in hits:
+                if hit.clear:
+                    clear_counter += 1
+
+            self.assertEqual(clear_counter, answer)
+
+        run_analysis_test_on_replay(test, get_specific_replays()["CLEARS"], get_specific_answers()["CLEARS"])
+
 
 if __name__ == '__main__':
     unittest.main()
