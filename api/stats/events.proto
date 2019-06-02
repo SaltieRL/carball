@@ -44,6 +44,8 @@ message Hit {
     // True if this hit is detected as the first hit for a kickoff.
     optional bool is_kickoff = 22;
 
+    optional bool clear = 23;
+
     // pseudo stats
     // is_turnover = !(goal || dribble || pass)
 

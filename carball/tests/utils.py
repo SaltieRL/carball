@@ -6,7 +6,7 @@ import requests
 import numpy as np
 from carball.decompile_replays import analyze_replay_file
 
-REPLAYS_FOLDER = 'carball/tests/replays/'
+REPLAYS_FOLDER = os.path.join(os.path.dirname(__file__), 'replays')
 
 
 def get_multiple_answers(answers: Iterable[str]) -> Iterable[Tuple[any]]:
@@ -32,7 +32,7 @@ def run_replay(replay_file, unit_test_func: Callable, answer=None):
     :param answer: data that can be passed to the replay to help judge it
     :return:
     """
-    file = REPLAYS_FOLDER + replay_file
+    file = os.path.join(REPLAYS_FOLDER, replay_file)
 
     fd, file_path = tempfile.mkstemp()
     os.close(fd)
@@ -124,6 +124,8 @@ def get_raw_replays():
         "GROUND_PASS": ["GROUNDED_PASS_GOAL.replay"],
         "PINCH_GROUND": ["PINCH_GROUNDED_GOAL.replay"],
         "DEFAULT_3_ON_3_AROUND_58_HITS": ["DEFAULT_3_ON_3_AROUND_58_HITS.replay"],
+        "1_CLEAR": ["1_CLEAR.replay"],
+        "2_CLEARS": ["2_CLEARS.replay"],
 
         # KBM
         "1_MIN_KBM_1_MIN_XBO_CONTROLLER": [
@@ -182,6 +184,9 @@ def get_raw_replays():
         "RUMBLE_FREEZE_VS_SPIKE": ["RUMBLE_FREEZE_VS_SPIKE.replay"],
         "RUMBLE_HOLD_TIME": ["RUMBLE_HOLD_TIME.replay"],
         "RUMBLE_FULL": ["RUMBLE_FULL.replay"],
+
+        # ratteltrap errors
+        "BROKEN_REPLAY": ["INVALID_FILE.replay"]
     }
 
 
@@ -220,7 +225,10 @@ def get_specific_replays():
                       raw_map["ISSUE_PLAYER_REJOIN"] + raw_map["ISSUE_PLAYER_REJOIN"],
         "ZERO_DRIBBLE": raw_map["12_BOOST_PAD_45_USED"] + raw_map["KICKOFF_NO_TOUCH"],
         "DRIBBLES": raw_map["1_DRIBBLE"] + raw_map["3_DRIBBLE_2_FLICKS"] + raw_map["SKYBOT_DRIBBLE_INFO"],
-        "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"]
+        "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
+        "OFFLINE": raw_map["3_KICKOFFS"],
+        "BROKEN_REPLAYS": raw_map["BROKEN_REPLAY"],
+        "CLEARS": raw_map['1_CLEAR'] + raw_map['2_CLEARS']
     }
 
 
@@ -241,6 +249,7 @@ def get_specific_answers():
         "DRIBBLES": [1, 3, 50],
         "FLICKS": [0, 1, 0],
         "SAVES": [1, 0],
+        "CLEARS": [1, 2]
     }
 
 
