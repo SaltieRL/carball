@@ -45,7 +45,7 @@ class DribbleTests(unittest.TestCase):
             player = proto_game.players[0]
             print(player)
 
-            percent = 2.705
+            percent = 6
             self.assertAlmostEqual(player.stats.ball_carries.total_carry_time, 196, delta=196 * percent / 100)
 
         run_analysis_test_on_replay(test, get_raw_replays()["SKYBOT_DRIBBLE_INFO"])
