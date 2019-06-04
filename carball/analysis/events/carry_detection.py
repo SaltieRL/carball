@@ -186,8 +186,12 @@ class CarryDetection:
         Merges separated player carries that are still within the greater valid carry set.
         This modifies player_carry_data
         """
-        start_frames = player_carry_data.start_frames
-        end_frames = player_carry_data.end_frames
+        start_frames = player_carry_data.start_frames # [188, 568, 603, 608, 1465]
+        end_frames = player_carry_data.end_frames # [222, 596, 603, 619, 1537]
+
+        # overall end [254, 264, 679, 719, 742, 756, 820, 829, 1551]
+        # overall start [188, 257, 551, 681, 721, 745, 759, 823, 1445]
+
 
         merged_start = []
         merged_end = []
@@ -206,16 +210,41 @@ class CarryDetection:
         player_frame_index = 0
         for frame_index in range(len(carry_data.end_frames)):
             end_frame = carry_data.end_frames[frame_index]
-            carry_start = start_frames[player_frame_index]
+            start_frame = carry_data.start_frames[frame_index]
             carry_end = None
-            while player_frame_index < len(start_frames) and start_frames[player_frame_index] < end_frame:
+
+            # if we have no more valid play indexes then we can exit
+            if player_frame_index >= len(start_frames):
+                break
+
+            # if the first dribble is after a global carry already started then just continue
+            if start_frames[player_frame_index] > end_frame:
+                continue
+
+            #  Increment till the player index is inside a valid start frame
+            while player_frame_index < len(start_frames) and start_frames[player_frame_index] < start_frame:
                 player_frame_index += 1
+
+            # No more player dribbles
+            if player_frame_index >= len(start_frames):
+                break
+
+            # if the first dribble is after a global carry already started then just continue
+            if start_frames[player_frame_index] > end_frame:
+                continue
+
+            carry_start = start_frames[player_frame_index]
+            # our start frame should now be inside a valid cary
+            while player_frame_index < len(start_frames) and end_frames[player_frame_index] < end_frame:
+                player_frame_index += 1
+
+            # our end frame should now be outside a valid cary
+            player_frame_index -= 1
+            carry_end = end_frames[player_frame_index]
+
             if carry_end is not None:
                 merged_start.append(carry_start)
                 merged_end.append(carry_end)
-
-            if player_frame_index >= len(start_frames):
-                break
 
         player_carry_data.start_frames = merged_start
         player_carry_data.end_frames = merged_end
