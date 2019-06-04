@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/SaltieRL/carball.svg?branch=master)](https://travis-ci.org/SaltieRL/carball)
+[![PyPI version](https://badge.fury.io/py/carball.svg)](https://badge.fury.io/py/carball)
 
 # carball
 Various tools for decompiling / analyzing Rocket League replays.
