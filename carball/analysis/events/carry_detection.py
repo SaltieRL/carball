@@ -31,7 +31,7 @@ class CarryDetection:
 
         return CarryData(valid_frames, *self.creat_start_end_frames(valid_frames))
 
-    def create_carry_events(self, carry_data: CarryData, player: Player, proto_game: game_pb2.Game):
+    def create_carry_events(self, carry_data: CarryData, player: Player, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
         """
         Gets all of the carry events and adds them to the protobuf for each individual player.
         """
@@ -44,7 +44,7 @@ class CarryDetection:
 
         modified_carry_data = self.correct_carries(carry_data, player_carry_data, player, proto_game)
 
-        self.add_carry_events(modified_carry_data, xy_distance, player_frames, player, proto_game)
+        self.add_carry_events(modified_carry_data, xy_distance, data_frame[player.name], player, proto_game)
 
     def player_close_frames(self, valid_frames: pd.DataFrame,
                             player_frames: pd.DataFrame) -> Tuple[CarryData, pd.DataFrame, pd.DataFrame]:
@@ -186,12 +186,8 @@ class CarryDetection:
         Merges separated player carries that are still within the greater valid carry set.
         This modifies player_carry_data
         """
-        start_frames = player_carry_data.start_frames # [188, 568, 603, 608, 1465]
-        end_frames = player_carry_data.end_frames # [222, 596, 603, 619, 1537]
-
-        # overall end [254, 264, 679, 719, 742, 756, 820, 829, 1551]
-        # overall start [188, 257, 551, 681, 721, 745, 759, 823, 1445]
-
+        start_frames = player_carry_data.start_frames
+        end_frames = player_carry_data.end_frames
 
         merged_start = []
         merged_end = []
@@ -235,11 +231,14 @@ class CarryDetection:
 
             carry_start = start_frames[player_frame_index]
             # our start frame should now be inside a valid cary
+            entered = False
             while player_frame_index < len(start_frames) and end_frames[player_frame_index] < end_frame:
                 player_frame_index += 1
+                entered = True
 
             # our end frame should now be outside a valid cary
-            player_frame_index -= 1
+            if entered:
+                player_frame_index -= 1
             carry_end = end_frames[player_frame_index]
 
             if carry_end is not None:

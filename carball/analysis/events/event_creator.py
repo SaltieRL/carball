@@ -58,5 +58,5 @@ class EventsCreator:
         carry_data = carry_detection.filter_frames(data_frame)
 
         for player in player_map:
-            carry_detection.create_carry_events(carry_data, player_map[player], proto_game)
+            carry_detection.create_carry_events(carry_data, player_map[player], proto_game, data_frame)
             # find now continuous data of longer than a second.
