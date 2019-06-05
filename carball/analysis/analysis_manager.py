@@ -12,6 +12,7 @@ with open(os.path.join(os.path.dirname(script_path), 'PROTOBUF_VERSION'), 'r') a
 
 from ..analysis.cleaner.cleaner import clean_replay
 from ..analysis.hit_detection.base_hit import BaseHit
+from ..analysis.kickoff_detection.kickoff_analysis import BaseKickoff
 from ..analysis.hit_detection.hit_analysis import SaltieHit
 from ..analysis.saltie_game.metadata.ApiGame import ApiGame
 from ..analysis.saltie_game.metadata.ApiMutators import ApiMutators
@@ -80,6 +81,7 @@ class AnalysisManager:
         self.get_game_time(proto_game, data_frame)
         clean_replay(game, data_frame, proto_game, player_map)
         self.calculate_hit_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
+        self.calculate_kickoff_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.log_time("calculating hits")
         self.get_stats(game, proto_game, player_map, data_frame)
 
@@ -151,6 +153,12 @@ class AnalysisManager:
         logger.info("Analysed hits.")
 
         # self.stats = get_stats(self)
+
+    def calculate_kickoff_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                            data_frame, kickoff_frames, first_touch_frames):
+        logger.info("Looking for kickoffs.")
+        kickoffs = BaseKickoff.get_kickoffs_from_game(game, proto_game, self.id_creator, player_map, data_frame, kickoff_frames, first_touch_frames)
+        logger.info("Found %s kickoffs." % len(kickoffs.keys()))
 
     def get_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                   data_frame: pd.DataFrame):

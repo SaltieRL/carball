@@ -1,0 +1,82 @@
+syntax = "proto2";
+
+import "api/player_id.proto";
+
+package api.stats;
+
+enum KickoffPosition {
+  // Kickoff positions for individual cars in standard arenas
+  // Diagonal, facing the ball
+  DIAGONAL=0;
+  // Back near the goal, but off the center line and slightly forward
+  OFFCENTER=1;
+  // Directly on the center line by the goal
+  GOALIE=2;
+  UNKNOWN_KICKOFF_POS=3;
+};
+enum KickoffType {
+  // Configuration of team at kickoff
+  // Compositions of the KickoffPosition types
+  // 3s
+  THREES_DIAG_DIAG_OFFCENT=0;
+  THREES_DIAG_DIAG_GOAL=1;
+  THREES_DIAG_OFFCENT_OFFCENT=2;
+  THREES_DIAG_OFFCENT_GOAL=3;
+  THREES_OFFCENT_OFFCENT_GOAL=4;
+  // 2s
+  TWOS_DIAG_DIAG=5;
+  TWOS_DIAG_OFFCENT=6;
+  TWOS_OFFCENT_OFFCENT=7;
+  TWOS_OFFCENT_GOAL=8;
+  TWOS_DIAG_GOAL=9;
+  // 1s
+  DUEL_DIAG=10;
+  DUEL_OFFCENT=11;
+  DUEL_GOAL=12;
+  // ??
+  UNKNOWN_KICKOFF_TYPE=13;
+};
+enum TouchPosition {
+  // Going for the big boost in the corner
+  BOOST=0;
+  // Going for the ball
+  BALL=1;
+  // Zero movement
+  AFK=2;
+  // Hanging out in the goal
+  GOAL=3;
+  // Cheating up close to the middle line
+  CHEAT=4;
+  // Middle big boost or some other degenerate strategy
+  UNKNOWN_TOUCH_POS=5;
+};
+
+message PlayerPositionData {
+    optional float pos_x = 1;
+    optional float pos_y = 2;
+    optional float pos_z = 3;
+}
+
+message KickoffPlayer {
+optional api.PlayerId player = 1;
+optional KickoffPosition kickoff_position = 2;
+optional TouchPosition touch_position = 3;
+optional PlayerPositionData player_position = 4;
+optional float boost = 5;
+repeated float jumps = 6;
+optional float ball_dist = 7;
+optional float boost_time = 8;
+};
+
+message Touch {
+repeated KickoffPlayer players = 1; // info about each player at the point of the touch
+optional float kickoff_goal = 2;  // time until next goal
+optional bool orange_team_goal = 3;
+};
+message KickoffStats {
+  optional int32 start_frame = 1;
+  optional int32 touch_frame = 2;
+  optional float touch_time = 3;
+  optional KickoffType type = 4;
+  optional Touch touch = 5;
+}
