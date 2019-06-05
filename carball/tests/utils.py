@@ -227,7 +227,7 @@ def get_specific_answers():
         "0_BOOST_USED": [0] * len(specific_replays["0_BOOST_USED"]),
         "BOOST_USED": [45, 100, 33, 33.33 + 33.33 + 12.15, 33.33, 33.33, 0],
         "BOOST_WASTED_USAGE": [33.33],
-        "BOOST_WASTED_COLLECTION": [6.2],
+        "BOOST_WASTED_COLLECTION": [[(12.15, 33.33 + 12.15)]],
         "BOOST_FEATHERED": [100.0, 3490.0],
         # Hits
         "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4, 50],
