@@ -41,6 +41,7 @@ after_success:
 - codecov
 
 stages:
+  - name: test
   - name: deploy
     if: branch = master AND NOT fork AND type = push
   - name: announcement
