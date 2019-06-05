@@ -241,9 +241,9 @@ def get_specific_answers():
     }
 
 
-def assertNearlyEqual(self, a, b, percent=2.0, msg=None):
+def assertNearlyEqual(case, a, b, percent=2.0, msg=None):
     if abs(a - b) > abs(percent / 100.0 * min(abs(a), abs(b))):
         if msg is None:
-            self.fail("The given numbers %s and %s are not within %s percent of each other." % (a, b, percent))
+            case.fail("The given numbers %s and %s are not within %s percent of each other." % (a, b, percent))
         else:
-            self.fail(msg)
+            case.fail(msg)
