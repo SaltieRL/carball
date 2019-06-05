@@ -51,3 +51,14 @@ message Speed {
     optional float time_at_super_sonic = 2; // time when car is > 2200
     optional float time_at_boost_speed = 3; // time when car is > 1410
 }
+
+message DetailedCarryStats {
+    optional float average_z_distance = 1; // avg distance of ball z - player z
+    optional float average_xy_distance = 2;
+    optional float average_ball_z_velocity = 3;
+    optional float variance_xy_distance = 4;
+    optional float variance_z_distance = 5;
+    optional float variance_ball_z_velocity = 6;
+    optional float average_carry_speed = 7; // Your speed while dribbling the ball
+    optional float distance_along_path = 8; // Your speed while dribbling the ball
+}

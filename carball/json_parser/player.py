@@ -3,7 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from ..json_parser.bots import get_bot_map, get_online_id_for_bot
+from carball.json_parser.bots import get_bot_map, get_online_id_for_bot
 from .boost import get_if_full_boost_position
 
 from typing import TYPE_CHECKING, List

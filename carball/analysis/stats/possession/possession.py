@@ -11,6 +11,7 @@ from ....json_parser.game import Game
 
 
 class PossessionStat(BaseStat, HitStat):
+
     def __init__(self):
         self.frame_possession_time_deltas = None
 

@@ -10,6 +10,9 @@ class SaltieGame:
 
     @staticmethod
     def get_first_touch_frames(game):
+        """
+        Returns the frames for which the ball was touched in a valid way (if any touches happened)
+        """
         if game.frames.loc[:, 'ball_has_been_hit'].any():
             ball_has_been_hit = game.frames.loc[:, 'ball_has_been_hit']
             last_frame_ball_has_been_hit = ball_has_been_hit.shift(1).rename('last_frame_ball_has_been_hit')
@@ -30,6 +33,9 @@ class SaltieGame:
 
     @staticmethod
     def get_kickoff_frames(game):
+        """
+        Returns the frames between the kickoff countdown and the first touch occurring (if any touches happened).
+        """
         if game.frames.loc[:, 'replicated_seconds_remaining'].any():
             ball_has_been_hit = game.frames.loc[:, 'replicated_seconds_remaining']
             last_frame_ball_has_been_hit = ball_has_been_hit.shift(1).rename('last_replicated_seconds_remaining')

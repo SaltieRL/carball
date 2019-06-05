@@ -1,10 +1,15 @@
 import os
 import tempfile
-from typing import Callable
+from typing import Callable, Tuple, Iterable
 
+import numpy as np
 from carball.decompile_replays import analyze_replay_file
 
 REPLAYS_FOLDER = os.path.join(os.path.dirname(__file__), 'replays')
+
+
+def get_multiple_answers(answers: Iterable[str]) -> Iterable[Tuple[any]]:
+    return np.column_stack([get_specific_answers().get(key) for key in answers])
 
 
 def run_tests_on_list(unit_test_func: Callable, replay_list=None, answers=None):
@@ -47,7 +52,10 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
     def wrapper(replay_file_path, json_file_path, answer=None):
         analysis_manager = analyze_replay_file(replay_file_path)
         if answer is not None:
-            unit_test_func(analysis_manager, answer)
+            if isinstance(answer, (list, tuple, np.ndarray)):
+                unit_test_func(analysis_manager, *answer)
+            else:
+                unit_test_func(analysis_manager, answer)
         else:
             unit_test_func(analysis_manager)
 
@@ -118,9 +126,33 @@ def get_raw_replays():
         "1_CLEAR": ["1_CLEAR.replay"],
         "2_CLEARS": ["2_CLEARS.replay"],
 
+        # KBM
+        "1_MIN_KBM_1_MIN_XBO_CONTROLLER": ["1_MIN_KBM_1_MIN_XBO_CONTROLLER.replay"],
+        "100_PERCENT_KBM": ["100_PERCENT_KBM.replay"],
+
+        # camera controls
+        "BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF": ["BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF.replay"],
+        "BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON": ["BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON.replay"],
+        "BALLCAM_MIXED": ["BALLCAM_MIXED.replay"],
+        "BALLCAM_ON_AT_DRIBBLE_ELSE_OFF": ["BALLCAM_ON_AT_DRIBBLE_ELSE_OFF.replay"],
+        "BALLCAM_OFF_AT_DRIBBLE_ELSE_ON": ["BALLCAM_OFF_AT_DRIBBLE_ELSE_ON.replay"],
+        "BALLCAM_OFF_ALWAYS": ["BALLCAM_OFF_ALWAYS.replay"],
+        "BALLCAM_ON_ALWAYS": ["BALLCAM_ON_ALWAYS.replay"],
+
+        # Dribbles
+        "SKYBOT_DRIBBLE_INFO": ["SKYBOT_DRIBBLE_INFO.replay"],
+        "1_DRIBBLE": ["1_DRIBBLE.replay"],
+        "3_DRIBBLE_2_FLICKS": ["3_DRIBBLE_2_FLICKS.replay"],
+
         # parties
         "PLAY_STATION_ONLY_PARTY": ['PLAY_STATION_ONLY_PARTY.replay'],
-
+        # error cases
+        "PLAYERNAME_BALL": ["PLAYERNAME_BALL.replay"],
+        "PLAYERNAME_GAME": ["PLAYERNAME_GAME.replay"],
+        "PLAYERNAME_TWO_PLAYERS_NAMED_SAME": ["PLAYERNAME_TWO_PLAYERS_NAMED_SAME.replay"],
+        "PLAYERNAME_ZTTL": ["PLAYERNAME_ZTTL.replay"],
+        "ISSUE_PLAYER_REJOIN": ["ISSUE_PLAYER_REJOIN.replay"],
+        "OCE_RLCS_7_CARS": ["OCE_RLCS_7_CARS.replay"],
         "XBOX_PARTY": ["XBOX_PARTY.replay"],
         # error cases
         "UNICODE_ERROR": ["UnicodeEncodeError.replay"],
@@ -143,12 +175,12 @@ def get_specific_replays():
     raw_map = get_raw_replays()
     return {
         # BOOSTS
-        "0_BOOST_COLLECTED": raw_map["NO_BOOST_PAD_0_USED"] + raw_map["NO_BOOST_PAD_33_USED"] + raw_map[
-            "KICKOFF_NO_TOUCH"],
+        "0_BOOST_COLLECTED": raw_map["NO_BOOST_PAD_0_USED"] + raw_map["NO_BOOST_PAD_33_USED"] +
+                             raw_map["KICKOFF_NO_TOUCH"],
         "1_SMALL_PAD": raw_map["12_BOOST_PAD_0_USED"] + raw_map["12_BOOST_PAD_45_USED"],
         "1_LARGE_PAD": raw_map["100_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_100_USED"],
-        "0_BOOST_USED": raw_map["12_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_0_USED"] + raw_map[
-            "NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"],
+        "0_BOOST_USED": raw_map["12_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_0_USED"] +
+                        raw_map["NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"],
         "BOOST_USED": raw_map["12_BOOST_PAD_45_USED"] +
                       raw_map["100_BOOST_PAD_100_USED"] +
                       raw_map["NO_BOOST_PAD_33_USED"] +
@@ -169,6 +201,11 @@ def get_specific_replays():
                  raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
         "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
         "AERIALS": raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["HIGH_AIR_PASS"] + raw_map["MID_AIR_PASS"],
+        "CANT_CRASH": raw_map["UNICODE_ERROR"] + raw_map["PLAYERNAME_BALL"] + raw_map["PLAYERNAME_GAME"] +
+                      raw_map["PLAYERNAME_TWO_PLAYERS_NAMED_SAME"] + raw_map["PLAYERNAME_ZTTL"] +
+                      raw_map["ISSUE_PLAYER_REJOIN"] + raw_map["ISSUE_PLAYER_REJOIN"],
+        "ZERO_DRIBBLE": raw_map["12_BOOST_PAD_45_USED"] + raw_map["KICKOFF_NO_TOUCH"],
+        "DRIBBLES": raw_map["1_DRIBBLE"] + raw_map["3_DRIBBLE_2_FLICKS"] + raw_map["SKYBOT_DRIBBLE_INFO"],
         "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
         "OFFLINE": raw_map["3_KICKOFFS"],
         "BROKEN_REPLAYS": raw_map["BROKEN_REPLAY"],
@@ -190,6 +227,8 @@ def get_specific_answers():
         "SHOTS": [3, 0, 2, 1],
         "PASSES": [1, 1, 1],
         "AERIALS": [0, 1, 2, 0],
+        "DRIBBLES": [1, 3, 49],
+        "FLICKS": [0, 1, 0],
         "SAVES": [1, 0],
         "CLEARS": [1, 2]
     }
