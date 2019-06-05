@@ -1,5 +1,6 @@
 import os
 import tempfile
+import time
 from typing import Callable, Tuple, Iterable
 
 import numpy as np
@@ -50,9 +51,13 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
     """
 
     def wrapper(replay_file_path, json_file_path, answer=None):
-        if cache is not None:
-            analysis_manager = cache[replay_file_path]
-        analysis_manager = analyze_replay_file(replay_file_path)
+        start = time.time()
+        if cache is not None and str(replay_file_path) in cache:
+            analysis_manager = cache[str(replay_file_path)]
+        else:
+            analysis_manager = analyze_replay_file(replay_file_path)
+        if cache is not None and time.time() - start > 10:
+            cache[str(replay_file_path)] = analysis_manager
         if answer is not None:
             if isinstance(answer, (list, tuple, np.ndarray)):
                 unit_test_func(analysis_manager, *answer)
