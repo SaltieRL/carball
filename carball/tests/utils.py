@@ -37,7 +37,7 @@ def run_replay(replay_file, unit_test_func: Callable, answer=None):
     os.remove(file_path)
 
 
-def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None):
+def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None, cache=None):
     """
     :param unit_test_func: Called with an AnalysisManager
     :param replay_list: list of replay urls
@@ -45,6 +45,8 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
     """
 
     def wrapper(replay_file_path, json_file_path, answer=None):
+        if cache is not None:
+            analysis_manager = cache[replay_file_path]
         analysis_manager = analyze_replay_file(replay_file_path)
         if answer is not None:
             unit_test_func(analysis_manager, answer)
