@@ -1,5 +1,7 @@
 import unittest
 
+import pytest
+
 from carball.analysis.events.carry_detection import CarryDetection, CarryData
 from carball.analysis.analysis_manager import AnalysisManager
 
@@ -15,48 +17,50 @@ class FakeIndex:
         self.values = FakeList()
 
 
-class DribbleTests(unittest.TestCase):
+class Test_Dribbles():
 
-    def test_dribble_detection_more_than_zero(self):
+    def test_dribble_detection_more_than_zero(self, replay_cache):
 
         def test(analysis: AnalysisManager, dribbles, flicks):
             proto_game = analysis.get_protobuf_data()
             carries = proto_game.game_stats.ball_carries
-            self.assertGreater(len(carries), 0)
+            assert(len(carries) > 0)
             player = proto_game.players[0]
-            self.assertEqual(player.stats.ball_carries.total_carries, dribbles)
-            self.assertEqual(player.stats.ball_carries.total_flicks, flicks)
-            self.assertGreater(player.stats.ball_carries.total_carry_time, 0)
+            assert(player.stats.ball_carries.total_carries == dribbles)
+            assert(player.stats.ball_carries.total_flicks == flicks)
+            assert(player.stats.ball_carries.total_carry_time > 0)
 
-        run_analysis_test_on_replay(test, get_specific_replays()["DRIBBLES"], answers=get_multiple_answers(["DRIBBLES", "FLICKS"]))
+        run_analysis_test_on_replay(test, get_specific_replays()["DRIBBLES"],
+                                    answers=get_multiple_answers(["DRIBBLES", "FLICKS"]),
+                                    cache=replay_cache)
 
-    def test_dribble_detection_is_zero(self):
+    def test_dribble_detection_is_zero(self, replay_cache):
 
         def test(analysis: AnalysisManager):
             proto_game = analysis.get_protobuf_data()
             carries = proto_game.game_stats.ball_carries
-            self.assertEqual(len(carries), 0)
+            assert(len(carries) == 0)
 
-        run_analysis_test_on_replay(test, get_specific_replays()["ZERO_DRIBBLE"])
+        run_analysis_test_on_replay(test, get_specific_replays()["ZERO_DRIBBLE"], cache=replay_cache)
 
-    def test_total_dribble_time(self):
+    def test_total_dribble_time(self, replay_cache):
         def test(analysis: AnalysisManager):
             proto_game = analysis.get_protobuf_data()
             player = proto_game.players[0]
             print(player)
 
             percent = 6
-            self.assertAlmostEqual(player.stats.ball_carries.total_carry_time, 196, delta=196 * percent / 100)
+            assert player.stats.ball_carries.total_carry_time == pytest.approx(196, percent / 100)
 
-        run_analysis_test_on_replay(test, get_raw_replays()["SKYBOT_DRIBBLE_INFO"])
+        run_analysis_test_on_replay(test, get_raw_replays()["SKYBOT_DRIBBLE_INFO"], cache=replay_cache)
 
-    def test_zero_dribbles(self):
+    def test_zero_dribbles(self, replay_cache):
         def test(analysis: AnalysisManager):
             proto_game = analysis.get_protobuf_data()
             carries = proto_game.game_stats.ball_carries
-            self.assertEqual(len(carries), 0)
+            assert(len(carries) == 0)
 
-        run_analysis_test_on_replay(test, get_raw_replays()["KICKOFF_NO_TOUCH"])
+        run_analysis_test_on_replay(test, get_raw_replays()["KICKOFF_NO_TOUCH"], cache=replay_cache)
 
 
     def test_dribble_merge_simple(self):
@@ -68,8 +72,8 @@ class DribbleTests(unittest.TestCase):
                                  FakeIndex([222, 596, 603, 619, 1537]))  # player end
         CarryDetection().merge_carries(overall_carry, player_carry)
 
-        self.assertEqual(len(player_carry.start_frames), 3)
-        self.assertEqual(len(player_carry.end_frames), 3)
+        assert(len(player_carry.start_frames) == 3)
+        assert(len(player_carry.end_frames) == 3)
 
 
     def test_dribble_merge_complex(self):
@@ -81,8 +85,8 @@ class DribbleTests(unittest.TestCase):
                                  FakeIndex([187, 501, 577, 657, 676, 1173, 1324, 1559, 1637, 1808, 2470, 2600, 2704, 2782, 3217, 3337, 3477, 3528, 4198, 4453, 4575, 4934, 5250, 5337, 5387, 5555, 6009, 6233, 6303, 6564, 7019, 7060, 7925, 8334, 9230, 9580, 9768, 9857, 9880, 9928, 10395, 10470, 10583, 10729, 10735, 10741, 11292, 11759, 11822, 11972, 12176, 12355, 12538, 12568, 12650, 12907, 13141, 13310, 13565, 13805, 13873, 13947, 14374, 14401, 14504, 14521, 14797, 14958, 15336, 16228, 16515, 16656, 16884, 17021, 17210, 17291, 17654, 18180, 18587, 18819, 19009, 19062, 19119, 19184, 19771, 20119, 20168, 20372, 20557, 20699, 21049, 21285, 21364, 21438, 21622, 21984, 22185, 22418, 22591, 22604, 22679, 22923, 22932, 23323, 23683, 23914, 24007, 24147, 24289, 24595, 24914, 25412, 25611, 25661, 25753, 26104, 26570, 26708, 26880, 27181, 27413, 27424, 27665, 28206, 28345, 28393, 28476, 28846, 29056, 29188, 29722, 29785, 30066, 30502, 30539, 30790, 31045, 31292, 31568, 31834, 32168, 33062, 33545, 33745, 34170, 34583, 34889, 35318, 35661, 36026, 36162, 36298, 36617, 36642, 37253, 37596, 37820, 37861, 38000, 38411, 38616, 38692, 38894, 38921, 39067, 39091, 39113, 39129, 39359, 39609, 39678, 40430, 40440, 40848]))  # player end
         CarryDetection().merge_carries(overall_carry, player_carry)
 
-        self.assertEqual(len(player_carry.start_frames), 133)
-        self.assertEqual(len(player_carry.end_frames), 133)
+        assert (len(player_carry.start_frames) == 133)
+        assert (len(player_carry.end_frames) == 133)
 
     def test_dribble_merge_rumble(self):
         overall_carry = CarryData([],
@@ -93,9 +97,5 @@ class DribbleTests(unittest.TestCase):
                                  FakeIndex([1852, 3414, 3702, 4441, 6718, 10731, 11040]))  # player end
         CarryDetection().merge_carries(overall_carry, player_carry)
 
-        self.assertEqual(len(player_carry.start_frames), 7)
-        self.assertEqual(len(player_carry.end_frames), 7)
-
-
-if __name__ == '__main__':
-    unittest.main()
+        assert (len(player_carry.start_frames) == 7)
+        assert (len(player_carry.end_frames) == 7)
