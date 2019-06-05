@@ -13,7 +13,8 @@ STANDARD_FIELD_LENGTH_HALF = 5120
 STANDARD_FIELD_WIDTH_HALF = 4096
 STANDARD_GOAL_WIDTH_HALF = 893
 
-HEIGHT_0_BALL_LIM = 95  # Height of car when on ground
+BALL_SIZE = 92.75
+HEIGHT_0_BALL_LIM = 95  # Height of ball when on ground
 HEIGHT_0_LIM = 20  # Height of car when on ground
 HEIGHT_1_LIM = 840  # Goal height
 
