@@ -1,5 +1,6 @@
 import os
 import tempfile
+import time
 from typing import Callable, Tuple, Iterable
 
 import numpy as np
@@ -42,7 +43,7 @@ def run_replay(replay_file, unit_test_func: Callable, answer=None):
     os.remove(file_path)
 
 
-def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None):
+def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None, cache=None):
     """
     :param unit_test_func: Called with an AnalysisManager
     :param replay_list: list of replay urls
@@ -50,7 +51,13 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
     """
 
     def wrapper(replay_file_path, json_file_path, answer=None):
-        analysis_manager = analyze_replay_file(replay_file_path)
+        start = time.time()
+        if cache is not None and str(replay_file_path) in cache:
+            analysis_manager = cache[str(replay_file_path)]
+        else:
+            analysis_manager = analyze_replay_file(replay_file_path)
+        if cache is not None and time.time() - start > 10:
+            cache[str(replay_file_path)] = analysis_manager
         if answer is not None:
             if isinstance(answer, (list, tuple, np.ndarray)):
                 unit_test_func(analysis_manager, *answer)
@@ -220,7 +227,7 @@ def get_specific_answers():
         "0_BOOST_USED": [0] * len(specific_replays["0_BOOST_USED"]),
         "BOOST_USED": [45, 100, 33, 33.33 + 33.33 + 12.15, 33.33, 33.33, 0],
         "BOOST_WASTED_USAGE": [33.33],
-        "BOOST_WASTED_COLLECTION": [6.2],
+        "BOOST_WASTED_COLLECTION": [[(12.15, 33.33 + 12.15)]],
         "BOOST_FEATHERED": [100.0, 3490.0],
         # Hits
         "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4, 50],
@@ -234,9 +241,9 @@ def get_specific_answers():
     }
 
 
-def assertNearlyEqual(self, a, b, percent=2.0, msg=None):
+def assertNearlyEqual(case, a, b, percent=2.0, msg=None):
     if abs(a - b) > abs(percent / 100.0 * min(abs(a), abs(b))):
         if msg is None:
-            self.fail("The given numbers %s and %s are not within %s percent of each other." % (a, b, percent))
+            case.fail("The given numbers %s and %s are not within %s percent of each other." % (a, b, percent))
         else:
-            self.fail(msg)
+            case.fail(msg)

@@ -94,3 +94,8 @@ Linux Error (Potential):
 `PermissionError: [Errno 13] Permission denied: 'carball/rattletrap/rattletrap-6.2.2-linux'`
 Fix:
 `chmod +x "carball/rattletrap/rattletrap-6.2.2-linux"`
+
+
+## Developing
+
+For testing you must run pytest.  For ides you can configure them to use the pytest runner.
