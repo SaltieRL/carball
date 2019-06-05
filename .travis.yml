@@ -51,7 +51,7 @@ stages:
 jobs:
   include:
     - stage: deploy
-      script: skip
+      script: python init.py
       deploy:
       - provider: releases
         api_key:
