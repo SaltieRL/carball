@@ -1,4 +1,5 @@
 from .actor import *
+import pandas as pd
 
 REPLICATED_RB_STATE_KEY = 'TAGame.RBActor_TA:ReplicatedRBState'
 
@@ -15,7 +16,8 @@ _HANDLERS = [
     BoostHandler,
     BoostPickupHandler,
     CameraSettingsHandler,
-    RumbleItemHandler
+    RumbleItemHandler,
+    PlatformHandler
 ]
 
 # These handlers will also handle frames with a delta of 0 to match the old implementation
@@ -63,6 +65,12 @@ def parse_frames(game):
     parser = FrameParser(game.replay_data, game)
     parser.parse_frames()
 
+    # TODO remove this
+    for key, val in parser.dropshot['tiles'].items():
+        parser.dropshot['tiles'][key] = pd.DataFrame.from_dict(val, orient='index')
+
+    df = pd.concat(parser.dropshot['tiles'], axis=1)
+
     player_ball_data = parser.player_data
     player_ball_data['ball'] = parser.ball_data
 
@@ -108,6 +116,12 @@ class FrameParser(object):
         self.current_car_ids_to_collect = []
 
         self.actors = {}
+
+        self.dropshot = {
+            'tiles': {},
+            'tile_states': {},
+            'tile_events': {}
+        }
 
     def parse_frames(self):
 
