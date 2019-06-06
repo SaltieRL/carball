@@ -14,6 +14,8 @@ class CarHandler(BaseActorHandler):
             return
 
         player_actor_id = actor['Engine.Pawn:PlayerReplicationInfo']
+        if player_actor_id == -1:
+            return
         # assign car player links
         self.parser.player_car_ids[player_actor_id] = actor['Id']
         self.parser.car_player_ids[actor['Id']] = player_actor_id
@@ -43,14 +45,15 @@ class CarHandler(BaseActorHandler):
                 # frame 1 of 0732D41D4AF83D610AE2A988ACBC977A (rlcs season 4 eu)
                 attacker_player_id = self.parser.car_player_ids[attacker_car_id]
                 victim_player_id = self.parser.car_player_ids[victim_car_id]
-                demo_data['attacker_player_id'] = attacker_player_id
-                demo_data['victim_player_id'] = victim_player_id
-                # add frame_number
-                demo_data['frame_number'] = frame_number
-                self.parser.demos_data.append(demo_data)
-                logger.debug('ReplicatedDemolish: Att: %s, Def: %s' %
-                             (attacker_player_id, victim_player_id))
-                logger.debug('RepDemo Names: Att: %s. Def: %s' %
-                             (self.parser.player_dicts[attacker_player_id]['name'],
-                              self.parser.player_dicts[victim_player_id]['name']))
-                actor.pop('TAGame.Car_TA:ReplicatedDemolish')
+                if attacker_player_id != -1 and victim_player_id != -1:
+                    demo_data['attacker_player_id'] = attacker_player_id
+                    demo_data['victim_player_id'] = victim_player_id
+                    # add frame_number
+                    demo_data['frame_number'] = frame_number
+                    self.parser.demos_data.append(demo_data)
+                    logger.debug('ReplicatedDemolish: Att: %s, Def: %s' %
+                                 (attacker_player_id, victim_player_id))
+                    logger.debug('RepDemo Names: Att: %s. Def: %s' %
+                                 (self.parser.player_dicts[attacker_player_id]['name'],
+                                  self.parser.player_dicts[victim_player_id]['name']))
+                    actor.pop('TAGame.Car_TA:ReplicatedDemolish')
