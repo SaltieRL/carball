@@ -31,13 +31,16 @@ before_install:
     fi
 - chmod 777 ./_travis/install-protoc.sh
 - "./_travis/install-protoc.sh 2.6.1"
+
 install:
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
-script:
 - python init.py
+
+script:
 - pytest --cov=./ --ignore=protobuf-2.6.1/
 - bash <(curl -s https://codecov.io/bash) -c -F carball
+
 after_success:
 - codecov
 
@@ -64,6 +67,7 @@ jobs:
           tags: true
         skip_cleanup: true
       - provider: pypi
+        skip_cleanup: true
         skip_existing: true
         user: PYPI_LOGIN
         password:
