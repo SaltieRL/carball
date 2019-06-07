@@ -55,6 +55,7 @@ jobs:
   include:
     - stage: deploy
       script: skip
+      after_success: skip
       deploy:
       - provider: releases
         api_key:
