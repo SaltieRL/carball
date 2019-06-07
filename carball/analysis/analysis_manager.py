@@ -41,6 +41,7 @@ class AnalysisManager:
         self.events_creator = EventsCreator(self.id_creator)
         self.should_store_frames = False
         self.df_bytes = None
+        self.force_full = False
 
     def create_analysis(self):
         """
@@ -54,7 +55,7 @@ class AnalysisManager:
         kickoff_frames, first_touch_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frame)
         self.game.kickoff_frames = kickoff_frames
         self.log_time("getting kickoff")
-        if self.can_do_full_analysis(first_touch_frames):
+        if self.can_do_full_analysis(first_touch_frames) or self.force_full:
             self.perform_full_analysis(self.game, self.protobuf_game, player_map,
                                        data_frame, kickoff_frames, first_touch_frames)
         else:

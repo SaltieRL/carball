@@ -1,10 +1,7 @@
-from typing import Callable, Dict
-
 import pandas as pd
 from carball.generated.api.stats.events_pb2 import Bump
 
 from carball.generated.api.player_id_pb2 import PlayerId
-from carball.generated.api.player_pb2 import Player
 from carball.json_parser.game import Game
 
 from carball.generated.api import game_pb2
@@ -35,3 +32,8 @@ class BumpAnalysis:
     def analyze_bumps(self, data_frame:pd.DataFrame):
         for index in range(len(self.proto_game.game_stats.bumps)):
             bump = self.proto_game.game_stats.bumps[index]
+            self.analyze_bump(bump, data_frame)
+
+
+    def analyze_bump(self, bump: Bump, data_frame:pd.DataFrame):
+        frame_number = bump.frame_number
