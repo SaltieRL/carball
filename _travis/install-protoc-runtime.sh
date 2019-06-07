@@ -8,3 +8,5 @@ make
 make check
 make install
 ldconfig
+export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp
+export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION_VERSION=2
