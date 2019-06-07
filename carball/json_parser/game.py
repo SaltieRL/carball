@@ -47,6 +47,7 @@ class Game:
         self.ball_type = None
         self.demos = None
         self.parties = None
+        self.dropshot = None
 
     def initialize(self, file_path='', loaded_json=None, parse_replay: bool = True, clean_player_names: bool = False):
         self.file_path = file_path
@@ -254,6 +255,18 @@ class Game:
 
         # PARTIES
         self.parties = all_data['parties']
+
+        # DROPSHOT EVENTS
+        self.dropshot = {
+            'damage_events': []
+        }
+
+        for frame_number, damage in all_data['dropshot']['damage_events'].items():
+            self.dropshot['damage_events'].append({
+                'frame_number': frame_number,
+                'player': player_actor_id_player_dict[damage[0]],
+                'tiles': damage[1]
+            })
 
         del self.replay_data
         del self.replay

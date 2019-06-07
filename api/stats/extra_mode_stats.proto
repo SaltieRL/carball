@@ -35,3 +35,14 @@ message ExtraModeGoalInfo {
     optional bool scored_with_item = 2;
     optional PowerUp used_item = 3;
 }
+
+enum TileState {
+    UNDAMAGED = 0;
+    DAMAGED = 1;
+    DESTROYED = 2;
+}
+
+message DropshotTile {
+    optional int32 id = 1;
+    optional TileState state = 2;
+}

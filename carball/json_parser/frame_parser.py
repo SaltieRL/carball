@@ -83,7 +83,8 @@ def parse_frames(game):
         'demos_data': parser.demos_data,
         'game_info_actor': parser.game_info_actor,
         'soccar_game_event_actor': parser.soccar_game_event_actor,
-        'parties': parser.parties
+        'parties': parser.parties,
+        'dropshot': parser.dropshot
     }
 
 
@@ -120,7 +121,7 @@ class FrameParser(object):
         self.dropshot = {
             'tiles': {},
             'tile_states': {},
-            'tile_events': {}
+            'damage_events': {}
         }
 
     def parse_frames(self):

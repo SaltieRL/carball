@@ -104,3 +104,9 @@ message RumbleItemEvent {
     optional api.PlayerId player_id = 4;
     optional api.PlayerId victim_id = 5; // TODO Not implemented, including ball target as things like plunger can fail
 }
+
+message DropshotDamageEvent {
+    optional api.PlayerId player_id = 1;
+    optional int32 frame_number = 2;
+    repeated DropshotTile tiles = 3;
+}
