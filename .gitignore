@@ -13,3 +13,4 @@ carball.egg*
 dist/
 
 !/carball/tests/replays/
+*.py___jb_tmp___
