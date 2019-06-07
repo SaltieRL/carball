@@ -3,6 +3,7 @@ from typing import Dict, Callable
 
 import pandas as pd
 
+from carball.analysis.events.bump_detection.bump_analysis import BumpAnalysis
 from carball.analysis.events.kickoff_detection.kickoff_analysis import BaseKickoff
 from carball.analysis.events.carry_detection import CarryDetection
 from carball.analysis.events.hit_detection.base_hit import BaseHit
@@ -31,6 +32,7 @@ class EventsCreator:
         self.create_hit_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_kickoff_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_ball_carries(game, proto_game, player_map, data_frame[goal_frames])
+        self.create_bumps(game, proto_game, player_map, data_frame[goal_frames])
 
     def calculate_kickoff_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                                 data_frame, kickoff_frames, first_touch_frames):
@@ -54,9 +56,17 @@ class EventsCreator:
 
     def calculate_ball_carries(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                                data_frame: pd.DataFrame):
+        logger.info("Looking for carries.")
         carry_detection = CarryDetection()
         carry_data = carry_detection.filter_frames(data_frame)
 
         for player in player_map:
             carry_detection.create_carry_events(carry_data, player_map[player], proto_game, data_frame)
             # find now continuous data of longer than a second.
+        logger.info("Found %s carries.", len(proto_game.game_stats.ball_carries))
+
+    def create_bumps(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                     data_frame: pd.DataFrame):
+        logger.info("Looking for bumps.")
+        BumpAnalysis.get_bumps_from_game(game, proto_game, player_map, data_frame)
+        logger.info("Found %s bumps.", len(proto_game.game_stats.bumps))

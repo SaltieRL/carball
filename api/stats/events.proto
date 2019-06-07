@@ -59,6 +59,9 @@ message Bump {
     optional api.PlayerId attacker_id = 2;
     optional api.PlayerId victim_id = 3;
     optional bool is_demo = 4;
+    optional bool caused_goal = 5;
+    optional bool caused_save = 6;
+    optional bool is_revenge = 7;
 }
 
 // Not Implemented
