@@ -27,8 +27,8 @@ class BumpAnalysis:
     def add_bump(self, frame: int, victim_id: PlayerId, attacker_id: PlayerId, is_demo: bool) -> Bump:
         bump = self.proto_game.game_stats.bumps.add()
         bump.frame_number = frame
-        bump.attacker_id = attacker_id
-        bump.victim_id = victim_id
+        bump.attacker_id.id = attacker_id.id
+        bump.victim_id.id = victim_id.id
         if is_demo:
             bump.is_demo = True
 
