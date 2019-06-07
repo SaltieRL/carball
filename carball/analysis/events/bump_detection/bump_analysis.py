@@ -19,7 +19,7 @@ class BumpAnalysis:
                                data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame):
         self.create_bumps_from_demos(proto_game)
 
-        self.analyze_bumps(kickoff_frames)
+        self.analyze_bumps()
 
     def create_bumps_from_demos(self, proto_game):
         for index in range(len(proto_game.metadata.demos)):
@@ -33,3 +33,7 @@ class BumpAnalysis:
         bump.victim_id = victim_id
         if is_demo:
             bump.is_demo = True
+
+    def analyze_bumps(self):
+        for index in range(len(self.proto_game.game_stats.bumps)):
+            bump = self.proto_game.game_stats.bumps[index]
