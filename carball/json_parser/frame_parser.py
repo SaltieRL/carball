@@ -1,5 +1,4 @@
 from .actor import *
-import pandas as pd
 
 REPLICATED_RB_STATE_KEY = 'TAGame.RBActor_TA:ReplicatedRBState'
 
@@ -65,12 +64,6 @@ def parse_frames(game):
     parser = FrameParser(game.replay_data, game)
     parser.parse_frames()
 
-    # TODO remove this
-    for key, val in parser.dropshot['tiles'].items():
-        parser.dropshot['tiles'][key] = pd.DataFrame.from_dict(val, orient='index')
-
-    df = pd.concat(parser.dropshot['tiles'], axis=1)
-
     player_ball_data = parser.player_data
     player_ball_data['ball'] = parser.ball_data
 
@@ -119,7 +112,6 @@ class FrameParser(object):
         self.actors = {}
 
         self.dropshot = {
-            'tiles': {},
             'tile_states': {},
             'damage_events': {}
         }

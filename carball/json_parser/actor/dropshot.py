@@ -19,9 +19,6 @@ class PlatformHandler(BaseActorHandler):
 
         damage_state = actor['TAGame.BreakOutActor_Platform_TA:DamageState']['damage_state']
 
-        if tile_id not in self.parser.dropshot['tiles']:
-            self.parser.dropshot['tiles'][tile_id] = {}
-
         # unknown1: 0 - undamaged, 1 - damaged, 2 - destroyed
         state = damage_state['unknown1']
 
@@ -46,17 +43,3 @@ class PlatformHandler(BaseActorHandler):
             self.parser.dropshot['damage_events'][frame_number][1].append((tile_id, state))
 
         self.parser.dropshot['tile_states'][tile_id] = state
-
-        # TODO remove this
-        self.parser.dropshot['tiles'][tile_id][frame_number] = {
-            'unknown1': damage_state['unknown1'],
-            'unknown2': damage_state['unknown2'],
-            'unknown3': damage_state['unknown3'],
-            'size': damage_state['unknown4']['size']['value'],
-            'bias': damage_state['unknown4']['bias'],
-            'x': damage_state['unknown4']['x'],
-            'y': damage_state['unknown4']['y'],
-            'z': damage_state['unknown4']['z'],
-            'unknown5': damage_state['unknown5'],
-            'unknown6': damage_state['unknown6']
-        }
