@@ -1,4 +1,4 @@
 numpy
-protobuf
+protobuf==3.6.1 --install-option="--cpp_implementation"
 xlrd
 pandas
