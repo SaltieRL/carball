@@ -15,7 +15,8 @@ cache:
   - pip
   - directories:
       - carball/generated/binaries
-      - protobuf-2.6.1/src/
+      - protobuf-2.6.1/
+      - v2.6.1/
 
 # We only build if it is a pr into master or it is a pr and it is not into master
 if:
@@ -31,6 +32,8 @@ before_install:
     fi
 - chmod 777 ./_travis/install-protoc.sh
 - "./_travis/install-protoc.sh 2.6.1"
+- chmod 777 ./_travis/install-protoc-runtime.sh
+- "./_travis/install-protoc-runtime.sh 2.6.1"
 
 install:
 - pip install -r requirements.txt
