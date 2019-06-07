@@ -66,4 +66,5 @@ message GameMetadata {
     optional int32 team_size = 16;
 	optional Playlist playlist = 17;
     optional bool is_invalid_analysis = 18; // True if we did not perform a full analysis on the replay.
+    optional int32 unknown_playlist = 19;
 }
