@@ -14,17 +14,15 @@ class BumpAnalysis:
     def __init__(self, game: Game, proto_game: game_pb2):
         self.proto_game = proto_game
 
-    def get_bumps_from_game(self, game: Game, proto_game: game_pb2, id_creation: Callable,
-                               player_map: Dict[str, Player],
-                               data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame):
-        self.create_bumps_from_demos(proto_game)
+    def get_bumps_from_game(self, data_frame: pd.DataFrame):
+        self.create_bumps_from_demos(self.proto_game)
 
-        self.analyze_bumps()
+        self.analyze_bumps(data_frame)
 
     def create_bumps_from_demos(self, proto_game):
-        for index in range(len(proto_game.metadata.demos)):
-            demo = proto_game.metadata.demos[0]
-            self.add_bump(demo.frame_number, demo.vicim_id, demo.attacker_id, True)
+        for index in range(len(proto_game.game_metadata.demos)):
+            demo = proto_game.game_metadata.demos[index]
+            self.add_bump(demo.frame_number, demo.victim_id, demo.attacker_id, True)
 
     def add_bump(self, frame: int, victim_id: PlayerId, attacker_id: PlayerId, is_demo: bool) -> Bump:
         bump = self.proto_game.game_stats.bumps.add()
@@ -34,6 +32,6 @@ class BumpAnalysis:
         if is_demo:
             bump.is_demo = True
 
-    def analyze_bumps(self):
+    def analyze_bumps(self, data_frame:pd.DataFrame):
         for index in range(len(self.proto_game.game_stats.bumps)):
             bump = self.proto_game.game_stats.bumps[index]
