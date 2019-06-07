@@ -113,7 +113,9 @@ class FrameParser(object):
 
         self.dropshot = {
             'tile_states': {},
-            'damage_events': {}
+            'damage_events': {},
+            'ball_state': 0,
+            'ball_events': []
         }
 
     def parse_frames(self):

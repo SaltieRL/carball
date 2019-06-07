@@ -110,3 +110,9 @@ message DropshotDamageEvent {
     optional int32 frame_number = 2;
     repeated DropshotTile tiles = 3;
 }
+
+message DropshotBallPhaseChangeEvent {
+    optional int32 frame_number = 1;
+    optional int32 ball_phase = 2;
+    optional api.PlayerId player_id = 3;
+}

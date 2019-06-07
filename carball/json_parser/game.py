@@ -268,6 +268,8 @@ class Game:
                 'tiles': damage[1]
             })
 
+        self.dropshot['ball_events'] = all_data['dropshot']['ball_events']
+
         del self.replay_data
         del self.replay
         del self.all_data

@@ -8,6 +8,7 @@ from carball.analysis.events.carry_detection import CarryDetection
 from carball.analysis.events.hit_detection.base_hit import BaseHit
 from carball.analysis.events.hit_detection.hit_analysis import SaltieHit
 from carball.analysis.events.dropshot.damage import create_dropshot_damage_events
+from carball.analysis.events.dropshot.ball import create_dropshot_ball_events
 from carball.generated.api import game_pb2
 from carball.generated.api.player_pb2 import Player
 from carball.json_parser.game import Game
@@ -32,7 +33,7 @@ class EventsCreator:
         self.create_hit_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_kickoff_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_ball_carries(game, proto_game, player_map, data_frame[goal_frames])
-        create_dropshot_damage_events(game, proto_game)
+        self.create_dropshot_events(game, proto_game, player_map)
 
     def calculate_kickoff_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                                 data_frame, kickoff_frames, first_touch_frames):
@@ -62,3 +63,7 @@ class EventsCreator:
         for player in player_map:
             carry_detection.create_carry_events(carry_data, player_map[player], proto_game, data_frame)
             # find now continuous data of longer than a second.
+
+    def create_dropshot_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player]):
+        create_dropshot_damage_events(game, proto_game)
+        create_dropshot_ball_events(game, proto_game, player_map)
