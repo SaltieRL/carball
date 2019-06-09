@@ -118,7 +118,7 @@ class FrameParser(object):
     def parse_frames(self):
 
         self.actors = {}
-        handlers = [dict() for x in range(len(_PRIORITY_HANDLERS) + 1)]
+        handlers = [dict() for _ in range(len(_PRIORITY_HANDLERS) + 1)]
 
         destroyed_actors = set()
 
@@ -201,21 +201,17 @@ class FrameParser(object):
             self.current_car_ids_to_collect.clear()
 
 
+_TYPES = ['int', 'boolean', 'string', 'byte', 'str', 'name']
+
+
 def find_actual_value(value_dict: dict) -> dict or int or bool or str:
-    types = ['int', 'boolean', 'string', 'byte', 'str', 'name', ('flagged_int', 'int')]
     if value_dict is None:
         return None
     if 'value' in value_dict:
         value_dict = value_dict['value']
-    for _type in types:
-        if isinstance(_type, str):
-            if _type in value_dict:
-                return value_dict[_type]
-        else:
-            value = value_dict
-            if _type[0] in value:
-                for type_str in _type:
-                    value = value[type_str]
-                return value
-    else:
-        return value_dict
+    key, value = next(iter(value_dict.items()))
+    if key == 'flagged_int':
+        return value['int']
+    if key in _TYPES:
+        return value
+    return value_dict
