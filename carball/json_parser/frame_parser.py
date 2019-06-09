@@ -119,6 +119,7 @@ class FrameParser(object):
 
         self.actors = {}
         handlers = [dict() for _ in range(len(_PRIORITY_HANDLERS) + 1)]
+        handled_actors = set()
 
         destroyed_actors = set()
 
@@ -152,6 +153,7 @@ class FrameParser(object):
                             priority = len(_PRIORITY_HANDLERS)
 
                         handlers[priority][actor_id] = handler(self), handler in _0_DELTA_HANDLERS
+                        handled_actors.add(actor_id)
 
                 elif actor_status == 'updated':
                     if actor_id not in self.actors:
@@ -163,12 +165,14 @@ class FrameParser(object):
                         actor[prop['name']] = find_actual_value(prop['value'])
 
                 elif actor_status == 'destroyed':
-                    destroyed_actors.add(actor_id)
+                    if actor_id in handled_actors:
+                        destroyed_actors.add(actor_id)
 
             # apply destroy handlers
             for actor_id in destroyed_actors:
                 for handler_group in handlers:
                     handler_group.pop(actor_id, None)
+                handled_actors.remove(actor_id)
                 self.player_car_ids.pop(actor_id, None)
                 self.car_player_ids.pop(actor_id, None)
                 self.actors.pop(actor_id, None)
