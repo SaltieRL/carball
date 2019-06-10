@@ -2,7 +2,6 @@ from .base import *
 
 
 class GameInfoHandler(BaseActorHandler):
-    priority = 1
 
     @classmethod
     def can_handle(cls, actor: dict) -> bool:
