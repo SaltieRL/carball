@@ -1,24 +1,16 @@
 import os
 import tempfile
-from typing import Callable
+import time
+from typing import Callable, Tuple, Iterable
 
-import requests
+import numpy as np
 from carball.decompile_replays import analyze_replay_file
 
-
-def download_replay_discord(url):
-    file = requests.get(url, stream=True)
-    replay = file.raw.data
-    return replay
+REPLAYS_FOLDER = os.path.join(os.path.dirname(__file__), 'replays')
 
 
-def save_locally(replay_object):
-    fd, file_path = tempfile.mkstemp()
-    with open(file_path, 'wb') as f:
-        f.write(replay_object)
-
-    os.close(fd)
-    return file_path
+def get_multiple_answers(answers: Iterable[str]) -> Iterable[Tuple[any]]:
+    return np.column_stack([get_specific_answers().get(key) for key in answers])
 
 
 def run_tests_on_list(unit_test_func: Callable, replay_list=None, answers=None):
@@ -26,23 +18,21 @@ def run_tests_on_list(unit_test_func: Callable, replay_list=None, answers=None):
         replay_list = get_complex_replay_list()
 
     for index in range(len(replay_list)):
-        replay_url = replay_list[index]
-        print('running test on replay: ' + replay_url[replay_url.rfind('/') + 1:])
+        replay_file = replay_list[index]
+        print('running test on replay: ' + replay_file)
         answer = answers[index] if answers is not None and index < len(answers) else None
-        run_replay(replay_url, unit_test_func, answer=answer)
+        run_replay(replay_file, unit_test_func, answer=answer)
 
 
-def run_replay(url, unit_test_func: Callable, answer=None):
+def run_replay(replay_file, unit_test_func: Callable, answer=None):
     """
     Runs the replay with the file downloaded locally then deletes the file.
-    :param url:
+    :param replay_file:
     :param unit_test_func:
     :param answer: data that can be passed to the replay to help judge it
     :return:
     """
-
-    replay = download_replay_discord(url)
-    file = save_locally(replay)
+    file = os.path.join(REPLAYS_FOLDER, replay_file)
 
     fd, file_path = tempfile.mkstemp()
     os.close(fd)
@@ -50,11 +40,10 @@ def run_replay(url, unit_test_func: Callable, answer=None):
         unit_test_func(file, file_path, answer)
     else:
         unit_test_func(file, file_path)
-    os.remove(file)
     os.remove(file_path)
 
 
-def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None):
+def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None, cache=None):
     """
     :param unit_test_func: Called with an AnalysisManager
     :param replay_list: list of replay urls
@@ -62,9 +51,18 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
     """
 
     def wrapper(replay_file_path, json_file_path, answer=None):
-        analysis_manager = analyze_replay_file(replay_file_path)
+        start = time.time()
+        if cache is not None and str(replay_file_path) in cache:
+            analysis_manager = cache[str(replay_file_path)]
+        else:
+            analysis_manager = analyze_replay_file(replay_file_path)
+        if cache is not None and time.time() - start > 10:
+            cache[str(replay_file_path)] = analysis_manager
         if answer is not None:
-            unit_test_func(analysis_manager, answer)
+            if isinstance(answer, (list, tuple, np.ndarray)):
+                unit_test_func(analysis_manager, *answer)
+            else:
+                unit_test_func(analysis_manager, answer)
         else:
             unit_test_func(analysis_manager)
 
@@ -77,15 +75,15 @@ def get_complex_replay_list():
     :return:
     """
     return [
-        'https://cdn.discordapp.com/attachments/493849514680254468/496153554977816576/BOTS_JOINING_AND_LEAVING.replay',
-        'https://cdn.discordapp.com/attachments/493849514680254468/496153569981104129/BOTS_NO_POSITION.replay',
-        'https://cdn.discordapp.com/attachments/493849514680254468/496153605074845734/ZEROED_STATS.replay',
-        'https://cdn.discordapp.com/attachments/493849514680254468/496180938968137749/FAKE_BOTS_SkyBot.replay',
-        'https://cdn.discordapp.com/attachments/493849514680254468/497149910999891969/NEGATIVE_WASTED_COLLECTION.replay',
-        'https://cdn.discordapp.com/attachments/493849514680254468/497191273619259393/WASTED_BOOST_WHILE_SUPER_SONIC.replay',
-        'https://cdn.discordapp.com/attachments/493849514680254468/501630263881760798/OCE_RLCS_7_CARS.replay',
-        'https://cdn.discordapp.com/attachments/493849514680254468/561300088400379905/crossplatform_party.replay',
-        'https://cdn.discordapp.com/attachments/493849514680254468/563036945635082260/PARTY_LEADER_SYSTEM_ID_0.replay',
+        'BOTS_JOINING_AND_LEAVING.replay',
+        'BOTS_NO_POSITION.replay',
+        'ZEROED_STATS.replay',
+        'FAKE_BOTS_SkyBot.replay',
+        'NEGATIVE_WASTED_COLLECTION.replay',
+        'WASTED_BOOST_WHILE_SUPER_SONIC.replay',
+        'OCE_RLCS_7_CARS.replay',
+        'crossplatform_party.replay',
+        'PARTY_LEADER_SYSTEM_ID_0.replay',
     ]
 
 
@@ -95,86 +93,88 @@ def get_raw_replays():
     :return:
     """
     return {
-        "0_JUMPS": ["https://cdn.discordapp.com/attachments/493849514680254468/495735116895748096/0_JUMPS.replay"],
-        "0_SAVES": ["https://cdn.discordapp.com/attachments/493849514680254468/495735137133264897/0_SAVES.replay"],
-        "1_AERIAL": ["https://cdn.discordapp.com/attachments/493849514680254468/495735149133168651/1_AERIAL.replay"],
-        "1_DEMO": ["https://cdn.discordapp.com/attachments/493849514680254468/495735163117109249/1_DEMO.replay"],
-        "1_DOUBLE_JUMP": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495735176761049103/1_DOUBLE_JUMP.replay"],
-        "1_EPIC_SAVE": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495735191537713153/1_EPIC_SAVE.replay"],
-        "1_JUMP": ["https://cdn.discordapp.com/attachments/493849514680254468/495735203323576321/1_JUMP.replay"],
-        "1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495735215767945234/1_NORMAL_SAVE.replay"],
+        "0_JUMPS": ["0_JUMPS.replay"],
+        "0_SAVES": ["0_SAVES.replay"],
+        "1_AERIAL": ["1_AERIAL.replay"],
+        "1_DEMO": ["1_DEMO.replay"],
+        "1_DOUBLE_JUMP": ["1_DOUBLE_JUMP.replay"],
+        "1_EPIC_SAVE": ["1_EPIC_SAVE.replay"],
+        "1_JUMP": ["1_JUMP.replay"],
+        "1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST": ["1_NORMAL_SAVE.replay"],
 
         # Boost
-        "12_BOOST_PAD_0_USED": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495735228422291456/12_BOOST_PAD_0_USED.replay"],
-        "12_BOOST_PAD_45_USED": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495735240321662986/12_BOOST_PAD_45_USED.replay"],
-        "100_BOOST_PAD_0_USED": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495735252233224193/100_BOOST_PAD_0_USED.replay"],
-        "100_BOOST_PAD_100_USED": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495735264262488065/100_BOOST_PAD_100_USED.replay"],
-        "NO_BOOST_PAD_0_USED": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495735276338020372/NO_BOOST_PAD_0_USED.replay"],
-        "NO_BOOST_PAD_33_USED": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495735288254169109/NO_BOOST_PAD_33_USED.replay"],
-        "12_AND_100_BOOST_PADS_0_USED": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/496071113768697859/12_AND_100_BOOST_PADS_0_USED.replay"],
-        "WASTED_BOOST_WHILE_SUPER_SONIC": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/497191273619259393/WASTED_BOOST_WHILE_SUPER_SONIC.replay"],
-        "CALCULATE_USED_BOOST_WITH_DEMO": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/497189284651204609/CALCULATE_USED_BOOST_WITH_DEMO.replay"],
-        "CALCULATE_USED_BOOST_DEMO_WITH_FLIPS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/497189968397991937/CALCULATE_USED_BOOST_DEMO_WITH_FLIPS.replay"],
-        "MORE_THAN_100_BOOST": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/497190406472204288/MORE_THAN_100_BOOST.replay"],
-        "USE_BOOST_AFTER_GOAL": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/497190907309850634/USE_BOOST_AFTER_GOAL.replay"
-        ],
-        "FEATHERING_34x100_BO0ST_USED": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/499640872313290763/FEATHERING_34_X_100_BOOSTS_USED.replay"
-        ],
+        "12_BOOST_PAD_0_USED": ["12_BOOST_PAD_0_USED.replay"],
+        "12_BOOST_PAD_45_USED": ["12_BOOST_PAD_45_USED.replay"],
+        "100_BOOST_PAD_0_USED": ["100_BOOST_PAD_0_USED.replay"],
+        "100_BOOST_PAD_100_USED": ["100_BOOST_PAD_100_USED.replay"],
+        "NO_BOOST_PAD_0_USED": ["NO_BOOST_PAD_0_USED.replay"],
+        "NO_BOOST_PAD_33_USED": ["NO_BOOST_PAD_33_USED.replay"],
+        "12_AND_100_BOOST_PADS_0_USED": ["12_AND_100_BOOST_PADS_0_USED.replay"],
+        "WASTED_BOOST_WHILE_SUPER_SONIC": ["WASTED_BOOST_WHILE_SUPER_SONIC.replay"],
+        "CALCULATE_USED_BOOST_WITH_DEMO": ["CALCULATE_USED_BOOST_WITH_DEMO.replay"],
+        "CALCULATE_USED_BOOST_DEMO_WITH_FLIPS": ["CALCULATE_USED_BOOST_DEMO_WITH_FLIPS.replay"],
+        "MORE_THAN_100_BOOST": ["MORE_THAN_100_BOOST.replay"],
+        "USE_BOOST_AFTER_GOAL": ["USE_BOOST_AFTER_GOAL.replay"],
+        "FEATHERING_34x100_BO0ST_USED": ["FEATHERING_34_X_100_BOOSTS_USED.replay"],
 
         # Kickoffs
-        "STRAIGHT_KICKOFF_GOAL": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495735301604376576/Straight_Kickoff_Goal.replay"],
-        "KICKOFF_NO_TOUCH": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/496034430943756289/NO_KICKOFF.replay"],
-        "3_KICKOFFS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/496034443442782208/3_KICKOFFS_4_SHOTS.replay"],
+        "STRAIGHT_KICKOFF_GOAL": ["Straight_Kickoff_Goal.replay"],
+        "KICKOFF_NO_TOUCH": ["NO_KICKOFF.replay"],
+        "3_KICKOFFS": ["3_KICKOFFS_4_SHOTS.replay"],
 
         # hits
-        "4_SHOTS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/496034443442782208/3_KICKOFFS_4_SHOTS.replay"],
-        "KICKOFF_3_HITS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/496072257928691743/KICKOFF_3_HITS.replay"],
-        "MID_AIR_PASS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495887162928267314/MID_AIR_PASS_GOAL.replay"],
-        "HIGH_AIR_PASS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495887164425633802/HIGH_AIR_PASS_GOAL.replay"],
-        "GROUND_PASS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495887165570678794/GROUNDED_PASS_GOAL.replay"],
-        "PINCH_GROUND": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/495887167932071947/PINCH_GROUNDED_GOAL.replay"],
-        "DEFAULT_3_ON_3_AROUND_58_HITS": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/496820586811621387/DEFAULT_3_ON_3_AROUND_58_HITS.replay"],
+        "4_SHOTS": ["3_KICKOFFS_4_SHOTS.replay"],
+        "KICKOFF_3_HITS": ["KICKOFF_3_HITS.replay"],
+        "MID_AIR_PASS": ["MID_AIR_PASS_GOAL.replay"],
+        "HIGH_AIR_PASS": ["HIGH_AIR_PASS_GOAL.replay"],
+        "GROUND_PASS": ["GROUNDED_PASS_GOAL.replay"],
+        "PINCH_GROUND": ["PINCH_GROUNDED_GOAL.replay"],
+        "DEFAULT_3_ON_3_AROUND_58_HITS": ["DEFAULT_3_ON_3_AROUND_58_HITS.replay"],
+        "1_CLEAR": ["1_CLEAR.replay"],
+        "2_CLEARS": ["2_CLEARS.replay"],
+
+        # KBM
+        "1_MIN_KBM_1_MIN_XBO_CONTROLLER": ["1_MIN_KBM_1_MIN_XBO_CONTROLLER.replay"],
+        "100_PERCENT_KBM": ["100_PERCENT_KBM.replay"],
+
+        # camera controls
+        "BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF": ["BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF.replay"],
+        "BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON": ["BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON.replay"],
+        "BALLCAM_MIXED": ["BALLCAM_MIXED.replay"],
+        "BALLCAM_ON_AT_DRIBBLE_ELSE_OFF": ["BALLCAM_ON_AT_DRIBBLE_ELSE_OFF.replay"],
+        "BALLCAM_OFF_AT_DRIBBLE_ELSE_ON": ["BALLCAM_OFF_AT_DRIBBLE_ELSE_ON.replay"],
+        "BALLCAM_OFF_ALWAYS": ["BALLCAM_OFF_ALWAYS.replay"],
+        "BALLCAM_ON_ALWAYS": ["BALLCAM_ON_ALWAYS.replay"],
+
+        # Dribbles
+        "SKYBOT_DRIBBLE_INFO": ["SKYBOT_DRIBBLE_INFO.replay"],
+        "1_DRIBBLE": ["1_DRIBBLE.replay"],
+        "3_DRIBBLE_2_FLICKS": ["3_DRIBBLE_2_FLICKS.replay"],
 
         # parties
-        "PLAY_STATION_ONLY_PARTY": [
-            'https://cdn.discordapp.com/attachments/493849514680254468/563457368193761301/PLAY_STATION_ONLY_PARTY.replay'],
-
-        "XBOX_PARTY": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/563831620222844928/XBOX_PARTY.replay"
-        ],
+        "PLAY_STATION_ONLY_PARTY": ['PLAY_STATION_ONLY_PARTY.replay'],
         # error cases
-        "UNICODE_ERROR": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/493880540802449462/UnicodeEncodeError.replay"],
-        "CROSSPLATFORM_PARTY_LEADER_ERROR": [
-            "https://cdn.discordapp.com/attachments/493849514680254468/561300088400379905/crossplatform_party.replay"],
-        "PARTY_LEADER_SYSTEM_ID_0_ERROR": [
-            'https://cdn.discordapp.com/attachments/493849514680254468/563036945635082260/PARTY_LEADER_SYSTEM_ID_0.replay'],
+        "PLAYERNAME_BALL": ["PLAYERNAME_BALL.replay"],
+        "PLAYERNAME_GAME": ["PLAYERNAME_GAME.replay"],
+        "PLAYERNAME_TWO_PLAYERS_NAMED_SAME": ["PLAYERNAME_TWO_PLAYERS_NAMED_SAME.replay"],
+        "PLAYERNAME_ZTTL": ["PLAYERNAME_ZTTL.replay"],
+        "ISSUE_PLAYER_REJOIN": ["ISSUE_PLAYER_REJOIN.replay"],
+        "OCE_RLCS_7_CARS": ["OCE_RLCS_7_CARS.replay"],
+        "XBOX_PARTY": ["XBOX_PARTY.replay"],
+        # error cases
+        "UNICODE_ERROR": ["UnicodeEncodeError.replay"],
+        "CROSSPLATFORM_PARTY_LEADER_ERROR": ["crossplatform_party.replay"],
+        "PARTY_LEADER_SYSTEM_ID_0_ERROR": ['PARTY_LEADER_SYSTEM_ID_0.replay'],
+
+        # rumble
+        "RUMBLE_PRE_ITEM_GOALS": ["RUMBLE_PRE_ITEM_GOALS.replay"],
+        "RUMBLE_ITEM_GOALS": ["RUMBLE_ITEM_GOALS.replay"],
+        "RUMBLE_FREEZE_VS_SPIKE": ["RUMBLE_FREEZE_VS_SPIKE.replay"],
+        "RUMBLE_HOLD_TIME": ["RUMBLE_HOLD_TIME.replay"],
+        "RUMBLE_FULL": ["RUMBLE_FULL.replay"],
+
+        # ratteltrap errors
+        "BROKEN_REPLAY": ["INVALID_FILE.replay"]
     }
 
 
@@ -182,12 +182,12 @@ def get_specific_replays():
     raw_map = get_raw_replays()
     return {
         # BOOSTS
-        "0_BOOST_COLLECTED": raw_map["NO_BOOST_PAD_0_USED"] + raw_map["NO_BOOST_PAD_33_USED"] + raw_map[
-            "KICKOFF_NO_TOUCH"],
+        "0_BOOST_COLLECTED": raw_map["NO_BOOST_PAD_0_USED"] + raw_map["NO_BOOST_PAD_33_USED"] +
+                             raw_map["KICKOFF_NO_TOUCH"],
         "1_SMALL_PAD": raw_map["12_BOOST_PAD_0_USED"] + raw_map["12_BOOST_PAD_45_USED"],
         "1_LARGE_PAD": raw_map["100_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_100_USED"],
-        "0_BOOST_USED": raw_map["12_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_0_USED"] + raw_map[
-            "NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"],
+        "0_BOOST_USED": raw_map["12_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_0_USED"] +
+                        raw_map["NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"],
         "BOOST_USED": raw_map["12_BOOST_PAD_45_USED"] +
                       raw_map["100_BOOST_PAD_100_USED"] +
                       raw_map["NO_BOOST_PAD_33_USED"] +
@@ -208,7 +208,15 @@ def get_specific_replays():
                  raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
         "PASSES": raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"],
         "AERIALS": raw_map["1_EPIC_SAVE"] + raw_map["1_AERIAL"] + raw_map["HIGH_AIR_PASS"] + raw_map["MID_AIR_PASS"],
-        "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"]
+        "CANT_CRASH": raw_map["UNICODE_ERROR"] + raw_map["PLAYERNAME_BALL"] + raw_map["PLAYERNAME_GAME"] +
+                      raw_map["PLAYERNAME_TWO_PLAYERS_NAMED_SAME"] + raw_map["PLAYERNAME_ZTTL"] +
+                      raw_map["ISSUE_PLAYER_REJOIN"] + raw_map["ISSUE_PLAYER_REJOIN"],
+        "ZERO_DRIBBLE": raw_map["12_BOOST_PAD_45_USED"] + raw_map["KICKOFF_NO_TOUCH"],
+        "DRIBBLES": raw_map["1_DRIBBLE"] + raw_map["3_DRIBBLE_2_FLICKS"] + raw_map["SKYBOT_DRIBBLE_INFO"],
+        "SAVES": raw_map["1_EPIC_SAVE"] + raw_map["1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST"],
+        "OFFLINE": raw_map["3_KICKOFFS"],
+        "BROKEN_REPLAYS": raw_map["BROKEN_REPLAY"],
+        "CLEARS": raw_map['1_CLEAR'] + raw_map['2_CLEARS']
     }
 
 
@@ -219,20 +227,23 @@ def get_specific_answers():
         "0_BOOST_USED": [0] * len(specific_replays["0_BOOST_USED"]),
         "BOOST_USED": [45, 100, 33, 33.33 + 33.33 + 12.15, 33.33, 33.33, 0],
         "BOOST_WASTED_USAGE": [33.33],
-        "BOOST_WASTED_COLLECTION": [6.2],
+        "BOOST_WASTED_COLLECTION": [[(12.15, 33.33 + 12.15)]],
         "BOOST_FEATHERED": [100.0, 3490.0],
         # Hits
         "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4, 50],
         "SHOTS": [3, 0, 2, 1],
         "PASSES": [1, 1, 1],
         "AERIALS": [0, 1, 2, 0],
+        "DRIBBLES": [1, 3, 49],
+        "FLICKS": [0, 1, 0],
         "SAVES": [1, 0],
+        "CLEARS": [1, 2]
     }
 
 
-def assertNearlyEqual(self, a, b, percent=2.0, msg=None):
+def assertNearlyEqual(case, a, b, percent=2.0, msg=None):
     if abs(a - b) > abs(percent / 100.0 * min(abs(a), abs(b))):
         if msg is None:
-            self.fail("The given numbers %s and %s are not within %s percent of each other." % (a, b, percent))
+            case.fail("The given numbers %s and %s are not within %s percent of each other." % (a, b, percent))
         else:
-            self.fail(msg)
+            case.fail(msg)

@@ -1,13 +1,18 @@
 import json
+import os
 
 import setuptools
 from setuptools import setup
-import os
+from setuptools.command.develop import develop
+from setuptools.command.install import install
 
 with open(os.path.join('carball', 'analysis', 'PROTOBUF_VERSION'), 'r') as f:
     PROTOBUF_VERSION = json.loads(f.read())
 
-subversion = 9
+
+with open(os.path.join('CARBALL_VERSION'), 'r') as f:
+    subversion = json.loads(f.read())
+
 version_string = '0.' + str(PROTOBUF_VERSION) + '.' + str(subversion)
 
 if os.path.isfile('README.md'):
@@ -15,6 +20,27 @@ if os.path.isfile('README.md'):
         long_description = readme_file.read()
 else:
     long_description = ''
+
+
+class PostDevelopCommand(develop):
+    """Post-installation for development mode."""
+
+    def run(self):
+        from init import initialize_project
+        initialize_project()
+        # this needs to be last
+        develop.run(self)
+
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+
+    def run(self):
+        from init import initialize_project
+        initialize_project()
+        # this needs to be last
+        install.run(self)
+
 
 setup(
     name='carball',
@@ -29,5 +55,10 @@ setup(
     author_email='sciguymjm@gmail.com',
     description='Rocket League replay parsing and analysis.',
     long_description=long_description,
-    exclude_package_data={'': ['.gitignore', '.git/*', '.git/**/*', 'replays/*']}
+    exclude_package_data={'': ['.gitignore', '.git/*', '.git/**/*', 'replays/*']},
+    long_description_content_type='text/markdown',
+    cmdclass={
+        'develop': PostDevelopCommand,
+        'install': PostInstallCommand,
+    },
 )

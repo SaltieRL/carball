@@ -1,22 +1,21 @@
-import unittest
-
 from carball.analysis.analysis_manager import AnalysisManager
 
 from carball.tests.utils import run_analysis_test_on_replay, get_specific_replays, get_specific_answers, get_raw_replays
 
 
-class HitTest(unittest.TestCase):
+class Test_Hits():
 
-    def test_num_hits_detected(self):
+    def test_num_hits_detected(self, replay_cache):
         def test(analysis: AnalysisManager, answer):
             proto_game = analysis.get_protobuf_data()
             hits = proto_game.game_stats.hits
-            self.assertEqual(len(hits), answer)
+            assert(len(hits) == answer)
             print(analysis)
 
-        run_analysis_test_on_replay(test, get_specific_replays()["HITS"], get_specific_answers()["HITS"])
+        run_analysis_test_on_replay(test, replay_list=get_specific_replays()["HITS"], answers=get_specific_answers()["HITS"],
+                                    cache=replay_cache)
 
-    def test_num_kickoff_hits_detected(self):
+    def test_num_kickoff_hits_detected(self, replay_cache):
         def test(analysis: AnalysisManager):
             proto_game = analysis.get_protobuf_data()
             hits = proto_game.game_stats.hits
@@ -26,11 +25,12 @@ class HitTest(unittest.TestCase):
                     kickoff_counter += 1
             print(analysis)
 
-            self.assertEqual(kickoff_counter, 3)
+            assert(kickoff_counter == 3)
 
-        run_analysis_test_on_replay(test, get_raw_replays()["3_KICKOFFS"])
+        run_analysis_test_on_replay(test, replay_list=get_raw_replays()["3_KICKOFFS"],
+                                    cache=replay_cache)
 
-    def test_num_shots_detected(self):
+    def test_num_shots_detected(self, replay_cache):
         def test(analysis: AnalysisManager, answer):
             proto_game = analysis.get_protobuf_data()
             hits = proto_game.game_stats.hits
@@ -39,11 +39,13 @@ class HitTest(unittest.TestCase):
                 if hit.shot:
                     shot_counter += 1
 
-            self.assertEqual(shot_counter, answer)
+            assert(shot_counter == answer)
 
-        run_analysis_test_on_replay(test, get_specific_replays()["SHOTS"], get_specific_answers()["SHOTS"])
+        run_analysis_test_on_replay(test, replay_list=get_specific_replays()["SHOTS"],
+                                    answers=get_specific_answers()["SHOTS"],
+                                    cache=replay_cache)
 
-    def test_num_passes_detected(self):
+    def test_num_passes_detected(self, replay_cache):
         def test(analysis: AnalysisManager, answer):
             proto_game = analysis.get_protobuf_data()
             hits = proto_game.game_stats.hits
@@ -52,11 +54,13 @@ class HitTest(unittest.TestCase):
                 if hit.pass_:
                     pass_counter += 1
 
-            self.assertEqual(pass_counter, answer)
+            assert(pass_counter == answer)
 
-        run_analysis_test_on_replay(test, get_specific_replays()["PASSES"], get_specific_answers()["PASSES"])
+        run_analysis_test_on_replay(test, replay_list=get_specific_replays()["PASSES"],
+                                    answers=get_specific_answers()["PASSES"],
+                                    cache=replay_cache)
 
-    def test_num_saves_detected(self):
+    def test_num_saves_detected(self, replay_cache):
         def test(analysis: AnalysisManager, answer):
             proto_game = analysis.get_protobuf_data()
             hits = proto_game.game_stats.hits
@@ -65,11 +69,13 @@ class HitTest(unittest.TestCase):
                 if hit.save:
                     counter += 1
 
-            self.assertEqual(counter, answer)
+            assert(counter == answer)
 
-        run_analysis_test_on_replay(test, get_specific_replays()["SAVES"], get_specific_answers()["SAVES"])
+        run_analysis_test_on_replay(test, replay_list=get_specific_replays()["SAVES"],
+                                    answers=get_specific_answers()["SAVES"],
+                                    cache=replay_cache)
 
-    def test_num_aerials_detected(self):
+    def test_num_aerials_detected(self, replay_cache):
         def test(analysis: AnalysisManager, answer):
             proto_game = analysis.get_protobuf_data()
             hits = proto_game.game_stats.hits
@@ -78,10 +84,23 @@ class HitTest(unittest.TestCase):
                 if hit.aerial:
                     aerial_counter += 1
 
-            self.assertEqual(aerial_counter, answer)
+            assert(aerial_counter == answer)
 
-        run_analysis_test_on_replay(test, get_specific_replays()["AERIALS"], get_specific_answers()["AERIALS"])
+        run_analysis_test_on_replay(test, replay_list=get_specific_replays()["AERIALS"],
+                                    answers=get_specific_answers()["AERIALS"],
+                                    cache=replay_cache)
 
+    def test_num_clears_detected(self, replay_cache):
+        def test(analysis: AnalysisManager, answer):
+            proto_game = analysis.get_protobuf_data()
+            hits = proto_game.game_stats.hits
+            clear_counter = 0
+            for hit in hits:
+                if hit.clear:
+                    clear_counter += 1
 
-if __name__ == '__main__':
-    unittest.main()
+            assert(clear_counter == answer)
+
+        run_analysis_test_on_replay(test, replay_list=get_specific_replays()["CLEARS"],
+                                    answers=get_specific_answers()["CLEARS"],
+                                    cache=replay_cache)

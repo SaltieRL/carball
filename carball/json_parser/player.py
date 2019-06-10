@@ -3,7 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from ..json_parser.bots import get_bot_map, get_online_id_for_bot
+from carball.json_parser.bots import get_bot_map, get_online_id_for_bot
 from .boost import get_if_full_boost_position
 
 from typing import TYPE_CHECKING, List
@@ -168,7 +168,7 @@ class Player:
         ['ping', 'pos_x', 'pos_y', 'pos_z', 'rot_x', 'rot_y', 'rot_z', 'vel_x',
         'vel_y', 'vel_z', 'ang_vel_x', 'ang_vel_y', 'ang_vel_z', 'throttle',
         'steer', 'handbrake', 'ball_cam', 'dodge_active', 'double_jump_active',
-        'jump_active', 'boost', 'boost_active']
+        'jump_active', 'boost', 'boost_active', 'power_up', 'power_up_active']
 
         {'ang_vel_x': dtype('float64'),
          'ang_vel_y': dtype('float64'),
@@ -191,7 +191,9 @@ class Player:
          'throttle': dtype('float64'),
          'vel_x': dtype('float64'),
          'vel_y': dtype('float64'),
-         'vel_z': dtype('float64')}
+         'vel_z': dtype('float64'),
+         'power_up': dtype('O'),
+         'power_up_active': dtype('O')}
 
         :param _dict:
         :return:

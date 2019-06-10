@@ -1,7 +1,8 @@
+dist: xenial
 language: python
 python:
-- "3.6"
-
+- '3.6'
+- '3.7'
 addons:
   apt:
     sources:
@@ -10,18 +11,79 @@ addons:
     - libstdc++6
     - gcc-4.8
 
-# command to install dependencies
+cache:
+  - pip
+  - directories:
+      - carball/generated/binaries
+      - protobuf-2.6.1/src/
+
+# We only build if it is a pr into master or it is a pr and it is not into master
+if:
+  branch = master OR (type = pull_request AND NOT branch = master)
+
+
 before_install:
-- chmod 777 ./.travis/install-protoc.sh
-- ./.travis/install-protoc.sh 2.6.1
+- |
+    if ! git diff --name-only $TRAVIS_COMMIT_RANGE | grep -qvE '(.md$)'
+    then
+      echo "Only docs were updated, not running the CI."
+      exit
+    fi
+- chmod 777 ./_travis/install-protoc.sh
+- "./_travis/install-protoc.sh 2.6.1"
 
 install:
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
-# command to run tests
-script:
 - python init.py
+
+script:
 - pytest --cov=./ --ignore=protobuf-2.6.1/
+- bash <(curl -s https://codecov.io/bash) -c -F carball
 
 after_success:
 - codecov
+
+stages:
+  - name: test
+  - name: deploy
+    if: branch = master AND NOT fork AND type = push
+  - name: announcement
+
+
+jobs:
+  include:
+    - stage: deploy
+      script: skip
+      after_success: skip
+      deploy:
+      - provider: releases
+        api_key:
+          secure: IgeO5fZQXWRx0LEOLuilkLTP1Hi15Lv86jAySHsPgR1NNOkst+zDy2awOSJ6kThIhozD4wAqBeIpEaCNoq3516O/AIrZmcaOrZWFZqU9Lb+YqH8AVlz1XjkR/hO1msRG+nQKoDzOGo6DtDb0nu9iJVYcHiTv9yQbe+h97oVWeA3MxRdaxbJWfAiAVD7xmbRG+PENQv/wCu6sHPuDlOfKDun5F6POvgLp+4zcwHn1Q+fq2sh8AvJ5uGofBpvky+171bRtVBxhmhABEECvXUlJig/uvyjG7onwwkZJOQMl75mONm1wuzZBpd+hxrNCdOtDN/2wrRuXJH99itoe1Y71IVNgwXsp1DrewzM3i7Y3ivBooywNoScgnJOu8D/Ip/WOgGOXnU+NN11+/zlq/h0j0wiVIwC34dGOo4EjA1cnWVgih2m9YL7xJ5YglZrw7RmkgxIRzrfRmreUelsH735aASlkyy5357uWdKtbhX9kOBgtxHr2b2TeWnvZIdKMX7aiDHc4fW3L2Ml9tb7nJAZzQ1+7APyO0z05iau7G4ZBVFP0a2HS6GguZpcI3zFk+4zZ00pQEvUI9fdTt+Q9PnFMpu7Y+94DWMEXkTWGjT5l4uopbvaiMWb1GlsTlDNWy8mwDhO6wKtpReqslesQ9+6Mzgxmausw/CokOodxhowJyoE=
+        file: README.md
+        on:
+          repo: SaltieRL/carball
+          branch: master
+          type: push
+          tags: true
+        skip_cleanup: true
+      - provider: pypi
+        skip_cleanup: true
+        skip_existing: true
+        user: PYPI_LOGIN
+        password:
+          secure: UwhFtUaTEhUkH7DxBLGJPO8voFibNgrO8O8/ezRvTc44+TJARo+sK42RFpQemRE9Z+aKNIoJNlsfo0Dic8/XHX1EoRIOrEngdpv4DdJIxvZeqZ6G3R+drnpwnSGI8foqZ+mDoylzPE4iTniZrK30rsbznrUv1OXvMxgCM5fb+/cfXSRlEtr+U5baoYt1hPB03lPhSJDKWT+LEWsA/4dt2FmCqKBbnTo62bt/ZOryN5K6z2cUXgSF6jMzEMnqC5uXQF5H24tL3v3L07Q06pkbRqP39VdzFlxf/LvE+QjpkGn1VVZCoxO9XWO/7RYCnAmso1dl2z1yfk1m/9w11uxE5izCuazFQnoFb8vIzCckpIOo7jIEAxmdWmKUERkyUaX5+iy6J+4eyC8VuGAB8pAsSDrbpUL94MqlhH12nElxsoiBspQhnaDu+d4V5r/t4BUna5pIrM4VJ4sh0dZlNuBa7nABewan17+VWU577PwN6f28Cnv3DlylskazU41mB8Rth6G30gHZmi36LbC1FxaB5QIa9Tgbh1yZwqbNO5VX2aBXaAzsnXsf1IKv0JEPRliZowApkOXRUeHCDQfwiDbvL0IK9FycG5BtLhtsXqyRPhT09ISxC48R5+P2+bgyoYrBwbinw57D0KJMpIXbuTEoDiztlfJS8p98DhEI+Jcm4Tc=
+        on:
+          repo: SaltieRL/carball
+          branch: master
+          type: push
+    - stage: announcement
+      name: "Announce success"
+      python: "3.7"
+      before_install: skip
+      install: skip
+      script: skip
+      after_success:
+        - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+        - chmod +x _travis/send.sh
+        - ./_travis/send.sh success $WEBHOOK_URL

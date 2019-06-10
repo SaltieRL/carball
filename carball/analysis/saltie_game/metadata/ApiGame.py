@@ -41,7 +41,10 @@ class ApiGame:
             proto_game.playlist = 0
         proto_game.game_server_id = game.game_info.server_id
         proto_game.server_name = game.game_info.server_name
-        proto_game.match_guid = game.game_info.match_guid
+        if game.game_info.match_guid is None or game.game_info.match_guid == '':
+            proto_game.match_guid = game.id
+        else:
+            proto_game.match_guid = game.game_info.match_guid
         proto_game.team_size = game.team_size
 
         return id_creator, proto_game

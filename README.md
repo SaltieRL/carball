@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/SaltieRL/carball.svg?branch=master)](https://travis-ci.org/SaltieRL/carball)
+[![PyPI version](https://badge.fury.io/py/carball.svg)](https://badge.fury.io/py/carball)
+
 # carball
 Various tools for decompiling / analyzing Rocket League replays.
 
@@ -9,6 +12,7 @@ Various tools for decompiling / analyzing Rocket League replays.
 ## Install
 
 `pip install carball`
+
 `python init.py`
 
 ## Examples / Usage
@@ -90,3 +94,8 @@ Linux Error (Potential):
 `PermissionError: [Errno 13] Permission denied: 'carball/rattletrap/rattletrap-6.2.2-linux'`
 Fix:
 `chmod +x "carball/rattletrap/rattletrap-6.2.2-linux"`
+
+
+## Developing
+
+For testing you must run pytest.  For ides you can configure them to use the pytest runner.
