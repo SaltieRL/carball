@@ -6,29 +6,29 @@ import "api/stats/extra_mode_stats.proto";
 package api.metadata;
 
 enum Playlist {
-	UNKNOWN = 0;
-	UNRANKED_DUELS = 1;
-	UNRANKED_DOUBLES = 2;
-	UNRANKED_STANDARD = 3;
-	UNRANKED_CHAOS = 4;
-	CUSTOM_LOBBY = 6;
-	OFFLINE_SPLITSCREEN = 8;
-	RANKED_DUELS = 10;
-	RANKED_DOUBLES = 11;
-	RANKED_SOLO_STANDARD = 12;
-	RANKED_STANDARD = 13;
-	UNRANKED_SNOW_DAY = 15;
-	ROCKET_LABS = 16;
-	UNRANKED_HOOPS = 17;
-	UNRANKED_RUMBLE = 18;
-	TOURNAMENT = 22;
-	UNRANKED_DROPSHOT = 23;
-	ANNIVERSARY = 25;
+    UNKNOWN = 0;
+    UNRANKED_DUELS = 1;
+    UNRANKED_DOUBLES = 2;
+    UNRANKED_STANDARD = 3;
+    UNRANKED_CHAOS = 4;
+    CUSTOM_LOBBY = 6;
+    OFFLINE_SPLITSCREEN = 8;
+    RANKED_DUELS = 10;
+    RANKED_DOUBLES = 11;
+    RANKED_SOLO_STANDARD = 12;
+    RANKED_STANDARD = 13;
+    UNRANKED_SNOW_DAY = 15;
+    ROCKET_LABS = 16;
+    UNRANKED_HOOPS = 17;
+    UNRANKED_RUMBLE = 18;
+    TOURNAMENT = 22;
+    UNRANKED_DROPSHOT = 23;
+    ANNIVERSARY = 25;
     THIRD_PARTY = 26; // EX: Faceit
-	RANKED_HOOPS = 27;
-	RANKED_RUMBLE = 28;
-	RANKED_DROPSHOT = 29;
-	RANKED_SNOW_DAY = 30;
+    RANKED_HOOPS = 27;
+    RANKED_RUMBLE = 28;
+    RANKED_DROPSHOT = 29;
+    RANKED_SNOW_DAY = 30;
 }
 
 message GameScore {
@@ -64,7 +64,7 @@ message GameMetadata {
     optional string server_name = 14;
     optional string match_guid = 15;
     optional int32 team_size = 16;
-	optional Playlist playlist = 17;
+    optional Playlist playlist = 17;
     optional bool is_invalid_analysis = 18; // True if we did not perform a full analysis on the replay.
     optional int32 unknown_playlist = 19;
 }
