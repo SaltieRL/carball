@@ -39,6 +39,11 @@ class ApiGame:
             proto_game.playlist = game.game_info.playlist
         except:
             proto_game.playlist = 0
+            try:
+                proto_game.unknown_playlist = int(game.game_info.playlist)
+            except:
+                print('unknown and invalid playlist')
+
         proto_game.game_server_id = game.game_info.server_id
         proto_game.server_name = game.game_info.server_name
         if game.game_info.match_guid is None or game.game_info.match_guid == '':
