@@ -41,9 +41,6 @@ script:
 - pytest --cov=./ --ignore=protobuf-2.6.1/
 - bash <(curl -s https://codecov.io/bash) -c -F carball
 
-after_success:
-- codecov
-
 stages:
   - name: test
   - name: deploy
@@ -55,7 +52,6 @@ jobs:
   include:
     - stage: deploy
       script: skip
-      after_success: skip
       deploy:
       - provider: releases
         api_key:
