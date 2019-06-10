@@ -31,6 +31,7 @@ class FieldConstants:
                        STANDARD_FIELD_LENGTH_HALF - STANDARD_GOAL_WIDTH_HALF])
     near_wall = np.array([STANDARD_FIELD_WIDTH_HALF - STANDARD_GOAL_WIDTH_HALF / 2,
                           STANDARD_FIELD_LENGTH_HALF - STANDARD_GOAL_WIDTH_HALF / 2])
+    on_wall = np.array([STANDARD_FIELD_WIDTH_HALF, STANDARD_FIELD_LENGTH_HALF]) - 30
     rectangle_lower = np.array(-near_wall)
     rectangle_higher = np.array(near_wall)
 
@@ -67,10 +68,12 @@ class FieldConstants:
         return player_data_frame.pos_z < HEIGHT_0_BALL_LIM
 
     def get_height_1(self, player_data_frame, **kwargs):
-        return (HEIGHT_0_LIM < player_data_frame.pos_z) & (player_data_frame.pos_z < HEIGHT_1_LIM)
+        return (HEIGHT_0_LIM < player_data_frame.pos_z) & (player_data_frame.pos_z < HEIGHT_1_LIM)\
+               & (player_data_frame.pos_x.abs() < self.on_wall[0]) & (player_data_frame.pos_y.abs() < self.on_wall[1])
 
     def get_height_2(self, player_data_frame, **kwargs):
-        return player_data_frame.pos_z > HEIGHT_1_LIM
+        return (player_data_frame.pos_z > HEIGHT_1_LIM) \
+               & (player_data_frame.pos_x.abs() < self.on_wall[0]) & (player_data_frame.pos_y.abs() < self.on_wall[1])
 
     def get_ball_0(self, player_data_frame, ball_data_frame):
         """Ball is closer to goal 0 than player"""
@@ -85,6 +88,9 @@ class FieldConstants:
                  (player_data_frame.pos_x <= self.rectangle_higher[0]) &
                  (self.rectangle_lower[1] <= player_data_frame.pos_y) &
                  (player_data_frame.pos_y <= self.rectangle_higher[1]))
+
+    def get_on_wall(self, player_data_frame, **kwargs):
+        return (player_data_frame.pos_x.abs() > self.on_wall[0]) | (player_data_frame.pos_y.abs() > self.on_wall[1])
 
     def get_corner_time(self, player_data_frame, **kwargs):
         return (((player_data_frame.pos_x >= self.corner[0]) |
