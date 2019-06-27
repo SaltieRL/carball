@@ -26,8 +26,7 @@ def decompile_replay(replay_path, output_path: str = None, overwrite: bool = Tru
 
 
 def analyze_replay_file(replay_path: str, output_path: str = None, overwrite=True, controls: ControlsCreator = None,
-                        sanity_check: SanityChecker = None, analysis_per_goal=False, rattletrap_path: str = None,
-                        force_full_analysis=False):
+                        sanity_check: SanityChecker = None, analysis_per_goal=False, rattletrap_path: str = None):
     """
     Decompile and analyze a replay file.
 
@@ -51,8 +50,6 @@ def analyze_replay_file(replay_path: str, output_path: str = None, overwrite=Tru
         analysis = PerGoalAnalysis(game)
     else:
         analysis = AnalysisManager(game)
-        if force_full_analysis:
-            analysis.force_full = True
     analysis.create_analysis()
 
     if controls is not None:
