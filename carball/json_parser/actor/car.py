@@ -9,31 +9,8 @@ class CarHandler(BaseActorHandler):
     type_name = 'Archetypes.Car.Car_Default'
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
-        if 'Engine.Pawn:PlayerReplicationInfo' not in actor:
-            return
-
-        player_actor_id = actor['Engine.Pawn:PlayerReplicationInfo']
-        if player_actor_id == -1:
-            return
-        # assign car player links
-        self.parser.player_car_ids[player_actor_id] = actor['Id']
-        self.parser.car_player_ids[actor['Id']] = player_actor_id
-
-        RBState = actor.get(REPLICATED_RB_STATE_KEY, {})
-        # bDriving is missing?! TODO: Investigate bDriving in RBState
-        # car_is_driving = RBState.get("rigid_body_state", {}).get("TAGame.Vehicle_TA:bDriving", False)
-        car_is_sleeping = RBState.get("rigid_body_state", {}).get('sleeping', True)
-        # only collect data if car is driving and not sleeping
-        if not car_is_sleeping:
-            self.parser.current_car_ids_to_collect.append(actor['Id'])
-
-            data_dict = CarActor.get_data_dict(actor, version=self.parser.replay_version)
-            # save data from here
-            self.parser.player_data[player_actor_id][frame_number].update(data_dict)
-
         # get demo data
         if 'TAGame.Car_TA:ReplicatedDemolish' in actor:
-
             demo_data = actor['TAGame.Car_TA:ReplicatedDemolish']['demolish']
             # add attacker and victim player ids
             attacker_car_id = demo_data['attacker_actor_id']
@@ -56,3 +33,26 @@ class CarHandler(BaseActorHandler):
                                  (self.parser.player_dicts[attacker_player_id]['name'],
                                   self.parser.player_dicts[victim_player_id]['name']))
                     actor.pop('TAGame.Car_TA:ReplicatedDemolish')
+
+        if 'Engine.Pawn:PlayerReplicationInfo' not in actor:
+            return
+
+        player_actor_id = actor['Engine.Pawn:PlayerReplicationInfo']
+        if player_actor_id == -1:
+            return
+        # assign car player links
+        self.parser.player_car_ids[player_actor_id] = actor['Id']
+        self.parser.car_player_ids[actor['Id']] = player_actor_id
+
+        RBState = actor.get(REPLICATED_RB_STATE_KEY, {})
+        # bDriving is missing?! TODO: Investigate bDriving in RBState
+        # car_is_driving = RBState.get("rigid_body_state", {}).get("TAGame.Vehicle_TA:bDriving", False)
+        car_is_sleeping = RBState.get("rigid_body_state", {}).get('sleeping', True)
+        # only collect data if car is driving and not sleeping
+        if not car_is_sleeping:
+            self.parser.current_car_ids_to_collect.append(actor['Id'])
+
+            data_dict = CarActor.get_data_dict(actor, version=self.parser.replay_version)
+            # save data from here
+            self.parser.player_data[player_actor_id][frame_number].update(data_dict)
+
