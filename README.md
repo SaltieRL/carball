@@ -62,6 +62,41 @@ with gzip.open(os.path.join('output.gzip'), 'wb') as fo:
     analysis.write_pandas_out_to_file(fo)
 ```
 
+### Command Line
+
+Carball comes with a command line tool to analyze replays. To use carball from the command line:
+
+```bash
+carball -i 9EB5E5814D73F55B51A1BD9664D4CBF3.replay -o analysis.json -f json
+```
+
+#### Command Line Arguments
+
+```
+usage: carball [-h] -i INPUT -o OUTPUT [-f {json,protobuf,gzip}] [-sd] [-v]
+               [-s]
+
+Rocket League replay parsing and analysis.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        Path to replay file that will be analyzed. Carball
+                        expects a raw replay file unless --skip-decompile is
+                        provided.
+  -o OUTPUT, --output OUTPUT
+                        Path to the output file where the result will be
+                        saved.
+  -f {json,protobuf,gzip}, --format {json,protobuf,gzip}
+                        The format of the output file. Gzip format will be a
+                        compressed protobuf file.
+  -sd, --skip-decompile
+                        If set, carball will treat the input file as a json
+                        file that Rattletrap outputs.
+  -v, --verbose         Set the logging level to INFO. To set the logging
+                        level to DEBUG use -vv.
+  -s, --silent          Disable logging altogether.
+```
 
 ## Pipeline
 ![pipeline is in Parserformat.png](Parser%20format.png)
