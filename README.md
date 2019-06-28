@@ -70,6 +70,12 @@ Carball comes with a command line tool to analyze replays. To use carball from t
 carball -i 9EB5E5814D73F55B51A1BD9664D4CBF3.replay --json analysis.json
 ```
 
+To get the analysis in both json and protobuf and also the compressed replay frame data frame:
+
+```bash
+carball -i 9EB5E5814D73F55B51A1BD9664D4CBF3.replay --json analysis.json --proto analysis.pts --gzip frames.gzip
+```
+
 #### Command Line Arguments
 
 ```
