@@ -9,18 +9,18 @@ from google.protobuf.json_format import MessageToJson
 
 def main():
     parser = argparse.ArgumentParser(description='Rocket League replay parsing and analysis.')
-    parser.add_argument('--input', '-i', type=str, required=True,
+    parser.add_argument('-i', '--input', type=str, required=True,
                         help='Path to replay file that will be analyzed. Carball expects a raw replay file unless '
                              '--skip-decompile is provided.')
-    parser.add_argument('--output', '-o', type=str, required=True,
+    parser.add_argument('-o', '--output', type=str, required=True,
                         help='Path to the output file where the result will be saved.')
-    parser.add_argument('--format', '-f', choices=['json', 'protobuf', 'gzip'], default='protobuf',
+    parser.add_argument('-f', '--format', choices=['json', 'protobuf', 'gzip'], default='protobuf',
                         help='The format of the output file. Gzip format will be a compressed protobuf file.')
-    parser.add_argument('--skip-decompile', '-sd', action='store_true', default=False,
+    parser.add_argument('-sd', '--skip-decompile', action='store_true', default=False,
                         help='If set, carball will treat the input file as a json file that Rattletrap outputs.')
-    parser.add_argument('--verbose', '-v', action='count', default=0,
+    parser.add_argument('-v', '--verbose', action='count', default=0,
                         help='Set the logging level to INFO. To set the logging level to DEBUG use -vv.')
-    parser.add_argument('--silent', '-s', action='store_true', default=False,
+    parser.add_argument('-s', '--silent', action='store_true', default=False,
                         help='Disable logging altogether.')
     args = parser.parse_args()
 
