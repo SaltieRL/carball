@@ -1,5 +1,6 @@
 import argparse
 import carball
+import logging
 from carball.json_parser.game import Game
 from carball.analysis.analysis_manager import AnalysisManager
 from google.protobuf.json_format import MessageToJson
@@ -16,15 +17,31 @@ def main():
                         help='The format of the output file. Gzip format will be a compressed protobuf file.')
     parser.add_argument('--skip-decompile', '-sd', action='store_true', default=False,
                         help='If set, carball will treat the input file as a json file that Rattletrap outputs.')
+    parser.add_argument('--verbose', '-v', action='count', default=0,
+                        help='Set the logging level to INFO. To set the logging level to DEBUG use -vv.')
+    parser.add_argument('--silent', '-s', action='store_true', default=False,
+                        help='Disable logging altogether.')
     args = parser.parse_args()
 
-    if args.skip_decompile:
-        manager = carball.analyze_replay_file(args.input)
+    log_level = logging.WARNING
+
+    if args.verbose == 1:
+        log_level = logging.INFO
+    elif args.verbose >= 2:
+        log_level = logging.DEBUG
+
+    if args.silent:
+        logging.basicConfig(handlers=[logging.NullHandler()])
     else:
+        logging.basicConfig(handlers=[logging.StreamHandler()], level=log_level)
+
+    if args.skip_decompile:
         game = Game()
         game.initialize(loaded_json=args.input)
         manager = AnalysisManager(game)
         manager.create_analysis()
+    else:
+        manager = carball.analyze_replay_file(args.input)
 
     if args.format == 'protobuf':
         with open(args.output, 'wb') as f:
