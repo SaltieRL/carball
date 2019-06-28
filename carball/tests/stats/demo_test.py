@@ -4,7 +4,7 @@ from carball.analysis.analysis_manager import AnalysisManager
 
 
 class Test_Demos:
-    def test_boost_wasted_collection(self, replay_cache):
+    def test_calculate_demos_correctly(self, replay_cache):
         def test(analysis: AnalysisManager):
             proto_game = analysis.get_protobuf_data()
             bumps = proto_game.game_stats.bumps
