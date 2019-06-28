@@ -251,6 +251,8 @@ class Game:
                                _demo_data["victim_velocity"]["y"],
                                _demo_data["victim_velocity"]["z"],),
             }
+
+            # Key created to prevent duplicate demo counts
             key = (int(_demo_data["attacker_velocity"]["x"]) + int(_demo_data["attacker_velocity"]["y"]) + int(_demo_data["attacker_velocity"]["z"]) +
                    int(_demo_data["victim_velocity"]["x"]) + int(_demo_data["victim_velocity"]["y"]) + int(_demo_data["victim_velocity"]["z"]))
             Game.add_demo_to_map(key, demo, demo_map)
