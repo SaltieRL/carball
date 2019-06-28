@@ -172,6 +172,7 @@ def get_raw_replays():
         "RUMBLE_FREEZE_VS_SPIKE": ["RUMBLE_FREEZE_VS_SPIKE.replay"],
         "RUMBLE_HOLD_TIME": ["RUMBLE_HOLD_TIME.replay"],
         "RUMBLE_FULL": ["RUMBLE_FULL.replay"],
+        "RUMBLE_ITEM_KICKOFF": ["RUMBLE_ITEM_KICKOFF.replay"],
 
         # ratteltrap errors
         "BROKEN_REPLAY": ["INVALID_FILE.replay"]
