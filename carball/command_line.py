@@ -14,7 +14,7 @@ def main():
                         help='Path to the output file where the result will be saved.')
     parser.add_argument('--format', '-f', choices=['json', 'protobuf', 'gzip'], default='protobuf',
                         help='The format of the output file. Gzip format will be a compressed protobuf file.')
-    parser.add_argument('--skip-decompile', '-sd', action='store_true', default=False, metavar='skip_decompile',
+    parser.add_argument('--skip-decompile', '-sd', action='store_true', default=False,
                         help='If set, carball will treat the input file as a json file that Rattletrap outputs.')
     args = parser.parse_args()
 
