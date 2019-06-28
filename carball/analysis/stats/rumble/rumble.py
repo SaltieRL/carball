@@ -83,6 +83,12 @@ def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rum
                 # goal before items
                 continue
 
+            if not math.isnan(data_frame.iloc[0]['power_up_active']):
+                # happens when kickoff starts with power ups after a goal that was scored less then 1 second before
+                # time's up
+                data_frame.loc[-1] = [0.0, math.nan, math.nan]
+                data_frame.sort_index(inplace=True)
+
             prev_row = data_frame.iloc[0]
             proto_current_item = None
             demoed = False
