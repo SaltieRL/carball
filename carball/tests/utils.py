@@ -96,7 +96,7 @@ def get_raw_replays():
         "0_JUMPS": ["0_JUMPS.replay"],
         "0_SAVES": ["0_SAVES.replay"],
         "1_AERIAL": ["1_AERIAL.replay"],
-        "1_DEMO": ["1_DEMO.replay"],
+        "1_DEMO": ["1_DEMO.replay", "1_DEMO_1_63.replay"],
         "1_DOUBLE_JUMP": ["1_DOUBLE_JUMP.replay"],
         "1_EPIC_SAVE": ["1_EPIC_SAVE.replay"],
         "1_JUMP": ["1_JUMP.replay"],
