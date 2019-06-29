@@ -183,6 +183,24 @@ class Test_Rumble():
 
         run_analysis_test_on_replay(test, get_raw_replays()["RUMBLE_FULL"], cache=replay_cache)
 
+    def test_item_kickoff(self, replay_cache):
+        def test(analysis: AnalysisManager):
+            proto_game = analysis.get_protobuf_data()
+            self.assert_rumble_item_counts(proto_game.players[0].stats.rumble_stats, [
+                {'item': BALL_FREEZE, 'used': 0, 'unused': 0},
+                {'item': BALL_GRAPPLING_HOOK, 'used': 0, 'unused': 0},
+                {'item': BALL_LASSO, 'used': 0, 'unused': 0},
+                {'item': BALL_SPRING, 'used': 2, 'unused': 0},
+                {'item': BALL_VELCRO, 'used': 0, 'unused': 0},
+                {'item': BOOST_OVERRIDE, 'used': 0, 'unused': 0},
+                {'item': CAR_SPRING, 'used': 0, 'unused': 0},
+                {'item': GRAVITY_WELL, 'used': 0, 'unused': 0},
+                {'item': STRONG_HIT, 'used': 0, 'unused': 0},
+                {'item': SWAPPER, 'used': 0, 'unused': 0},
+                {'item': TORNADO, 'used': 0, 'unused': 0}
+            ])
+        run_analysis_test_on_replay(test, get_raw_replays()["RUMBLE_ITEM_KICKOFF"], cache=replay_cache)
+
     def assert_rumble_item_counts(self, rumble_stats_proto, expected):
         result_stats = list(map(proto_to_dict, rumble_stats_proto.rumble_items))
         case = unittest.TestCase('__init__')
