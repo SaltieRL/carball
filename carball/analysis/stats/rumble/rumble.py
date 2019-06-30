@@ -70,6 +70,9 @@ def _get_power_up_events(player: Player, df: pd.DataFrame, game: Game, proto_rum
     """
     events = []
     if 'power_up_active' in df and 'power_up' in df:
+        if 'time_till_power_up' not in df:
+            # someone actually uploaded a 10 second replay of the end of the match..
+            df['time_till_power_up'] = math.nan
         df = df[['time_till_power_up', 'power_up', 'power_up_active']]
 
         ranges = [(game.kickoff_frames[i], game.kickoff_frames[i + 1]) for i in range(len(game.kickoff_frames) - 1)]
