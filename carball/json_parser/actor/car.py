@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 
 class CarHandler(BaseActorHandler):
     type_name = 'Archetypes.Car.Car_Default'
-    priority = 600
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         if 'Engine.Pawn:PlayerReplicationInfo' not in actor:
@@ -15,6 +14,7 @@ class CarHandler(BaseActorHandler):
 
         player_actor_id = actor['Engine.Pawn:PlayerReplicationInfo']
         if player_actor_id == -1:
+            self.add_demo(actor, frame_number)
             return
         # assign car player links
         self.parser.player_car_ids[player_actor_id] = actor['Id']
@@ -33,8 +33,10 @@ class CarHandler(BaseActorHandler):
             self.parser.player_data[player_actor_id][frame_number].update(data_dict)
 
         # get demo data
-        if 'TAGame.Car_TA:ReplicatedDemolish' in actor:
+        self.add_demo(actor, frame_number)
 
+    def add_demo(self, actor, frame_number):
+        if 'TAGame.Car_TA:ReplicatedDemolish' in actor:
             demo_data = actor['TAGame.Car_TA:ReplicatedDemolish']['demolish']
             # add attacker and victim player ids
             attacker_car_id = demo_data['attacker_actor_id']

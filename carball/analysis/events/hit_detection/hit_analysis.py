@@ -115,15 +115,16 @@ class SaltieHit:
         """
         # find shots
         # TODO: Support non-standard maps? Raise warning/don't predict for non-standard maps?
+        player = player_map[saltie_hit.player_id.id]
         ball_sim = BallSimulator(BaseHit.get_ball_data(data_frame, saltie_hit),
-                                 player_map[saltie_hit.player_id.id].is_orange)
+                                 player.is_orange)
         is_shot = ball_sim.get_is_shot()
         if is_shot:
             saltie_hit.shot = True
             # if saltie_hit.goal:
             #    logger.debug('Found shot for goal:')
         if saltie_hit.goal and not is_shot:
-            logger.warning('Goal is not shot: %s', saltie_hit)
+            logger.warning(f'Goal is not shot: frame {saltie_hit.frame_number} by {player.name}')
 
     @staticmethod
     def get_clear(data_frame: pd.DataFrame, saltie_hit: Hit, next_saltie_hit: Hit,  player_map: Dict[str, Player]):

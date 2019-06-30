@@ -9,12 +9,8 @@ class BaseActorHandler(object):
 
     Attributes:
         type_name (str): If can_handle is not overridden, it will check the type_name attribute.
-        priority (int): The priority attribute determines the order of the handlers. Lower number means higher priority.
-                        If the priority is the same, the order will depend on the order of actors in the replay.
-
     """
     type_name: str = None
-    priority: int = 1000
 
     @classmethod
     def can_handle(cls, actor: dict) -> bool:

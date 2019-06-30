@@ -37,6 +37,7 @@ def analyze_replay_file(replay_path: str, output_path: str = None, overwrite=Tru
     :param sanity_check: Run sanity check to make sure we analyzed correctly (BETA)
     :param analysis_per_goal: Runs the analysis per a goal instead of the replay as a whole
     :param rattletrap_path: Custom location for rattletrap executable. Path to folder.
+    :param force_full_analysis: If True full analysis will be performed even if checks say it should not.
     :return: AnalysisManager of game with analysis.
     """
     _json = decompile_replay(replay_path, output_path=output_path, overwrite=overwrite, rattletrap_path=rattletrap_path)
