@@ -8,8 +8,7 @@ class PlatformHandler(BaseActorHandler):
 
     @classmethod
     def can_handle(cls, actor: dict) -> bool:
-        return actor['ClassName'] == 'TAGame.BreakOutActor_Platform_TA' and \
-               actor['Name'].startswith('BreakOutActor_Platform_TA_')
+        return actor['TypeName'].startswith('ShatterShot_VFX.TheWorld:PersistentLevel.BreakOutActor_Platform_TA_')
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         tile_id = int(actor['TypeName'][actor['TypeName'].rfind('_') + 1:])
