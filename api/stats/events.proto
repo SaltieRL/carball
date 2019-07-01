@@ -112,7 +112,8 @@ message RumbleItemEvent {
 message DropshotDamageEvent {
     optional api.PlayerId player_id = 1;
     optional int32 frame_number = 2;
-    repeated DropshotTile tiles = 3;
+    optional int32 tile_hit = 3;
+    repeated DropshotTile tiles = 4;
 }
 
 message DropshotBallPhaseChangeEvent {

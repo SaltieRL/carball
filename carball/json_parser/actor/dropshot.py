@@ -31,6 +31,7 @@ class PlatformHandler(BaseActorHandler):
 
         # unknown5: In a single damage event only one tile has a value of True, the others are False
         # probably the center of the damage aka the tile that was hit
+        tile_hit = damage_state['unknown5']
 
         # unknown6: seems to be always False
 
@@ -39,6 +40,6 @@ class PlatformHandler(BaseActorHandler):
             if frame_number not in self.parser.dropshot['damage_events']:
                 self.parser.dropshot['damage_events'][frame_number] = (player_actor_id, [])
 
-            self.parser.dropshot['damage_events'][frame_number][1].append((tile_id, state))
+            self.parser.dropshot['damage_events'][frame_number][1].append((tile_id, state, tile_hit))
 
         self.parser.dropshot['tile_states'][tile_id] = state

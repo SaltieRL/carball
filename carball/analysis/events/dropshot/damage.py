@@ -18,3 +18,6 @@ def create_dropshot_damage_events(game: Game, proto_game: game_pb2.Game):
             proto_tile = proto_damage_event.tiles.add()
             proto_tile.id = tile[0]
             proto_tile.state = tile[1]
+
+            if tile[2]:
+                proto_damage_event.tile_hit = tile[0]
