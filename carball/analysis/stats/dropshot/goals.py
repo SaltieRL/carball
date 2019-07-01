@@ -1,4 +1,5 @@
 import math
+import logging
 from typing import Dict
 
 import pandas as pd
@@ -11,11 +12,19 @@ from carball.json_parser.game import Game
 from carball.analysis.stats.dropshot import is_dropshot
 from carball.analysis.constants.dropshot import *
 
+log = logging.getLogger(__name__)
+
 
 class DropshotGoals(BaseStat):
     def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                        data_frame: pd.DataFrame):
         if not is_dropshot(game):
+            return
+
+        tile_positions = get_tile_positions(game.map)
+
+        if tile_positions is None:
+            log.warning(f'Unsupported dropshot map: {game.map}')
             return
 
         for goal in proto_game.game_metadata.goals:
@@ -29,19 +38,19 @@ class DropshotGoals(BaseStat):
             closest_distance = TILE_DIAMETER
             closest_id = -1
 
-            for tile_id, tile in TILES.items():
-                if tile['team'] == team:
-                    continue
+            team_tiles = tile_positions[:70] if team == 1 else tile_positions[70:]
+
+            for tile_id, tile in enumerate(team_tiles):
 
                 d = math.sqrt(
-                    math.pow(ball_pos['pos_x'] - tile['position'][0], 2) +
-                    math.pow(ball_pos['pos_y'] - tile['position'][1], 2) +
-                    math.pow(ball_pos['pos_z'] - tile['position'][2], 2)
+                    math.pow(ball_pos['pos_x'] - tile[0], 2) +
+                    math.pow(ball_pos['pos_y'] - tile[1], 2) +
+                    math.pow(ball_pos['pos_z'] - tile[2], 2)
                 )
 
                 if d < closest_distance:
                     closest_distance = d
-                    closest_id = tile_id
+                    closest_id = tile_id if team == 1 else tile_id + 70
 
             if closest_id != -1:
                 goal.extra_mode_info.dropshot_tile.id = closest_id

@@ -1,4 +1,5 @@
 from .base import *
+from carball.json_parser.dropshot import get_tile_mapping
 
 
 class PlatformHandler(BaseActorHandler):
@@ -12,6 +13,10 @@ class PlatformHandler(BaseActorHandler):
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         tile_id = int(actor['TypeName'][actor['TypeName'].rfind('_') + 1:])
+
+        tile_mapping = get_tile_mapping(self.parser.game.map)
+        if tile_mapping is not None:
+            tile_id = tile_mapping[tile_id]
 
         if tile_id not in self.parser.dropshot['tile_states']:
             self.parser.dropshot['tile_states'][tile_id] = 0
