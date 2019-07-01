@@ -17,6 +17,7 @@ from carball.analysis.stats.tendencies.speed_tendencies import SpeedTendencies
 from carball.analysis.stats.tendencies.team_tendencies import TeamTendencies
 from carball.analysis.stats.rumble.rumble import RumbleItemStat
 from carball.analysis.stats.rumble.goals import PreRumbleGoals, ItemGoals
+from carball.analysis.stats.dropshot.goals import DropshotGoals
 
 
 class StatsList:
@@ -55,7 +56,8 @@ class StatsList:
         """These are stats that end up being assigned to the game as a whole"""
         return [PositionalTendencies(),
                 SpeedTendencies(),
-                ItemGoals()
+                ItemGoals(),
+                DropshotGoals()
                 ]
 
     @staticmethod

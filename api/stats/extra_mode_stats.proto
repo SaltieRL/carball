@@ -34,6 +34,7 @@ message ExtraModeGoalInfo {
     optional bool pre_items = 1;
     optional bool scored_with_item = 2;
     optional PowerUp used_item = 3;
+    optional DropshotTile dropshot_tile = 4;
 }
 
 enum TileState {
