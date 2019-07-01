@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Optional, Tuple
 
 # taken from https://github.com/RLBot/RLBot/wiki/Dropshot
 
@@ -155,5 +155,5 @@ _MAPPING = {
 }
 
 
-def get_tile_positions(map_name: str) -> Optional[Dict[int, int]]:
+def get_tile_positions(map_name: str) -> Optional[Tuple[Tuple]]:
     return _MAPPING.get(map_name, None)

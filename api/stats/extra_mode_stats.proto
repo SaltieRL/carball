@@ -47,3 +47,13 @@ message DropshotTile {
     optional int32 id = 1;
     optional TileState state = 2;
 }
+
+message ExtraModeBallStats {
+    repeated DropshotBallPhaseStats dropshot_phase_stats = 1;
+}
+
+message DropshotBallPhaseStats {
+    optional int32 phase = 1;
+    optional float average = 2;
+    optional float max = 3;
+}
