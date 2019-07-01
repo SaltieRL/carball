@@ -269,14 +269,33 @@ class Game:
             'damage_events': []
         }
 
-        for frame_number, damage in all_data['dropshot']['damage_events'].items():
+        damage_events = all_data['dropshot']['damage_events']
+        ball_events = all_data['dropshot']['ball_events']
+
+        if len(damage_events) > 1:
+            # sometimes damages can trickle over to the next frame, clean those up
+            frames = list(damage_events.keys())
+
+            for i in range(len(frames) - 1):
+                if frames[i] + 1 == frames[i + 1] and damage_events[frames[i]][0] == damage_events[frames[i + 1]][0]:
+                    ball_event = next(event for event in reversed(ball_events) if event['frame_number'] < frames[i])
+                    ball_phase = ball_event['state']
+
+                    # check if the total damage of the two frames is not more than it could be
+                    if (ball_phase == 1 and len(damage_events[frames[i]][1]) + len(damage_events[frames[i + 1]][1])) <= 7 or \
+                            (ball_phase == 2 and len(damage_events[frames[i]][1]) + len(damage_events[frames[i + 1]][1]) <= 19):
+                        damage_events[frames[i]][1].extend(damage_events[frames[i + 1]][1])
+                        damage_events.pop(frames[i + 1])
+                        i += 1
+
+        for frame_number, damage in damage_events.items():
             self.dropshot['damage_events'].append({
                 'frame_number': frame_number,
                 'player': player_actor_id_player_dict[damage[0]],
                 'tiles': damage[1]
             })
 
-        self.dropshot['ball_events'] = all_data['dropshot']['ball_events']
+        self.dropshot['ball_events'] = ball_events
 
         del self.replay_data
         del self.replay
