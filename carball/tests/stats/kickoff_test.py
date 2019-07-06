@@ -23,3 +23,13 @@ class Test_Kickoff():
             assert (len(kickoffs) == 3)
 
         run_analysis_test_on_replay(test, get_raw_replays()["3_KICKOFFS"])
+
+    def test_last_kickoff_no_touch(self):
+
+        def test(analysis: AnalysisManager):
+
+            proto_game = analysis.get_protobuf_data()
+            kickoffs = proto_game.game_stats.kickoffs
+            assert (len(kickoffs) == 2)
+
+        run_analysis_test_on_replay(test, get_raw_replays()["LAST_KICKOFF_NO_TOUCH"])
