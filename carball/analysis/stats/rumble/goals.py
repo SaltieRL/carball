@@ -1,3 +1,4 @@
+import logging
 from typing import Dict
 
 import pandas as pd
@@ -9,6 +10,8 @@ from carball.generated.api.stats.team_stats_pb2 import TeamStats
 from carball.generated.api.stats.extra_mode_stats_pb2 import PowerUp
 from carball.json_parser.game import Game
 from carball.analysis.stats.rumble.rumble import is_rumble_enabled
+
+log = logging.getLogger(__name__)
 
 
 class PreRumbleGoals(BaseStat):
@@ -24,14 +27,24 @@ class PreRumbleGoals(BaseStat):
 
         for goal in proto_game.game_metadata.goals:
             # kick off frame before the goal
-            kickoff_frame = next(frame for frame in reversed(game.kickoff_frames) if frame < goal.frame_number)
+            try:
+                kickoff_frame = next(frame for frame in reversed(game.kickoff_frames) if frame < goal.frame_number)
+            except StopIteration:
+                # there was no kickoff before game, the replay started mid game
+                log.warning(f'There was a goal at frame {goal.frame_number} before the replay started. '
+                            f'Cannot tell if it was pre rumble items.')
+                continue
 
             # first item get frame after kick off
             next_get_frame = next((frame for frame in item_get_frames if frame > kickoff_frame), -1)
 
             if next_get_frame > goal.frame_number or next_get_frame == -1:
                 # goal before rumble items
-                pre_power_up_goals[player_map[goal.player_id.id].is_orange] += 1
+                if goal.player_id.id in player_map:
+                    pre_power_up_goals[player_map[goal.player_id.id].is_orange] += 1
+                else:
+                    log.error(f'Could not determine which team the goal at {goal.frame_number} belongs to, '
+                              f'missing player {goal.player_id.id}')
                 goal.extra_mode_info.pre_items = True
             else:
                 goal.extra_mode_info.pre_items = False

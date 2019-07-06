@@ -120,6 +120,7 @@ def get_raw_replays():
         # Kickoffs
         "STRAIGHT_KICKOFF_GOAL": ["Straight_Kickoff_Goal.replay"],
         "KICKOFF_NO_TOUCH": ["NO_KICKOFF.replay"],
+        "LAST_KICKOFF_NO_TOUCH": ["LAST_KICKOFF_NO_TOUCH.replay"],
         "3_KICKOFFS": ["3_KICKOFFS_4_SHOTS.replay"],
 
         # hits
