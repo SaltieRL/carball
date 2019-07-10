@@ -2,17 +2,14 @@ import logging
 import time
 from typing import Dict, List
 from bisect import bisect_left
-import numpy as np
-import pandas as pd
 
-from ...generated.api import game_pb2
-from ...generated.api.player_pb2 import Player
-from ...generated.api.stats.events_pb2 import Hit
-from ...json_parser.game import Game
-from ...analysis.hit_detection.base_hit import BaseHit
-from ...analysis.simulator.ball_simulator import BallSimulator
-from ...analysis.simulator.map_constants import *
-from ...analysis.constants.field_constants import *
+from ....generated.api import game_pb2
+from ....generated.api.player_pb2 import Player
+from ....generated.api.stats.events_pb2 import Hit
+from carball.analysis.events.hit_detection.base_hit import BaseHit
+from carball.analysis.simulator.ball_simulator import BallSimulator
+from carball.analysis.simulator.map_constants import *
+from carball.analysis.constants.field_constants import *
 
 
 logger = logging.getLogger(__name__)
@@ -118,15 +115,16 @@ class SaltieHit:
         """
         # find shots
         # TODO: Support non-standard maps? Raise warning/don't predict for non-standard maps?
+        player = player_map[saltie_hit.player_id.id]
         ball_sim = BallSimulator(BaseHit.get_ball_data(data_frame, saltie_hit),
-                                 player_map[saltie_hit.player_id.id].is_orange)
+                                 player.is_orange)
         is_shot = ball_sim.get_is_shot()
         if is_shot:
             saltie_hit.shot = True
             # if saltie_hit.goal:
             #    logger.debug('Found shot for goal:')
         if saltie_hit.goal and not is_shot:
-            logger.warning('Goal is not shot: %s', saltie_hit)
+            logger.warning(f'Goal is not shot: frame {saltie_hit.frame_number} by {player.name}')
 
     @staticmethod
     def get_clear(data_frame: pd.DataFrame, saltie_hit: Hit, next_saltie_hit: Hit,  player_map: Dict[str, Player]):
@@ -169,7 +167,7 @@ class SaltieHit:
                        sorted_frames, hit_analytics_dict: Dict[int, Hit]):
         """
         Finds stats for all hits.
-        :param game:
+        :param data_frame:
         :param player_map:
         :param sorted_frames:
         :param hit_analytics_dict:

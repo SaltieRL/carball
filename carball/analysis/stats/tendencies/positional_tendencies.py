@@ -29,6 +29,7 @@ class PositionalTendencies(BaseStat):
             "ball_0": self.field_constants.get_ball_0,
             "ball_1": self.field_constants.get_ball_1,
             "wall": self.field_constants.get_wall_time,
+            "on_wall": self.field_constants.get_on_wall,
             "corner": self.field_constants.get_corner_time
         }
 
@@ -44,6 +45,7 @@ class PositionalTendencies(BaseStat):
             "ball_0": self.field_constants.get_ball_0,
             "ball_1": self.field_constants.get_ball_1,
             "wall": self.field_constants.get_wall_time,
+            "on_wall": lambda *args, **kwargs: [],
             "corner": self.field_constants.get_corner_time
         }
 
@@ -114,7 +116,7 @@ class PositionalTendencies(BaseStat):
                            half_0: float, half_1: float,
                            third_0: float, third_1: float, third_2: float,
                            ball_0: float, ball_1: float,
-                           wall: float, corner: float
+                           wall: float, on_wall: float, corner: float
                            ):
         """
         :param proto: What object everything is getting set on
@@ -129,6 +131,7 @@ class PositionalTendencies(BaseStat):
         :param ball_0: Time spent behind ball
         :param ball_1: Time spent ahead of ball
         :param wall: Time spent near the wall
+        :param on_wall: Time spent on the wall
         :param corner: Time spent near the corner
         """
         proto.time_on_ground = height_0
@@ -142,4 +145,5 @@ class PositionalTendencies(BaseStat):
         proto.time_behind_ball = ball_0
         proto.time_in_front_ball = ball_1
         proto.time_near_wall = wall
+        proto.time_on_wall = wall
         proto.time_in_corner = corner

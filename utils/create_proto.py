@@ -17,6 +17,7 @@ def get_proto():
     if os.getenv('PROTOC_PATH'):
         return os.getenv('PROTOC_PATH')
 
+
     if is_windows():
         return os.path.join(proto_dir, 'protoc.exe')
     else:
@@ -25,7 +26,7 @@ def get_proto():
         if result is not None:
             return result
         else:
-            return os.path.join(proto_dir, 'protoc')
+            return os.path.join(proto_dir, 'binaries', 'protoc')
 
 
 def split_to_list(drive_and_path):
@@ -46,17 +47,21 @@ def split_to_list(drive_and_path):
     return folders
 
 
+def get_dir():
+    return current_dir
+
+
 def get_deepness(top_level_dir, path_list):
     return len(path_list) - path_list.index(top_level_dir)
 
 
 def get_file_list(top_level_dir, exclude_dir=None, file_extension='.py'):
-    proto_dir = [x[0] for x in os.walk(current_dir) if top_level_dir in x[0] and '__pycache__' not in x[0]]
+    proto_directories = [x[0] for x in os.walk(get_dir()) if top_level_dir in x[0] and '__pycache__' not in x[0]]
 
     file_result = []
 
     path_lists = []
-    for path in proto_dir:
+    for path in proto_directories:
         if exclude_dir is not None and exclude_dir in path:
             continue
         path_list = split_to_list(path)

@@ -3,7 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-from ..json_parser.bots import get_bot_map, get_online_id_for_bot
+from carball.json_parser.bots import get_bot_map, get_online_id_for_bot
 from .boost import get_if_full_boost_position
 
 from typing import TYPE_CHECKING, List
@@ -142,7 +142,10 @@ class Player:
         if "TAGame.PRI_TA:ClientLoadouts" in actor_data:  # new version (2 loadouts)
             loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]["loadouts"]
         else:
-            loadout_data = {'0': actor_data["TAGame.PRI_TA:ClientLoadout"]["loadout"]}
+            try:
+                loadout_data = {'0': actor_data["TAGame.PRI_TA:ClientLoadout"]["loadout"]}
+            except KeyError:
+                loadout_data = {'0': {}}
         for loadout_name, _loadout in loadout_data.items():
             self.loadout.append({
                 'version': _loadout.get('version', None),

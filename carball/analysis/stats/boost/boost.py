@@ -10,7 +10,8 @@ from ....analysis.stats.stats import BaseStat
 from ....generated.api import game_pb2
 from ....generated.api.player_pb2 import Player
 from ....generated.api.stats.player_stats_pb2 import PlayerStats
-from ....json_parser.game import Game, BOOST_PER_SECOND
+from ....json_parser.actor.boost import BOOST_PER_SECOND
+from ....json_parser.game import Game
 
 logger = logging.getLogger(__name__)
 

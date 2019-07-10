@@ -34,7 +34,7 @@ def update_rattletrap():
           f'Update? {update}')
     if update:
         for file in binaries:
-            os.remove(file)
+            os.remove(os.path.join(path, file))
 
         for asset in js['assets']:
             print('Downloading {}'.format(asset['name']))

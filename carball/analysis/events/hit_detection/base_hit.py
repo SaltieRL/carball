@@ -9,9 +9,9 @@ import pandas as pd
 from carball.analysis.constants.basic_math import position_column_names, get_player_ball_displacements, \
     positional_columns
 from .hitbox.hitbox import Hitbox
-from ...generated.api import game_pb2
-from ...generated.api.stats.events_pb2 import Hit
-from ...json_parser.game import Game
+from ....generated.api import game_pb2
+from ....generated.api.stats.events_pb2 import Hit
+from carball.json_parser.game import Game
 
 logger = logging.getLogger(__name__)
 

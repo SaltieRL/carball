@@ -1,5 +1,6 @@
 from typing import List
 
+from carball.analysis.stats.dribbles.ball_carry import CarryStat
 from carball.analysis.stats.possession.per_possession import PerPossessionStat
 from carball.analysis.stats.ball_forward.distance_hit_ball_forward import DistanceStats
 from carball.analysis.stats.boost.boost import BoostStat
@@ -32,6 +33,7 @@ class StatsList:
                 BallDistanceStat(),
                 ControlsStat(),
                 SpeedTendencies(),
+                CarryStat(),
                 PerPossessionStat(),
                 SpeedTendencies(),
                 RumbleItemStat()
