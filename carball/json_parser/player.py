@@ -1,12 +1,11 @@
 import logging
+from typing import TYPE_CHECKING, List
 
 import numpy as np
 import pandas as pd
 
 from carball.json_parser.bots import get_bot_map, get_online_id_for_bot
 from .boost import get_if_full_boost_position
-
-from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from .team import Team
@@ -161,6 +160,18 @@ class Player:
                 'banner': _loadout.get('banner', None)
             })
             # TODO: Support painted stuff (look in ClientLoadoutsOnline)
+        if 'TAGame.PRI_TA:ClientLoadoutsOnline' in actor_data:
+            loadout_online = actor_data['TAGame.PRI_TA:ClientLoadoutsOnline']['loadouts_online']
+            # Paints
+            for team in ['blue', 'orange']:
+                team_loadout = loadout_online[team]
+                items = ['Car', 'Decal', 'Wheels', 'Boost', 'Topper', 'Antenna', 'Goal Explosion', 'Trail']
+                for i, item in enumerate(items):  # order is based on menu
+                    corresponding_item = team_loadout[i]
+                    for attribute in corresponding_item:
+                        if attribute['object_name'] == 'TAGame.ProductAttribute_Painted_TA':
+                            print(item, attribute['value']['painted_new'])
+                print(team_loadout)
         logger.info('Loadout for %s: %s' % (self.name, self.loadout))
 
     def parse_data(self, _dict: dict):
