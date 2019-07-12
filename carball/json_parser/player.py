@@ -32,6 +32,7 @@ class Player:
 
         self.camera_settings = {}
         self.loadout = []
+        self.paint = []
 
         self.data = None
         self.boosts = None
@@ -164,14 +165,30 @@ class Player:
             loadout_online = actor_data['TAGame.PRI_TA:ClientLoadoutsOnline']['loadouts_online']
             # Paints
             for team in ['blue', 'orange']:
+                paint = {}
                 team_loadout = loadout_online[team]
-                items = ['Car', 'Decal', 'Wheels', 'Boost', 'Topper', 'Antenna', 'Goal Explosion', 'Trail']
+                items = [
+                    'car', 'skin', 'wheels', 'boost', 'antenna', 'topper',
+                    #  8 unknown items O.o
+                    'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown',
+                    'trail', 'goal_explosion', 'banner'
+                ]
                 for i, item in enumerate(items):  # order is based on menu
                     corresponding_item = team_loadout[i]
                     for attribute in corresponding_item:
                         if attribute['object_name'] == 'TAGame.ProductAttribute_Painted_TA':
-                            print(item, attribute['value']['painted_new'])
-                print(team_loadout)
+                            paint[item] = attribute['value']['painted_new']
+                self.paint.append({
+                    'car': paint.get('body', None),
+                    'skin': paint.get('decal', None),
+                    'wheels': paint.get('wheels', None),
+                    'boost': paint.get('boost', None),
+                    'antenna': paint.get('antenna', None),
+                    'topper': paint.get('topper', None),
+                    'trail': paint.get('trail', None),
+                    'goal_explosion': paint.get('goal_explosion', None),
+                    'banner': paint.get('banner', None)
+                })
         logger.info('Loadout for %s: %s' % (self.name, self.loadout))
 
     def parse_data(self, _dict: dict):
