@@ -160,7 +160,6 @@ class Player:
                 'goal_explosion': _loadout.get('goal_explosion', None),
                 'banner': _loadout.get('banner', None)
             })
-            # TODO: Support painted stuff (look in ClientLoadoutsOnline)
         if 'TAGame.PRI_TA:ClientLoadoutsOnline' in actor_data:
             loadout_online = actor_data['TAGame.PRI_TA:ClientLoadoutsOnline']['loadouts_online']
             # Paints
