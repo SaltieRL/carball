@@ -172,11 +172,10 @@ class Player:
                     'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown',
                     'trail', 'goal_explosion', 'banner'
                 ]
-                for i, item in enumerate(items):  # order is based on menu
-                    corresponding_item = team_loadout[i]
+                for item_name, corresponding_item in zip(items, team_loadout):  # order is based on menu
                     for attribute in corresponding_item:
                         if attribute['object_name'] == 'TAGame.ProductAttribute_Painted_TA':
-                            paint[item] = attribute['value']['painted_new']
+                            paint[item_name] = attribute['value']['painted_new']
                 self.paint.append({
                     'car': paint.get('body', None),
                     'skin': paint.get('decal', None),
