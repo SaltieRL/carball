@@ -60,6 +60,12 @@ with open(os.path.join('output.pts'), 'wb') as fo:
 # write pandas dataframe out as a gzipped numpy array
 with gzip.open(os.path.join('output.gzip'), 'wb') as fo:
     analysis.write_pandas_out_to_file(fo)
+    
+# return the proto object in python
+proto_object = analysis.get_protobuf_data()
+
+# return the pandas data frame in python
+dataframe = analysis.get_data_frame()
 ```
 
 ### Command Line
