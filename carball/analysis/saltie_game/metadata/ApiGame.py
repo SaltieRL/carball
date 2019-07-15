@@ -1,3 +1,4 @@
+import logging
 from typing import Callable
 
 from carball.generated.api import party_pb2
@@ -5,6 +6,8 @@ from ....json_parser.game import Game
 from ....generated.api.metadata import game_metadata_pb2
 from .ApiDemo import ApiDemo
 from .ApiGoal import ApiGoal
+
+log = logging.getLogger(__name__)
 
 
 class ApiGameScore:
@@ -42,7 +45,7 @@ class ApiGame:
             try:
                 proto_game.unknown_playlist = int(game.game_info.playlist)
             except:
-                print('unknown and invalid playlist')
+                log.error('unknown and invalid playlist')
 
         proto_game.game_server_id = game.game_info.server_id
         proto_game.server_name = game.game_info.server_name

@@ -34,7 +34,7 @@ def create_rattletrap_command(replay_path: str, output_path: str, overwrite: boo
         binaries = get_rattletrap_binaries(rattletrap_path)
     binary = get_binary_for_platform(pt.system(), binaries)
     if binary is None:
-        print('no binary!')
+        logger.warning('no binary!')
     cmd = [os.path.join(rattletrap_path, '{}'.format(binary)), '--compact', '-i',
            replay_path]
     if output_path:
