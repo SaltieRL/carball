@@ -51,7 +51,7 @@ class BaseKickoff:
             boost = True
             collected_boost_df    = data_frame[player.name]['boost_collect']
         # check the kickoff frames (and then some) for jumps & big boost collection
-        for f in range(frame, end_frame + 20):
+        for f in range(frame, min(end_frame + 20, len(data_frame))):
             if boost:
                 if collected_boost_df[f] == True:
                     kPlayer.boost_time = data_frame['game']['delta'][frame:f].sum()

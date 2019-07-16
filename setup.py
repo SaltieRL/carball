@@ -61,4 +61,7 @@ setup(
         'develop': PostDevelopCommand,
         'install': PostInstallCommand,
     },
+    entry_points={
+        'console_scripts': ['carball=carball.command_line:main']
+    }
 )
