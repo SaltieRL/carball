@@ -175,7 +175,10 @@ class Player:
                 for item_name, corresponding_item in zip(items, team_loadout):  # order is based on menu
                     for attribute in corresponding_item:
                         if attribute['object_name'] == 'TAGame.ProductAttribute_Painted_TA':
-                            paint[item_name] = attribute['value']['painted_new']
+                            if 'painted_old' in attribute['value']:
+                                paint[item_name] = attribute['value']['painted_old']['value']
+                            else:
+                                paint[item_name] = attribute['value']['painted_new']
                 self.paint.append({
                     'car': paint.get('body', None),
                     'skin': paint.get('decal', None),
