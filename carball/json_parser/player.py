@@ -1,12 +1,11 @@
 import logging
+from typing import TYPE_CHECKING, List
 
 import numpy as np
 import pandas as pd
 
 from carball.json_parser.bots import get_bot_map, get_online_id_for_bot
 from .boost import get_if_full_boost_position
-
-from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from .team import Team
@@ -33,6 +32,7 @@ class Player:
 
         self.camera_settings = {}
         self.loadout = []
+        self.paint = []
 
         self.data = None
         self.boosts = None
@@ -160,7 +160,36 @@ class Player:
                 'goal_explosion': _loadout.get('goal_explosion', None),
                 'banner': _loadout.get('banner', None)
             })
-            # TODO: Support painted stuff (look in ClientLoadoutsOnline)
+        if 'TAGame.PRI_TA:ClientLoadoutsOnline' in actor_data:
+            loadout_online = actor_data['TAGame.PRI_TA:ClientLoadoutsOnline']['loadouts_online']
+            # Paints
+            for team in ['blue', 'orange']:
+                paint = {}
+                team_loadout = loadout_online[team]
+                items = [
+                    'car', 'skin', 'wheels', 'boost', 'antenna', 'topper',
+                    #  8 unknown items O.o
+                    'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown',
+                    'trail', 'goal_explosion', 'banner'
+                ]
+                for item_name, corresponding_item in zip(items, team_loadout):  # order is based on menu
+                    for attribute in corresponding_item:
+                        if attribute['object_name'] == 'TAGame.ProductAttribute_Painted_TA':
+                            if 'painted_old' in attribute['value']:
+                                paint[item_name] = attribute['value']['painted_old']['value']
+                            else:
+                                paint[item_name] = attribute['value']['painted_new']
+                self.paint.append({
+                    'car': paint.get('body', None),
+                    'skin': paint.get('decal', None),
+                    'wheels': paint.get('wheels', None),
+                    'boost': paint.get('boost', None),
+                    'antenna': paint.get('antenna', None),
+                    'topper': paint.get('topper', None),
+                    'trail': paint.get('trail', None),
+                    'goal_explosion': paint.get('goal_explosion', None),
+                    'banner': paint.get('banner', None)
+                })
         logger.info('Loadout for %s: %s' % (self.name, self.loadout))
 
     def parse_data(self, _dict: dict):
