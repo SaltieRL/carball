@@ -12,6 +12,17 @@ def sum_deltas_by_player_name(data_frame: pd.DataFrame, players_data_frame: pd.S
     return combined_data.groupby(players_data_frame.name).sum().rename(columns={'delta': players_data_frame.name})
 
 
+def sum_deltas_start_end_frame(data_frame: pd.DataFrame, start_frame, end_frame) -> pd.DataFrame:
+    """
+    Gets the delta from the pandas data frame for a given start and end frame
+    :param data_frame: The game data frame, goal frames are removed
+    :param start_frame: When to start counting the delta
+    :param end_frame: When to stop counting the delta
+    :return: The time based on delta.
+    """
+    return data_frame['game', 'delta'][start_frame: end_frame].sum()
+
+
 def sum_deltas_by_truthy_data(data_frame: pd.DataFrame, truthy_frames: pd.Series) -> pd.DataFrame:
     """
     Gets the delta from the pandas data frame for certain players at certain times.

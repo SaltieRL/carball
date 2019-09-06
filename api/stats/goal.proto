@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package api.stats;
+
+message GoalStats {
+    optional int32 goal_index = 1; // The index for this goal in game_metadata
+}

@@ -2,7 +2,9 @@ import logging
 from typing import Dict, Callable
 import pandas as pd
 
+from carball.analysis.stats.utils.pandas_utils import sum_deltas_start_end_frame
 from carball.generated.api import game_pb2
+from carball.generated.api.metadata.game_metadata_pb2 import Goal
 from carball.generated.api.player_pb2 import Player
 from carball.generated.api.stats.kickoff_pb2 import KickoffStats
 from carball.generated.api.stats import kickoff_pb2 as kickoff
@@ -20,27 +22,51 @@ class BaseKickoff:
                                data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame,
                                first_touch_frames: pd.DataFrame) -> Dict[int, KickoffStats]:
         kickoffs = dict()
-        for index,frame in enumerate(kickoff_frames):
+        goals = proto_game.game_metadata.goals
+        num_goals = len(goals)
+        for index, frame in enumerate(kickoff_frames):
+
             cur_kickoff = proto_game.game_stats.kickoff_stats.add()
             end_frame = first_touch_frames[index]
-            cur_kickoff.touch
             cur_kickoff.start_frame = frame
             cur_kickoff.touch_frame = end_frame
-            cur_kickoff.touch_time  = data_frame['game']['delta'][frame:end_frame].sum()
+            cur_kickoff.touch_time = data_frame['game']['delta'][frame:end_frame].sum()
+
+            # find who touched the ball first
+            closest_player_distance = 10000000
+            closest_player_id = 0
+
+            if index < num_goals:
+                BaseKickoff.get_goal_data(cur_kickoff, goals[index], data_frame)
+
+            # get player stats
             for player in player_map.values():
-                kPlayer = cur_kickoff.touch.players.add()
-                kPlayer.player.id = player.id.id
-                kPlayer.kickoff_position = BaseKickoff.get_kickoff_position(player, data_frame, frame)
-                kPlayer.touch_position = BaseKickoff.get_touch_position(player, data_frame, frame, end_frame)
-                kPlayer.boost = data_frame[player.name]['boost'][end_frame]
-                kPlayer.ball_dist  = BaseKickoff.get_dist(data_frame, player.name, end_frame)
-                kPlayer.player_position.pos_x = data_frame[player.name]['pos_x'][end_frame]
-                kPlayer.player_position.pos_y = data_frame[player.name]['pos_y'][end_frame]
-                kPlayer.player_position.pos_z = data_frame[player.name]['pos_z'][end_frame]
-                BaseKickoff.set_jumps(kPlayer, player, data_frame, frame, end_frame)
+                kickoff_player = BaseKickoff.get_player_stats(cur_kickoff, player, data_frame, frame, end_frame)
+
+                if kickoff_player.ball_dist < closest_player_distance:
+                    closest_player_distance = kickoff_player.ball_dist
+                    closest_player_id = player.id.id
+
+            if closest_player_distance != 10000000:
+                # Todo use hit analysis
+                cur_kickoff.touch.first_touch_player.id = closest_player_id
             cur_kickoff.type = BaseKickoff.get_kickoff_type(cur_kickoff.touch.players)
             kickoffs[frame] = cur_kickoff
         return kickoffs
+
+    @staticmethod
+    def get_player_stats(cur_kickoff, player, data_frame: pd.DataFrame, start_frame: int, end_frame: int):
+        kickoff_player = cur_kickoff.touch.players.add()
+        kickoff_player.player.id = player.id.id
+        kickoff_player.kickoff_position = BaseKickoff.get_kickoff_position(player, data_frame, start_frame)
+        kickoff_player.touch_position = BaseKickoff.get_touch_position(player, data_frame, start_frame, end_frame)
+        kickoff_player.boost = data_frame[player.name]['boost'][end_frame]
+        kickoff_player.ball_dist = BaseKickoff.get_dist(data_frame, player.name, end_frame)
+        kickoff_player.player_position.pos_x = data_frame[player.name]['pos_x'][end_frame]
+        kickoff_player.player_position.pos_y = data_frame[player.name]['pos_y'][end_frame]
+        kickoff_player.player_position.pos_z = data_frame[player.name]['pos_z'][end_frame]
+        BaseKickoff.set_jumps(kickoff_player, player, data_frame, start_frame, end_frame)
+        return kickoff_player
 
     @staticmethod
     def set_jumps(kPlayer, player, data_frame, frame, end_frame):
@@ -141,3 +167,9 @@ class BaseKickoff:
         if (x <500) and (y < 3600):
             return kickoff.CHEAT
         return kickoff.UNKNOWN_TOUCH_POS
+
+    # Todo get what team scored next
+    @classmethod
+    def get_goal_data(cls, cur_kickoff: KickoffStats, current_goal: Goal, data_frame: pd.DataFrame):
+        game_time = data_frame['game', 'time']
+        cur_kickoff.touch.kickoff_goal = game_time[current_goal.frame_number] - game_time[cur_kickoff.touch_frame]
