@@ -1,7 +1,10 @@
 import inspect
 import os
 import fnmatch
+import logging
 from typing import List, Union
+
+log = logging.getLogger(__name__)
 
 
 def get_rattletrap_path() -> Union[bytes, str]:
@@ -13,7 +16,7 @@ def get_rattletrap_path() -> Union[bytes, str]:
 def get_rattletrap_binaries(path: Union[bytes, str]) -> List[Union[bytes, str]]:
     files = os.listdir(path)
     binaries = [f for f in files if not f.endswith('.py') and fnmatch.fnmatch(f, "*rattletrap*")]
-    print(binaries)
+    log.debug(f'Discovered rattletrap binaries: {binaries}')
     return binaries
 
 

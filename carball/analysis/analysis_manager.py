@@ -126,6 +126,10 @@ class AnalysisManager:
         kickoff_frames = SaltieGame.get_kickoff_frames(game)
         first_touch_frames = SaltieGame.get_first_touch_frames(game)
 
+        if len(kickoff_frames) > len(first_touch_frames):
+            # happens when the game ends before anyone touches the ball at kickoff
+            kickoff_frames = kickoff_frames[:len(first_touch_frames)]
+
         for goal_number, goal in enumerate(game.goals):
             data_frame.loc[
             kickoff_frames[goal_number]: goal.frame_number, ('game', 'goal_number')
