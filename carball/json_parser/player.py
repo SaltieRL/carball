@@ -182,8 +182,10 @@ class Player:
                             else:
                                 paint[item_name] = attribute['value']['painted_new']
                         elif attribute['object_name'] == 'TAGame.ProductAttribute_UserColor_TA':
-                            # rgb integer, 0xAARRGGBB
-                            paint[item_name] = attribute['value']['user_color_new']
+                            # TODO handle 'user_color_old', looks like an ID like primary and accent colors
+                            if 'user_color_new' in attribute['value']:
+                                # rgb integer, 0xAARRGGBB, banners and avatar borders have different default values
+                                paint[item_name] = attribute['value']['user_color_new']
                 self.paint.append({
                     'car': paint.get('body', None),
                     'skin': paint.get('decal', None),
@@ -245,3 +247,14 @@ class Player:
             position = self.data.loc[boost_collection_frame, ['pos_x', 'pos_y', 'pos_z']]
             boost_type = get_if_full_boost_position(position)
             self.data.loc[boost_collection_frame, 'boost_collect'] = boost_type
+
+    def get_data_from_car(self, car_data):
+        if car_data is None:
+            car_data = {'team_paint': {}}
+
+        for i in range(2):
+            # default blue primary = 35, default orange primary = 33, default accent = 0, default glossy = 270
+            self.loadout[i]['primary_color'] = car_data['team_paint'].get(i, {}).get('primary_color', 35 if i == 0 else 33)
+            self.loadout[i]['accent_color'] = car_data['team_paint'].get(i, {}).get('accent_color', 0)
+            self.loadout[i]['primary_finish'] = car_data['team_paint'].get(i, {}).get('primary_finish', 270)
+            self.loadout[i]['accent_finish'] = car_data['team_paint'].get(i, {}).get('accent_finish', 270)

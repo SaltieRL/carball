@@ -53,3 +53,12 @@ class ApiPlayerLoadout:
             proto_loadout.antenna_paint = paints['antenna']
         if paints['avatar_border'] is not None:
             proto_loadout.avatar_border_paint = paints['avatar_border']
+
+        if loadout['primary_color'] is not None:
+            proto_loadout.primary_color = loadout['primary_color']
+        if loadout['accent_color'] is not None:
+            proto_loadout.accent_color = loadout['accent_color']
+        if loadout['primary_finish'] is not None:
+            proto_loadout.primary_finish = loadout['primary_finish']
+        if loadout['accent_finish'] is not None:
+            proto_loadout.accent_finish = loadout['accent_finish']

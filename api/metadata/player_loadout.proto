@@ -28,4 +28,9 @@ message PlayerLoadout {
     optional int32 topper_paint = 20;
     optional int32 antenna_paint = 21;
     optional int64 avatar_border_paint = 23;
+
+    optional int32 primary_color = 24;
+    optional int32 accent_color = 25;
+    optional int32 primary_finish = 26;
+    optional int32 accent_finish = 27;
 }
