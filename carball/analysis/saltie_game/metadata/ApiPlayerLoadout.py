@@ -30,6 +30,8 @@ class ApiPlayerLoadout:
             proto_loadout.antenna = loadout['antenna']
         if loadout['engine_audio'] is not None:
             proto_loadout.engine_audio = loadout['engine_audio']
+        if loadout['avatar_border'] is not None:
+            proto_loadout.engine_audio = loadout['avatar_border']
 
         if paints['banner'] is not None:
             proto_loadout.banner_paint = paints['banner']
@@ -49,3 +51,5 @@ class ApiPlayerLoadout:
             proto_loadout.topper_paint = paints['topper']
         if paints['antenna'] is not None:
             proto_loadout.antenna_paint = paints['antenna']
+        if paints['avatar_border'] is not None:
+            proto_loadout.avatar_border_paint = paints['avatar_border']

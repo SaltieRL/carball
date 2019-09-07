@@ -158,7 +158,8 @@ class Player:
                 'engine_audio': _loadout.get('engine_audio', None),
                 'trail': _loadout.get('trail', None),
                 'goal_explosion': _loadout.get('goal_explosion', None),
-                'banner': _loadout.get('banner', None)
+                'banner': _loadout.get('banner', None),
+                'avatar_border': _loadout.get('unknown5', None)
             })
         if 'TAGame.PRI_TA:ClientLoadoutsOnline' in actor_data:
             loadout_online = actor_data['TAGame.PRI_TA:ClientLoadoutsOnline']['loadouts_online']
@@ -170,7 +171,8 @@ class Player:
                     'car', 'skin', 'wheels', 'boost', 'antenna', 'topper',
                     #  8 unknown items O.o
                     'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown',
-                    'trail', 'goal_explosion', 'banner'
+                    'trail', 'goal_explosion', 'banner',
+                    'Unknown', 'Unknown', 'Unknown', 'avatar_border'
                 ]
                 for item_name, corresponding_item in zip(items, team_loadout):  # order is based on menu
                     for attribute in corresponding_item:
@@ -179,6 +181,9 @@ class Player:
                                 paint[item_name] = attribute['value']['painted_old']['value']
                             else:
                                 paint[item_name] = attribute['value']['painted_new']
+                        elif attribute['object_name'] == 'TAGame.ProductAttribute_UserColor_TA':
+                            # rgb integer, 0xAARRGGBB
+                            paint[item_name] = attribute['value']['user_color_new']
                 self.paint.append({
                     'car': paint.get('body', None),
                     'skin': paint.get('decal', None),
@@ -188,7 +193,8 @@ class Player:
                     'topper': paint.get('topper', None),
                     'trail': paint.get('trail', None),
                     'goal_explosion': paint.get('goal_explosion', None),
-                    'banner': paint.get('banner', None)
+                    'banner': paint.get('banner', None),
+                    'avatar_border': paint.get('avatar_border', None)
                 })
         logger.info('Loadout for %s: %s' % (self.name, self.loadout))
 
