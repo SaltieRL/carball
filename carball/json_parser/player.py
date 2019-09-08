@@ -33,6 +33,7 @@ class Player:
         self.camera_settings = {}
         self.loadout = []
         self.paint = []
+        self.user_colors = []
 
         self.data = None
         self.boosts = None
@@ -166,6 +167,7 @@ class Player:
             # Paints
             for team in ['blue', 'orange']:
                 paint = {}
+                user_color = {}
                 team_loadout = loadout_online[team]
                 items = [
                     'car', 'skin', 'wheels', 'boost', 'antenna', 'topper',
@@ -185,7 +187,7 @@ class Player:
                             # TODO handle 'user_color_old', looks like an ID like primary and accent colors
                             if 'user_color_new' in attribute['value']:
                                 # rgb integer, 0xAARRGGBB, banners and avatar borders have different default values
-                                paint[item_name] = attribute['value']['user_color_new']
+                                user_color[item_name] = attribute['value']['user_color_new']
                 self.paint.append({
                     'car': paint.get('body', None),
                     'skin': paint.get('decal', None),
@@ -195,8 +197,11 @@ class Player:
                     'topper': paint.get('topper', None),
                     'trail': paint.get('trail', None),
                     'goal_explosion': paint.get('goal_explosion', None),
-                    'banner': paint.get('banner', None),
-                    'avatar_border': paint.get('avatar_border', None)
+                    'banner': paint.get('banner', None)
+                })
+                self.user_colors.append({
+                    'banner': user_color.get('user_color', None),
+                    'avatar_border': user_color.get('avatar_border', None)
                 })
         logger.info('Loadout for %s: %s' % (self.name, self.loadout))
 
