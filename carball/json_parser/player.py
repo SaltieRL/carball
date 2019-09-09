@@ -33,6 +33,7 @@ class Player:
         self.camera_settings = {}
         self.loadout = []
         self.paint = []
+        self.user_colors = []
 
         self.data = None
         self.boosts = None
@@ -158,19 +159,22 @@ class Player:
                 'engine_audio': _loadout.get('engine_audio', None),
                 'trail': _loadout.get('trail', None),
                 'goal_explosion': _loadout.get('goal_explosion', None),
-                'banner': _loadout.get('banner', None)
+                'banner': _loadout.get('banner', None),
+                'avatar_border': _loadout.get('unknown5', None)
             })
         if 'TAGame.PRI_TA:ClientLoadoutsOnline' in actor_data:
             loadout_online = actor_data['TAGame.PRI_TA:ClientLoadoutsOnline']['loadouts_online']
             # Paints
             for team in ['blue', 'orange']:
                 paint = {}
+                user_color = {}
                 team_loadout = loadout_online[team]
                 items = [
                     'car', 'skin', 'wheels', 'boost', 'antenna', 'topper',
                     #  8 unknown items O.o
                     'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown', 'Unknown',
-                    'trail', 'goal_explosion', 'banner'
+                    'trail', 'goal_explosion', 'banner',
+                    'Unknown', 'Unknown', 'Unknown', 'avatar_border'
                 ]
                 for item_name, corresponding_item in zip(items, team_loadout):  # order is based on menu
                     for attribute in corresponding_item:
@@ -179,6 +183,11 @@ class Player:
                                 paint[item_name] = attribute['value']['painted_old']['value']
                             else:
                                 paint[item_name] = attribute['value']['painted_new']
+                        elif attribute['object_name'] == 'TAGame.ProductAttribute_UserColor_TA':
+                            # TODO handle 'user_color_old', looks like an ID like primary and accent colors
+                            if 'user_color_new' in attribute['value']:
+                                # rgb integer, 0xAARRGGBB, banners and avatar borders have different default values
+                                user_color[item_name] = attribute['value']['user_color_new']
                 self.paint.append({
                     'car': paint.get('body', None),
                     'skin': paint.get('decal', None),
@@ -189,6 +198,10 @@ class Player:
                     'trail': paint.get('trail', None),
                     'goal_explosion': paint.get('goal_explosion', None),
                     'banner': paint.get('banner', None)
+                })
+                self.user_colors.append({
+                    'banner': user_color.get('user_color', None),
+                    'avatar_border': user_color.get('avatar_border', None)
                 })
         logger.info('Loadout for %s: %s' % (self.name, self.loadout))
 
@@ -239,3 +252,14 @@ class Player:
             position = self.data.loc[boost_collection_frame, ['pos_x', 'pos_y', 'pos_z']]
             boost_type = get_if_full_boost_position(position)
             self.data.loc[boost_collection_frame, 'boost_collect'] = boost_type
+
+    def get_data_from_car(self, car_data):
+        if car_data is None:
+            car_data = {'team_paint': {}}
+
+        for i in range(2):
+            # default blue primary = 35, default orange primary = 33, default accent = 0, default glossy = 270
+            self.loadout[i]['primary_color'] = car_data['team_paint'].get(i, {}).get('primary_color', 35 if i == 0 else 33)
+            self.loadout[i]['accent_color'] = car_data['team_paint'].get(i, {}).get('accent_color', 0)
+            self.loadout[i]['primary_finish'] = car_data['team_paint'].get(i, {}).get('primary_finish', 270)
+            self.loadout[i]['accent_finish'] = car_data['team_paint'].get(i, {}).get('accent_finish', 270)

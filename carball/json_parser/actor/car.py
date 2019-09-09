@@ -35,6 +35,18 @@ class CarHandler(BaseActorHandler):
         # get demo data
         self.add_demo(actor, frame_number)
 
+        if player_actor_id not in self.parser.car_dicts:
+            self.parser.car_dicts[player_actor_id] = {'team_paint': {}}
+
+        team_paint = actor['TAGame.Car_TA:TeamPaint']['team_paint']
+
+        self.parser.car_dicts[player_actor_id]['team_paint'][team_paint['team']] = {
+            'primary_color': team_paint['primary_color'],
+            'accent_color': team_paint['accent_color'],
+            'primary_finish': team_paint['primary_finish'],
+            'accent_finish': team_paint['accent_finish']
+        }
+
     def add_demo(self, actor, frame_number):
         if 'TAGame.Car_TA:ReplicatedDemolish' in actor:
             demo_data = actor['TAGame.Car_TA:ReplicatedDemolish']['demolish']
