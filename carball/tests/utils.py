@@ -85,6 +85,7 @@ def get_complex_replay_list():
         'crossplatform_party.replay',
         'PARTY_LEADER_SYSTEM_ID_0.replay',
         'RL_1_66.replay',
+        'CARRY.replay'
     ]
 
 
