@@ -5,6 +5,7 @@ class ApiPlayerLoadout:
         try:
             loadout = player.loadout[player.is_orange]
             paints = player.paint[player.is_orange]
+            user_colors = player.user_colors[player.is_orange]
         except IndexError:
             return
 
@@ -30,6 +31,8 @@ class ApiPlayerLoadout:
             proto_loadout.antenna = loadout['antenna']
         if loadout['engine_audio'] is not None:
             proto_loadout.engine_audio = loadout['engine_audio']
+        if loadout['avatar_border'] is not None:
+            proto_loadout.engine_audio = loadout['avatar_border']
 
         if paints['banner'] is not None:
             proto_loadout.banner_paint = paints['banner']
@@ -49,3 +52,17 @@ class ApiPlayerLoadout:
             proto_loadout.topper_paint = paints['topper']
         if paints['antenna'] is not None:
             proto_loadout.antenna_paint = paints['antenna']
+
+        if loadout['primary_color'] is not None:
+            proto_loadout.primary_color = loadout['primary_color']
+        if loadout['accent_color'] is not None:
+            proto_loadout.accent_color = loadout['accent_color']
+        if loadout['primary_finish'] is not None:
+            proto_loadout.primary_finish = loadout['primary_finish']
+        if loadout['accent_finish'] is not None:
+            proto_loadout.accent_finish = loadout['accent_finish']
+
+        if user_colors['banner'] is not None:
+            proto_loadout.banner_user_color = user_colors['banner']
+        if user_colors['avatar_border'] is not None:
+            proto_loadout.avatar_border_user_color = user_colors['avatar_border']
