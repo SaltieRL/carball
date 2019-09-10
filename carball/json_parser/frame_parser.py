@@ -75,6 +75,7 @@ def parse_frames(game):
     return {
         'player_ball_data': player_ball_data,
         'player_dicts': parser.player_dicts,
+        'car_dicts': parser.car_dicts,
         'team_dicts': parser.team_dicts,
         'frames_data': parser.frames_data,
         'cameras_data': parser.cameras_data,
@@ -103,6 +104,7 @@ class FrameParser(object):
         self.parties = {}
         self.player_dicts = {}
         self.team_dicts = {}
+        self.car_dicts = {}
 
         self.player_car_ids = {}  # player_actor_id: car_actor_id
         self.car_player_ids = {}  # car_actor_id: player_actor_id
