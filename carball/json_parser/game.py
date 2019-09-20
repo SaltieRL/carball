@@ -214,6 +214,7 @@ class Game:
             found_player.parse_data(all_data['player_ball_data'][_player_actor_id])
             # camera_settings might not exist (see 0AF8AC734890E6D3995B829E474F9924)
             found_player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}).get('cam_settings', {}))
+            found_player.get_data_from_car(all_data['car_dicts'].get(_player_actor_id, None))
 
             for team in self.teams:
                 if found_player.is_orange == team.is_orange:
@@ -238,6 +239,7 @@ class Game:
 
         # DEMOS
         self.demos = []
+        demo_map = dict()
         for _demo_data in all_data['demos_data']:
             demo = {
                 'frame_number': _demo_data['frame_number'],
@@ -250,7 +252,14 @@ class Game:
                                _demo_data["victim_velocity"]["y"],
                                _demo_data["victim_velocity"]["z"],),
             }
-            self.demos.append(demo)
+
+            # Key created to prevent duplicate demo counts
+            key = (int(_demo_data["attacker_velocity"]["x"]) + int(_demo_data["attacker_velocity"]["y"]) + int(_demo_data["attacker_velocity"]["z"]) +
+                   int(_demo_data["victim_velocity"]["x"]) + int(_demo_data["victim_velocity"]["y"]) + int(_demo_data["victim_velocity"]["z"]))
+            Game.add_demo_to_map(key, demo, demo_map)
+
+        self.demos = list(demo_map.values())
+
 
         # PARTIES
         self.parties = all_data['parties']
@@ -258,3 +267,15 @@ class Game:
         del self.replay_data
         del self.replay
         del self.all_data
+
+    @staticmethod
+    def add_demo_to_map(key, demo, demo_map):
+        if key in demo_map:
+            old_demo = demo_map[key]
+            if demo['attacker'] == old_demo['attacker'] and demo['victim'] == old_demo['victim']:
+                if demo['frame_number'] < old_demo['frame_number']:
+                    demo_map[key] = demo
+                return
+            Game.add_demo_to_map(key + 1, demo, demo_map)
+        else:
+            demo_map[key] = demo

@@ -44,3 +44,5 @@ ignore:
   - utils/tests/*
   - init.py
   - setup.py
+  - command_line.py
+

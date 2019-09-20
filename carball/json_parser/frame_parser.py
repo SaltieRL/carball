@@ -18,6 +18,12 @@ _HANDLERS = [
     RumbleItemHandler
 ]
 
+_PRIORITY_HANDLERS = [
+    GameInfoHandler,
+    PlayerHandler,
+    CarHandler
+]
+
 # These handlers will also handle frames with a delta of 0 to match the old implementation
 # TODO check if this is needed
 _0_DELTA_HANDLERS = [
@@ -69,6 +75,7 @@ def parse_frames(game):
     return {
         'player_ball_data': player_ball_data,
         'player_dicts': parser.player_dicts,
+        'car_dicts': parser.car_dicts,
         'team_dicts': parser.team_dicts,
         'frames_data': parser.frames_data,
         'cameras_data': parser.cameras_data,
@@ -97,6 +104,7 @@ class FrameParser(object):
         self.parties = {}
         self.player_dicts = {}
         self.team_dicts = {}
+        self.car_dicts = {}
 
         self.player_car_ids = {}  # player_actor_id: car_actor_id
         self.car_player_ids = {}  # car_actor_id: player_actor_id
@@ -112,7 +120,8 @@ class FrameParser(object):
     def parse_frames(self):
 
         self.actors = {}
-        handlers = {}
+        handlers = [dict() for _ in range(len(_PRIORITY_HANDLERS) + 1)]
+        handled_actors = set()
 
         destroyed_actors = set()
 
@@ -140,7 +149,13 @@ class FrameParser(object):
                                           _HANDLERS), None)
 
                     if handler is not None:
-                        handlers[actor_id] = handler.priority, handler(self), handler in _0_DELTA_HANDLERS
+                        try:
+                            priority = _PRIORITY_HANDLERS.index(handler)
+                        except ValueError:
+                            priority = len(_PRIORITY_HANDLERS)
+
+                        handlers[priority][actor_id] = handler(self), handler in _0_DELTA_HANDLERS
+                        handled_actors.add(actor_id)
 
                 elif actor_status == 'updated':
                     if actor_id not in self.actors:
@@ -152,12 +167,14 @@ class FrameParser(object):
                         actor[prop['name']] = find_actual_value(prop['value'])
 
                 elif actor_status == 'destroyed':
-                    if actor_id in handlers:
+                    if actor_id in handled_actors:
                         destroyed_actors.add(actor_id)
 
             # apply destroy handlers
             for actor_id in destroyed_actors:
-                handlers.pop(actor_id, None)
+                for handler_group in handlers:
+                    handler_group.pop(actor_id, None)
+                handled_actors.remove(actor_id)
                 self.player_car_ids.pop(actor_id, None)
                 self.car_player_ids.pop(actor_id, None)
                 self.actors.pop(actor_id, None)
@@ -179,32 +196,28 @@ class FrameParser(object):
                 pass
 
             # apply the update handlers
-            sorted_handlers = sorted(map(lambda x: (x[0],) + x[1], handlers.items()), key=lambda x: x[1])
-            for handler_tuple in sorted_handlers:
-                handler = handler_tuple[2]
+            for handler_group in handlers:
+                for actor_id, handler_tuple in handler_group.items():
+                    handler = handler_tuple[0]
 
-                # skip 0 delta frames, except for these two handlers (matches old implementation)
-                if handler_tuple[3] or delta != 0:
-                    handler_tuple[2].update(self.actors[handler_tuple[0]], i, time, delta)
+                    # skip 0 delta frames, except for these two handlers (matches old implementation)
+                    if handler_tuple[1] or delta != 0:
+                        handler.update(self.actors[actor_id], i, time, delta)
 
             self.current_car_ids_to_collect.clear()
 
 
+_TYPES = ['int', 'boolean', 'string', 'byte', 'str', 'name']
+
+
 def find_actual_value(value_dict: dict) -> dict or int or bool or str:
-    types = ['int', 'boolean', 'string', 'byte', 'str', 'name', ('flagged_int', 'int')]
     if value_dict is None:
         return None
     if 'value' in value_dict:
         value_dict = value_dict['value']
-    for _type in types:
-        if isinstance(_type, str):
-            if _type in value_dict:
-                return value_dict[_type]
-        else:
-            value = value_dict
-            if _type[0] in value:
-                for type_str in _type:
-                    value = value[type_str]
-                return value
-    else:
-        return value_dict
+    key, value = next(iter(value_dict.items()))
+    if key == 'flagged_int':
+        return value['int']
+    if key in _TYPES:
+        return value
+    return value_dict

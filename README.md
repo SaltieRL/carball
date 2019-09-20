@@ -60,8 +60,56 @@ with open(os.path.join('output.pts'), 'wb') as fo:
 # write pandas dataframe out as a gzipped numpy array
 with gzip.open(os.path.join('output.gzip'), 'wb') as fo:
     analysis.write_pandas_out_to_file(fo)
+    
+# return the proto object in python
+proto_object = analysis.get_protobuf_data()
+
+# return the pandas data frame in python
+dataframe = analysis.get_data_frame()
 ```
 
+### Command Line
+
+Carball comes with a command line tool to analyze replays. To use carball from the command line:
+
+```bash
+carball -i 9EB5E5814D73F55B51A1BD9664D4CBF3.replay --json analysis.json
+```
+
+To get the analysis in both json and protobuf and also the compressed replay frame data frame:
+
+```bash
+carball -i 9EB5E5814D73F55B51A1BD9664D4CBF3.replay --json analysis.json --proto analysis.pts --gzip frames.gzip
+```
+
+#### Command Line Arguments
+
+```
+usage: carball [-h] -i INPUT [--proto PROTO] [--json JSON] [--gzip GZIP] [-sd]
+               [-v] [-s]
+
+Rocket League replay parsing and analysis.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        Path to replay file that will be analyzed. Carball
+                        expects a raw replay file unless --skip-decompile is
+                        provided.
+  --proto PROTO         The result of the analysis will be saved to this file
+                        in protocol buffers format.
+  --json JSON           The result of the analysis will be saved to this file
+                        in json file format. This is not the decompiled replay
+                        json from rattletrap.
+  --gzip GZIP           The pandas dataframe will be saved to this file in a
+                        compressed gzip format.
+  -sd, --skip-decompile
+                        If set, carball will treat the input file as a json
+                        file that Rattletrap outputs.
+  -v, --verbose         Set the logging level to INFO. To set the logging
+                        level to DEBUG use -vv.
+  -s, --silent          Disable logging altogether.
+```
 
 ## Pipeline
 ![pipeline is in Parserformat.png](Parser%20format.png)

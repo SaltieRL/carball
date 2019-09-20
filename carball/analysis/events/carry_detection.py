@@ -103,6 +103,8 @@ class CarryDetection:
             valid_start_frame = carry_data.start_frames[valid_frame_index]
 
             # Get to the correct index before going backwards
+            if hit_index >= len(hit_list):
+                continue
             while hit_list[hit_index].frame_number < starting_frame:
                 if hit_index == len(hit_list) - 1:
                     break

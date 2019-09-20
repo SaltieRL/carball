@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 
 class PlayerHandler(BaseActorHandler):
     type_name = 'TAGame.Default__PRI_TA'
-    priority = 500
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         if 'Engine.PlayerReplicationInfo:PlayerName' not in actor:
@@ -29,12 +28,13 @@ class PlayerHandler(BaseActorHandler):
                         0]
 
                 # handle UniqueID for plays_station and switch
+                unique_id = None
                 if actor_type == "play_station" or actor_type == "psy_net":
                     actor_name = actor["Engine.PlayerReplicationInfo:PlayerName"]
                     for player_stat in self.parser.game.properties['PlayerStats']['value']["array"]:
                         if actor_name == player_stat['value']['Name']['value']['str']:
                             unique_id = str(player_stat['value']['OnlineID']['value']['q_word'])
-                else:
+                if unique_id is None:
                     unique_id = str(
                         actor['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][actor_type])
 
@@ -44,6 +44,7 @@ class PlayerHandler(BaseActorHandler):
                     leader_actor_type = list(
                         actor["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0].keys()
                     )[0]
+                    leader = None
                     if leader_actor_type == "play_station" or leader_actor_type == "psy_net":
                         leader_name = actor[
                             "TAGame.PRI_TA:PartyLeader"
@@ -53,7 +54,7 @@ class PlayerHandler(BaseActorHandler):
                             if leader_name == player_stat['value']['Name']['value']['str']:
                                 leader = str(player_stat['value']['OnlineID']['value']['q_word'])
 
-                    else:  # leader is not using play_station nor switch (ie. xbox or steam)
+                    if leader is None:  # leader is not using play_station nor switch (ie. xbox or steam)
                         leader = str(
                             actor[
                                 "TAGame.PRI_TA:PartyLeader"

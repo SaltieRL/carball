@@ -66,6 +66,7 @@ message PlayerStats {
     optional api.stats.PerPossessionStats per_possession_stats = 11;
     optional api.stats.RumbleStats rumble_stats = 12;
     optional CarryDribbles ball_carries = 13;
+    optional CumulativeKickoffStats kickoff_stats = 14;
 }
 
 message Controller {
@@ -84,6 +85,16 @@ message CarryDribbles {
     optional float average_carry_time = 6;
     optional float fastest_carry_speed = 7; // Your speed along the ground while dribbling the ball
     optional float total_carry_distance = 8; // Just adding up the start/end distances.  It is NOT distance along path
-
     optional DetailedCarryStats carry_stats = 9;
+}
+
+message CumulativeKickoffStats {
+    optional int32 total_kickoffs = 1; // In unranked players may not be there for all kickoffs in the game.
+    optional int32 num_time_boost = 2;
+    optional int32 num_time_cheat = 3;
+    optional int32 num_time_defend = 4;
+    optional int32 num_time_go_to_ball = 5;
+    optional int32 num_time_afk = 6;
+    optional int32 num_time_first_touch = 7;
+    optional float average_boost_used = 8; // The average amount of boost used over all kickoff events
 }
