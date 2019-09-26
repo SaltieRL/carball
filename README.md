@@ -21,10 +21,12 @@ Decompile and analyze a replay:
 ```Python
 import carball
 
-manager = carball.analyze_replay_file('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', 
+analysis_manager = carball.analyze_replay_file('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', 
                                       output_path='9EB5E5814D73F55B51A1BD9664D4CBF3.json', 
                                       overwrite=True)
-proto_game = manager.get_protobuf_data()
+proto_game = analysis_manager.get_protobuf_data()
+
+# you can see more example of using the analysis manager below
 
 ```
 
@@ -49,23 +51,23 @@ from carball.analysis.analysis_manager import AnalysisManager
 game = Game()
 game.initialize(loaded_json=_json)
 
-analysis = AnalysisManager(game)
-analysis.create_analysis()
+analysis_manager = AnalysisManager(game)
+analysis_manager.create_analysis()
 
 # write proto out to a file
 # read api/*.proto for info on the object properties
 with open(os.path.join('output.pts'), 'wb') as fo:
-    analysis.write_proto_out_to_file(fo)
+    analysis_manager.write_proto_out_to_file(fo)
     
 # write pandas dataframe out as a gzipped numpy array
 with gzip.open(os.path.join('output.gzip'), 'wb') as fo:
-    analysis.write_pandas_out_to_file(fo)
+    analysis_manager.write_pandas_out_to_file(fo)
     
 # return the proto object in python
-proto_object = analysis.get_protobuf_data()
+proto_object = analysis_manager.get_protobuf_data()
 
 # return the pandas data frame in python
-dataframe = analysis.get_data_frame()
+dataframe = analysis_manager.get_data_frame()
 ```
 
 ### Command Line
