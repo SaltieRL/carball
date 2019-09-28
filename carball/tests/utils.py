@@ -84,6 +84,8 @@ def get_complex_replay_list():
         'OCE_RLCS_7_CARS.replay',
         'crossplatform_party.replay',
         'PARTY_LEADER_SYSTEM_ID_0.replay',
+        'RL_1_66.replay',
+        'CARRY.replay'
     ]
 
 
@@ -120,7 +122,10 @@ def get_raw_replays():
         # Kickoffs
         "STRAIGHT_KICKOFF_GOAL": ["Straight_Kickoff_Goal.replay"],
         "KICKOFF_NO_TOUCH": ["NO_KICKOFF.replay"],
+        "LAST_KICKOFF_NO_TOUCH": ["LAST_KICKOFF_NO_TOUCH.replay"],
         "3_KICKOFFS": ["3_KICKOFFS_4_SHOTS.replay"],
+        "5_DIVERSE_KICKOFFS": ["KICKOFF_TEST_1.replay"],
+        "6_DIVERSE_KICKOFFS": ["KICKOFF_TEST_2.replay"],
 
         # hits
         "4_SHOTS": ["3_KICKOFFS_4_SHOTS.replay"],

@@ -215,6 +215,7 @@ class Game:
             found_player.parse_data(all_data['player_ball_data'][_player_actor_id])
             # camera_settings might not exist (see 0AF8AC734890E6D3995B829E474F9924)
             found_player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}).get('cam_settings', {}))
+            found_player.get_data_from_car(all_data['car_dicts'].get(_player_actor_id, None))
 
             for team in self.teams:
                 if found_player.is_orange == team.is_orange:

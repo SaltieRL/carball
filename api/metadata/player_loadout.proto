@@ -15,4 +15,24 @@ message PlayerLoadout {
     optional int32 topper = 10;
     optional int32 antenna = 11;
     optional int32 engine_audio = 12;
+    optional int32 avatar_border = 22;
+
+
+    optional int32 banner_paint = 13;
+    optional int32 boost_paint = 14;
+    optional int32 car_paint = 15;
+    optional int32 goal_explosion_paint = 16;
+    optional int32 skin_paint = 17;
+    optional int32 trail_paint = 18;
+    optional int32 wheels_paint = 19;
+    optional int32 topper_paint = 20;
+    optional int32 antenna_paint = 21;
+
+    optional int32 primary_color = 23;
+    optional int32 accent_color = 24;
+    optional int32 primary_finish = 25;
+    optional int32 accent_finish = 26;
+
+    optional int64 banner_user_color = 27;
+    optional int64 avatar_border_user_color = 28;
 }
