@@ -43,3 +43,4 @@ class DropshotBallPhaseTimes(BaseStat):
             phase_stat_proto.phase = phase
             phase_stat_proto.average = np.mean(times)
             phase_stat_proto.max = max(times)
+            phase_stat_proto.total = sum(times)

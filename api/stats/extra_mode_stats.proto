@@ -56,4 +56,5 @@ message DropshotBallPhaseStats {
     optional int32 phase = 1;
     optional float average = 2;
     optional float max = 3;
+    optional float total = 4;
 }
