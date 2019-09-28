@@ -1,4 +1,5 @@
 import logging
+from typing import Dict
 
 import pandas as pd
 import numpy as np
@@ -8,7 +9,6 @@ from carball.generated.api.player_pb2 import Player
 from carball.generated.api import game_pb2
 from carball.json_parser.game import Game
 from carball.analysis.stats.dropshot import is_dropshot
-from carball.analysis.constants.dropshot import *
 
 log = logging.getLogger(__name__)
 
