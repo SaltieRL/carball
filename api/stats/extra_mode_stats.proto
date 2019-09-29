@@ -1,5 +1,7 @@
 syntax = "proto2";
 
+import "api/player_id.proto";
+
 package api.stats;
 
 enum PowerUp {
@@ -75,4 +77,23 @@ message DropshotBallPhaseStats {
     optional float average = 2;
     optional float max = 3;
     optional float total = 4;
+}
+
+message DropshotDamageEvent {
+    optional api.PlayerId player_id = 1;
+    optional int32 frame_number = 2;
+    optional int32 tile_hit = 3;
+    repeated DropshotTile tiles = 4;
+}
+
+message DropshotBallPhaseChangeEvent {
+    optional int32 frame_number = 1;
+    optional int32 ball_phase = 2;
+    optional api.PlayerId player_id = 3;
+}
+
+message DropshotGameStats {
+    repeated DropshotDamageEvent damage_events = 1;
+    repeated DropshotBallPhaseChangeEvent ball_phase_events = 2;
+    optional DropshotTileStats tile_stats = 3;
 }

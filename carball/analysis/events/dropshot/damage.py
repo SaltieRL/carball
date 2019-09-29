@@ -7,7 +7,7 @@ def create_dropshot_damage_events(game: Game, proto_game: game_pb2.Game):
     if game.game_info.playlist not in [RANKED_DROPSHOT, UNRANKED_DROPSHOT] and game.map != 'ShatterShot_P':
         return
 
-    proto_damages = proto_game.game_stats.dropshot_damages
+    proto_damages = proto_game.game_stats.dropshot_stats.damage_events
 
     for event in game.dropshot['damage_events']:
         proto_damage_event = proto_damages.add()

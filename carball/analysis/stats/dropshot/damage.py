@@ -93,9 +93,9 @@ class DropshotStats(BaseStat):
                     destroyed += 1
 
         for tile_id, total_damage in tile_stats.items():
-            damage_stat_proto = proto_game.game_stats.dropshot_tile_stats.damage_stats.add()
+            damage_stat_proto = proto_game.game_stats.dropshot_stats.tile_stats.damage_stats.add()
             damage_stat_proto.id = tile_id
             damage_stat_proto.total_damage = total_damage
 
-        proto_game.game_stats.dropshot_tile_stats.damaged_tiles = damaged
-        proto_game.game_stats.dropshot_tile_stats.destroyed_tiles = destroyed
+        proto_game.game_stats.dropshot_stats.tile_stats.damaged_tiles = damaged
+        proto_game.game_stats.dropshot_stats.tile_stats.destroyed_tiles = destroyed

@@ -13,7 +13,7 @@ def create_dropshot_ball_events(game: Game, proto_game: game_pb2.Game, player_ma
         return
 
     hits = list(proto_game.game_stats.hits)
-    proto_events = proto_game.game_stats.dropshot_ball_phase_changes
+    proto_events = proto_game.game_stats.dropshot_stats.ball_phase_events
     for event in game.dropshot['ball_events']:
 
         frame_number = event['frame_number']

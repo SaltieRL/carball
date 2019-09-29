@@ -16,7 +16,5 @@ message GameStats {
     repeated api.stats.RumbleItemEvent rumble_items = 6;
     repeated api.stats.KickoffStats kickoff_stats = 7;
     repeated api.stats.BallCarry ball_carries = 8;
-    repeated api.stats.DropshotDamageEvent dropshot_damages = 9;
-    repeated api.stats.DropshotBallPhaseChangeEvent dropshot_ball_phase_changes = 10;
-    optional api.stats.DropshotTileStats dropshot_tile_stats = 11;
+    optional api.stats.DropshotGameStats dropshot_stats = 9;
 }
