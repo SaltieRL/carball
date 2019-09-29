@@ -24,4 +24,5 @@ message TeamStats {
     optional CenterOfMass center_of_mass = 3;
     optional PerPossessionStats per_possession_stats = 4;
     optional api.stats.RumbleStats rumble_stats = 5;
+    optional api.stats.DropshotStats dropshot_stats = 6;
 }

@@ -20,6 +20,7 @@ from carball.analysis.stats.rumble.rumble import RumbleItemStat
 from carball.analysis.stats.rumble.goals import PreRumbleGoals, ItemGoals
 from carball.analysis.stats.dropshot.goals import DropshotGoals
 from carball.analysis.stats.dropshot.ball_phase_times import DropshotBallPhaseTimes
+from carball.analysis.stats.dropshot.damage import DropshotStats
 
 
 class StatsList:
@@ -40,7 +41,8 @@ class StatsList:
                 PerPossessionStat(),
                 SpeedTendencies(),
                 RumbleItemStat(),
-                KickoffStat()
+                KickoffStat(),
+                DropshotStats()
                 ]
 
     @staticmethod
@@ -51,7 +53,8 @@ class StatsList:
                 RelativeTendencies(),
                 PerPossessionStat(),
                 RumbleItemStat(),
-                PreRumbleGoals()
+                PreRumbleGoals(),
+                DropshotStats()
                 ]
 
     @staticmethod

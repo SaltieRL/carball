@@ -54,6 +54,11 @@ message ExtraModeBallStats {
     repeated DropshotBallPhaseStats dropshot_phase_stats = 1;
 }
 
+message DropshotStats {
+    optional int32 total_damage = 1;
+    optional float damage_efficiency = 2;
+}
+
 message DropshotBallPhaseStats {
     optional int32 phase = 1;
     optional float average = 2;

@@ -67,6 +67,7 @@ message PlayerStats {
     optional api.stats.RumbleStats rumble_stats = 12;
     optional CarryDribbles ball_carries = 13;
     optional CumulativeKickoffStats kickoff_stats = 14;
+    optional api.stats.DropshotStats dropshot_stats = 15;
 }
 
 message Controller {
