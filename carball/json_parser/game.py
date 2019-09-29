@@ -266,6 +266,9 @@ class Game:
         self.parties = all_data['parties']
 
         # DROPSHOT EVENTS
+        if 'dropshot_phase' in self.ball:
+            self.ball['dropshot_phase'] = self.ball['dropshot_phase'].astype('int8')
+
         self.dropshot = {
             'damage_events': []
         }
