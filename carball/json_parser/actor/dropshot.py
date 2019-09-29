@@ -48,3 +48,7 @@ class PlatformHandler(BaseActorHandler):
             self.parser.dropshot['damage_events'][frame_number][1].append((tile_id, state, tile_hit))
 
         self.parser.dropshot['tile_states'][tile_id] = state
+
+        if frame_number not in self.parser.dropshot['tile_frames']:
+            self.parser.dropshot['tile_frames'][frame_number] = {}
+        self.parser.dropshot['tile_frames'][frame_number][tile_id] = state

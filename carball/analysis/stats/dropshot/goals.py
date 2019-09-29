@@ -53,3 +53,17 @@ class DropshotGoals(BaseStat):
 
             if closest_id != -1:
                 goal.extra_mode_info.dropshot_tile.id = closest_id
+
+            # find the previous damage frame
+            damage_frame = max(filter(lambda x: x <= frame, game.dropshot['tile_frames'].keys()))
+
+            # get the team tile states
+            team_tiles = get_team_tiles(game.map, team ^ 1)
+            tile_states = {k: v for (k, v) in game.dropshot['tile_frames'][damage_frame].items() if k in team_tiles}
+
+            # get number of damaged tiles
+            damaged_tiles = sum(1 for _ in filter(lambda x: x == 1, tile_states.values()))
+            destroyed_tiles = sum(1 for _ in filter(lambda x: x == 2, tile_states.values()))
+
+            goal.extra_mode_info.phase_1_tiles = damaged_tiles
+            goal.extra_mode_info.phase_2_tiles = destroyed_tiles

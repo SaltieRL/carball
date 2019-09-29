@@ -296,6 +296,10 @@ class Game:
                 'tiles': damage[1]
             })
 
+        damage_frames = set(damage_events.keys())
+        self.dropshot['tile_frames'] =\
+            {k: v for (k, v) in all_data['dropshot']['tile_frames'].items() if k in damage_frames}
+
         self.dropshot['ball_events'] = ball_events
 
         del self.replay_data

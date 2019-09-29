@@ -123,7 +123,8 @@ class FrameParser(object):
             'tile_states': {},
             'damage_events': {},
             'ball_state': 0,
-            'ball_events': []
+            'ball_events': [],
+            'tile_frames': {}
         }
 
     def parse_frames(self):

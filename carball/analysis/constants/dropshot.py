@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 
 # taken from https://github.com/RLBot/RLBot/wiki/Dropshot
 
@@ -157,3 +157,12 @@ _MAPPING = {
 
 def get_tile_positions(map_name: str) -> Optional[Tuple[Tuple]]:
     return _MAPPING.get(map_name, None)
+
+
+def get_team_tiles(map_name: str, team: int) -> List[int] or None:
+    if map_name == 'ShatterShot_P':
+        if team == 0:
+            return list(range(70))
+        else:
+            return list(range(70, 140))
+    return None
