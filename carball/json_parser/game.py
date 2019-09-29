@@ -269,6 +269,10 @@ class Game:
         if 'dropshot_phase' in self.ball:
             self.ball['dropshot_phase'] = self.ball['dropshot_phase'].astype('int8')
 
+        for column in self.frames.columns:
+            if column.startswith('dropshot_tile'):
+                self.frames[column] = self.frames[column].astype('int8')
+
         self.dropshot = {
             'damage_events': []
         }

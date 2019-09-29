@@ -52,3 +52,4 @@ class PlatformHandler(BaseActorHandler):
         if frame_number not in self.parser.dropshot['tile_frames']:
             self.parser.dropshot['tile_frames'][frame_number] = {}
         self.parser.dropshot['tile_frames'][frame_number][tile_id] = state
+        self.parser.frames_data[frame_number][f'dropshot_tile_{tile_id}'] = state
