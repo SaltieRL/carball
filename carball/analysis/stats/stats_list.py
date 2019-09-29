@@ -64,7 +64,8 @@ class StatsList:
                 SpeedTendencies(),
                 ItemGoals(),
                 DropshotGoals(),
-                DropshotBallPhaseTimes()
+                DropshotBallPhaseTimes(),
+                DropshotStats()
                 ]
 
     @staticmethod

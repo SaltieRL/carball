@@ -69,3 +69,33 @@ class DropshotStats(BaseStat):
         for key, stats in team_stat_list.items():
             stats.dropshot_stats.total_damage = team_stats[key]['total']
             stats.dropshot_stats.damage_efficiency = team_stats[key]['total'] / team_stats[key]['max']
+
+    def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                       data_frame: pd.DataFrame):
+        if not is_dropshot(game):
+            return
+
+        tile_stats = {}
+        damaged = 0
+        destroyed = 0
+
+        for event in game.dropshot['damage_events']:
+            for tile_damage in event['tiles']:
+                tile_id = tile_damage[0]
+                if tile_id not in tile_stats:
+                    tile_stats[tile_id] = 1
+                else:
+                    tile_stats[tile_id] += 1
+
+                if tile_damage[1] == 1:
+                    damaged += 1
+                elif tile_damage[1] == 2:
+                    destroyed += 1
+
+        for tile_id, total_damage in tile_stats.items():
+            damage_stat_proto = proto_game.game_stats.dropshot_tile_stats.damage_stats.add()
+            damage_stat_proto.id = tile_id
+            damage_stat_proto.total_damage = total_damage
+
+        proto_game.game_stats.dropshot_tile_stats.damaged_tiles = damaged
+        proto_game.game_stats.dropshot_tile_stats.destroyed_tiles = destroyed

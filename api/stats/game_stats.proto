@@ -3,6 +3,7 @@ syntax = "proto2";
 import "api/stats/events.proto";
 import "api/stats/ball_stats.proto";
 import "api/stats/kickoff.proto";
+import "api/stats/extra_mode_stats.proto";
 package api.stats;
 
 
@@ -17,4 +18,5 @@ message GameStats {
     repeated api.stats.BallCarry ball_carries = 8;
     repeated api.stats.DropshotDamageEvent dropshot_damages = 9;
     repeated api.stats.DropshotBallPhaseChangeEvent dropshot_ball_phase_changes = 10;
+    optional api.stats.DropshotTileStats dropshot_tile_stats = 11;
 }

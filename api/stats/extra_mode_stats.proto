@@ -50,6 +50,17 @@ message DropshotTile {
     optional TileState state = 2;
 }
 
+message DropshotTileDamageStat {
+    optional int32 id = 1;
+    optional int32 total_damage = 2;
+}
+
+message DropshotTileStats {
+    repeated DropshotTileDamageStat damage_stats = 1;
+    optional int32 damaged_tiles = 2;
+    optional int32 destroyed_tiles = 3;
+}
+
 message ExtraModeBallStats {
     repeated DropshotBallPhaseStats dropshot_phase_stats = 1;
 }
