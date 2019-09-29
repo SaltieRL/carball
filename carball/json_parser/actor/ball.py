@@ -37,3 +37,4 @@ class BallHandler(BaseActorHandler):
                     'team': team
                 })
             self.parser.dropshot['ball_state'] = damage_index
+            self.parser.ball_data[frame_number]['dropshot_phase'] = damage_index
