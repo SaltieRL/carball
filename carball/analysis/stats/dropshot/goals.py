@@ -37,9 +37,10 @@ class DropshotGoals(BaseStat):
             closest_distance = TILE_DIAMETER
             closest_id = -1
 
-            team_tiles = tile_positions[:70] if team == 1 else tile_positions[70:]
+            opponent_tile_ids = get_team_tiles(game.map, team ^ 1)
+            opponent_tiles = [tile_positions[i] for i in opponent_tile_ids]
 
-            for tile_id, tile in enumerate(team_tiles):
+            for tile_id, tile in enumerate(opponent_tiles):
 
                 d = math.sqrt(
                     math.pow(ball_pos['pos_x'] - tile[0], 2) +
@@ -58,8 +59,7 @@ class DropshotGoals(BaseStat):
             damage_frame = max(filter(lambda x: x <= frame, game.dropshot['tile_frames'].keys()))
 
             # get the team tile states
-            team_tiles = get_team_tiles(game.map, team ^ 1)
-            tile_states = {k: v for (k, v) in game.dropshot['tile_frames'][damage_frame].items() if k in team_tiles}
+            tile_states = {k: v for (k, v) in game.dropshot['tile_frames'][damage_frame].items() if k in opponent_tile_ids}
 
             # get number of damaged tiles
             damaged_tiles = sum(1 for _ in filter(lambda x: x == 1, tile_states.values()))
