@@ -38,6 +38,10 @@ class DropshotBallPhaseTimes(BaseStat):
             current_frame = ball_event[0]
             current_phase = ball_event[1]
 
+        # last phase
+        phase_time = data_frame['game', 'time'].iloc[-1] - data_frame['game', 'time'].loc[current_frame]
+        phase_air_times[current_phase].append(phase_time)
+
         for phase, times in enumerate(phase_air_times):
             phase_stat_proto = proto_game.game_stats.ball_stats.extra_mode.dropshot_phase_stats.add()
             phase_stat_proto.phase = phase
