@@ -41,6 +41,11 @@ class DropshotBallPhaseTimes(BaseStat):
         for phase, times in enumerate(phase_air_times):
             phase_stat_proto = proto_game.game_stats.ball_stats.extra_mode.dropshot_phase_stats.add()
             phase_stat_proto.phase = phase
-            phase_stat_proto.average = np.mean(times)
-            phase_stat_proto.max = max(times)
-            phase_stat_proto.total = sum(times)
+            if len(times) > 0:
+                phase_stat_proto.average = np.mean(times)
+                phase_stat_proto.max = max(times)
+                phase_stat_proto.total = sum(times)
+            else:
+                phase_stat_proto.average = 0
+                phase_stat_proto.max = 0
+                phase_stat_proto.total = 0
