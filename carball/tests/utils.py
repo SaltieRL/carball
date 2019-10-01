@@ -179,6 +179,12 @@ def get_raw_replays():
         "RUMBLE_FULL": ["RUMBLE_FULL.replay"],
         "RUMBLE_ITEM_KICKOFF": ["RUMBLE_ITEM_KICKOFF.replay"],
 
+        # dropshot
+        "DROPSHOT_SINGLE_DAMAGE": ["DROPSHOT_SINGLE_DAMAGE.replay"],
+        "DROPSHOT_DOUBLE_DAMAGE": ["DROPSHOT_DOUBLE_DAMAGE.replay"],
+        "DROPSHOT_PHASE1_BALL": ["DROPSHOT_PHASE1_BALL.replay"],
+        "DROPSHOT_PHASE2_BALL": ["DROPSHOT_PHASE2_BALL.replay"],
+
         # ratteltrap errors
         "BROKEN_REPLAY": ["INVALID_FILE.replay"]
     }
