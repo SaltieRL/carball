@@ -139,6 +139,12 @@ class Test_Dropshot():
 
         run_analysis_test_on_replay(test, get_raw_replays()["DROPSHOT_PHASE2_BALL"], cache=replay_cache)
 
+    def test_goal(self, replay_cache):
+        def test(analysis: AnalysisManager):
+            proto_game = analysis.get_protobuf_data()
 
-if __name__ == '__main__':
-    Test_Dropshot().test_phase2_ball(None)
+            assert proto_game.game_metadata.goals[0].extra_mode_info.dropshot_tile.id == 89
+            assert proto_game.game_metadata.goals[0].extra_mode_info.phase_1_tiles == 0
+            assert proto_game.game_metadata.goals[0].extra_mode_info.phase_2_tiles == 1
+
+        run_analysis_test_on_replay(test, get_raw_replays()["DROPSHOT_GOAL"], cache=replay_cache)

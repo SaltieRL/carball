@@ -184,6 +184,7 @@ def get_raw_replays():
         "DROPSHOT_DOUBLE_DAMAGE": ["DROPSHOT_DOUBLE_DAMAGE.replay"],
         "DROPSHOT_PHASE1_BALL": ["DROPSHOT_PHASE1_BALL.replay"],
         "DROPSHOT_PHASE2_BALL": ["DROPSHOT_PHASE2_BALL.replay"],
+        "DROPSHOT_GOAL": ["DROPSHOT_GOAL.replay"],
 
         # ratteltrap errors
         "BROKEN_REPLAY": ["INVALID_FILE.replay"]
