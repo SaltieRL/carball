@@ -1,6 +1,7 @@
 syntax = "proto2";
 
 import "api/stats/stats.proto";
+import "api/stats/extra_mode_stats.proto";
 package api.stats;
 
 
@@ -8,4 +9,5 @@ message BallStats {
     optional api.stats.Speed speed = 1;
     optional api.stats.PositionalTendencies positional_tendencies = 2;
     optional api.stats.Averages averages = 3;
+    optional api.stats.ExtraModeBallStats extra_mode = 4;
 }
