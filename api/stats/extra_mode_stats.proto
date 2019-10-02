@@ -1,36 +1,9 @@
 syntax = "proto2";
 
-import "api/player_id.proto";
+import "api/stats/dropshot.proto";
+import "api/stats/rumble.proto";
 
 package api.stats;
-
-enum PowerUp {
-    option allow_alias = true;
-    BALL_FREEZE = 1;
-    BALL_GRAPPLING_HOOK = 2;
-    BALL_LASSO = 3;
-    BATARANG = 3;
-    BALL_SPRING = 4;
-    BALL_VELCRO = 5;
-    BOOST_OVERRIDE = 6;
-    CAR_SPRING = 7;
-    GRAVITY_WELL = 8;
-    STRONG_HIT = 9;
-    SWAPPER = 10;
-    TORNADO = 11;
-}
-
-message RumbleStats {
-    repeated RumbleItemsUsage rumble_items = 1;
-    optional int32 pre_item_goals = 2;
-}
-
-message RumbleItemsUsage {
-    optional PowerUp item = 1;
-    optional int32 used = 2;
-    optional int32 unused = 3;
-    optional float average_hold = 4;
-}
 
 message ExtraModeGoalInfo {
     optional bool pre_items = 1;
@@ -41,59 +14,6 @@ message ExtraModeGoalInfo {
     optional int32 phase_2_tiles = 6;
 }
 
-enum TileState {
-    UNDAMAGED = 0;
-    DAMAGED = 1;
-    DESTROYED = 2;
-}
-
-message DropshotTile {
-    optional int32 id = 1;
-    optional TileState state = 2;
-}
-
-message DropshotTileDamageStat {
-    optional int32 id = 1;
-    optional int32 total_damage = 2;
-}
-
-message DropshotTileStats {
-    repeated DropshotTileDamageStat damage_stats = 1;
-    optional int32 damaged_tiles = 2;
-    optional int32 destroyed_tiles = 3;
-}
-
 message ExtraModeBallStats {
     repeated DropshotBallPhaseStats dropshot_phase_stats = 1;
-}
-
-message DropshotStats {
-    optional int32 total_damage = 1;
-    optional float damage_efficiency = 2;
-}
-
-message DropshotBallPhaseStats {
-    optional int32 phase = 1;
-    optional float average = 2;
-    optional float max = 3;
-    optional float total = 4;
-}
-
-message DropshotDamageEvent {
-    optional api.PlayerId player_id = 1;
-    optional int32 frame_number = 2;
-    optional int32 tile_hit = 3;
-    repeated DropshotTile tiles = 4;
-}
-
-message DropshotBallPhaseChangeEvent {
-    optional int32 frame_number = 1;
-    optional int32 ball_phase = 2;
-    optional api.PlayerId player_id = 3;
-}
-
-message DropshotGameStats {
-    repeated DropshotDamageEvent damage_events = 1;
-    repeated DropshotBallPhaseChangeEvent ball_phase_events = 2;
-    optional DropshotTileStats tile_stats = 3;
 }

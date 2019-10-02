@@ -3,7 +3,7 @@ import unittest
 from carball.analysis.analysis_manager import AnalysisManager
 
 from carball.tests.utils import run_analysis_test_on_replay, get_raw_replays
-from carball.generated.api.stats.extra_mode_stats_pb2 import DAMAGED, DESTROYED
+from carball.generated.api.stats.dropshot_pb2 import DAMAGED, DESTROYED
 
 
 class Test_Dropshot():

@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+package api.stats;
+
+enum PowerUp {
+    option allow_alias = true;
+    BALL_FREEZE = 1;
+    BALL_GRAPPLING_HOOK = 2;
+    BALL_LASSO = 3;
+    BATARANG = 3;
+    BALL_SPRING = 4;
+    BALL_VELCRO = 5;
+    BOOST_OVERRIDE = 6;
+    CAR_SPRING = 7;
+    GRAVITY_WELL = 8;
+    STRONG_HIT = 9;
+    SWAPPER = 10;
+    TORNADO = 11;
+}
+
+message RumbleStats {
+    repeated RumbleItemsUsage rumble_items = 1;
+    optional int32 pre_item_goals = 2;
+}
+
+message RumbleItemsUsage {
+    optional PowerUp item = 1;
+    optional int32 used = 2;
+    optional int32 unused = 3;
+    optional float average_hold = 4;
+}

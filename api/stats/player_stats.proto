@@ -3,7 +3,8 @@ syntax = "proto2";
 import "api/stats/stats.proto";
 import "api/stats/events.proto";
 import "api/stats/per_possession_stats.proto";
-import "api/stats/extra_mode_stats.proto";
+import "api/stats/rumble.proto";
+import "api/stats/dropshot.proto";
 
 package api.stats;
 
