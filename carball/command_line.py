@@ -2,19 +2,8 @@ import argparse
 import carball
 import logging
 import gzip
-import json
-import numpy as np
 from carball.json_parser.game import Game
 from carball.analysis.analysis_manager import AnalysisManager
-from google.protobuf.json_format import _Printer
-
-
-class CarballJsonEncoder(json.JSONEncoder):
-    def default(self, o):
-        # it cannot normally serialize np.int64 and possibly other np data types
-        if type(o).__module__ == np.__name__:
-            return o.item()
-        return super(CarballJsonEncoder, self).default(o)
 
 
 def main():
@@ -65,11 +54,8 @@ def main():
         with open(args.proto, 'wb') as f:
             manager.write_proto_out_to_file(f)
     if args.json:
-        proto_game = manager.get_protobuf_data()
         with open(args.json, 'w') as f:
-            printer = _Printer()
-            js = printer._MessageToJsonObject(proto_game)
-            json.dump(js, f, indent=2, cls=CarballJsonEncoder)
+            manager.write_json_out_to_file(f)
     if args.gzip:
         with gzip.open(args.gzip, 'wb') as f:
             manager.write_pandas_out_to_file(f)
