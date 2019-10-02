@@ -6,6 +6,8 @@ import pandas as pd
 import json
 import os
 
+from google.protobuf.json_format import _Printer
+from .utils.json_encoder import CarballJsonEncoder
 
 script_path = os.path.abspath(__file__)
 with open(os.path.join(os.path.dirname(script_path), 'PROTOBUF_VERSION'), 'r') as f:
@@ -211,3 +213,8 @@ class AnalysisManager:
         #     return False
 
         return True
+
+    def write_json_out_to_file(self, file):
+        printer = _Printer()
+        js = printer._MessageToJsonObject(self.protobuf_game)
+        json.dump(js, file, indent=2, cls=CarballJsonEncoder)
