@@ -30,7 +30,9 @@ class Test_Kickoff():
             assert kickoff_stats.num_time_first_touch == 3
             assert kickoff_stats.num_time_go_to_ball == 3
             assert kickoff_stats.total_kickoffs == 3
-
+            for i in range(len(kickoffs)):
+                player = proto_game.game_stats.kickoffs[i].touch.players[0]
+                assert player.start_left == player.start_position.pos_x > 0
         run_analysis_test_on_replay(test, get_raw_replays()["3_KICKOFFS"])
 
     def test_last_kickoff_no_touch(self):
@@ -66,6 +68,9 @@ class Test_Kickoff():
             second_player_stats = proto_game.players[1].stats.kickoff_stats
             assert second_player_stats.num_time_first_touch == 5
             assert second_player_stats.num_time_go_to_ball == 5
+            for i in range(len(kickoffs)):
+                player = proto_game.game_stats.kickoffs[i].touch.players[0]
+                assert player.start_left == player.start_position.pos_x > 0
 
         run_analysis_test_on_replay(test, get_raw_replays()["5_DIVERSE_KICKOFFS"])
 
@@ -95,5 +100,8 @@ class Test_Kickoff():
             second_player_stats = proto_game.players[1].stats.kickoff_stats
             assert second_player_stats.num_time_first_touch == 5
             assert second_player_stats.num_time_go_to_ball == 6
+            for i in range(len(kickoffs)):
+                player = proto_game.game_stats.kickoffs[i].touch.players[0]
+                assert player.start_left == player.start_position.pos_x > 0
 
         run_analysis_test_on_replay(test, get_raw_replays()["6_DIVERSE_KICKOFFS"])

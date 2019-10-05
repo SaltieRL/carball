@@ -58,13 +58,21 @@ class BaseKickoff:
     def get_player_stats(cur_kickoff, player, data_frame: pd.DataFrame, start_frame: int, end_frame: int):
         kickoff_player = cur_kickoff.touch.players.add()
         kickoff_player.player.id = player.id.id
-        kickoff_player.kickoff_position = BaseKickoff.get_kickoff_position(player, data_frame, start_frame)
+
+        kickoff_player.kickoff_position, kickoff_player.start_left = BaseKickoff.get_kickoff_position(player,
+                                                                                                      data_frame,
+                                                                                                      start_frame)
+
         kickoff_player.touch_position = BaseKickoff.get_touch_position(player, data_frame, start_frame, end_frame)
         kickoff_player.boost = data_frame[player.name]['boost'][end_frame]
         kickoff_player.ball_dist = BaseKickoff.get_dist(data_frame, player.name, end_frame)
         kickoff_player.player_position.pos_x = data_frame[player.name]['pos_x'][end_frame]
         kickoff_player.player_position.pos_y = data_frame[player.name]['pos_y'][end_frame]
         kickoff_player.player_position.pos_z = data_frame[player.name]['pos_z'][end_frame]
+
+        kickoff_player.start_position.pos_x = data_frame[player.name]['pos_x'][start_frame]
+        kickoff_player.start_position.pos_y = data_frame[player.name]['pos_y'][start_frame]
+        kickoff_player.start_position.pos_z = data_frame[player.name]['pos_z'][start_frame]
         BaseKickoff.set_jumps(kickoff_player, player, data_frame, start_frame, end_frame)
         return kickoff_player
 
@@ -130,13 +138,17 @@ class BaseKickoff:
     def get_kickoff_position(player_class: Player, data_frame: pd.DataFrame, frame: int):
         player = player_class.name
         player_df = data_frame[player]
-        if abs(abs(player_df['pos_x'][frame]) - 2050) < 100:
-            return kickoff.DIAGONAL
-        if abs(abs(player_df['pos_x'][frame]) - 256) < 100:
-            return kickoff.OFFCENTER
-        if abs(abs(player_df['pos_x'][frame])) < 4:
-            return kickoff.GOALIE
-        return kickoff.UNKNOWN_KICKOFF_POS
+        pos_x = player_df['pos_x'][frame]
+        less_than_zero = ~((pos_x < 0) ^ player_class.is_orange)
+        kickoff_position = kickoff.UNKNOWN_KICKOFF_POS
+        if abs(abs(pos_x) - 2050) < 100:
+            kickoff_position = kickoff.DIAGONAL
+        elif abs(abs(pos_x) - 256) < 100:
+            kickoff_position = kickoff.OFFCENTER
+        elif abs(abs(pos_x)) < 4:
+            kickoff_position = kickoff.GOALIE
+
+        return kickoff_position, less_than_zero
 
     @staticmethod
     def get_dist(data_frame: pd.DataFrame, player: str, frame: int):
