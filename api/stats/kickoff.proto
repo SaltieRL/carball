@@ -52,27 +52,29 @@ enum TouchPosition {
 };
 
 message PlayerPositionData {
-    optional float pos_x = 1;
-    optional float pos_y = 2;
-    optional float pos_z = 3;
+  optional float pos_x = 1;
+  optional float pos_y = 2;
+  optional float pos_z = 3;
 }
 
 message KickoffPlayer {
-optional api.PlayerId player = 1;
-optional KickoffPosition kickoff_position = 2;
-optional TouchPosition touch_position = 3;
-optional PlayerPositionData player_position = 4;
-optional float boost = 5;
-repeated float jumps = 6;
-optional float ball_dist = 7;
-optional float boost_time = 8;
+  optional api.PlayerId player = 1;
+  optional KickoffPosition kickoff_position = 2;
+  optional TouchPosition touch_position = 3;
+  optional PlayerPositionData player_position = 4; // Players position when the ball was touched
+  optional float boost = 5;
+  repeated float jumps = 6;
+  optional float ball_dist = 7;
+  optional float boost_time = 8;
 };
 
 message Touch {
-repeated KickoffPlayer players = 1; // info about each player at the point of the touch
-optional float kickoff_goal = 2;  // time until next goal
-optional bool orange_team_goal = 3;
+  repeated KickoffPlayer players = 1; // info about each player at the point of the touch
+  optional float kickoff_goal = 2;  // time until next goal
+  optional bool orange_team_goal = 3; // Who scores the next goal
+  optional api.PlayerId first_touch_player = 4;
 };
+
 message KickoffStats {
   optional int32 start_frame = 1;
   optional int32 touch_frame = 2;

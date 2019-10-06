@@ -6,6 +6,8 @@ import pandas as pd
 import json
 import os
 
+from google.protobuf.json_format import _Printer
+from .utils.json_encoder import CarballJsonEncoder
 
 script_path = os.path.abspath(__file__)
 with open(os.path.join(os.path.dirname(script_path), 'PROTOBUF_VERSION'), 'r') as f:
@@ -126,6 +128,10 @@ class AnalysisManager:
         kickoff_frames = SaltieGame.get_kickoff_frames(game)
         first_touch_frames = SaltieGame.get_first_touch_frames(game)
 
+        if len(kickoff_frames) > len(first_touch_frames):
+            # happens when the game ends before anyone touches the ball at kickoff
+            kickoff_frames = kickoff_frames[:len(first_touch_frames)]
+
         for goal_number, goal in enumerate(game.goals):
             data_frame.loc[
             kickoff_frames[goal_number]: goal.frame_number, ('game', 'goal_number')
@@ -207,3 +213,8 @@ class AnalysisManager:
         #     return False
 
         return True
+
+    def write_json_out_to_file(self, file):
+        printer = _Printer()
+        js = printer._MessageToJsonObject(self.protobuf_game)
+        json.dump(js, file, indent=2, cls=CarballJsonEncoder)

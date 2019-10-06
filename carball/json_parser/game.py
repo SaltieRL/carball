@@ -47,6 +47,7 @@ class Game:
         self.ball_type = None
         self.demos = None
         self.parties = None
+        self.dropshot = None
 
     def initialize(self, file_path='', loaded_json=None, parse_replay: bool = True, clean_player_names: bool = False):
         self.file_path = file_path
@@ -214,6 +215,7 @@ class Game:
             found_player.parse_data(all_data['player_ball_data'][_player_actor_id])
             # camera_settings might not exist (see 0AF8AC734890E6D3995B829E474F9924)
             found_player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}).get('cam_settings', {}))
+            found_player.get_data_from_car(all_data['car_dicts'].get(_player_actor_id, None))
 
             for team in self.teams:
                 if found_player.is_orange == team.is_orange:
@@ -238,6 +240,7 @@ class Game:
 
         # DEMOS
         self.demos = []
+        demo_map = dict()
         for _demo_data in all_data['demos_data']:
             demo = {
                 'frame_number': _demo_data['frame_number'],
@@ -250,11 +253,74 @@ class Game:
                                _demo_data["victim_velocity"]["y"],
                                _demo_data["victim_velocity"]["z"],),
             }
-            self.demos.append(demo)
+
+            # Key created to prevent duplicate demo counts
+            key = (int(_demo_data["attacker_velocity"]["x"]) + int(_demo_data["attacker_velocity"]["y"]) + int(_demo_data["attacker_velocity"]["z"]) +
+                   int(_demo_data["victim_velocity"]["x"]) + int(_demo_data["victim_velocity"]["y"]) + int(_demo_data["victim_velocity"]["z"]))
+            Game.add_demo_to_map(key, demo, demo_map)
+
+        self.demos = list(demo_map.values())
+
 
         # PARTIES
         self.parties = all_data['parties']
 
+        # DROPSHOT EVENTS
+        if 'dropshot_phase' in self.ball:
+            self.ball['dropshot_phase'] = self.ball['dropshot_phase'].astype('int8')
+
+        for column in self.frames.columns:
+            if column.startswith('dropshot_tile'):
+                self.frames[column] = self.frames[column].astype('int8')
+
+        self.dropshot = {
+            'damage_events': []
+        }
+
+        damage_events = all_data['dropshot']['damage_events']
+        ball_events = all_data['dropshot']['ball_events']
+
+        if len(damage_events) > 1:
+            # sometimes damages can trickle over to the next frame, clean those up
+            frames = list(damage_events.keys())
+
+            for i in range(len(frames) - 1):
+                if frames[i] + 1 == frames[i + 1] and damage_events[frames[i]][0] == damage_events[frames[i + 1]][0]:
+                    ball_event = next(event for event in reversed(ball_events) if event['frame_number'] < frames[i])
+                    ball_phase = ball_event['state']
+
+                    # check if the total damage of the two frames is not more than it could be
+                    if (ball_phase == 1 and len(damage_events[frames[i]][1]) + len(damage_events[frames[i + 1]][1])) <= 7 or \
+                            (ball_phase == 2 and len(damage_events[frames[i]][1]) + len(damage_events[frames[i + 1]][1]) <= 19):
+                        damage_events[frames[i]][1].extend(damage_events[frames[i + 1]][1])
+                        damage_events.pop(frames[i + 1])
+                        i += 1
+
+        for frame_number, damage in damage_events.items():
+            self.dropshot['damage_events'].append({
+                'frame_number': frame_number,
+                'player': player_actor_id_player_dict[damage[0]],
+                'tiles': damage[1]
+            })
+
+        damage_frames = set(damage_events.keys())
+        self.dropshot['tile_frames'] =\
+            {k: v for (k, v) in all_data['dropshot']['tile_frames'].items() if k in damage_frames}
+
+        self.dropshot['ball_events'] = ball_events
+
         del self.replay_data
         del self.replay
         del self.all_data
+
+    @staticmethod
+    def add_demo_to_map(key, demo, demo_map):
+        if key in demo_map:
+            old_demo = demo_map[key]
+            if demo['attacker'] == old_demo['attacker'] and demo['victim'] == old_demo['victim']:
+                if demo['frame_number'] < old_demo['frame_number']:
+                    demo_map[key] = demo
+                return
+            Game.add_demo_to_map(key + 1, demo, demo_map)
+        else:
+            demo_map[key] = demo

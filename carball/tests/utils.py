@@ -84,6 +84,8 @@ def get_complex_replay_list():
         'OCE_RLCS_7_CARS.replay',
         'crossplatform_party.replay',
         'PARTY_LEADER_SYSTEM_ID_0.replay',
+        'RL_1_66.replay',
+        'CARRY.replay'
     ]
 
 
@@ -96,7 +98,7 @@ def get_raw_replays():
         "0_JUMPS": ["0_JUMPS.replay"],
         "0_SAVES": ["0_SAVES.replay"],
         "1_AERIAL": ["1_AERIAL.replay"],
-        "1_DEMO": ["1_DEMO.replay"],
+        "1_DEMO": ["1_DEMO.replay", "1_DEMO_1_63.replay"],
         "1_DOUBLE_JUMP": ["1_DOUBLE_JUMP.replay"],
         "1_EPIC_SAVE": ["1_EPIC_SAVE.replay"],
         "1_JUMP": ["1_JUMP.replay"],
@@ -120,7 +122,10 @@ def get_raw_replays():
         # Kickoffs
         "STRAIGHT_KICKOFF_GOAL": ["Straight_Kickoff_Goal.replay"],
         "KICKOFF_NO_TOUCH": ["NO_KICKOFF.replay"],
+        "LAST_KICKOFF_NO_TOUCH": ["LAST_KICKOFF_NO_TOUCH.replay"],
         "3_KICKOFFS": ["3_KICKOFFS_4_SHOTS.replay"],
+        "5_DIVERSE_KICKOFFS": ["KICKOFF_TEST_1.replay"],
+        "6_DIVERSE_KICKOFFS": ["KICKOFF_TEST_2.replay"],
 
         # hits
         "4_SHOTS": ["3_KICKOFFS_4_SHOTS.replay"],
@@ -172,6 +177,14 @@ def get_raw_replays():
         "RUMBLE_FREEZE_VS_SPIKE": ["RUMBLE_FREEZE_VS_SPIKE.replay"],
         "RUMBLE_HOLD_TIME": ["RUMBLE_HOLD_TIME.replay"],
         "RUMBLE_FULL": ["RUMBLE_FULL.replay"],
+        "RUMBLE_ITEM_KICKOFF": ["RUMBLE_ITEM_KICKOFF.replay"],
+
+        # dropshot
+        "DROPSHOT_SINGLE_DAMAGE": ["DROPSHOT_SINGLE_DAMAGE.replay"],
+        "DROPSHOT_DOUBLE_DAMAGE": ["DROPSHOT_DOUBLE_DAMAGE.replay"],
+        "DROPSHOT_PHASE1_BALL": ["DROPSHOT_PHASE1_BALL.replay"],
+        "DROPSHOT_PHASE2_BALL": ["DROPSHOT_PHASE2_BALL.replay"],
+        "DROPSHOT_GOAL": ["DROPSHOT_GOAL.replay"],
 
         # ratteltrap errors
         "BROKEN_REPLAY": ["INVALID_FILE.replay"]

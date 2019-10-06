@@ -1,6 +1,7 @@
 from typing import List
 
 from carball.analysis.stats.dribbles.ball_carry import CarryStat
+from carball.analysis.stats.kickoffs.kickoff_stat import KickoffStat
 from carball.analysis.stats.possession.per_possession import PerPossessionStat
 from carball.analysis.stats.ball_forward.distance_hit_ball_forward import DistanceStats
 from carball.analysis.stats.boost.boost import BoostStat
@@ -17,6 +18,9 @@ from carball.analysis.stats.tendencies.speed_tendencies import SpeedTendencies
 from carball.analysis.stats.tendencies.team_tendencies import TeamTendencies
 from carball.analysis.stats.rumble.rumble import RumbleItemStat
 from carball.analysis.stats.rumble.goals import PreRumbleGoals, ItemGoals
+from carball.analysis.stats.dropshot.goals import DropshotGoals
+from carball.analysis.stats.dropshot.ball_phase_times import DropshotBallPhaseTimes
+from carball.analysis.stats.dropshot.damage import DropshotStats
 
 
 class StatsList:
@@ -36,7 +40,9 @@ class StatsList:
                 CarryStat(),
                 PerPossessionStat(),
                 SpeedTendencies(),
-                RumbleItemStat()
+                RumbleItemStat(),
+                KickoffStat(),
+                DropshotStats()
                 ]
 
     @staticmethod
@@ -47,7 +53,8 @@ class StatsList:
                 RelativeTendencies(),
                 PerPossessionStat(),
                 RumbleItemStat(),
-                PreRumbleGoals()
+                PreRumbleGoals(),
+                DropshotStats()
                 ]
 
     @staticmethod
@@ -55,7 +62,10 @@ class StatsList:
         """These are stats that end up being assigned to the game as a whole"""
         return [PositionalTendencies(),
                 SpeedTendencies(),
-                ItemGoals()
+                ItemGoals(),
+                DropshotGoals(),
+                DropshotBallPhaseTimes(),
+                DropshotStats()
                 ]
 
     @staticmethod

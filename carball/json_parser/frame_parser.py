@@ -15,7 +15,8 @@ _HANDLERS = [
     BoostHandler,
     BoostPickupHandler,
     CameraSettingsHandler,
-    RumbleItemHandler
+    RumbleItemHandler,
+    PlatformHandler
 ]
 
 _PRIORITY_HANDLERS = [
@@ -75,13 +76,15 @@ def parse_frames(game):
     return {
         'player_ball_data': player_ball_data,
         'player_dicts': parser.player_dicts,
+        'car_dicts': parser.car_dicts,
         'team_dicts': parser.team_dicts,
         'frames_data': parser.frames_data,
         'cameras_data': parser.cameras_data,
         'demos_data': parser.demos_data,
         'game_info_actor': parser.game_info_actor,
         'soccar_game_event_actor': parser.soccar_game_event_actor,
-        'parties': parser.parties
+        'parties': parser.parties,
+        'dropshot': parser.dropshot
     }
 
 
@@ -103,6 +106,7 @@ class FrameParser(object):
         self.parties = {}
         self.player_dicts = {}
         self.team_dicts = {}
+        self.car_dicts = {}
 
         self.player_car_ids = {}  # player_actor_id: car_actor_id
         self.car_player_ids = {}  # car_actor_id: player_actor_id
@@ -114,6 +118,14 @@ class FrameParser(object):
         self.current_car_ids_to_collect = []
 
         self.actors = {}
+
+        self.dropshot = {
+            'tile_states': {},
+            'damage_events': {},
+            'ball_state': 0,
+            'ball_events': [],
+            'tile_frames': {}
+        }
 
     def parse_frames(self):
 

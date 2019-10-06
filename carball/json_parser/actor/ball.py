@@ -26,3 +26,15 @@ class BallHandler(BaseActorHandler):
 
         ball_data = BallActor.get_data_dict(actor, self.parser.replay_version)
         self.parser.ball_data[frame_number] = ball_data
+
+        if self.parser.game.ball_type == mutators.BREAKOUT:
+            damage_index = actor.get('TAGame.Ball_Breakout_TA:DamageIndex', 0)
+            if damage_index > self.parser.dropshot['ball_state']:
+                team = actor.get('TAGame.Ball_Breakout_TA:LastTeamTouch')
+                self.parser.dropshot['ball_events'].append({
+                    'state': damage_index,
+                    'frame_number': frame_number,
+                    'team': team
+                })
+            self.parser.dropshot['ball_state'] = damage_index
+            self.parser.ball_data[frame_number]['dropshot_phase'] = damage_index
