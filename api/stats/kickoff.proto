@@ -66,6 +66,8 @@ message KickoffPlayer {
   repeated float jumps = 6;
   optional float ball_dist = 7;
   optional float boost_time = 8;
+  optional bool start_left = 9; // if the position was on the left side or the right side
+  optional PlayerPositionData start_position = 10; // Players position for the first frame of the kickoff.
 };
 
 message Touch {
