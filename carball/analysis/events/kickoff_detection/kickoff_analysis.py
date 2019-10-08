@@ -139,7 +139,7 @@ class BaseKickoff:
         player = player_class.name
         player_df = data_frame[player]
         pos_x = player_df['pos_x'][frame]
-        less_than_zero = ~((pos_x < 0) ^ player_class.is_orange)
+        start_left = not ((pos_x < 0) ^ player_class.is_orange)
         kickoff_position = kickoff.UNKNOWN_KICKOFF_POS
         if abs(abs(pos_x) - 2050) < 100:
             kickoff_position = kickoff.DIAGONAL
@@ -148,7 +148,7 @@ class BaseKickoff:
         elif abs(abs(pos_x)) < 4:
             kickoff_position = kickoff.GOALIE
 
-        return kickoff_position, less_than_zero
+        return kickoff_position, start_left
 
     @staticmethod
     def get_dist(data_frame: pd.DataFrame, player: str, frame: int):
