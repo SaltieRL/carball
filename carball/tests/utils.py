@@ -24,6 +24,10 @@ def run_tests_on_list(unit_test_func: Callable, replay_list=None, answers=None):
         run_replay(replay_file, unit_test_func, answer=answer)
 
 
+def get_replay_path(replay_file):
+    return os.path.join(REPLAYS_FOLDER, replay_file)
+
+
 def run_replay(replay_file, unit_test_func: Callable, answer=None):
     """
     Runs the replay with the file downloaded locally then deletes the file.
@@ -32,7 +36,7 @@ def run_replay(replay_file, unit_test_func: Callable, answer=None):
     :param answer: data that can be passed to the replay to help judge it
     :return:
     """
-    file = os.path.join(REPLAYS_FOLDER, replay_file)
+    file = get_replay_path(replay_file)
 
     fd, file_path = tempfile.mkstemp()
     os.close(fd)

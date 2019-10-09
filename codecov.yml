@@ -45,4 +45,5 @@ ignore:
   - init.py
   - setup.py
   - command_line.py
+  - carball/controls/*
 
