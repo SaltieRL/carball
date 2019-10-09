@@ -4,7 +4,6 @@ import logging
 import gzip
 from carball.json_parser.game import Game
 from carball.analysis.analysis_manager import AnalysisManager
-from google.protobuf.json_format import MessageToJson
 
 
 def main():
@@ -55,9 +54,8 @@ def main():
         with open(args.proto, 'wb') as f:
             manager.write_proto_out_to_file(f)
     if args.json:
-        proto_game = manager.get_protobuf_data()
         with open(args.json, 'w') as f:
-            f.write(MessageToJson(proto_game))
+            manager.write_json_out_to_file(f)
     if args.gzip:
         with gzip.open(args.gzip, 'wb') as f:
             manager.write_pandas_out_to_file(f)

@@ -30,7 +30,11 @@ class Test_Kickoff():
             assert kickoff_stats.num_time_first_touch == 3
             assert kickoff_stats.num_time_go_to_ball == 3
             assert kickoff_stats.total_kickoffs == 3
-
+            for i in range(len(kickoffs)):
+                kickoff = proto_game.game_stats.kickoff_stats[i]
+                player = kickoff.touch.players[0]
+                start_left = player.start_position.pos_x > 0
+                assert player.start_left == start_left
         run_analysis_test_on_replay(test, get_raw_replays()["3_KICKOFFS"])
 
     def test_last_kickoff_no_touch(self):
@@ -53,7 +57,6 @@ class Test_Kickoff():
             proto_game = analysis.get_protobuf_data()
             kickoffs = proto_game.game_stats.kickoffs
             assert (len(kickoffs) == 5)
-
             first_player = proto_game.players[0].stats
             kickoff_stats = first_player.kickoff_stats
             assert kickoff_stats.num_time_first_touch == 0
@@ -66,6 +69,11 @@ class Test_Kickoff():
             second_player_stats = proto_game.players[1].stats.kickoff_stats
             assert second_player_stats.num_time_first_touch == 5
             assert second_player_stats.num_time_go_to_ball == 5
+            for i in range(len(kickoffs)):
+                kickoff = proto_game.game_stats.kickoff_stats[i]
+                player = kickoff.touch.players[0]
+                start_left = player.start_position.pos_x < 0
+                assert player.start_left == start_left
 
         run_analysis_test_on_replay(test, get_raw_replays()["5_DIVERSE_KICKOFFS"])
 
@@ -95,5 +103,10 @@ class Test_Kickoff():
             second_player_stats = proto_game.players[1].stats.kickoff_stats
             assert second_player_stats.num_time_first_touch == 5
             assert second_player_stats.num_time_go_to_ball == 6
+            for i in range(len(kickoffs)):
+                kickoff = proto_game.game_stats.kickoff_stats[i]
+                player = kickoff.touch.players[0]
+                start_left = player.start_position.pos_x < 0
+                assert player.start_left == start_left
 
         run_analysis_test_on_replay(test, get_raw_replays()["6_DIVERSE_KICKOFFS"])
