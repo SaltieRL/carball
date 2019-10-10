@@ -48,8 +48,8 @@ stages:
 jobs:
   include:
     - stage: deploy
-      script: skip
-      after_success: skip
+      script: echo "move on to deploy"
+      after_success: "move on to deploy"
       deploy:
       - provider: releases
         api_key:
