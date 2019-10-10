@@ -49,7 +49,7 @@ jobs:
   include:
     - stage: deploy
       script: echo "move on to deploy"
-      after_success: "move on to deploy"
+      after_success: echo "move on to deploy"
       deploy:
       - provider: releases
         api_key:
