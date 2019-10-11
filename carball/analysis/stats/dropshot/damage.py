@@ -42,7 +42,9 @@ class DropshotStats(BaseStat):
 
         for key, stats in player_stat_map.items():
             stats.dropshot_stats.total_damage = player_stats[key]['total']
-            stats.dropshot_stats.damage_efficiency = player_stats[key]['total'] / player_stats[key]['max']
+            max_damage = player_stats[key]['max']
+            if max_damage is not None and max_damage != 0:
+                stats.dropshot_stats.damage_efficiency = player_stats[key]['total'] / max_damage
 
     def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game, proto_game: game_pb2.Game,
                             player_map: Dict[str, Player], data_frame: pd.DataFrame):
