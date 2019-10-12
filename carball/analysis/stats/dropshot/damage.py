@@ -40,9 +40,7 @@ class DropshotStats(BaseStat):
             player_stats[player_id]['total'] += len(event['tiles'])
             player_stats[player_id]['max'] += max_dmg
 
-        for key, stats in player_stat_map.items():
-            stats.dropshot_stats.total_damage = player_stats[key]['total']
-            stats.dropshot_stats.damage_efficiency = player_stats[key]['total'] / player_stats[key]['max']
+        self.apply_damage_stats(player_stat_map, player_stats)
 
     def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game, proto_game: game_pb2.Game,
                             player_map: Dict[str, Player], data_frame: pd.DataFrame):
@@ -66,13 +64,7 @@ class DropshotStats(BaseStat):
             team_stats[team]['total'] += len(event['tiles'])
             team_stats[team]['max'] += max_dmg
 
-        for key, stats in team_stat_list.items():
-            stats.dropshot_stats.total_damage = team_stats[key]['total']
-
-            if team_stats[key]['max'] > 0:
-                stats.dropshot_stats.damage_efficiency = team_stats[key]['total'] / team_stats[key]['max']
-            else:
-                stats.dropshot_stats.damage_efficiency = 0
+        self.apply_damage_stats(team_stat_list, team_stats)
 
     def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                        data_frame: pd.DataFrame):
@@ -103,3 +95,12 @@ class DropshotStats(BaseStat):
 
         proto_game.game_stats.dropshot_stats.tile_stats.damaged_tiles = damaged
         proto_game.game_stats.dropshot_stats.tile_stats.destroyed_tiles = destroyed
+
+    def apply_damage_stats(self, stat_list, game_stats):
+        for key, stats in stat_list.items():
+            stats.dropshot_stats.total_damage = game_stats[key]['total']
+
+            if game_stats[key]['max'] > 0:
+                stats.dropshot_stats.damage_efficiency = game_stats[key]['total'] / game_stats[key]['max']
+            else:
+                stats.dropshot_stats.damage_efficiency = 0
