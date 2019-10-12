@@ -61,12 +61,12 @@ message KickoffPlayer {
   optional api.PlayerId player = 1;
   optional KickoffPosition kickoff_position = 2;
   optional TouchPosition touch_position = 3;
-  optional PlayerPositionData player_position = 4; // Players position when the ball was touched
-  optional float boost = 5;
-  repeated float jumps = 6;
-  optional float ball_dist = 7;
-  optional float boost_time = 8;
-  optional bool start_left = 9; // if the position was on the left side or the right side
+  optional PlayerPositionData player_position = 4; // Players position when the ball was touched.
+  optional float boost = 5; // The amount of boost the player has when the ball was touched.
+  repeated float jumps = 6; // The number of times the player jumped during the kickoff.
+  optional float ball_dist = 7; // Distance from the ball when it was touched.
+  optional float boost_time = 8; // The time it took for the player to collect the big boost.
+  optional bool start_left = 9; // if the position was on the left side or the right side.
   optional PlayerPositionData start_position = 10; // Players position for the first frame of the kickoff.
 };
 
