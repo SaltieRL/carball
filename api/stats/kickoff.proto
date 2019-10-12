@@ -63,7 +63,7 @@ message KickoffPlayer {
   optional TouchPosition touch_position = 3;
   optional PlayerPositionData player_position = 4; // Players position when the ball was touched.
   optional float boost = 5; // The amount of boost the player has when the ball was touched.
-  repeated float jumps = 6; // The number of times the player jumped during the kickoff.
+  repeated float jumps = 6; // A list of the times where a player jump occurs
   optional float ball_dist = 7; // Distance from the ball when it was touched.
   optional float boost_time = 8; // The time it took for the player to collect the big boost.
   optional bool start_left = 9; // if the position was on the left side or the right side.
