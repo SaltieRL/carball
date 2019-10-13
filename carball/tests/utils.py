@@ -254,7 +254,7 @@ def get_specific_answers():
         "DRIBBLES": [1, 3, 49],
         "FLICKS": [0, 1, 0],
         "SAVES": [1, 0],
-        "CLEARS": [1, 2]
+        "CLEARS": [1, 2],
     }
 
 

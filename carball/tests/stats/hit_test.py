@@ -104,3 +104,21 @@ class Test_Hits():
         run_analysis_test_on_replay(test, replay_list=get_specific_replays()["CLEARS"],
                                     answers=get_specific_answers()["CLEARS"],
                                     cache=replay_cache)
+
+    def test_total_clears_detected(self, replay_cache):
+        def test(analysis: AnalysisManager, answer):
+            clears_lookup = {'76561198204422936':6, # Decka
+                       '76561198050413646': 1,      # Requeim
+                       '76561198058420486': 6,      # Delusion
+                       '76561197998103705': 4,      # CJCJ
+                       '76561198065500375': 1,      # Express
+                       '76561198173645057': 2}      # Shadey
+            proto_game = analysis.get_protobuf_data()
+            for pl in proto_game.players:
+                expected_total_clears = clears_lookup[pl.id.id]
+                calculated_total_clears = pl.stats.hit_counts.total_clears
+                assert(expected_total_clears == calculated_total_clears)
+
+        run_analysis_test_on_replay(test, replay_list=get_raw_replays()["OCE_RLCS_7_CARS"],
+                                    answers=get_specific_answers()["CLEARS"],
+                                    cache=replay_cache)
