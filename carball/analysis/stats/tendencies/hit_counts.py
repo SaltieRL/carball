@@ -30,6 +30,8 @@ class HitCountStat(HitStat):
             hit_count.total_saves += 1
         if saltie_hit.aerial:
             hit_count.total_aerials += 1
+        if saltie_hit.clear:
+            hit_count.total_clears += 1
         hit_count.total_hits += 1
 
     def calculate_next_hit_stat(self, game: Game, proto_game: game_pb2.Game, saltie_hit: Hit, next_saltie_hit: Hit,
