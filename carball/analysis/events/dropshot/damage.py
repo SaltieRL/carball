@@ -12,7 +12,7 @@ def create_dropshot_damage_events(game: Game, proto_game: game_pb2.Game):
     for event in game.dropshot['damage_events']:
         proto_damage_event = proto_damages.add()
         proto_damage_event.frame_number = event['frame_number']
-        proto_damage_event.player_id.id = event['player'].online_id
+        proto_damage_event.player_id.id = str(event['player'].online_id)
 
         for tile in event['tiles']:
             proto_tile = proto_damage_event.tiles.add()

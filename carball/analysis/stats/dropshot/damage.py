@@ -36,7 +36,7 @@ class DropshotStats(BaseStat):
                 max_dmg = 7
             elif ball_phase == 2:
                 max_dmg = 19
-            player_id = event['player'].online_id
+            player_id = str(event['player'].online_id)
             player_stats[player_id]['total'] += len(event['tiles'])
             player_stats[player_id]['max'] += max_dmg
 
@@ -60,7 +60,7 @@ class DropshotStats(BaseStat):
             elif ball_phase == 2:
                 max_dmg = 19
 
-            team = player_map[event['player'].online_id].is_orange
+            team = player_map[str(event['player'].online_id)].is_orange
             team_stats[team]['total'] += len(event['tiles'])
             team_stats[team]['max'] += max_dmg
 
