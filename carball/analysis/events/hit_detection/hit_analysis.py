@@ -139,7 +139,6 @@ class SaltieHit:
         player =  player_map[saltie_hit.player_id.id]
 
         # get y-pos of ball to determine if the hit occurs in a player's defending third
-        frame = saltie_hit.frame_number
         y_pos = saltie_hit.ball_data.pos_y
         defending_on_orange = (player.is_orange and y_pos > (STANDARD_FIELD_LENGTH_HALF/3 + CLEAR_BUFFER))
         defending_on_blue = (not player.is_orange and y_pos < ((-1)*STANDARD_FIELD_LENGTH_HALF/3 - CLEAR_BUFFER))
@@ -150,12 +149,21 @@ class SaltieHit:
 
         # determine if hit passed the buffer to be considered a clear
         if next_saltie_hit is not None:
+
+            # check edge case where an own goal moves the ball to the middle
+            goals_at_hit = data_frame.game.iloc[saltie_hit.frame_number].goal_number
+            goals_at_next_hit = data_frame.game.iloc[next_saltie_hit.frame_number].goal_number
+            if goals_at_hit != goals_at_next_hit:
+                # lol they own-goaled
+                return
+
             # find next hit, determine if this hit went far enough
             next_y = next_saltie_hit.ball_data.pos_y
             orange_reached_neutral_third = (player.is_orange and next_y < (STANDARD_FIELD_LENGTH_HALF/3 - CLEAR_BUFFER))
             blue_reached_neutral_third = (not player.is_orange and next_y > ((-1)*STANDARD_FIELD_LENGTH_HALF/3 + CLEAR_BUFFER))
             if orange_reached_neutral_third or blue_reached_neutral_third:
                 saltie_hit.clear = True
+
         else:
             # a big hit to end the game should also count as a clear
             distance = saltie_hit.distance
