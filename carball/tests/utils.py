@@ -116,6 +116,7 @@ def get_raw_replays():
         "NO_BOOST_PAD_0_USED": ["NO_BOOST_PAD_0_USED.replay"],
         "NO_BOOST_PAD_33_USED": ["NO_BOOST_PAD_33_USED.replay"],
         "12_AND_100_BOOST_PADS_0_USED": ["12_AND_100_BOOST_PADS_0_USED.replay", "1_100_1_12_0_BOOST_168.replay"],
+        "1_12_AND_1_100_PADS_0_USED": ["1_100_1_12_0_BOOST_168.replay"],
         "WASTED_BOOST_WHILE_SUPER_SONIC": ["WASTED_BOOST_WHILE_SUPER_SONIC.replay"],
         "CALCULATE_USED_BOOST_WITH_DEMO": ["CALCULATE_USED_BOOST_WITH_DEMO.replay"],
         "CALCULATE_USED_BOOST_DEMO_WITH_FLIPS": ["CALCULATE_USED_BOOST_DEMO_WITH_FLIPS.replay"],
@@ -202,11 +203,11 @@ def get_specific_replays():
         "0_BOOST_COLLECTED": raw_map["NO_BOOST_PAD_0_USED"] + raw_map["NO_BOOST_PAD_33_USED"] +
                              raw_map["KICKOFF_NO_TOUCH"],
         "1_SMALL_PAD": raw_map["12_BOOST_PAD_0_USED"] + raw_map["12_BOOST_PAD_45_USED"] +
-                        raw_map['12_AND_100_BOOST_PADS_0_USED'],
+                        raw_map['1_12_AND_1_100_PADS_0_USED'],
         "1_LARGE_PAD": raw_map["100_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_100_USED"] +
                         raw_map['12_AND_100_BOOST_PADS_0_USED'],
         "0_BOOST_USED": raw_map["12_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_0_USED"] +
-                        raw_map["NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"],
+                        raw_map["NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"] + raw_map['12_AND_100_BOOST_PADS_0_USED'],
         "BOOST_USED": raw_map["12_BOOST_PAD_45_USED"] +
                       raw_map["100_BOOST_PAD_100_USED"] +
                       raw_map["NO_BOOST_PAD_33_USED"] +
