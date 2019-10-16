@@ -58,6 +58,6 @@ class BoostPickupHandler(BaseActorHandler):
     def get_boost_actor(actor: dict):
         if REPLICATED_PICKUP_KEY in actor:
             return actor[REPLICATED_PICKUP_KEY]
-        else if REPLICATED_PICKUP_KEY_168 in actor:
+        elif REPLICATED_PICKUP_KEY_168 in actor:
             return actor[REPLICATED_PICKUP_KEY_168]
         return None
