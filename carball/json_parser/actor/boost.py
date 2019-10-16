@@ -2,7 +2,7 @@ from .base import *
 
 BOOST_PER_SECOND = 80 * 1 / .93  # boost used per second out of 255
 REPLICATED_PICKUP_KEY = 'TAGame.VehiclePickup_TA:ReplicatedPickupData'
-REPLICATED_PICKUP_KEY_168 = 'TAGame.VehiclePickup_TA:ReplicatedPickupData'
+REPLICATED_PICKUP_KEY_168 = 'TAGame.VehiclePickup_TA:NewReplicatedPickupData'
 
 
 def get_boost_actor(actor: dict):
