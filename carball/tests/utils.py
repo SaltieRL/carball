@@ -206,7 +206,8 @@ def get_specific_replays():
         "1_LARGE_PAD": raw_map["100_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_100_USED"] +
                         raw_map['12_AND_100_BOOST_PADS_0_USED'],
         "0_BOOST_USED": raw_map["12_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_0_USED"] +
-                        raw_map["NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"] + raw_map['12_AND_100_BOOST_PADS_0_USED'],
+                        raw_map["NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"] +
+                        raw_map['12_AND_100_BOOST_PADS_0_USED'],
         "BOOST_USED": raw_map["12_BOOST_PAD_45_USED"] +
                       raw_map["100_BOOST_PAD_100_USED"] +
                       raw_map["NO_BOOST_PAD_33_USED"] +
@@ -216,7 +217,7 @@ def get_specific_replays():
                       raw_map["WASTED_BOOST_WHILE_SUPER_SONIC"],
         "BOOST_FEATHERED": raw_map["MORE_THAN_100_BOOST"] + raw_map["FEATHERING_34x100_BO0ST_USED"],
         "BOOST_WASTED_USAGE": raw_map["WASTED_BOOST_WHILE_SUPER_SONIC"],
-        "BOOST_WASTED_COLLECTION": raw_map["MORE_THAN_100_BOOST"],
+        "BOOST_WASTED_COLLECTION": raw_map["MORE_THAN_100_BOOST"] + raw_map["12_AND_100_BOOST_PADS_0_USED"],
         # HITS
         "HITS": raw_map["4_SHOTS"] + raw_map["KICKOFF_3_HITS"] + raw_map["12_BOOST_PAD_45_USED"] +
                 raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"] +
@@ -246,7 +247,7 @@ def get_specific_answers():
         "0_BOOST_USED": [0] * len(specific_replays["0_BOOST_USED"]),
         "BOOST_USED": [45, 100, 33, 33.33 + 33.33 + 12.15, 33.33, 33.33, 0],
         "BOOST_WASTED_USAGE": [33.33],
-        "BOOST_WASTED_COLLECTION": [[(12.15, 33.33 + 12.15)]],
+        "BOOST_WASTED_COLLECTION": [[((31, 238), (255, 85))], [([255, 116],)], [([255, 116],)], [([255, 116],)]],
         "BOOST_FEATHERED": [100.0, 3490.0],
         # Hits
         "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4, 50],

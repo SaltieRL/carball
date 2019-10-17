@@ -70,8 +70,10 @@ class Test_Boost():
         def test(analysis: AnalysisManager, boost_value):
             proto_game = analysis.get_protobuf_data()
             for index, player in enumerate(proto_game.players):
+                wasted_answer = boost_value[index]
+                total_wasted = (wasted_answer[0] - (255 - wasted_answer[1])) / 256.0 * 100.0
                 boost = player.stats.boost
-                case.assertAlmostEqual(boost.wasted_collection, boost_value[index], delta=2)
+                case.assertAlmostEqual(boost.wasted_collection, total_wasted, delta=2)
 
         run_analysis_test_on_replay(test, get_specific_replays()["BOOST_WASTED_COLLECTION"],
                                     answers=get_specific_answers()["BOOST_WASTED_COLLECTION"], cache=replay_cache)
