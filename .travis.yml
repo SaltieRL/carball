@@ -1,4 +1,4 @@
-dist: xenial
+dist: bionic
 language: python
 python:
 - '3.6'
@@ -7,8 +7,6 @@ addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
-    packages:
-    - libstdc++6
 
 cache:
   - pip
