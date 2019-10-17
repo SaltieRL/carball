@@ -30,6 +30,7 @@ install:
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
 - python init.py
+- ldd --version
 
 script:
 - pytest --cov=./ --ignore=protobuf-2.6.1/
