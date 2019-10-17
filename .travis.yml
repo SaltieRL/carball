@@ -3,13 +3,14 @@ language: python
 python:
 - '3.6'
 - '3.7'
+
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
+      - ubuntu-toolchain-r-test
     packages:
-    - libstdc++6
-    - libc6
+      - gcc-4.8
+      - g++-4.8
 
 cache:
   - pip
