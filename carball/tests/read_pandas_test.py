@@ -1,6 +1,5 @@
 import gzip
 import os
-import unittest
 
 from ..analysis.utils.pandas_manager import PandasManager
 
@@ -9,8 +8,8 @@ OUTPUT_FORMAT = '.gzip'
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
-class DBTest(unittest.TestCase):
-    def setUp(self):
+class Test_Database():
+    def setup_method(self):
         self.pandas = None
         if not os.path.isdir(OUTPUT_DIR):
             os.makedirs(OUTPUT_DIR)
@@ -24,7 +23,3 @@ class DBTest(unittest.TestCase):
     def test_replay_attrs(self):
         if self.pandas is not None:
             print(self.pandas)
-
-
-if __name__ == '__main__':
-    unittest.main()

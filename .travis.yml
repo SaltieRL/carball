@@ -9,7 +9,7 @@ addons:
     - ubuntu-toolchain-r-test
     packages:
     - libstdc++6
-    - gcc-4.8
+    - libc6
 
 cache:
   - pip
@@ -48,8 +48,8 @@ stages:
 jobs:
   include:
     - stage: deploy
-      script: skip
-      after_success: skip
+      script: echo "move on to deploy"
+      after_success: echo "move on to deploy"
       deploy:
       - provider: releases
         api_key:
@@ -64,9 +64,8 @@ jobs:
       - provider: pypi
         skip_cleanup: true
         skip_existing: true
-        user: PYPI_LOGIN
-        password:
-          secure: UwhFtUaTEhUkH7DxBLGJPO8voFibNgrO8O8/ezRvTc44+TJARo+sK42RFpQemRE9Z+aKNIoJNlsfo0Dic8/XHX1EoRIOrEngdpv4DdJIxvZeqZ6G3R+drnpwnSGI8foqZ+mDoylzPE4iTniZrK30rsbznrUv1OXvMxgCM5fb+/cfXSRlEtr+U5baoYt1hPB03lPhSJDKWT+LEWsA/4dt2FmCqKBbnTo62bt/ZOryN5K6z2cUXgSF6jMzEMnqC5uXQF5H24tL3v3L07Q06pkbRqP39VdzFlxf/LvE+QjpkGn1VVZCoxO9XWO/7RYCnAmso1dl2z1yfk1m/9w11uxE5izCuazFQnoFb8vIzCckpIOo7jIEAxmdWmKUERkyUaX5+iy6J+4eyC8VuGAB8pAsSDrbpUL94MqlhH12nElxsoiBspQhnaDu+d4V5r/t4BUna5pIrM4VJ4sh0dZlNuBa7nABewan17+VWU577PwN6f28Cnv3DlylskazU41mB8Rth6G30gHZmi36LbC1FxaB5QIa9Tgbh1yZwqbNO5VX2aBXaAzsnXsf1IKv0JEPRliZowApkOXRUeHCDQfwiDbvL0IK9FycG5BtLhtsXqyRPhT09ISxC48R5+P2+bgyoYrBwbinw57D0KJMpIXbuTEoDiztlfJS8p98DhEI+Jcm4Tc=
+        user: $PYPI_LOGIN
+        password: $PYPI_PASSWORD
         on:
           repo: SaltieRL/carball
           branch: master

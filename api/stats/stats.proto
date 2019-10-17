@@ -45,6 +45,7 @@ message HitCounts {
     optional int32 total_dribbles = 6;
     optional int32 total_dribble_conts = 7;
     optional int32 total_aerials = 8;
+    optional int32 total_clears = 9;
 }
 
 message Speed {

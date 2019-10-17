@@ -2,7 +2,8 @@ import unittest
 
 from carball.analysis.analysis_manager import AnalysisManager
 
-from carball.tests.utils import run_analysis_test_on_replay, get_specific_replays, get_specific_answers, assertNearlyEqual
+from carball.tests.utils import run_analysis_test_on_replay, get_specific_replays, get_specific_answers, \
+    assertNearlyEqual, get_raw_replays
 
 
 class Test_Boost():
@@ -24,6 +25,16 @@ class Test_Boost():
             assert(boost.num_large_boosts == 1)
 
         run_analysis_test_on_replay(test, get_specific_replays()["1_LARGE_PAD"], cache=replay_cache)
+
+    def test_1_large_pad_1_small_pad_collected(self, replay_cache):
+        def test(analysis: AnalysisManager):
+            proto_game = analysis.get_protobuf_data()
+            player = proto_game.players[0]
+            boost = player.stats.boost
+            assert(boost.num_large_boosts == 1)
+            assert(boost.num_small_boosts == 1)
+
+        run_analysis_test_on_replay(test, get_raw_replays()["12_AND_100_BOOST_PADS_0_USED"], cache=replay_cache)
 
     def test_0_boost_collected(self, replay_cache):
         def test(analysis: AnalysisManager):
@@ -70,8 +81,10 @@ class Test_Boost():
         def test(analysis: AnalysisManager, boost_value):
             proto_game = analysis.get_protobuf_data()
             for index, player in enumerate(proto_game.players):
+                wasted_answer = boost_value[index]
+                total_wasted = (wasted_answer[0] - (255 - wasted_answer[1])) / 256.0 * 100.0
                 boost = player.stats.boost
-                case.assertAlmostEqual(boost.wasted_collection, boost_value[index], delta=2)
+                case.assertAlmostEqual(boost.wasted_collection, total_wasted, delta=2)
 
         run_analysis_test_on_replay(test, get_specific_replays()["BOOST_WASTED_COLLECTION"],
                                     answers=get_specific_answers()["BOOST_WASTED_COLLECTION"], cache=replay_cache)
