@@ -9,6 +9,7 @@ addons:
     - ubuntu-toolchain-r-test
     packages:
     - libstdc++6
+    - libc6
 
 cache:
   - pip
