@@ -6,7 +6,7 @@ from shutil import copyfile
 from urllib import request
 
 from carball.rattletrap.rattletrap_utils import get_rattletrap_path, get_binary_version, \
-    get_all_binaries, get_highest_binary, get_rattletrap_binaries
+    get_all_binaries, get_highest_binary, get_rattletrap_binaries, copy_cloud_over_to_rattletrap
 
 log = logging.getLogger(__name__)
 
@@ -25,14 +25,15 @@ def update_rattletrap():
         log.warning('Unable to download rattletrap copying backup')
         # unable to download a new rattletrap version so we should just copy our own
         github_ver = StrictVersion(cur_ver)
-        copyfile(os.path.join(get_rattletrap_path(),
-                              list(filter(lambda file_name: 'cloud_parser' in str(file_name), binaries))[0]),
-                 os.path.join(get_rattletrap_path(), 'rattletrap-linux'))
-        os.chmod(os.path.join(get_rattletrap_path(), 'rattletrap-linux'), 0o777)
+        copy_cloud_over_to_rattletrap(binaries)
         return
 
     if len(binaries) > 0:
-        cur_ver = get_binary_version(get_highest_binary(binaries))
+        binary = get_highest_binary(binaries)
+        if 'cloud' in binary:
+            log.warning('Cloud parser is highest binary')
+            copy_cloud_over_to_rattletrap(binaries)
+        cur_ver = get_binary_version(binary)
     update = github_ver > cur_ver
     log.info(f'GitHub version: {js["name"]}\n'
              f'Current version: {cur_ver}\n'

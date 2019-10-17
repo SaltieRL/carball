@@ -3,6 +3,7 @@ import os
 import fnmatch
 import logging
 from distutils.version import StrictVersion
+from shutil import copyfile
 from typing import List, Union
 
 log = logging.getLogger(__name__)
@@ -59,3 +60,13 @@ def get_binary_for_platform(platform, binaries):
         raise Exception('Unknown platform, unable to process replay file.')
 
     return get_highest_binary(binaries)
+
+
+def copy_cloud_over_to_rattletrap(binaries):
+    cloud_binary = list(filter(lambda file_name: 'cloud_parser' in str(file_name), binaries))[0]
+    version_info = get_binary_version(cloud_binary)
+    linux_name = 'rattletrap-' + str(version_info) + '-linux'
+    copyfile(os.path.join(get_rattletrap_path(), cloud_binary),
+             os.path.join(get_rattletrap_path(), linux_name))
+    os.chmod(os.path.join(get_rattletrap_path(), linux_name), 0o777)
+    log.info("copied " + cloud_binary + " to " + linux_name)
