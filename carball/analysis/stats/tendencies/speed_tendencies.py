@@ -16,6 +16,8 @@ class SpeedTendencies(BaseStat):
                        data_frame: pd.DataFrame):
 
         ball = data_frame['ball']
+        if 'vel_x' not in ball:
+            return
         speed: pd.Series = (ball.vel_x ** 2 +
                             ball.vel_y ** 2 +
                             ball.vel_z ** 2) ** 0.5

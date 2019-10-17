@@ -9,11 +9,15 @@ def get_boost_actor_data(actor: dict):
     if REPLICATED_PICKUP_KEY in actor:
         actor = actor[REPLICATED_PICKUP_KEY]
         if actor is not None and actor != -1:
-            return actor['pickup']
+            actor = actor['pickup']
+            if actor is not None and 'instigator_id' in actor and actor["instigator_id"] != -1:
+                return actor
     elif REPLICATED_PICKUP_KEY_168 in actor:
         actor = actor[REPLICATED_PICKUP_KEY_168]
         if actor is not None and actor != -1:
-            return actor['pickup_new']
+            actor = actor['pickup_new']
+            if actor is not None and 'instigator_id' in actor and actor["instigator_id"] != -1:
+                return actor
     return None
 
 
@@ -53,13 +57,15 @@ class BoostPickupHandler(BaseActorHandler):
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         boost_actor = get_boost_actor_data(actor)
-        if boost_actor is not None and 'instigator_id' in boost_actor:
+        if boost_actor is not None:
             car_actor_id = boost_actor['instigator_id']
             if car_actor_id in self.parser.car_player_ids:
                 player_actor_id = self.parser.car_player_ids[car_actor_id]
                 if frame_number in self.parser.player_data[player_actor_id]:
-                    self.parser.player_data[player_actor_id][frame_number]['boost_collect'] = True
-                    # TODO: Investigate and fix random imaginary boost collects
+                    actor = self.parser.player_data[player_actor_id][frame_number]
+                    previous_boost_data = self.parser.player_data[player_actor_id][frame_number - 1]['boost']
+                    if previous_boost_data < 255 and previous_boost_data != actor['boost']:
+                        actor['boost_collect'] = True
                 # set to false after acknowledging it's turned True
                 # it does not turn back false immediately although boost is only collected once.
                 # using actor_id!=-1

@@ -32,6 +32,8 @@ class BaseHit:
             team_dict[team.is_orange] = team
 
         hit_frame_numbers = BaseHit.get_hit_frame_numbers_by_ball_ang_vel(data_frame)
+        if len(hit_frame_numbers) == 0:
+            return {}
 
         # add kickoff hits
         for hit_frame in first_touch_frames:
@@ -193,6 +195,8 @@ class BaseHit:
 
     @staticmethod
     def get_hit_frame_numbers_by_ball_ang_vel(data_frame: pd.DataFrame) -> List[int]:
+        if 'ang_vel_x' not in data_frame.ball:
+            return []
         ball_ang_vels = data_frame.ball.loc[:, ['ang_vel_x', 'ang_vel_y', 'ang_vel_z']]
         diff_series = ball_ang_vels.diff().any(axis=1)
         indices = diff_series.index[diff_series].tolist()
