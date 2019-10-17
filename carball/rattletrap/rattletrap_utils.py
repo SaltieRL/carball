@@ -44,9 +44,11 @@ def get_binary_version(filename: str) -> StrictVersion:
 
 def get_highest_binary(binaries):
     if len(binaries) == 1:
-        return binaries
+        return binaries[0]
     binaries.sort(key=lambda value: get_binary_version(str(value)))
-    return binaries[-1]
+    binary = binaries[-1]
+    log.debug(binary)
+    return binary
 
 
 def get_binary_for_platform(platform, binaries):
