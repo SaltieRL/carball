@@ -32,7 +32,7 @@ def update_rattletrap():
         return
 
     if len(binaries) > 0:
-        cur_ver = get_binary_version(get_highest_binary(binaries)[0])
+        cur_ver = get_binary_version(get_highest_binary(binaries))
     update = github_ver > cur_ver
     log.info(f'GitHub version: {js["name"]}\n'
              f'Current version: {cur_ver}\n'

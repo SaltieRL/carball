@@ -44,7 +44,8 @@ def get_binary_version(filename: str) -> StrictVersion:
 def get_highest_binary(binaries):
     if len(binaries) == 1:
         return binaries
-    return binaries.sort(key=lambda value: get_binary_version(str(value)))
+    binaries.sort(key=lambda value: get_binary_version(str(value)))
+    return binaries[-1]
 
 
 def get_binary_for_platform(platform, binaries):
@@ -57,5 +58,4 @@ def get_binary_for_platform(platform, binaries):
     else:
         raise Exception('Unknown platform, unable to process replay file.')
 
-    get_highest_binary(binaries)
-    return binaries[-1]
+    return get_highest_binary(binaries)
