@@ -7,9 +7,9 @@ python:
 addons:
   apt:
     packages:
-      - libstdc++6
-      - gcc-4.8
-      - g++-4.8
+    - libstdc++6
+    - gcc-4.8
+    - g++-4.8
 
 cache:
   - pip
