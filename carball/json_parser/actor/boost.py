@@ -5,11 +5,15 @@ REPLICATED_PICKUP_KEY = 'TAGame.VehiclePickup_TA:ReplicatedPickupData'
 REPLICATED_PICKUP_KEY_168 = 'TAGame.VehiclePickup_TA:NewReplicatedPickupData'
 
 
-def get_boost_actor(actor: dict):
+def get_boost_actor_data(actor: dict):
     if REPLICATED_PICKUP_KEY in actor:
-        return actor[REPLICATED_PICKUP_KEY]
+        actor = actor[REPLICATED_PICKUP_KEY]
+        if actor is not None and actor != -1:
+            return actor['pickup']
     elif REPLICATED_PICKUP_KEY_168 in actor:
-        return actor[REPLICATED_PICKUP_KEY_168]
+        actor = actor[REPLICATED_PICKUP_KEY_168]
+        if actor is not None and actor != -1:
+            return actor['pickup_new']
     return None
 
 
@@ -48,11 +52,9 @@ class BoostPickupHandler(BaseActorHandler):
         return actor['ClassName'] == 'TAGame.VehiclePickup_Boost_TA'
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
-        boost_actor = get_boost_actor(actor)
-        if boost_actor is not None and \
-                boost_actor != -1 and \
-                'instigator_id' in boost_actor['pickup']:
-            car_actor_id = boost_actor['pickup']['instigator_id']
+        boost_actor = get_boost_actor_data(actor)
+        if boost_actor is not None and 'instigator_id' in boost_actor:
+            car_actor_id = boost_actor['instigator_id']
             if car_actor_id in self.parser.car_player_ids:
                 player_actor_id = self.parser.car_player_ids[car_actor_id]
                 if frame_number in self.parser.player_data[player_actor_id]:
@@ -61,4 +63,4 @@ class BoostPickupHandler(BaseActorHandler):
                 # set to false after acknowledging it's turned True
                 # it does not turn back false immediately although boost is only collected once.
                 # using actor_id!=-1
-                boost_actor['pickup']["instigator_id"] = -1
+                boost_actor["instigator_id"] = -1
