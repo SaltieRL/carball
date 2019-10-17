@@ -38,7 +38,7 @@ def get_binary_version(filename: str) -> StrictVersion:
     try:
         return StrictVersion(filename.split('-')[1])
     except:
-        return None
+        return StrictVersion('0.0.0')
 
 
 def get_highest_binary(binaries):
