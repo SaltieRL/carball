@@ -43,11 +43,13 @@ class PerPossessionStat(BaseStat):
         # Remove possessions that are 1-hit or <1s
         self.player_possessions = [
             player_possession for player_possession in _player_possessions
-            if len(player_possession.hits) > 1 and player_possession.duration > 1
+            # if len(player_possession.hits) > 1 and player_possession.duration > 1
+            if player_possession.duration > 1
         ]
         self.team_possessions = [
             team_possession for team_possession in _team_possessions
-            if len(team_possession.hits) > 1 and team_possession.duration > 1
+            # if len(team_possession.hits) > 1 and team_possession.duration > 1
+            if team_possession.duration > 1
         ]
         self.logger.info(f"Found {len(self.player_possessions)} player possessions and "
                          f"{len(self.team_possessions)} team possessions.")
@@ -168,8 +170,12 @@ class PerPossessionStat(BaseStat):
                 # possession end frame is last frame of game
                 possession_end_frame = data_frame.index.max()
 
-            possession_times = data_frame.loc[[possession_start_frame, possession_end_frame], ('game', 'time')].values
-            possession_duration = possession_times[1] - possession_times[0]
+            try:
+                possession_times = data_frame.loc[[possession_start_frame, possession_end_frame], ('game', 'time')].values
+                possession_duration = possession_times[1] - possession_times[0]
+            except KeyError:
+                # Happens when replay is spliced?
+                possession_duration = 1e-5
             possession.duration = possession_duration
 
     @classmethod
