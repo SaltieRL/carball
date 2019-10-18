@@ -2,6 +2,23 @@ from .base import *
 
 BOOST_PER_SECOND = 80 * 1 / .93  # boost used per second out of 255
 REPLICATED_PICKUP_KEY = 'TAGame.VehiclePickup_TA:ReplicatedPickupData'
+REPLICATED_PICKUP_KEY_168 = 'TAGame.VehiclePickup_TA:NewReplicatedPickupData'
+
+
+def get_boost_actor_data(actor: dict):
+    if REPLICATED_PICKUP_KEY in actor:
+        actor = actor[REPLICATED_PICKUP_KEY]
+        if actor is not None and actor != -1:
+            actor = actor['pickup']
+            if actor is not None and 'instigator_id' in actor and actor["instigator_id"] != -1:
+                return actor
+    elif REPLICATED_PICKUP_KEY_168 in actor:
+        actor = actor[REPLICATED_PICKUP_KEY_168]
+        if actor is not None and actor != -1:
+            actor = actor['pickup_new']
+            if actor is not None and 'instigator_id' in actor and actor["instigator_id"] != -1:
+                return actor
+    return None
 
 
 class BoostHandler(BaseActorHandler):
@@ -39,16 +56,26 @@ class BoostPickupHandler(BaseActorHandler):
         return actor['ClassName'] == 'TAGame.VehiclePickup_Boost_TA'
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
-        if REPLICATED_PICKUP_KEY in actor and \
-                actor[REPLICATED_PICKUP_KEY] != -1 and \
-                'instigator_id' in actor[REPLICATED_PICKUP_KEY]['pickup']:
-            car_actor_id = actor[REPLICATED_PICKUP_KEY]['pickup']['instigator_id']
+        boost_actor = get_boost_actor_data(actor)
+        if boost_actor is not None:
+            car_actor_id = boost_actor['instigator_id']
             if car_actor_id in self.parser.car_player_ids:
                 player_actor_id = self.parser.car_player_ids[car_actor_id]
                 if frame_number in self.parser.player_data[player_actor_id]:
-                    self.parser.player_data[player_actor_id][frame_number]['boost_collect'] = True
-                    # TODO: Investigate and fix random imaginary boost collects
-                # set to false after acknowledging it's turned True
-                # it does not turn back false immediately although boost is only collected once.
-                # using actor_id!=-1
-                actor[REPLICATED_PICKUP_KEY]['pickup']["instigator_id"] = -1
+                    actor = self.parser.player_data[player_actor_id]
+                    try:
+                        previous_boost_data = actor[frame_number - 1]['boost']
+                    except KeyError:
+                        previous_boost_data = None
+                    try:
+                        current_boost_data = actor[frame_number]['boost']
+                    except KeyError:
+                        current_boost_data = None
+                    # Ignore any phantom boosts
+                    if (previous_boost_data is None or current_boost_data is None or
+                            (255 > previous_boost_data < current_boost_data)):
+                        actor[frame_number]['boost_collect'] = True
+                        # set to false after acknowledging it's turned True
+                        # it does not turn back false immediately although boost is only collected once.
+                        # using actor_id!=-1
+                        boost_actor["instigator_id"] = -1

@@ -1,4 +1,4 @@
-numpy
+numpy==1.17.0
 protobuf==3.6.1 --install-option="--cpp_implementation"
-xlrd
-pandas
+pandas==0.24.2
+xlrd==1.1.0

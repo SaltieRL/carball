@@ -284,17 +284,26 @@ class Game:
             # sometimes damages can trickle over to the next frame, clean those up
             frames = list(damage_events.keys())
 
-            for i in range(len(frames) - 1):
+            i = 0
+            while i < len(frames) - 1:
                 if frames[i] + 1 == frames[i + 1] and damage_events[frames[i]][0] == damage_events[frames[i + 1]][0]:
                     ball_event = next(event for event in reversed(ball_events) if event['frame_number'] < frames[i])
                     ball_phase = ball_event['state']
 
-                    # check if the total damage of the two frames is not more than it could be
-                    if (ball_phase == 1 and len(damage_events[frames[i]][1]) + len(damage_events[frames[i + 1]][1])) <= 7 or \
-                            (ball_phase == 2 and len(damage_events[frames[i]][1]) + len(damage_events[frames[i + 1]][1]) <= 19):
-                        damage_events[frames[i]][1].extend(damage_events[frames[i + 1]][1])
-                        damage_events.pop(frames[i + 1])
-                        i += 1
+                    first_frame = damage_events[frames[i]]
+                    trickle_frame = frames[i + 1]
+
+                    while trickle_frame in frames:
+                        # check if the total damage of the two frames is not more than it could be
+                        if (ball_phase == 1 and len(first_frame[1]) + len(damage_events[trickle_frame][1])) <= 7 or \
+                                (ball_phase == 2 and len(first_frame[1]) + len(damage_events[trickle_frame][1]) <= 19):
+                            first_frame[1].extend(damage_events[trickle_frame][1])
+                            damage_events.pop(trickle_frame)
+                            i += 1
+                            trickle_frame += 1
+                        else:
+                            break
+                i += 1
 
         for frame_number, damage in damage_events.items():
             self.dropshot['damage_events'].append({

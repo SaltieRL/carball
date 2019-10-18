@@ -1,7 +1,5 @@
 import os
-import unittest
-import urllib
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 from requests import HTTPError
 
@@ -10,7 +8,7 @@ from carball.rattletrap.run_rattletrap import create_rattletrap_command
 from carball.rattletrap.check_rattletrap_version import update_rattletrap
 
 
-class setup_tests(unittest.TestCase):
+class Test_rattletrapSetup():
 
     def cleanup(self):
         path = get_rattletrap_path()

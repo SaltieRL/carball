@@ -24,6 +24,10 @@ def run_tests_on_list(unit_test_func: Callable, replay_list=None, answers=None):
         run_replay(replay_file, unit_test_func, answer=answer)
 
 
+def get_replay_path(replay_file):
+    return os.path.join(REPLAYS_FOLDER, replay_file)
+
+
 def run_replay(replay_file, unit_test_func: Callable, answer=None):
     """
     Runs the replay with the file downloaded locally then deletes the file.
@@ -32,7 +36,7 @@ def run_replay(replay_file, unit_test_func: Callable, answer=None):
     :param answer: data that can be passed to the replay to help judge it
     :return:
     """
-    file = os.path.join(REPLAYS_FOLDER, replay_file)
+    file = get_replay_path(replay_file)
 
     fd, file_path = tempfile.mkstemp()
     os.close(fd)
@@ -111,7 +115,7 @@ def get_raw_replays():
         "100_BOOST_PAD_100_USED": ["100_BOOST_PAD_100_USED.replay"],
         "NO_BOOST_PAD_0_USED": ["NO_BOOST_PAD_0_USED.replay"],
         "NO_BOOST_PAD_33_USED": ["NO_BOOST_PAD_33_USED.replay"],
-        "12_AND_100_BOOST_PADS_0_USED": ["12_AND_100_BOOST_PADS_0_USED.replay"],
+        "12_AND_100_BOOST_PADS_0_USED": ["12_AND_100_BOOST_PADS_0_USED.replay", "1_100_1_12_0_BOOST_168.replay", "1_100_1_12_0_BOOST_168_ALT.replay"],
         "WASTED_BOOST_WHILE_SUPER_SONIC": ["WASTED_BOOST_WHILE_SUPER_SONIC.replay"],
         "CALCULATE_USED_BOOST_WITH_DEMO": ["CALCULATE_USED_BOOST_WITH_DEMO.replay"],
         "CALCULATE_USED_BOOST_DEMO_WITH_FLIPS": ["CALCULATE_USED_BOOST_DEMO_WITH_FLIPS.replay"],
@@ -197,10 +201,13 @@ def get_specific_replays():
         # BOOSTS
         "0_BOOST_COLLECTED": raw_map["NO_BOOST_PAD_0_USED"] + raw_map["NO_BOOST_PAD_33_USED"] +
                              raw_map["KICKOFF_NO_TOUCH"],
-        "1_SMALL_PAD": raw_map["12_BOOST_PAD_0_USED"] + raw_map["12_BOOST_PAD_45_USED"],
-        "1_LARGE_PAD": raw_map["100_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_100_USED"],
+        "1_SMALL_PAD": raw_map["12_BOOST_PAD_0_USED"] + raw_map["12_BOOST_PAD_45_USED"] +
+                        raw_map['12_AND_100_BOOST_PADS_0_USED'],
+        "1_LARGE_PAD": raw_map["100_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_100_USED"] +
+                        raw_map['12_AND_100_BOOST_PADS_0_USED'],
         "0_BOOST_USED": raw_map["12_BOOST_PAD_0_USED"] + raw_map["100_BOOST_PAD_0_USED"] +
-                        raw_map["NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"],
+                        raw_map["NO_BOOST_PAD_0_USED"] + raw_map["KICKOFF_NO_TOUCH"] +
+                        raw_map['12_AND_100_BOOST_PADS_0_USED'],
         "BOOST_USED": raw_map["12_BOOST_PAD_45_USED"] +
                       raw_map["100_BOOST_PAD_100_USED"] +
                       raw_map["NO_BOOST_PAD_33_USED"] +
@@ -210,7 +217,7 @@ def get_specific_replays():
                       raw_map["WASTED_BOOST_WHILE_SUPER_SONIC"],
         "BOOST_FEATHERED": raw_map["MORE_THAN_100_BOOST"] + raw_map["FEATHERING_34x100_BO0ST_USED"],
         "BOOST_WASTED_USAGE": raw_map["WASTED_BOOST_WHILE_SUPER_SONIC"],
-        "BOOST_WASTED_COLLECTION": raw_map["MORE_THAN_100_BOOST"],
+        "BOOST_WASTED_COLLECTION": raw_map["MORE_THAN_100_BOOST"] + raw_map["12_AND_100_BOOST_PADS_0_USED"],
         # HITS
         "HITS": raw_map["4_SHOTS"] + raw_map["KICKOFF_3_HITS"] + raw_map["12_BOOST_PAD_45_USED"] +
                 raw_map["MID_AIR_PASS"] + raw_map["HIGH_AIR_PASS"] + raw_map["GROUND_PASS"] +
@@ -240,7 +247,7 @@ def get_specific_answers():
         "0_BOOST_USED": [0] * len(specific_replays["0_BOOST_USED"]),
         "BOOST_USED": [45, 100, 33, 33.33 + 33.33 + 12.15, 33.33, 33.33, 0],
         "BOOST_WASTED_USAGE": [33.33],
-        "BOOST_WASTED_COLLECTION": [[(12.15, 33.33 + 12.15)]],
+        "BOOST_WASTED_COLLECTION": [[((31, 238), (255, 85))], [([255, 116],)], [([255, 116],)], [([255, 116],)]],
         "BOOST_FEATHERED": [100.0, 3490.0],
         # Hits
         "HITS": [4, 3, 1, 2, 9, 2, 4, 4, 4, 50],
@@ -250,7 +257,7 @@ def get_specific_answers():
         "DRIBBLES": [1, 3, 49],
         "FLICKS": [0, 1, 0],
         "SAVES": [1, 0],
-        "CLEARS": [1, 2]
+        "CLEARS": [1, 2],
     }
 
 

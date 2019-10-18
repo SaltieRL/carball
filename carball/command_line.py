@@ -6,7 +6,7 @@ from carball.json_parser.game import Game
 from carball.analysis.analysis_manager import AnalysisManager
 
 
-def main():
+def main(program_args=None):
     parser = argparse.ArgumentParser(description='Rocket League replay parsing and analysis.')
     parser.add_argument('-i', '--input', type=str, required=True,
                         help='Path to replay file that will be analyzed. Carball expects a raw replay file unless '
@@ -25,9 +25,14 @@ def main():
                         help='Set the logging level to INFO. To set the logging level to DEBUG use -vv.')
     parser.add_argument('-s', '--silent', action='store_true', default=False,
                         help='Disable logging altogether.')
-    args = parser.parse_args()
+    parser.add_argument('-dr', '--dry-run', action='store_true', default=False,
+                        help='Explicitly notifying that there is not going to be any output to be saved')
+    if program_args is not None:
+        args = parser.parse_args(program_args)
+    else:
+        args = parser.parse_args()
 
-    if not args.proto and not args.json and not args.gzip:
+    if not args.proto and not args.json and not args.gzip and not args.dry_run:
         parser.error('at least one of the following arguments are required: --proto, --json, --gzip')
 
     log_level = logging.WARNING
