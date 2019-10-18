@@ -18,13 +18,16 @@ class PossessionStat(BaseStat, HitStat):
     def calculate_team_stat(self, team_stat_list: Dict[int, TeamStats], game: Game,
                             proto_game: game_pb2.Game, player_map: Dict[str, Player],
                             data_frame: pd.DataFrame):
-        frame_possession_time_deltas = pd.concat(
-            [
-                data_frame['ball', 'hit_team_no'],
-                data_frame['game', 'delta']
-            ],
-            axis=1
-        )
+        try:
+            frame_possession_time_deltas = pd.concat(
+                [
+                    data_frame['ball', 'hit_team_no'],
+                    data_frame['game', 'delta']
+                ],
+                axis=1
+            )
+        except KeyError:
+            return
         frame_possession_time_deltas.columns = ['hit_team_no', 'delta']
 
         last_hit_possession = frame_possession_time_deltas.groupby('hit_team_no').sum()
@@ -36,17 +39,22 @@ class PossessionStat(BaseStat, HitStat):
                 pass
 
     def initialize_hit_stat(self, game: Game, player_map: Dict[str, Player], data_frame: pd.DataFrame):
-        self.frame_possession_time_deltas = pd.concat(
-            [
-                data_frame['ball', 'hit_team_no'],
-                data_frame['game', 'delta']
-            ],
-            axis=1
-        )
-        self.frame_possession_time_deltas.columns = ['hit_team_no', 'delta']
+        try:
+            self.frame_possession_time_deltas = pd.concat(
+                [
+                    data_frame['ball', 'hit_team_no'],
+                    data_frame['game', 'delta']
+                ],
+                axis=1
+            )
+            self.frame_possession_time_deltas.columns = ['hit_team_no', 'delta']
+        except KeyError:
+            return
 
     def calculate_next_hit_stat(self, game: Game, proto_game: game_pb2.Game, saltie_hit: Hit, next_saltie_hit: Hit,
                                 player_map: Dict[str, Player], hit_index: int):
+        if self.frame_possession_time_deltas is None:
+            return
         player = player_map[saltie_hit.player_id.id]
         next_player = player_map[next_saltie_hit.player_id.id]
         if player.is_orange == next_player.is_orange:

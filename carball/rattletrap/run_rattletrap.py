@@ -6,7 +6,7 @@ import subprocess
 from typing import List
 
 from carball.rattletrap.rattletrap_utils import get_rattletrap_binaries, download_rattletrap, get_rattletrap_path, \
-    get_binary_for_platform
+    get_binary_for_platform, get_all_binaries
 
 logger = logging.getLogger(__name__)
 
@@ -14,8 +14,9 @@ logger = logging.getLogger(__name__)
 class RattleTrapException(Exception):
     pass
 
-def create_rattletrap_command(replay_path: str, output_path: str, overwrite: bool = True, rattletrap_path: str = None) \
-        -> List[str]:
+
+def create_rattletrap_command(replay_path: str, output_path: str,
+                              overwrite: bool = True, rattletrap_path: str = None) -> List[str]:
     """
     Takes a path to the replay and outputs the json of that replay.
 
@@ -27,8 +28,9 @@ def create_rattletrap_command(replay_path: str, output_path: str, overwrite: boo
     """
     if rattletrap_path is None:
         rattletrap_path = get_rattletrap_path()
-    binaries = get_rattletrap_binaries(rattletrap_path)
-    if len(binaries) == 0:
+    binaries = get_all_binaries(rattletrap_path)
+
+    if len(binaries) == 0 or not any('rattletrap' in file for file in binaries):
         logger.warning("Need to redownload rattletrap")
         download_rattletrap()
         binaries = get_rattletrap_binaries(rattletrap_path)
@@ -80,5 +82,6 @@ def decompile_replay(replay_path: str, output_path: str, overwrite: bool = True,
     :return: The json created from rattle trap.
     """
     command = create_rattletrap_command(replay_path, output_path, overwrite, rattletrap_path)
-    logger.debug(" ".join(command))
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug(" ".join(command))
     return run_rattletrap_command(command, output_path)
