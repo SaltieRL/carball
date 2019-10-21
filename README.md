@@ -6,7 +6,7 @@ Various tools for decompiling / analyzing Rocket League replays.
 
 ## Requirements
 
-- Python 3.6+
+- Python 3.6.7+ or 3.7+
 - Windows, Mac or Linux
 
 ## Install
