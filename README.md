@@ -11,9 +11,18 @@ Various tools for decompiling / analyzing Rocket League replays.
 
 ## Install
 
+#### Install from pip:
+
 `pip install carball`
 
-`python init.py`
+#### Clone for development
+
+```
+git clone https://github.com/SaltieRL/carball
+cd carball/
+python init.py
+```
+
 
 ## Examples / Usage
 
