@@ -1,5 +1,8 @@
 
 version: 0.6.{build}
+pull_requests:
+  do_not_increment_build_number: true
+
 skip_tags: true
 
 # Do not build feature branch with open Pull Requests
