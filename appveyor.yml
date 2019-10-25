@@ -8,8 +8,10 @@ skip_branch_with_pr: true
 
 environment:
   matrix:
-  - PYTHON: C:\Python37-x64
-  - PYTHON: C:\Python36-x64
+    - PYTHON: "C:\\Python37-x64"
+      PYTHON_VERSION: "3.7.4"
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6.9"
 
 install:
   - python --version
