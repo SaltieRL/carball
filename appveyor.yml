@@ -6,15 +6,13 @@ skip_tags: true
 skip_branch_with_pr: true
 
 
-platform:
-  - x64
-
 environment:
   matrix:
-    - TOXENV: py36
-    - TOXENV: py37
+  - PYTHON: C:\Python37-x64
+  - PYTHON: C:\Python36-x64
 
 install:
+  - python -m pip install --upgrade pip
   - pip install -r requirements.txt
   - pip install -r requirements-test.txt
   - python init.py
