@@ -12,10 +12,11 @@ environment:
   - PYTHON: C:\Python36-x64
 
 install:
-  - python -m pip install --upgrade pip
-  - pip install -r requirements.txt
-  - pip install -r requirements-test.txt
-  - python init.py
+  - python --version
+  - python3 -m pip install --upgrade pip
+  - pip3 install -r requirements.txt
+  - pip3 install -r requirements-test.txt
+  - python3 init.py
 
 test_script:
   - pytest --cov=./ --ignore=protobuf-2.6.1/
