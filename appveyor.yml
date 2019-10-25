@@ -23,10 +23,10 @@ install:
   - "SET PYTHONPATH=%PYTHON%\\Lib\\site-packages;%PYTHONPATH%"
   - python --version
 
-  - python3 -m pip install --upgrade pip
-  - pip3 install -r requirements.txt
-  - pip3 install -r requirements-test.txt
-  - python3 init.py
+  - python -m pip install --upgrade pip
+  - pip install -r requirements.txt
+  - pip install -r requirements-test.txt
+  - python init.py
 
 test_script:
   - pytest --cov=./ --ignore=protobuf-2.6.1/
