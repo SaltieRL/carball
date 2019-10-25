@@ -12,8 +12,6 @@ environment:
   matrix:
     - PYTHON: "C:\\Python37-x64"
       PYTHON_VERSION: "3.7.4"
-    - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6.9"
 
 install:
   # Prepend newly installed Python to the PATH of this build (this cannot be
@@ -32,4 +30,3 @@ build: false
 
 test_script:
   - pytest --cov=./ --ignore=protobuf-2.6.1/
-  - bash <(curl -s https://codecov.io/bash) -c -F carball
