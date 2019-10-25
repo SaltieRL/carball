@@ -2,8 +2,11 @@
 version: 0.6.{build}
 skip_tags: true
 
+# Do not build feature branch with open Pull Requests
+skip_branch_with_pr: true
+
+
 platform:
-  - x86
   - x64
 
 environment:
