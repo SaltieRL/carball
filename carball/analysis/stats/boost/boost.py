@@ -40,13 +40,11 @@ class BoostStat(BaseStat):
                 logger.warning('%s did not collect any boost', player_key)
             else:
 
-                previous_frames = player_data_frame.loc[
-                    player_data_frame.index[player_data_frame.boost_collect.fillna(False)] - 1]
+                previous_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] > 34] - 1]
                 # any boost in tank when big is collected is wasted
                 wasted_big = previous_frames.boost.sum() / 255 * 100
 
-                previous_frames = player_data_frame.loc[
-                    player_data_frame.index[~player_data_frame.boost_collect.fillna(True)] - 1]
+                previous_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] <= 34] - 1]
                 # delta is the +- of a full tank of boost they would have if there was no limit on boost
                 delta = ((previous_frames.boost + 30.5) - 255)
                 # we only want when the delta > 0 since that is wasted boost

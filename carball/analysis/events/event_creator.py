@@ -4,6 +4,7 @@ from typing import Dict, Callable
 import pandas as pd
 
 from carball.analysis.events.bump_detection.bump_analysis import BumpAnalysis
+from carball.analysis.events.boost_pad_detection.pickup_analysis import PickupAnalysis
 from carball.analysis.events.kickoff_detection.kickoff_analysis import BaseKickoff
 from carball.analysis.events.carry_detection import CarryDetection
 from carball.analysis.events.hit_detection.base_hit import BaseHit
@@ -36,6 +37,7 @@ class EventsCreator:
         self.calculate_ball_carries(game, proto_game, player_map, data_frame[goal_frames])
         self.create_bumps(game, proto_game, player_map, data_frame[goal_frames])
         self.create_dropshot_events(game, proto_game, player_map)
+        self.create_boostpad_events(proto_game, data_frame)
 
     def calculate_kickoff_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                                 data_frame, kickoff_frames, first_touch_frames):
@@ -78,3 +80,7 @@ class EventsCreator:
     def create_dropshot_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player]):
         create_dropshot_damage_events(game, proto_game)
         create_dropshot_ball_events(game, proto_game, player_map)
+
+    def create_boostpad_events(self, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
+        PickupAnalysis.add_pickups(proto_game, data_frame)
+
