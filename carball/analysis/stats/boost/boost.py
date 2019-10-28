@@ -116,24 +116,16 @@ class BoostStat(BaseStat):
     @staticmethod
     def get_player_boost_collection(player_dataframe: pd.DataFrame) -> Dict[str, int]:
         try:
-            value_counts = player_dataframe.boost_collect.value_counts()
-            if len(value_counts) == 0:
-                return {}
-            if len(value_counts) == 1:
-                if True in value_counts:
-                    return {
-                        'big': int(value_counts[True])
-                    }
-                else:
-                    return {
-                        'small': int(value_counts[False])
-                    }
-            return {
-                'big': int(value_counts[True]),
-                'small': int(value_counts[False])
-            }
-        except (AttributeError, KeyError) as e:
+            big_counts = (player_dataframe['boost_collect'] > 34).sum()
+            small_counts = (player_dataframe['boost_collect'] <= 34).sum()
+            ret = {}
+            if big_counts > 0:
+                ret['big'] = big_counts
+            if small_counts > 0:
+                ret['small'] = small_counts
+        except (AttributeError, KeyError):
             return {}
+        return ret
 
     @staticmethod
     def get_player_boost_waste(usage: np.float64, collection: Dict[str, int]) -> float:

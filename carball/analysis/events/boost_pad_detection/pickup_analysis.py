@@ -113,5 +113,5 @@ def get_boost_collect(player_vals_df):
     gains_indexes = gains_frames['recent_entry_index'].dropna()
 
     pickups = df.loc[gains_indexes]['status_change'].copy()
-    pickups = pickups.drop_duplicates(keep='first')
+    pickups = pickups.loc[~pickups.index.duplicated(keep='first')]
     return pickups
