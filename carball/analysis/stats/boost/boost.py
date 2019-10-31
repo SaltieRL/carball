@@ -39,16 +39,23 @@ class BoostStat(BaseStat):
             if 'boost_collect' not in player_data_frame:
                 logger.warning('%s did not collect any boost', player_key)
             else:
+                gains_index = player_data_frame['boost'].diff().clip(0)
+                gains_index = gains_index.loc[gains_index > 0].index.to_numpy()
+                collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] > 34]]
+                # Have to loop to fuzzy match
+                wasted_big = 0
+                for index in collect_frames.index.to_numpy():
+                    idx = gains_index[(np.abs(gains_index - index).argmin())]
+                    wasted_big += player_data_frame['boost'].loc[idx - 1] / 256 * 100
 
-                previous_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] > 34] - 1]
-                # any boost in tank when big is collected is wasted
-                wasted_big = previous_frames.boost.sum() / 255 * 100
-
-                previous_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] <= 34] - 1]
-                # delta is the +- of a full tank of boost they would have if there was no limit on boost
-                delta = ((previous_frames.boost + 30.5) - 255)
-                # we only want when the delta > 0 since that is wasted boost
-                wasted_small = delta[delta > 0].sum() / 255 * 100
+                collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] <= 34]]
+                prior_vals = np.empty([0])
+                for index in collect_frames.index.to_numpy():
+                    idx = gains_index[(np.abs(gains_index - index).argmin())]
+                    val = player_data_frame['boost'].loc[idx-1]
+                    prior_vals = np.append(prior_vals, val)
+                deltas = ((prior_vals + 30.6) - 255)
+                wasted_small = deltas[deltas > 0].sum() / 256 * 100
 
                 collection = self.get_player_boost_collection(player_data_frame)
                 proto_boost.wasted_collection = wasted_big + wasted_small
