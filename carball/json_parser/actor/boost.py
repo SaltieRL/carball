@@ -63,16 +63,23 @@ class BoostPickupHandler(BaseActorHandler):
                 player_actor_id = self.parser.car_player_ids[car_actor_id]
                 if frame_number in self.parser.player_data[player_actor_id]:
                     actor = self.parser.player_data[player_actor_id]
-                    try:
-                        previous_boost_data = actor[frame_number - 1]['boost']
-                    except KeyError:
-                        previous_boost_data = None
+                    frame_number_look_back = frame_number - 1
+                    previous_boost_data = None
+                    while frame_number_look_back >= 0:
+                        try:
+                            previous_boost_data = actor[frame_number_look_back]['boost']
+                        except KeyError:
+                            previous_boost_data = None
+                        if previous_boost_data is not None:
+                            break
+                        frame_number_look_back -= 1
                     try:
                         current_boost_data = actor[frame_number]['boost']
                     except KeyError:
                         current_boost_data = None
+
                     # Ignore any phantom boosts
-                    if (previous_boost_data is None or current_boost_data is None or
+                    if (previous_boost_data is not None and current_boost_data is not None and
                             (255 > previous_boost_data < current_boost_data)):
                         actor[frame_number]['boost_collect'] = True
                         # set to false after acknowledging it's turned True
