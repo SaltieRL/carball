@@ -46,13 +46,15 @@ class BoostStat(BaseStat):
                 wasted_big = 0
                 for index in collect_frames.index.to_numpy():
                     idx = gains_index[(np.abs(gains_index - index).argmin())]
-                    wasted_big += player_data_frame['boost'].loc[idx - 1] / 256 * 100
+                    int_idx = player_data_frame.index.get_loc(idx)
+                    wasted_big += player_data_frame['boost'].iloc[int_idx - 1] / 256 * 100
 
                 collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] <= 34]]
                 prior_vals = np.empty([0])
                 for index in collect_frames.index.to_numpy():
                     idx = gains_index[(np.abs(gains_index - index).argmin())]
-                    val = player_data_frame['boost'].loc[idx-1]
+                    int_idx = player_data_frame.index.get_loc(idx)
+                    val = player_data_frame['boost'].iloc[int_idx-1]
                     prior_vals = np.append(prior_vals, val)
                 deltas = ((prior_vals + 30.6) - 255)
                 wasted_small = deltas[deltas > 0].sum() / 256 * 100
