@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 
 from carball.json_parser.bots import get_bot_map, get_online_id_for_bot
-from .boost import get_if_full_boost_position
 
 if TYPE_CHECKING:
     from .team import Team
@@ -241,17 +240,6 @@ class Player:
         :return:
         """
         self.data = pd.DataFrame.from_dict(_dict, orient='index')
-        self.get_boost()
-
-    def get_boost(self):
-        # comparator has to be == for pandas
-        if not ('boost_collect' in self.data.columns):
-            self.data['boost_collect'] = np.nan
-        boost_collection_frames = self.data.boost_collect[self.data.boost_collect == True].index.values
-        for boost_collection_frame in boost_collection_frames:
-            position = self.data.loc[boost_collection_frame, ['pos_x', 'pos_y', 'pos_z']]
-            boost_type = get_if_full_boost_position(position)
-            self.data.loc[boost_collection_frame, 'boost_collect'] = boost_type
 
     def get_data_from_car(self, car_data):
         if car_data is None:

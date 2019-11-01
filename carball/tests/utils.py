@@ -122,6 +122,7 @@ def get_raw_replays():
         "MORE_THAN_100_BOOST": ["MORE_THAN_100_BOOST.replay"],
         "USE_BOOST_AFTER_GOAL": ["USE_BOOST_AFTER_GOAL.replay"],
         "FEATHERING_34x100_BO0ST_USED": ["FEATHERING_34_X_100_BOOSTS_USED.replay"],
+        "6_BIG_25_SMALL": ["6_BIG_25_SMALL.replay"],
 
         # Kickoffs
         "STRAIGHT_KICKOFF_GOAL": ["Straight_Kickoff_Goal.replay"],
