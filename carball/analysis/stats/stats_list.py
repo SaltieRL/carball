@@ -40,9 +40,9 @@ class StatsList:
                 CarryStat(),
                 PerPossessionStat(),
                 SpeedTendencies(),
-                RumbleItemStat(),
-                KickoffStat(),
-                DropshotStats()
+                # RumbleItemStat(),
+                # KickoffStat(),
+                # DropshotStats()
                 ]
 
     @staticmethod
@@ -52,9 +52,9 @@ class StatsList:
                 TeamTendencies(),
                 RelativeTendencies(),
                 PerPossessionStat(),
-                RumbleItemStat(),
-                PreRumbleGoals(),
-                DropshotStats()
+                # RumbleItemStat(),
+                # PreRumbleGoals(),
+                # DropshotStats()
                 ]
 
     @staticmethod
@@ -62,10 +62,10 @@ class StatsList:
         """These are stats that end up being assigned to the game as a whole"""
         return [PositionalTendencies(),
                 SpeedTendencies(),
-                ItemGoals(),
-                DropshotGoals(),
-                DropshotBallPhaseTimes(),
-                DropshotStats()
+                # ItemGoals(),
+                # DropshotGoals(),
+                # DropshotBallPhaseTimes(),
+                # DropshotStats()
                 ]
 
     @staticmethod
