@@ -168,8 +168,11 @@ class PerPossessionStat(BaseStat):
                 # possession end frame is last frame of game
                 possession_end_frame = data_frame.index.max()
 
-            possession_times = data_frame.loc[[possession_start_frame, possession_end_frame], ('game', 'time')].values
-            possession_duration = possession_times[1] - possession_times[0]
+            try:
+                possession_times = data_frame.loc[[possession_start_frame, possession_end_frame], ('game', 'time')].values
+                possession_duration = possession_times[1] - possession_times[0]
+            except KeyError:
+                possession_duration = 0
             possession.duration = possession_duration
 
     @classmethod
