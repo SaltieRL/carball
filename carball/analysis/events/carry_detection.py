@@ -161,7 +161,7 @@ class CarryDetection:
                             hit_list[hit_index - 1].player_id.id == player.id.id):
                         last_player_hit = hit_list[hit_index - 1]
                 if last_player_hit is None:
-                    logger.error('The player never hit the ball during the "carry"')
+                    logger.warning('The player never hit the ball during the "carry"')
                     end_frames[carry_index] = start_frames[carry_index]
                 else:
                     most_recent_frame = max(last_player_hit.previous_hit_frame_number, start_frames[carry_index])
