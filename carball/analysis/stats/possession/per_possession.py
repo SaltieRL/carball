@@ -49,7 +49,7 @@ class PerPossessionStat(BaseStat):
             team_possession for team_possession in _team_possessions
             if len(team_possession.hits) > 1 and team_possession.duration > 1
         ]
-        self.logger.info(f"Found {len(self.player_possessions)} player possessions and "
+        self.logger.debug(f"Found {len(self.player_possessions)} player possessions and "
                          f"{len(self.team_possessions)} team possessions.")
 
         for possessions in (self.player_possessions, self.team_possessions):
