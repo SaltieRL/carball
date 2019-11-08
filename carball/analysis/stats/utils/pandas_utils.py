@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 
@@ -23,7 +24,7 @@ def sum_deltas_start_end_frame(data_frame: pd.DataFrame, start_frame, end_frame)
     return data_frame['game', 'delta'][start_frame: end_frame].sum()
 
 
-def sum_deltas_by_truthy_data(data_frame: pd.DataFrame, truthy_frames: pd.Series) -> pd.DataFrame:
+def sum_deltas_by_truthy_data(data_frame: pd.DataFrame, truthy_frames: pd.Series) -> np.float64:
     """
     Gets the delta from the pandas data frame for certain players at certain times.
     :param data_frame: The game data frame, goal frames are removed
