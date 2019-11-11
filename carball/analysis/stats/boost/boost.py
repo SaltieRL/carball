@@ -85,13 +85,14 @@ class BoostStat(BaseStat):
 
     @classmethod
     def get_num_stolen_boosts(cls, player_dataframe: pd.DataFrame, is_orange):
-        big_pads_collected = player_dataframe[player_dataframe.boost_collect == True]
-        if is_orange == 1:
-            boost_collected_in_opposing_third = big_pads_collected[cls.field_constants.get_third_0(big_pads_collected)]
+        big = cls.field_constants.get_big_pads()
+        # Get big pads below or above 0 depending on team
+        if is_orange:
+            opponent_pad_labels = big[big[:, 1] < 0][:, 2]
         else:
-            boost_collected_in_opposing_third = big_pads_collected[cls.field_constants.get_third_2(big_pads_collected)]
-
-        return len(boost_collected_in_opposing_third.index)
+            opponent_pad_labels = big[big[:, 1] > 0][:, 2]
+        stolen = player_dataframe.boost_collect.isin(opponent_pad_labels).sum()
+        return stolen
 
     @staticmethod
     def get_player_boost_usage_max_speed(player_dataframe: pd.DataFrame) -> np.float64:
@@ -135,11 +136,3 @@ class BoostStat(BaseStat):
         except (AttributeError, KeyError):
             return {}
         return ret
-
-    @staticmethod
-    def get_player_boost_waste(usage: np.float64, collection: Dict[str, int]) -> float:
-        try:
-            total_collected = collection['big'] * 100 + collection['small'] * 12
-            return total_collected - usage
-        except KeyError:
-            return 0
