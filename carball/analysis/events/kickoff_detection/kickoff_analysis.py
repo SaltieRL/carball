@@ -41,6 +41,8 @@ class BaseKickoff:
 
             # get player stats
             for player in player_map.values():
+                if player.name not in data_frame:
+                    continue
                 kickoff_player = BaseKickoff.get_player_stats(cur_kickoff, player, data_frame, frame, end_frame)
 
                 if kickoff_player.ball_dist < closest_player_distance:
