@@ -56,6 +56,30 @@ class Test_Boost():
 
         run_analysis_test_on_replay(test, get_raw_replays()["6_BIG_25_SMALL"], cache=replay_cache)
 
+    def test_boost_steals(self, replay_cache):
+        def test(analysis: AnalysisManager):
+            proto_game = analysis.get_protobuf_data()
+            player = proto_game.players[0]
+            boost = player.stats.boost
+            assert boost.num_stolen_boosts == 2
+
+        run_analysis_test_on_replay(test, get_raw_replays()["6_BIG_25_SMALL"], cache=replay_cache)
+
+    def test_boost_steals_post_goal(self, replay_cache):
+        def test(analysis: AnalysisManager):
+            proto_game = analysis.get_protobuf_data()
+            player = proto_game.players[0]
+            boost = player.stats.boost
+            assert [boost.num_small_boosts, boost.num_large_boosts,
+                    boost.num_stolen_boosts, boost.boost_usage] == [0, 0, 0, 0]
+
+            player = proto_game.players[1]
+            boost = player.stats.boost
+            assert [boost.num_large_boosts, boost.num_stolen_boosts] == [3, 3]
+            assert boost.boost_usage > 0
+
+        run_analysis_test_on_replay(test, get_raw_replays()["3_STEAL_ORANGE_0_STEAL_BLUE"], cache=replay_cache)
+
     def test_boost_used(self, replay_cache):
         case = unittest.TestCase('__init__')
 
