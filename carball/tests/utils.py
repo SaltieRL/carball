@@ -109,6 +109,7 @@ def get_raw_replays():
         "1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST": ["1_NORMAL_SAVE.replay"],
 
         # Boost
+        "3_STEAL_ORANGE_0_STEAL_BLUE": ["3_STEALS.replay"],
         "12_BOOST_PAD_0_USED": ["12_BOOST_PAD_0_USED.replay"],
         "12_BOOST_PAD_45_USED": ["12_BOOST_PAD_45_USED.replay"],
         "100_BOOST_PAD_0_USED": ["100_BOOST_PAD_0_USED.replay"],
