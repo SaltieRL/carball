@@ -18,7 +18,7 @@ class Goal:
 
         self.player = self.get_player(game)
         self.frame_number = goal_dict["frame"]["value"]["int"]
-        logger.info('Created Goal: %s' % self)
+        logger.debug('Created Goal: %s', self)
 
     def __repr__(self):
         if self.player:
