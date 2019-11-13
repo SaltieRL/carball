@@ -80,16 +80,16 @@ class BaseKickoff:
 
     @staticmethod
     def set_jumps(kPlayer, player, data_frame, frame, end_frame):
-        jump_active_df        = data_frame[player.name]['jump_active']
+        jump_active_df = data_frame[player.name]['jump_active']
         double_jump_active_df = data_frame[player.name]['double_jump_active']
         boost = False
         if 'boost_collect' in data_frame[player.name].keys():
             boost = True
-            collected_boost_df    = data_frame[player.name]['boost_collect']
+            collected_boost_df = data_frame[player.name]['boost_collect']
         # check the kickoff frames (and then some) for jumps & big boost collection
         for f in range(frame, min(end_frame + 20, len(data_frame))):
             if boost:
-                if collected_boost_df[f] == True:
+                if collected_boost_df[f] != False:
                     kPlayer.boost_time = data_frame['game']['delta'][frame:f].sum()
             if jump_active_df[f] != jump_active_df[f-1] or double_jump_active_df[f] != double_jump_active_df[f-1]:
                 kPlayer.jumps.append(data_frame['game']['delta'][frame:f].sum())
