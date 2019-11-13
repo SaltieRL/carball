@@ -87,10 +87,12 @@ class BoostStat(BaseStat):
     def get_num_stolen_boosts(cls, player_dataframe: pd.DataFrame, is_orange):
         big = cls.field_constants.get_big_pads()
         # Get big pads below or above 0 depending on team
+        # The index of y position is 1. The index of the label is 2.
         if is_orange:
-            opponent_pad_labels = big[big[:, 1] < 0][:, 2]
+            opponent_pad_labels = big[big[:, 1] < 0][:, 2] #big[where[y] is < 0][labels]
         else:
-            opponent_pad_labels = big[big[:, 1] > 0][:, 2]
+            opponent_pad_labels = big[big[:, 1] > 0][:, 2] #big[where[y] is > 0][labels]
+        # Count all the places where isin = True by summing
         stolen = player_dataframe.boost_collect.isin(opponent_pad_labels).sum()
         return stolen
 
