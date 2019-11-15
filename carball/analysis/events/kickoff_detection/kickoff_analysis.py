@@ -29,12 +29,23 @@ class BaseKickoff:
         last_frame = data_frame.last_valid_index()
         first_frame = data_frame.first_valid_index()
         for index, frame in enumerate(kickoff_frames):
+            starting_kickoff_time = data_frame.game.time[frame]
             cur_kickoff = proto_game.game_stats.kickoff_stats.add()
             end_frame = first_touch_frames[index]
             smaller_data_frame = data_frame.loc[max(first_frame, frame - 1):  min(end_frame + 20, last_frame)]
             cur_kickoff.start_frame = frame
             cur_kickoff.touch_frame = end_frame
-            cur_kickoff.touch_time = smaller_data_frame['game']['delta'][frame:end_frame].sum()
+            ending_time = smaller_data_frame['game']['time'][end_frame]
+            time = cur_kickoff.touch_time = ending_time - starting_kickoff_time
+            differs = smaller_data_frame['game']['time'][frame:end_frame].diff()
+            summed_time_diff = differs.sum()
+            summed_time = smaller_data_frame['game']['delta'][frame:end_frame].sum()
+            if summed_time > 0:
+                cur_kickoff.touch_time = summed_time
+            logger.error("STRAIGHT TIME " + str(time))
+            logger.error("SUM TIME" + str(summed_time))
+            sum_vs_adding_diff = time - summed_time
+
 
             # find who touched the ball first
             closest_player_distance = 10000000
@@ -80,26 +91,33 @@ class BaseKickoff:
         kickoff_player.start_position.pos_x = data_frame[player.name]['pos_x'][start_frame]
         kickoff_player.start_position.pos_y = data_frame[player.name]['pos_y'][start_frame]
         kickoff_player.start_position.pos_z = data_frame[player.name]['pos_z'][start_frame]
-        BaseKickoff.set_jumps(kickoff_player, player, data_frame, start_frame, end_frame)
+        BaseKickoff.set_jumps(kickoff_player, player, data_frame, start_frame)
         return kickoff_player
 
     @staticmethod
-    def set_jumps(kPlayer, player, data_frame, frame, end_frame):
+    def set_jumps(kPlayer, player, data_frame, frame):
         jump_active_df        = data_frame[player.name]['jump_active']
         double_jump_active_df = data_frame[player.name]['double_jump_active']
         if 'boost_collect' in data_frame[player.name].keys():
             collected_boost_df    = data_frame[player.name]['boost_collect']
-            collected_boost_df = collected_boost_df[(~(collected_boost_df.isnull())) & collected_boost_df != False]
-            print(collected_boost_df)
+            collected_boost_df = collected_boost_df[collected_boost_df > 34]
+            if len(collected_boost_df) > 0:
+                kPlayer.boost_time = data_frame['game']['delta'][frame:collected_boost_df.index.values[0]].sum()
 
         # check the kickoff frames (and then some) for jumps & big boost collection
+        jump_active_df = jump_active_df[jump_active_df.diff(1) > 0]
+        BaseKickoff.add_jumps(kPlayer, data_frame, frame, jump_active_df)
 
         """for f in range(frame, )):
             if boost:
                 if collected_boost_df[f] == True:
-                    kPlayer.boost_time = data_frame['game']['delta'][frame:f].sum()
+                    
             if jump_active_df[f] != jump_active_df[f-1] or double_jump_active_df[f] != double_jump_active_df[f-1]:
                 kPlayer.jumps.append(data_frame['game']['delta'][frame:f].sum())"""
+
+    @staticmethod
+    def add_jumps(kPlayer, data_frame, frame, jumps):
+        pass
 
     @staticmethod
     def get_kickoff_type(players: list):

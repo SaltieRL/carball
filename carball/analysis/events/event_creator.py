@@ -32,12 +32,12 @@ class EventsCreator:
         Creates all of the event protos.
         """
         goal_frames = data_frame.game.goal_number.notnull()
+        self.create_boostpad_events(proto_game, data_frame)
         self.create_hit_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_kickoff_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_ball_carries(game, proto_game, player_map, data_frame[goal_frames])
         self.create_bumps(game, proto_game, player_map, data_frame[goal_frames])
         self.create_dropshot_events(game, proto_game, player_map)
-        self.create_boostpad_events(proto_game, data_frame)
 
     def calculate_kickoff_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                                 data_frame, kickoff_frames, first_touch_frames):

@@ -40,10 +40,15 @@ class SaltieGame:
             ball_has_been_hit = game.frames.loc[:, 'replicated_seconds_remaining']
             last_frame_ball_has_been_hit = ball_has_been_hit.shift(1).rename('last_replicated_seconds_remaining')
             ball_hit_dataframe = pd.concat([ball_has_been_hit, last_frame_ball_has_been_hit], axis=1)
-            ball_hit_dataframe.fillna(0, inplace=True)
+            ball_hit_dataframe.fillna(-1, inplace=True)
+
+            countdown_frames = ball_hit_dataframe[(ball_hit_dataframe['replicated_seconds_remaining'] > 0) &
+                                                  (ball_hit_dataframe['last_replicated_seconds_remaining'] == -1)]
 
             kickoff_frames = ball_hit_dataframe[(ball_hit_dataframe['replicated_seconds_remaining'] == 0) &
                                                 (ball_hit_dataframe['last_replicated_seconds_remaining'] > 0)]
+
+
         else:
             logger.debug("No ball_has_been_hit?! Is this really old or what.")
             hit_team_no = game.ball.loc[:, 'hit_team_no']
