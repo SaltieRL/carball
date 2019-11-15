@@ -1,5 +1,7 @@
 import logging
 from typing import Dict, Callable
+
+import numpy
 import pandas as pd
 
 from carball.analysis.stats.utils.pandas_utils import sum_deltas_start_end_frame
@@ -24,13 +26,15 @@ class BaseKickoff:
         kickoffs = dict()
         goals = proto_game.game_metadata.goals
         num_goals = len(goals)
+        last_frame = data_frame.last_valid_index()
+        first_frame = data_frame.first_valid_index()
         for index, frame in enumerate(kickoff_frames):
-
             cur_kickoff = proto_game.game_stats.kickoff_stats.add()
             end_frame = first_touch_frames[index]
+            smaller_data_frame = data_frame.loc[max(first_frame, frame - 1):  min(end_frame + 20, last_frame)]
             cur_kickoff.start_frame = frame
             cur_kickoff.touch_frame = end_frame
-            cur_kickoff.touch_time = data_frame['game']['delta'][frame:end_frame].sum()
+            cur_kickoff.touch_time = smaller_data_frame['game']['delta'][frame:end_frame].sum()
 
             # find who touched the ball first
             closest_player_distance = 10000000
@@ -43,7 +47,7 @@ class BaseKickoff:
             for player in player_map.values():
                 if player.name not in data_frame:
                     continue
-                kickoff_player = BaseKickoff.get_player_stats(cur_kickoff, player, data_frame, frame, end_frame)
+                kickoff_player = BaseKickoff.get_player_stats(cur_kickoff, player, smaller_data_frame, frame, end_frame)
 
                 if kickoff_player.ball_dist < closest_player_distance:
                     closest_player_distance = kickoff_player.ball_dist
@@ -58,6 +62,7 @@ class BaseKickoff:
 
     @staticmethod
     def get_player_stats(cur_kickoff, player, data_frame: pd.DataFrame, start_frame: int, end_frame: int):
+
         kickoff_player = cur_kickoff.touch.players.add()
         kickoff_player.player.id = player.id.id
 
@@ -82,17 +87,19 @@ class BaseKickoff:
     def set_jumps(kPlayer, player, data_frame, frame, end_frame):
         jump_active_df        = data_frame[player.name]['jump_active']
         double_jump_active_df = data_frame[player.name]['double_jump_active']
-        boost = False
         if 'boost_collect' in data_frame[player.name].keys():
-            boost = True
             collected_boost_df    = data_frame[player.name]['boost_collect']
+            collected_boost_df = collected_boost_df[(~(collected_boost_df.isnull())) & collected_boost_df != False]
+            print(collected_boost_df)
+
         # check the kickoff frames (and then some) for jumps & big boost collection
-        for f in range(frame, min(end_frame + 20, len(data_frame))):
+
+        """for f in range(frame, )):
             if boost:
                 if collected_boost_df[f] == True:
                     kPlayer.boost_time = data_frame['game']['delta'][frame:f].sum()
             if jump_active_df[f] != jump_active_df[f-1] or double_jump_active_df[f] != double_jump_active_df[f-1]:
-                kPlayer.jumps.append(data_frame['game']['delta'][frame:f].sum())
+                kPlayer.jumps.append(data_frame['game']['delta'][frame:f].sum())"""
 
     @staticmethod
     def get_kickoff_type(players: list):
