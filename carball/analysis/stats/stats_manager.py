@@ -4,6 +4,7 @@ from typing import Dict, List
 
 import pandas as pd
 
+from carball.generated.api.stats.events_pb2 import Hit
 from ...analysis.stats.stats_list import StatsList
 from ...generated.api import game_pb2
 from ...generated.api.player_pb2 import Player
@@ -26,20 +27,20 @@ def end_time(start):
 class StatsManager:
 
     def get_stats(self, game: Game, proto_game: game_pb2.Game,
-                  player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                  player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
         """
         Calculates all basic stats.
         The stats are always calculated in this order:
             Player, Team, Game, Hit
         """
-        self.calculate_player_stats(game, proto_game, player_map, data_frame)
+        self.calculate_player_stats(game, proto_game, player_map, data_frame, per_second=per_second)
         self.calculate_team_stats(game, proto_game, proto_game.teams, player_map, data_frame)
         self.calculate_game_stats(game, proto_game, player_map, data_frame)
         self.calculate_hit_stats(game, proto_game, player_map, data_frame)
 
     @staticmethod
     def calculate_player_stats(game: Game, proto_game: game_pb2.Game,
-                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                               player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
         stats_proto: Dict[str, PlayerStats] = {
             key: player.stats
             for key, player in player_map.items()
@@ -47,7 +48,8 @@ class StatsManager:
         for stat_function in StatsList.get_player_stats():
             time = start_time()
             logger.debug("Building player stat: %s", type(stat_function).__name__)
-            stat_function.calculate_player_stat(stats_proto, game, proto_game, player_map, data_frame)
+            stat_function.calculate_player_stat(stats_proto, game, proto_game, player_map, data_frame,
+                                                per_second=per_second)
             logger.debug("Built in [%d] milliseconds", end_time(time))
 
     @staticmethod
@@ -79,7 +81,7 @@ class StatsManager:
         for hit_stat in hit_stats:
             logger.debug("Building hit stat: %s", type(hit_stat).__name__)
             hit_stat.initialize_hit_stat(game, player_map, data_frame)
-        hits = proto_game.game_stats.hits
+        hits: List[Hit] = proto_game.game_stats.hits
         for hit_index in range(len(hits) - 1):
             current_hit = hits[hit_index]
             if current_hit.HasField("next_hit_frame_number"):

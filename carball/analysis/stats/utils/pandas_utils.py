@@ -34,3 +34,12 @@ def sum_deltas_by_truthy_data(data_frame: pd.DataFrame, truthy_frames: pd.Series
     truthy_frames = truthy_frames.rename('truthy')
     combined_data = pd.concat([truthy_frames, data_frame['game', 'delta'].rename('delta')], axis=1)
     return combined_data.loc[combined_data['truthy'] == True].sum().rename(columns={'delta': 'true_values'}).delta
+
+
+def sum_deltas(data_frame: pd.DataFrame):
+    """
+    Gets the total time elapsed in the given dataframe
+    :param data_frame: The game data frame, goal frames are removed
+    :return: The time based on delta.
+    """
+    return data_frame['game', 'delta'].sum()

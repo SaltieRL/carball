@@ -29,7 +29,7 @@ class BaseStat:
         raise NotImplementedError()
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
         """
         Calculates stats that only apply to players.
         :param player_stat_map: A map of playerId to the specific proto object for stats for that player.
@@ -37,6 +37,7 @@ class BaseStat:
         :param proto_game: A protobuf that contains some parsed stats + all metadata for the game.
         :param player_map: A map of playerId to the protobuf Player object
         :param data_frame: The raw frames of the replay this is the same object as `game.frames`
+        :param per_second: If stats should be divided by in game time
         """
         raise NotImplementedError()
 

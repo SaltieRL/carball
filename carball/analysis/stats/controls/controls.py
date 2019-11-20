@@ -16,7 +16,7 @@ logger = getLogger(__name__)
 class ControlsStat(BaseStat):
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
         for player_key, stats in player_map.items():
             try:
                 player_name = player_map[player_key].name

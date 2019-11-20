@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from carball.analysis.constants.field_constants import FieldConstants
 
-from carball.analysis.stats.utils.pandas_utils import sum_deltas_by_truthy_data
+from carball.analysis.stats.utils.pandas_utils import sum_deltas_by_truthy_data, sum_deltas
 from ....analysis.stats.stats import BaseStat
 from ....generated.api import game_pb2
 from ....generated.api.player_pb2 import Player
@@ -20,20 +20,30 @@ class BoostStat(BaseStat):
     field_constants = FieldConstants()
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
         for player_key, stats in player_stat_map.items():
 
             proto_boost = stats.boost
             player_name = player_map[player_key].name
             player_data_frame = data_frame[player_name].copy()
             player_data_frame.loc[:, 'delta'] = data_frame['game'].delta
-            proto_boost.boost_usage = self.get_player_boost_usage(player_data_frame)
+            if not per_second:
+                proto_boost.boost_usage = self.get_player_boost_usage(player_data_frame)
 
-            proto_boost.wasted_usage = self.get_player_boost_usage_max_speed(player_data_frame)
+                proto_boost.wasted_usage = self.get_player_boost_usage_max_speed(player_data_frame)
 
-            proto_boost.time_full_boost = self.get_time_with_max_boost(data_frame, player_data_frame)
-            proto_boost.time_low_boost = self.get_time_with_low_boost(data_frame, player_data_frame)
-            proto_boost.time_no_boost = self.get_time_with_zero_boost(data_frame, player_data_frame)
+                proto_boost.time_full_boost = self.get_time_with_max_boost(data_frame, player_data_frame)
+                proto_boost.time_low_boost = self.get_time_with_low_boost(data_frame, player_data_frame)
+                proto_boost.time_no_boost = self.get_time_with_zero_boost(data_frame, player_data_frame)
+            else:
+                time_elapsed = sum_deltas(data_frame)
+                proto_boost.boost_usage = self.get_player_boost_usage(player_data_frame) / time_elapsed
+
+                proto_boost.wasted_usage = self.get_player_boost_usage_max_speed(player_data_frame) / time_elapsed
+
+                proto_boost.time_full_boost = self.get_time_with_max_boost(data_frame, player_data_frame) / time_elapsed
+                proto_boost.time_low_boost = self.get_time_with_low_boost(data_frame, player_data_frame) / time_elapsed
+                proto_boost.time_no_boost = self.get_time_with_zero_boost(data_frame, player_data_frame) / time_elapsed
             proto_boost.average_boost_level = self.get_average_boost_level(player_data_frame)
 
             if 'boost_collect' not in player_data_frame:
@@ -49,12 +59,13 @@ class BoostStat(BaseStat):
                     int_idx = player_data_frame.index.get_loc(idx)
                     wasted_big += player_data_frame['boost'].iloc[int_idx - 1] / 256 * 100
 
-                collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] <= 34]]
+                collect_frames = player_data_frame.loc[
+                    player_data_frame.index[player_data_frame['boost_collect'] <= 34]]
                 prior_vals = np.empty([0])
                 for index in collect_frames.index.to_numpy():
                     idx = gains_index[(np.abs(gains_index - index).argmin())]
                     int_idx = player_data_frame.index.get_loc(idx)
-                    val = player_data_frame['boost'].iloc[int_idx-1]
+                    val = player_data_frame['boost'].iloc[int_idx - 1]
                     prior_vals = np.append(prior_vals, val)
                 deltas = ((prior_vals + 30.6) - 255)
                 wasted_small = deltas[deltas > 0].sum() / 256 * 100
@@ -89,9 +100,9 @@ class BoostStat(BaseStat):
         # Get big pads below or above 0 depending on team
         # The index of y position is 1. The index of the label is 2.
         if is_orange:
-            opponent_pad_labels = big[big[:, 1] < 0][:, 2] #big[where[y] is < 0][labels]
+            opponent_pad_labels = big[big[:, 1] < 0][:, 2]  # big[where[y] is < 0][labels]
         else:
-            opponent_pad_labels = big[big[:, 1] > 0][:, 2] #big[where[y] is > 0][labels]
+            opponent_pad_labels = big[big[:, 1] > 0][:, 2]  # big[where[y] is > 0][labels]
         # Count all the places where isin = True by summing
         stolen = player_dataframe.boost_collect.isin(opponent_pad_labels).sum()
         return stolen

@@ -17,7 +17,7 @@ from carball.generated.api.metadata.game_metadata_pb2 import RANKED_RUMBLE, UNRA
 class RumbleItemStat(BaseStat):
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
         if not is_rumble_enabled(game):
             return
 

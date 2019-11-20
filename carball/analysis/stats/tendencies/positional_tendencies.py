@@ -2,6 +2,7 @@ from typing import Callable, Dict
 
 import pandas as pd
 
+from carball.analysis.stats.utils.pandas_utils import sum_deltas
 from ....analysis.constants.field_constants import FieldConstants
 from ....analysis.stats.stats import BaseStat
 from ....generated.api import game_pb2
@@ -50,26 +51,27 @@ class PositionalTendencies(BaseStat):
         }
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
         for id, player in player_map.items():
-            self.get_player_tendencies(player, data_frame)
+            self.get_player_tendencies(player, data_frame, per_second=per_second)
 
     def calculate_stat(self, proto_stat, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                       data_frame: pd.DataFrame):
+                       data_frame: pd.DataFrame, per_second: bool = False):
         ball_data_frame = data_frame['ball']
 
         self.get_tendencies(data_frame, ball_data_frame, ball_data_frame, False,
-                            proto_stat.ball_stats.positional_tendencies, self.map_ball_attributes_to_predicates)
+                            proto_stat.ball_stats.positional_tendencies, self.map_ball_attributes_to_predicates,
+                            per_second=per_second)
 
-    def get_player_tendencies(self, player: Player, data_frame: pd.DataFrame):
+    def get_player_tendencies(self, player: Player, data_frame: pd.DataFrame, per_second: bool = False):
         self.get_tendencies(data_frame, data_frame[player.name], data_frame['ball'],
                             player.is_orange, player.stats.positional_tendencies,
-                            self.map_player_attributes_to_predicates)
+                            self.map_player_attributes_to_predicates, per_second=per_second)
 
     def get_tendencies(self, data_frame: pd.DataFrame, player_data_frame: pd.DataFrame,
                        ball_data_frame: pd.DataFrame, is_orange: bool,
                        positional_tendencies: stats_pb2.PositionalTendencies,
-                       predicate_map: Dict[str, Callable]):
+                       predicate_map: Dict[str, Callable], per_second: bool = False):
         """
         Calculates the tendencies for all of the stats
         :param data_frame: The normal data frame
@@ -86,8 +88,11 @@ class PositionalTendencies(BaseStat):
         if is_orange:
             player_ball_dataframes = self.get_flipped_dataframes(player_ball_dataframes)
 
+        time_elapsed = 1
+        if per_second:
+            time_elapsed = sum_deltas(data_frame)
         init_params = {
-            attr: self.get_duration_from_predicate(predicate, player_ball_dataframes, data_frame)
+            attr: self.get_duration_from_predicate(predicate, player_ball_dataframes, data_frame) / time_elapsed
             for attr, predicate in predicate_map.items()
         }
         self.set_tendency_proto(positional_tendencies, **init_params)

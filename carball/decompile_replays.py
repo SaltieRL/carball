@@ -26,7 +26,8 @@ def decompile_replay(replay_path, output_path: str = None, overwrite: bool = Tru
 
 
 def analyze_replay_file(replay_path: str, output_path: str = None, overwrite=True, controls: ControlsCreator = None,
-                        sanity_check: SanityChecker = None, analysis_per_goal=False, rattletrap_path: str = None):
+                        sanity_check: SanityChecker = None, analysis_per_goal=False, rattletrap_path: str = None,
+                        per_second: bool = False):
     """
     Decompile and analyze a replay file.
 
@@ -38,6 +39,7 @@ def analyze_replay_file(replay_path: str, output_path: str = None, overwrite=Tru
     :param analysis_per_goal: Runs the analysis per a goal instead of the replay as a whole
     :param rattletrap_path: Custom location for rattletrap executable. Path to folder.
     :param force_full_analysis: If True full analysis will be performed even if checks say it should not.
+    :param per_second: If stats should be divided by in game time
     :return: AnalysisManager of game with analysis.
     """
     _json = decompile_replay(replay_path, output_path=output_path, overwrite=overwrite, rattletrap_path=rattletrap_path)
@@ -50,7 +52,7 @@ def analyze_replay_file(replay_path: str, output_path: str = None, overwrite=Tru
         analysis = PerGoalAnalysis(game)
     else:
         analysis = AnalysisManager(game)
-    analysis.create_analysis()
+    analysis.create_analysis(per_second=per_second)
 
     if controls is not None:
         controls.get_controls(game)

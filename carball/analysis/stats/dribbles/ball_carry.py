@@ -2,6 +2,8 @@ import logging
 from typing import Dict
 
 import pandas as pd
+
+from carball.analysis.stats.utils.pandas_utils import sum_deltas
 from ....analysis.stats.stats import BaseStat
 from ....generated.api import game_pb2
 from ....generated.api.player_pb2 import Player
@@ -13,7 +15,8 @@ logger = logging.getLogger(__name__)
 
 class CarryStat(BaseStat):
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
+
         for event_carry in proto_game.game_stats.ball_carries:
             player_stats = player_stat_map[event_carry.player_id.id]
             player_carry_stats = player_stats.ball_carries
@@ -35,9 +38,15 @@ class CarryStat(BaseStat):
                 player_carry_stats.fastest_carry_speed = event_carry.carry_stats.average_carry_speed
             self.add_ball_stats(player_carry_stats.carry_stats, event_carry.carry_stats)
 
+        time_elapsed = 0
+        if per_second:
+            time_elapsed = sum_deltas(data_frame)
         for player_key in player_stat_map:
             player_carry_stats = player_stat_map[player_key].ball_carries
-            num_carries = player_carry_stats.total_carries
+            if per_second:
+                num_carries = player_carry_stats.total_carries / time_elapsed
+            else:
+                num_carries = player_carry_stats.total_carries
             if num_carries == 0:
                 continue
             player_carry_stats.average_carry_time = player_carry_stats.total_carry_time / num_carries

@@ -12,7 +12,7 @@ from carball.json_parser.game import Game
 
 class KickoffStat(BaseStat):
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
         for kickoff in proto_game.game_stats.kickoff_stats:
             for kickoff_player in kickoff.touch.players:
                 if kickoff_player.player.id in player_stat_map:

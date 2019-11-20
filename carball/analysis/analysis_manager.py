@@ -44,7 +44,7 @@ class AnalysisManager:
         self.should_store_frames = False
         self.df_bytes = None
 
-    def create_analysis(self):
+    def create_analysis(self, per_second: bool = False):
         """
         Organizes all the different analysis that can occurs
         """
@@ -58,7 +58,7 @@ class AnalysisManager:
         self.log_time("getting kickoff")
         if self.can_do_full_analysis(first_touch_frames):
             self.perform_full_analysis(self.game, self.protobuf_game, player_map,
-                                       data_frame, kickoff_frames, first_touch_frames)
+                                       data_frame, kickoff_frames, first_touch_frames, per_second=per_second)
         else:
             self.protobuf_game.game_metadata.is_invalid_analysis = True
 
@@ -68,7 +68,8 @@ class AnalysisManager:
         self.store_frames(data_frame)
 
     def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                              data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series):
+                              data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series,
+                              per_second: bool = False):
 
         """
         Performs the more in depth analysis on the game in addition to just metadata.
@@ -79,12 +80,13 @@ class AnalysisManager:
         :param data_frame: Contains the entire data from the game.
         :param kickoff_frames: Contains data about the kickoffs.
         :param first_touch_frames:  Contains data for frames where touches can actually occur.
+        :param per_second: If stats should be divided by game time
         """
         self.get_game_time(proto_game, data_frame)
         clean_replay(game, data_frame, proto_game, player_map)
         self.events_creator.create_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.log_time("creating events")
-        self.get_stats(game, proto_game, player_map, data_frame)
+        self.get_stats(game, proto_game, player_map, data_frame, per_second=per_second)
 
     def get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
 
@@ -149,13 +151,13 @@ class AnalysisManager:
         return kickoff_frames, first_touch_frames
 
     def get_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                  data_frame: pd.DataFrame):
+                  data_frame: pd.DataFrame, per_second: bool = False):
         """
         Calculates all stats that are beyond the basic event creation.
         This is only active on valid goal frames.
         """
         goal_frames = data_frame.game.goal_number.notnull()
-        self.stats_manager.get_stats(game, proto_game, player_map, data_frame[goal_frames])
+        self.stats_manager.get_stats(game, proto_game, player_map, data_frame[goal_frames], per_second=per_second)
 
     def store_frames(self, data_frame: pd.DataFrame):
         self.data_frame = data_frame

@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 class DropshotStats(BaseStat):
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
         if not is_dropshot(game):
             return
 

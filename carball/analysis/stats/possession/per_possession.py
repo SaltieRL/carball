@@ -69,7 +69,7 @@ class PerPossessionStat(BaseStat):
         self.initialized = True
 
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
-                              player_map: Dict[str, Player], data_frame: pd.DataFrame):
+                              player_map: Dict[str, Player], data_frame: pd.DataFrame, per_second: bool = False):
         if not self.initialized:
             self.initialize(proto_game, player_map, data_frame)
 
