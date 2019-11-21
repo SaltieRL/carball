@@ -132,6 +132,8 @@ def get_raw_replays():
         "3_KICKOFFS": ["3_KICKOFFS_4_SHOTS.replay"],
         "5_DIVERSE_KICKOFFS": ["KICKOFF_TEST_1.replay"],
         "6_DIVERSE_KICKOFFS": ["KICKOFF_TEST_2.replay"],
+        "NO_ONE_FOR_KICKOFF": ["NO_ONE_FOR_KICKOFF.replay"],
+        "WEIRD_KICKOFFS": ["WEIRD_KICKOFFS.replay"],
 
         # hits
         "4_SHOTS": ["3_KICKOFFS_4_SHOTS.replay"],

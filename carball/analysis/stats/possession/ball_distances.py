@@ -46,13 +46,13 @@ class BallDistanceStat(BaseStat):
         :param location:
         :return:
         """
+
         player_displacements = {player_id: get_position_displacements(data_frame[player_map[player_id].name],
                                                                       location)
                                 for player_id in player_map.keys()}
 
         player_distances = {player_id: get_distance_from_displacements(player_data_frame).rename(player_id)
                             for player_id, player_data_frame in player_displacements.items()}
-
         player_distances_data_frame = pd.concat(player_distances, axis=1)
         closest_players = player_distances_data_frame.idxmin(axis=1).rename('closest_player')
         furthest_players = player_distances_data_frame.idxmax(axis=1).rename('furthest_player')
