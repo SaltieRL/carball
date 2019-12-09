@@ -17,4 +17,5 @@ message GameStats {
     repeated api.stats.KickoffStats kickoff_stats = 7;
     repeated api.stats.BallCarry ball_carries = 8;
     optional api.stats.DropshotGameStats dropshot_stats = 9;
+    repeated api.stats.FiftyFifty fifty_fifties = 10;
 }

@@ -86,8 +86,7 @@ message FiftyFifty {
     optional int32 ending_frame = 2;
     repeated Hit hits = 3;
     repeated api.PlayerId players = 4;
-    optional api.Team winning_team = 5;
-    optional api.Team losing_team = 6;
+    optional api.PlayerId winner = 5;
     optional bool is_neutral = 7;
 }
 

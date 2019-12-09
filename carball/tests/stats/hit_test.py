@@ -142,6 +142,6 @@ class Test_Hits():
             for x in range(len(hits)):
                 assert(hits[x].pressure == expected_pressures[x])
 
-                run_analysis_test_on_replay(test, replay_list=get_raw_replays()["OCE_RLCS_7_CARS"],
-                                    answers=get_specific_answers()["CLEARS"],
-                                    calculate_intensive_events=True)
+            run_analysis_test_on_replay(test, replay_list=get_raw_replays()["OCE_RLCS_7_CARS"],
+                                answers=get_specific_answers()["CLEARS"],
+                                calculate_intensive_events=True)
