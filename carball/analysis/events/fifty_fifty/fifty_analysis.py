@@ -3,6 +3,7 @@ import math
 from typing import List
 
 from carball.generated.api.stats.events_pb2 import FiftyFifty
+from carball.generated.api.stats.events_pb2 import Hit
 from carball.generated.api import game_pb2
 from carball.json_parser.game import Game
 
@@ -14,7 +15,13 @@ class FiftyAnalysis:
         self.data_frame = data_frame
         self.fifty_threshold = 5
 
-    def determine_fifty_fifty_winner(self, fifty, next_hit_index):
+    def hits_are_consecutive(self, hit1: Hit, hit2: Hit):
+        """Return True if hit2 occurs right after hit1 and are from different players."""
+        withinThreshold = (hit2.frame_number - hit1.frame_number) < self.fifty_threshold
+        opposingPlayers = hit1.player_id.id != hit2.player_id.id
+        return withinThreshold and opposingPlayers
+
+    def determine_fifty_fifty_winner(self, fifty: FiftyFifty, next_hit_index: int):
         """Iterate all 50/50s and determine the winner of each."""
         hits = self.proto_game.game_stats.hits
         hit = hits[next_hit_index]
@@ -27,7 +34,7 @@ class FiftyAnalysis:
             return
 
         # If the next hit starts a 50/50, then this hit was a neutral 50/50.
-        if (following_hit.frame_number - hit.frame_number) < self.fifty_threshold:
+        if self.hits_are_consecutive(hit,following_hit):
             fifty.is_neutral = True
         else:
             # Winner is whichever team successfully recovered the ball.
@@ -36,7 +43,7 @@ class FiftyAnalysis:
     def calculate_fifty_fifty_stats(self):
         """Find all 50/50s in a match and assign their winners."""
         hits = self.proto_game.game_stats.hits
-        # Check all hits for 50.50 potential.
+        # Check all hits for 50/50 potential.
         i = 0
         while i < len(hits)-1:
             hit = hits[i]
@@ -44,29 +51,33 @@ class FiftyAnalysis:
             hits_in_fifty = []
             players_involved = {}
             # If two hits are within threshold, we are starting a 50/50.
-            if (lookahead.frame_number - hit.frame_number) < self.fifty_threshold:
+            if not self.hits_are_consecutive(hit,lookahead):
+                # If no 50/50 found, go to next hit.
+                i += 1
+                continue
+            else:
+                # 50/50 detected.
                 hits_in_fifty.append(hit)
                 hits_in_fifty.append(lookahead)
                 players_involved[hit.player_id.id] = hit.player_id
                 players_involved[lookahead.player_id.id] = lookahead.player_id
-            else:
-                break
+            # Check next hit, break if that was the last hit.
             i += 1
-            # Break if that was the last hit.
             if i >= len(hits)-1:
                 break
             hit = hits[i]
             lookahead = hits[i+1]
-            while (lookahead.frame_number - hit.frame_number) < self.fifty_threshold:
+            # Start iterating hits that are all in 50/50.
+            while self.hits_are_consecutive(hit, lookahead):
                 hits_in_fifty.append(lookahead)
                 players_involved[lookahead.player_id.id] = lookahead.player_id
-                i += 1
                 # Break if that was the last hit.
+                i += 1
                 if i >= len(hits)-1:
                     break
                 hit = hits[i]
                 lookahead = hits[i+1]
-            # Check if a 50/50 was found.
+            # Build 50/50 object.
             if len(hits_in_fifty) >= 1:
                 fifty = self.proto_game.game_stats.fifty_fifties.add()
                 fifty.hits.extend(hits_in_fifty)
