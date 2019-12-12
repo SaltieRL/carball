@@ -44,9 +44,10 @@ class AnalysisManager:
         self.should_store_frames = False
         self.df_bytes = None
 
-    def create_analysis(self):
+    def create_analysis(self, calculate_intensive_events: bool = False):
         """
-        Organizes all the different analysis that can occurs
+        Organizes all the different analysis that can occurs.
+        :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats.
         """
         self.start_time()
         player_map = self.get_game_metadata(self.game, self.protobuf_game)
@@ -58,7 +59,8 @@ class AnalysisManager:
         self.log_time("getting kickoff")
         if self.can_do_full_analysis(first_touch_frames):
             self.perform_full_analysis(self.game, self.protobuf_game, player_map,
-                                       data_frame, kickoff_frames, first_touch_frames)
+                                       data_frame, kickoff_frames, first_touch_frames,
+                                       calculate_intensive_events=calculate_intensive_events)
         else:
             self.protobuf_game.game_metadata.is_invalid_analysis = True
 
@@ -68,21 +70,23 @@ class AnalysisManager:
         self.store_frames(data_frame)
 
     def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                              data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series):
+                              data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series,
+                              calculate_intensive_events: bool = False):
 
         """
         Performs the more in depth analysis on the game in addition to just metadata.
-
         :param game: Contains all metadata about the game and any json data.
         :param proto_game: The protobuf where all the stats are being stored.
         :param player_map: A map of player name to Player protobuf.
         :param data_frame: Contains the entire data from the game.
         :param kickoff_frames: Contains data about the kickoffs.
         :param first_touch_frames:  Contains data for frames where touches can actually occur.
+        :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats.
         """
         self.get_game_time(proto_game, data_frame)
         clean_replay(game, data_frame, proto_game, player_map)
-        self.events_creator.create_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
+        self.events_creator.create_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames,
+            calculate_intensive_events=calculate_intensive_events)
         self.log_time("creating events")
         self.get_stats(game, proto_game, player_map, data_frame)
 
