@@ -104,7 +104,7 @@ class BaseKickoff:
                 kPlayer.boost_time = data_frame['game']['delta'][frame:collected_boost_df.index.values[0]].sum()
 
         # Make sure that we are not doing diffs on booleans
-        jump_active_df = jump_active_df.astype(int)
+        jump_active_df = jump_active_df.astype(float)
 
         # check the kickoff frames (and then some) for jumps & big boost collection
         jump_active_df = jump_active_df[jump_active_df.diff(1) > 0]
