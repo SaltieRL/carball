@@ -50,20 +50,24 @@ class SaltieGame:
 
             countdown_indexes = countdown_start_frames.index.values
 
-            kickoff_count = 0
-            reset_kickoff_index = []
-            current_kickoff = None
-            for kickoff in kickoff_frames.index.values:
-                if not kickoff_count + 1 < len(countdown_indexes):
-                    break
-                if kickoff > countdown_indexes[kickoff_count] and kickoff < countdown_indexes[kickoff_count + 1]:
-                    current_kickoff = kickoff
-                else:
-                    reset_kickoff_index.append(current_kickoff)
-                    kickoff_count += 1
-                    current_kickoff = kickoff
+            if len(kickoff_frames.index.values) == len(countdown_indexes) == 1:
+                reset_kickoff_index = kickoff_frames.index.values
+            else:
+                kickoff_count = 0
+                reset_kickoff_index = []
+                current_kickoff = None
+                for kickoff in kickoff_frames.index.values:
+                    if not kickoff_count + 1 < len(countdown_indexes):
+                        break
+                    if kickoff > countdown_indexes[kickoff_count] and kickoff < countdown_indexes[kickoff_count + 1]:
+                        current_kickoff = kickoff
+                    else:
+                        reset_kickoff_index.append(current_kickoff)
+                        kickoff_count += 1
+                        current_kickoff = kickoff
 
-            reset_kickoff_index.append(current_kickoff)
+                if current_kickoff is not None:
+                    reset_kickoff_index.append(current_kickoff)
 
         else:
             logger.debug("No ball_has_been_hit?! Is this really old or what.")
@@ -72,6 +76,8 @@ class SaltieGame:
             hit_team_no_dataframe = pd.concat([hit_team_no, last_hit_team_no], axis=1)
             kickoff_frames = hit_team_no_dataframe[~(hit_team_no_dataframe['hit_team_no'].isnull()) &
                                                    (hit_team_no_dataframe['last_hit_team_no'].isnull())]
+
+            reset_kickoff_index = kickoff_frames
 
         return reset_kickoff_index
 
