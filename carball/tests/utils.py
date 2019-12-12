@@ -47,10 +47,11 @@ def run_replay(replay_file, unit_test_func: Callable, answer=None):
     os.remove(file_path)
 
 
-def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None, cache=None):
+def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None, cache=None, calculate_intensive_events=False):
     """
     :param unit_test_func: Called with an AnalysisManager
     :param replay_list: list of replay urls
+    :param calculate_intensive_events: Indicates if the test needs the replay to be analyzed against expensive-to-calculate events.
     :return:
     """
 
@@ -59,7 +60,7 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
         if cache is not None and str(replay_file_path) in cache:
             analysis_manager = cache[str(replay_file_path)]
         else:
-            analysis_manager = analyze_replay_file(replay_file_path)
+            analysis_manager = analyze_replay_file(replay_file_path, calculate_intensive_events=calculate_intensive_events)
         if cache is not None and time.time() - start > 10:
             cache[str(replay_file_path)] = analysis_manager
         if answer is not None:

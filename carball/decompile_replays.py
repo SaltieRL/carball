@@ -26,7 +26,8 @@ def decompile_replay(replay_path, output_path: str = None, overwrite: bool = Tru
 
 def analyze_replay_file(replay_path: str, output_path: str = None, overwrite=True, controls: ControlsCreator = None,
                         sanity_check: SanityChecker = None, analysis_per_goal=False, rattletrap_path: str = None,
-                        logging_level=logging.NOTSET):
+                        logging_level=logging.NOTSET,
+                        calculate_intensive_events: bool = False):
     """
     Decompile and analyze a replay file.
 
@@ -39,6 +40,7 @@ def analyze_replay_file(replay_path: str, output_path: str = None, overwrite=Tru
     :param rattletrap_path: Custom location for rattletrap executable. Path to folder.
     :param force_full_analysis: If True full analysis will be performed even if checks say it should not.
     :param logging_level: Sets the logging level globally across carball
+    :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats.
     :return: AnalysisManager of game with analysis.
     """
 
@@ -55,7 +57,7 @@ def analyze_replay_file(replay_path: str, output_path: str = None, overwrite=Tru
         analysis = PerGoalAnalysis(game)
     else:
         analysis = AnalysisManager(game)
-    analysis.create_analysis()
+    analysis.create_analysis(calculate_intensive_events=calculate_intensive_events)
 
     if controls is not None:
         controls.get_controls(game)
