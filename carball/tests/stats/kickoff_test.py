@@ -36,7 +36,7 @@ class Test_Kickoff():
 
             first_player = proto_game.players[0].stats
             kickoff_stats = first_player.kickoff_stats
-            assert kickoff_stats.total_kickoffs == 0
+            assert kickoff_stats.total_kickoffs == 3
 
         run_analysis_test_on_replay(test, get_raw_replays()["WEIRD_KICKOFFS"])
 
