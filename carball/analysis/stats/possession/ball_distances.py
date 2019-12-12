@@ -17,6 +17,9 @@ class BallDistanceStat(BaseStat):
     def calculate_player_stat(self, player_stat_map: Dict[str, PlayerStats], game: Game, proto_game: game_pb2.Game,
                               player_map: Dict[str, Player], data_frame: pd.DataFrame):
 
+        if len(player_map) == 0:
+            return
+
         player_distances_data_frame, player_distance_times, player_distance_with_delta, \
              = self.calculate_player_distance_to_location(player_map, data_frame,
                                                           data_frame['ball'])
@@ -53,6 +56,7 @@ class BallDistanceStat(BaseStat):
 
         player_distances = {player_id: get_distance_from_displacements(player_data_frame).rename(player_id)
                             for player_id, player_data_frame in player_displacements.items()}
+
         player_distances_data_frame = pd.concat(player_distances, axis=1)
         closest_players = player_distances_data_frame.idxmin(axis=1).rename('closest_player')
         furthest_players = player_distances_data_frame.idxmax(axis=1).rename('furthest_player')
