@@ -16,6 +16,7 @@ message BallData {
 message Hit {
     optional int32 frame_number = 1;
     optional api.PlayerId player_id = 2;
+    // How far the player center of mass from the player to the center of mass of the car at the frame of this hit.
     optional float collision_distance = 3;
     optional BallData ball_data = 4;
 
@@ -30,10 +31,13 @@ message Hit {
     optional bool assist = 12;
     optional bool assisted = 13;
     optional bool save = 14;
-    optional bool aerial = 15; // ball is above 800 units
+    // Ball is above 800 units
+    optional bool aerial = 15;
     optional bool on_ground = 16; // TODO: CALCULATE
+    // Distance the ball travels from the current hit till the next hit.
     optional float distance = 17;
-    optional float distance_to_goal = 18;
+    // Distance from the ball to the center of the goal.
+    optional float distance_to_goal = 18; 
 
     optional int32 previous_hit_frame_number = 19;
     optional int32 next_hit_frame_number = 20;
@@ -44,7 +48,7 @@ message Hit {
 
     // True if this hit is detected as the first hit for a kickoff.
     optional bool is_kickoff = 22;
-
+    
     optional bool clear = 23;
 
     // Scales from 100 to 0;
