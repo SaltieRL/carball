@@ -8,10 +8,10 @@ from io import BytesIO
 
 from google.protobuf.json_format import MessageToJson
 
-from ..analysis.utils.pandas_manager import PandasManager
-from ..controls.controls import ControlsCreator
-from ..decompile_replays import analyze_replay_file
-from ..json_parser.sanity_check.sanity_check import SanityChecker
+from carball.analysis.utils.pandas_manager import PandasManager
+from carball.controls.controls import ControlsCreator
+from carball.decompile_replays import analyze_replay_file
+from carball.json_parser.sanity_check.sanity_check import SanityChecker
 
 
 def create_dir(directory):
@@ -25,7 +25,7 @@ def __test_replays(BASE_DIR):
     ROOT_DIR = os.path.dirname(BASE_DIR)
     OUTPUT_DIR = os.path.join(ROOT_DIR, 'output')
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     MOVE_WORKING = True
     DEBUGGING = True
@@ -35,7 +35,7 @@ def __test_replays(BASE_DIR):
     sanity_check = SanityChecker()
     sanity_check = None
 
-    for filepath in glob.iglob(ROOT_DIR + '/**/*.replay', recursive=True):
+    for filepath in glob.iglob(ROOT_DIR + '/**carball/replays/*.replay', recursive=True):
         logger.info('decompiling %s', filepath)
         if "output" in filepath:
             continue
@@ -84,3 +84,6 @@ def __test_replays(BASE_DIR):
             print("Need files in: " + BASE_DIR)
         ratio = success / float(success + failure)
         print('success ratio:', ratio)
+
+if __name__ == "__main__":
+    __test_replays(os.path.dirname(os.getcwd()))

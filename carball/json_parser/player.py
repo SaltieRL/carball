@@ -78,7 +78,7 @@ class Player:
         self.shots = actor_data.get("TAGame.PRI_TA:MatchShots", None)
         self.parse_actor_data(actor_data)
 
-        logger.info('Created Player from actor_data: %s' % self)
+        logger.debug('Created Player from actor_data: %s', self)
         return self
 
     def parse_player_stats(self, player_stats: dict):
@@ -92,7 +92,7 @@ class Player:
         self.shots = player_stats["Shots"]["value"]["int"]
         self.is_bot = bool(player_stats["bBot"]["value"]["bool"])
 
-        logger.info('Created Player from stats: %s' % self)
+        logger.debug('Created Player from stats: %s', self)
         if self.is_bot or self.online_id == '0' or self.online_id == 0:
             self.online_id = get_online_id_for_bot(bot_map, self)
 
@@ -110,7 +110,7 @@ class Player:
         for key, value in self.camera_settings.items():
             if value is None:
                 logger.warning('Could not find ' + key + ' in camera settings for ' + self.name)
-        logger.info('Camera settings for %s: %s' % (self.name, self.camera_settings))
+        logger.debug('Camera settings for %s: %s', self.name, self.camera_settings)
 
     def parse_actor_data(self, actor_data: dict):
         """
@@ -202,7 +202,7 @@ class Player:
                     'banner': user_color.get('user_color', None),
                     'avatar_border': user_color.get('avatar_border', None)
                 })
-        logger.info('Loadout for %s: %s' % (self.name, self.loadout))
+        logger.debug('Loadout for %s: %s', self.name, self.loadout)
 
     def parse_data(self, _dict: dict):
         """
@@ -246,8 +246,12 @@ class Player:
             car_data = {'team_paint': {}}
 
         for i in range(2):
+            try:
+                loadout = self.loadout[i]
+            except IndexError:
+                continue
             # default blue primary = 35, default orange primary = 33, default accent = 0, default glossy = 270
-            self.loadout[i]['primary_color'] = car_data['team_paint'].get(i, {}).get('primary_color', 35 if i == 0 else 33)
-            self.loadout[i]['accent_color'] = car_data['team_paint'].get(i, {}).get('accent_color', 0)
-            self.loadout[i]['primary_finish'] = car_data['team_paint'].get(i, {}).get('primary_finish', 270)
-            self.loadout[i]['accent_finish'] = car_data['team_paint'].get(i, {}).get('accent_finish', 270)
+            loadout['primary_color'] = car_data['team_paint'].get(i, {}).get('primary_color', 35 if i == 0 else 33)
+            loadout['accent_color'] = car_data['team_paint'].get(i, {}).get('accent_color', 0)
+            loadout['primary_finish'] = car_data['team_paint'].get(i, {}).get('primary_finish', 270)
+            loadout['accent_finish'] = car_data['team_paint'].get(i, {}).get('accent_finish', 270)

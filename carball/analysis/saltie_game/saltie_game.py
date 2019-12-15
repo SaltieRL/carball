@@ -40,10 +40,35 @@ class SaltieGame:
             ball_has_been_hit = game.frames.loc[:, 'replicated_seconds_remaining']
             last_frame_ball_has_been_hit = ball_has_been_hit.shift(1).rename('last_replicated_seconds_remaining')
             ball_hit_dataframe = pd.concat([ball_has_been_hit, last_frame_ball_has_been_hit], axis=1)
-            ball_hit_dataframe.fillna(0, inplace=True)
+            ball_hit_dataframe.fillna(-1, inplace=True)
+
+            countdown_start_frames = ball_hit_dataframe[(ball_hit_dataframe['replicated_seconds_remaining'] > 0) &
+                                                  (ball_hit_dataframe['last_replicated_seconds_remaining'] == -1)]
 
             kickoff_frames = ball_hit_dataframe[(ball_hit_dataframe['replicated_seconds_remaining'] == 0) &
                                                 (ball_hit_dataframe['last_replicated_seconds_remaining'] > 0)]
+
+            countdown_indexes = countdown_start_frames.index.values
+
+            if len(kickoff_frames.index.values) == len(countdown_indexes) == 1:
+                reset_kickoff_index = kickoff_frames.index.values
+            else:
+                kickoff_count = 0
+                reset_kickoff_index = []
+                current_kickoff = None
+                for kickoff in kickoff_frames.index.values:
+                    if not kickoff_count + 1 < len(countdown_indexes):
+                        break
+                    if kickoff > countdown_indexes[kickoff_count] and kickoff < countdown_indexes[kickoff_count + 1]:
+                        current_kickoff = kickoff
+                    else:
+                        reset_kickoff_index.append(current_kickoff)
+                        kickoff_count += 1
+                        current_kickoff = kickoff
+
+                if current_kickoff is not None:
+                    reset_kickoff_index.append(current_kickoff)
+
         else:
             logger.debug("No ball_has_been_hit?! Is this really old or what.")
             hit_team_no = game.ball.loc[:, 'hit_team_no']
@@ -52,7 +77,9 @@ class SaltieGame:
             kickoff_frames = hit_team_no_dataframe[~(hit_team_no_dataframe['hit_team_no'].isnull()) &
                                                    (hit_team_no_dataframe['last_hit_team_no'].isnull())]
 
-        return kickoff_frames.index.values
+            reset_kickoff_index = kickoff_frames
+
+        return reset_kickoff_index
 
     @staticmethod
     def create_data_df(game: Game) -> pd.DataFrame:

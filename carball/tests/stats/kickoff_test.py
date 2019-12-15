@@ -18,6 +18,28 @@ class Test_Kickoff():
 
         run_analysis_test_on_replay(test, get_raw_replays()["KICKOFF_NO_TOUCH"])
 
+    def test_no_one_for_kickoffs(self):
+        def test(analysis: AnalysisManager):
+
+            proto_game = analysis.get_protobuf_data()
+            kickoffs = proto_game.game_stats.kickoffs
+            assert (len(kickoffs) == 1)
+
+        run_analysis_test_on_replay(test, get_raw_replays()["NO_ONE_FOR_KICKOFF"])
+
+    def test_no_one_for_weird_kickoffs(self):
+        def test(analysis: AnalysisManager):
+
+            proto_game = analysis.get_protobuf_data()
+            kickoffs = proto_game.game_stats.kickoffs
+            assert (len(kickoffs) == 3)
+
+            first_player = proto_game.players[0].stats
+            kickoff_stats = first_player.kickoff_stats
+            assert kickoff_stats.total_kickoffs == 3
+
+        run_analysis_test_on_replay(test, get_raw_replays()["WEIRD_KICKOFFS"])
+
     def test_3_kickoffs(self):
         def test(analysis: AnalysisManager):
 
