@@ -22,12 +22,20 @@ Various tools for decompiling / analyzing Rocket League replays.
 
 #### Clone for development
 
+##### Windows
 ```
 git clone https://github.com/SaltieRL/carball
 cd carball/
 python init.py
 ```
 
+##### Linux
+```
+git clone https://github.com/SaltieRL/carball
+cd carball/
+./_travis/install-protoc.sh
+python init.py
+```
 
 ## Examples / Usage
 
