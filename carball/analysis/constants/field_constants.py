@@ -23,6 +23,8 @@ MAP_THIRD = MAP_Y / 6
 
 NEUTRAL_ZONE = MAP_Y / 20
 
+# Max car speed (boosting) in uu/s
+MAX_CAR_SPEED = 2300
 
 class FieldConstants:
     field_type = FieldType.STANDARD

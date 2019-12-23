@@ -35,12 +35,12 @@ class EventsCreator:
         :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats.
         """
         goal_frames = data_frame.game.goal_number.notnull()
+        self.create_boostpad_events(proto_game, data_frame)
         self.create_hit_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_kickoff_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_ball_carries(game, proto_game, player_map, data_frame[goal_frames])
         self.create_bumps(game, proto_game, player_map, data_frame[goal_frames])
         self.create_dropshot_events(game, proto_game, player_map)
-        self.create_boostpad_events(proto_game, data_frame)
 
         if calculate_intensive_events:
             self.calculate_hit_pressure(game, proto_game, data_frame)
