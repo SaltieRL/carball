@@ -37,7 +37,7 @@ message Hit {
     // Distance the ball travels from the current hit till the next hit.
     optional float distance = 17;
     // Distance from the ball to the center of the goal.
-    optional float distance_to_goal = 18; 
+    optional float distance_to_goal = 18;
 
     optional int32 previous_hit_frame_number = 19;
     optional int32 next_hit_frame_number = 20;
@@ -48,13 +48,15 @@ message Hit {
 
     // True if this hit is detected as the first hit for a kickoff.
     optional bool is_kickoff = 22;
-    
+
     optional bool clear = 23;
 
     // Scales from 100 to 0;
     // 100 indicates an opponent was right on top of this hit.
     // 0 indicates the hit was made with little to no defending pressure.
     optional int32 pressure = 24;
+
+    optional bool dunk = 25;
 
     // pseudo stats
     // is_turnover = !(goal || dribble || pass)
@@ -88,10 +90,9 @@ message CameraChange {
 message FiftyFifty {
     optional int32 starting_frame = 1;
     optional int32 ending_frame = 2;
-    repeated Hit hits = 3;
+    repeated int32 hits = 3; // indices of hit included in this fifty-fifty
     repeated api.PlayerId players = 4;
-    optional api.Team winning_team = 5;
-    optional api.Team losing_team = 6;
+    optional api.PlayerId winner = 5;
     optional bool is_neutral = 7;
 }
 

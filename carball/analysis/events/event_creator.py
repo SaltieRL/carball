@@ -6,6 +6,7 @@ import pandas as pd
 from carball.analysis.events.bump_detection.bump_analysis import BumpAnalysis
 from carball.analysis.events.boost_pad_detection.pickup_analysis import PickupAnalysis
 from carball.analysis.events.hit_pressure.pressure_analysis import PressureAnalysis
+from carball.analysis.events.fifty_fifty.fifty_analysis import FiftyAnalysis
 from carball.analysis.events.kickoff_detection.kickoff_analysis import BaseKickoff
 from carball.analysis.events.carry_detection import CarryDetection
 from carball.analysis.events.hit_detection.base_hit import BaseHit
@@ -17,7 +18,6 @@ from carball.generated.api.player_pb2 import Player
 from carball.json_parser.game import Game
 
 logger = logging.getLogger(__name__)
-
 
 class EventsCreator:
     """
@@ -44,8 +44,13 @@ class EventsCreator:
 
         if calculate_intensive_events:
             self.calculate_hit_pressure(game, proto_game, data_frame)
-            # TODO (j-wass): calculate 50/50s
+            self.calculate_fifty_fifty(game, proto_game, data_frame)
             # TODO (j-wass): calculate bumps
+
+    def calculate_fifty_fifty(self, game: Game, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
+        logger.info("Calculating 50/50s.")
+        fiftyAnalysis = FiftyAnalysis(game=game, proto_game=proto_game, data_frame=data_frame)
+        fiftyAnalysis.calculate_fifty_fifty_stats()
 
     def calculate_hit_pressure(self, game: Game, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
         logger.info("Calculating hit pressure.")

@@ -11,5 +11,6 @@ rattletrap-*
 build/
 carball.egg*
 dist/
+*ipynb*
 
 !/carball/tests/replays/
