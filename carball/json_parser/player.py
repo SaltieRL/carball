@@ -1,7 +1,6 @@
 import logging
 from typing import TYPE_CHECKING, List
 
-import numpy as np
 import pandas as pd
 
 from carball.json_parser.bots import get_bot_map, get_online_id_for_bot
@@ -50,7 +49,7 @@ class Player:
         else:
             return '%s: %s' % (self.__class__.__name__, self.name)
 
-    def create_from_actor_data(self, actor_data: dict, teams: List['Team']):
+    def create_from_actor_data(self, actor_data: dict, teams: List['Team'], objects: List[str]):
         self.name = actor_data['name']
         if 'Engine.PlayerReplicationInfo:bBot' in actor_data and actor_data['Engine.PlayerReplicationInfo:bBot']:
             self.is_bot = True
@@ -76,7 +75,7 @@ class Player:
         self.assists = actor_data.get("TAGame.PRI_TA:MatchAssists", None)
         self.saves = actor_data.get("TAGame.PRI_TA:MatchSaves", None)
         self.shots = actor_data.get("TAGame.PRI_TA:MatchShots", None)
-        self.parse_actor_data(actor_data)
+        self.parse_actor_data(actor_data, objects)
 
         logger.debug('Created Player from actor_data: %s', self)
         return self
@@ -112,15 +111,16 @@ class Player:
                 logger.warning('Could not find ' + key + ' in camera settings for ' + self.name)
         logger.debug('Camera settings for %s: %s', self.name, self.camera_settings)
 
-    def parse_actor_data(self, actor_data: dict):
+    def parse_actor_data(self, actor_data: dict, objects: List[str]):
         """
         Adds stuff not found in PlayerStats metadata.
         PlayerStats is a better source of truth - as actor_data might not have been updated (e.g. for last assist)
 
         :param actor_data:
+        :param objects:
         :return:
         """
-        self.get_loadout(actor_data)
+        self.get_loadout(actor_data, objects)
         self.party_leader = actor_data.get('TAGame.PRI_TA:PartyLeader', None)
         try:
             if self.party_leader is not None and \
@@ -138,12 +138,12 @@ class Player:
         self.steering_sensitivity = actor_data.get('TAGame.PRI_TA:SteeringSensitivity', None)
         return self
 
-    def get_loadout(self, actor_data: dict):
+    def get_loadout(self, actor_data: dict, objects: List[str]):
         if "TAGame.PRI_TA:ClientLoadouts" in actor_data:  # new version (2 loadouts)
-            loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]["loadouts"]
+            loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]
         else:
             try:
-                loadout_data = {'0': actor_data["TAGame.PRI_TA:ClientLoadout"]["loadout"]}
+                loadout_data = {'0': actor_data["TAGame.PRI_TA:ClientLoadout"]}
             except KeyError:
                 loadout_data = {'0': {}}
         for loadout_name, _loadout in loadout_data.items():
@@ -162,7 +162,7 @@ class Player:
                 'avatar_border': _loadout.get('unknown5', None)
             })
         if 'TAGame.PRI_TA:ClientLoadoutsOnline' in actor_data:
-            loadout_online = actor_data['TAGame.PRI_TA:ClientLoadoutsOnline']['loadouts_online']
+            loadout_online = actor_data['TAGame.PRI_TA:ClientLoadoutsOnline']
             # Paints
             for team in ['blue', 'orange']:
                 paint = {}
@@ -177,16 +177,17 @@ class Player:
                 ]
                 for item_name, corresponding_item in zip(items, team_loadout):  # order is based on menu
                     for attribute in corresponding_item:
-                        if attribute['object_name'] == 'TAGame.ProductAttribute_Painted_TA':
+                        object_name = objects[attribute['object_ind']]
+                        if object_name == 'TAGame.ProductAttribute_Painted_TA':
                             if 'painted_old' in attribute['value']:
-                                paint[item_name] = attribute['value']['painted_old']['value']
+                                paint[item_name] = attribute['value']['OldPaint']
                             else:
-                                paint[item_name] = attribute['value']['painted_new']
-                        elif attribute['object_name'] == 'TAGame.ProductAttribute_UserColor_TA':
+                                paint[item_name] = attribute['value']['NewPaint']
+                        elif object_name == 'TAGame.ProductAttribute_UserColor_TA':
                             # TODO handle 'user_color_old', looks like an ID like primary and accent colors
-                            if 'user_color_new' in attribute['value']:
+                            if 'NewColor' in attribute['value']:
                                 # rgb integer, 0xAARRGGBB, banners and avatar borders have different default values
-                                user_color[item_name] = attribute['value']['user_color_new']
+                                user_color[item_name] = attribute['value']['NewColor']
                 self.paint.append({
                     'car': paint.get('body', None),
                     'skin': paint.get('decal', None),

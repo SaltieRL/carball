@@ -24,7 +24,7 @@ class GameInfo:
         # There is no GameServerID if you play alone
         self.server_id = ''
         if 'ProjectX.GRI_X:GameServerID' in actor_data:
-            self.server_id = str(actor_data['ProjectX.GRI_X:GameServerID']['q_word'])
+            self.server_id = actor_data['ProjectX.GRI_X:GameServerID']
         self.server_name = actor_data['Engine.GameReplicationInfo:ServerName']
         
         # A custom lobby doesn't have a MatchGUID

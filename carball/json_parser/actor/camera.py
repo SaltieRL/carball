@@ -8,7 +8,8 @@ class CameraSettingsHandler(BaseActorHandler):
         if 'TAGame.CameraSettingsActor_TA:PRI' not in actor:
             return
 
-        player_actor_id = actor['TAGame.CameraSettingsActor_TA:PRI']  # may need to try another key
+        id_info = actor['TAGame.CameraSettingsActor_TA:PRI']  # may need to try another key
+        player_actor_id = -1 if not id_info[0] else id_info[1]
         # add camera settings
         if player_actor_id not in self.parser.cameras_data and \
                 'TAGame.CameraSettingsActor_TA:ProfileSettings' in actor:

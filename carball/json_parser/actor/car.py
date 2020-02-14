@@ -12,7 +12,8 @@ class CarHandler(BaseActorHandler):
         if 'Engine.Pawn:PlayerReplicationInfo' not in actor:
             return
 
-        player_actor_id = actor['Engine.Pawn:PlayerReplicationInfo']
+        id_info = actor['Engine.Pawn:PlayerReplicationInfo']
+        player_actor_id = -1 if not id_info[0] else id_info[1]
         if player_actor_id == -1:
             self.add_demo(actor, frame_number)
             return
@@ -38,7 +39,7 @@ class CarHandler(BaseActorHandler):
         if player_actor_id not in self.parser.car_dicts:
             self.parser.car_dicts[player_actor_id] = {'team_paint': {}}
 
-        team_paint = actor['TAGame.Car_TA:TeamPaint']['team_paint']
+        team_paint = actor['TAGame.Car_TA:TeamPaint']
 
         self.parser.car_dicts[player_actor_id]['team_paint'][team_paint['team']] = {
             'primary_color': team_paint['primary_color'],
@@ -49,7 +50,7 @@ class CarHandler(BaseActorHandler):
 
     def add_demo(self, actor, frame_number):
         if 'TAGame.Car_TA:ReplicatedDemolish' in actor:
-            demo_data = actor['TAGame.Car_TA:ReplicatedDemolish']['demolish']
+            demo_data = actor['TAGame.Car_TA:ReplicatedDemolish']
             # add attacker and victim player ids
             attacker_car_id = demo_data['attacker_actor_id']
             victim_car_id = demo_data['victim_actor_id']

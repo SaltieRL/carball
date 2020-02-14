@@ -22,21 +22,17 @@ class PlayerHandler(BaseActorHandler):
 
         if "TAGame.PRI_TA:PartyLeader" in actor:
             try:
-                actor_type = \
-                    list(actor["Engine.PlayerReplicationInfo:UniqueId"]['unique_id'][
-                             'remote_id'].keys())[
-                        0]
+                actor_type = list(actor["Engine.PlayerReplicationInfo:UniqueId"]['remote_id'].keys())[0]
 
                 # handle UniqueID for plays_station and switch
                 unique_id = None
                 if actor_type == "play_station" or actor_type == "psy_net":
                     actor_name = actor["Engine.PlayerReplicationInfo:PlayerName"]
-                    for player_stat in self.parser.game.properties['PlayerStats']['value']["array"]:
-                        if actor_name == player_stat['value']['Name']['value']['str']:
-                            unique_id = str(player_stat['value']['OnlineID']['value']['q_word'])
+                    for player_stat in self.parser.game.properties['PlayerStats']:
+                        if actor_name == player_stat['Name']:
+                            unique_id = str(player_stat['OnlineID'])
                 if unique_id is None:
-                    unique_id = str(
-                        actor['Engine.PlayerReplicationInfo:UniqueId']['unique_id']['remote_id'][actor_type])
+                    unique_id = str(actor['Engine.PlayerReplicationInfo:UniqueId']['remote_id'][actor_type])
 
                 # only process if party_leader id exists
                 if "party_leader" in actor["TAGame.PRI_TA:PartyLeader"] and \

@@ -146,7 +146,7 @@ class Game:
         # GAME INFO
         self.game_info = GameInfo().parse_game_info_actor(all_data['game_info_actor'],
                                                           all_data['soccar_game_event_actor'],
-                                                          self.replay['content']['body']['objects'])
+                                                          self.replay['objects'])
 
         # TEAMS
         self.teams = []
@@ -166,12 +166,12 @@ class Game:
                 if _player_data['name'] == player.name:
                     found_player = player
                     player_actor_id_player_dict[_player_actor_id] = found_player
-                    found_player.parse_actor_data(_player_data)  # just add extra stuff
+                    found_player.parse_actor_data(_player_data, self.replay['objects'])  # just add extra stuff
                     break
             if found_player is None:
                 # player not in endgame stats, create new player
                 try:
-                    found_player = Player().create_from_actor_data(_player_data, self.teams)
+                    found_player = Player().create_from_actor_data(_player_data, self.teams, self.replay['objects'])
                 except KeyError as e:
                     # KeyError: 'Engine.PlayerReplicationInfo:Team'
                     # in `team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]`
