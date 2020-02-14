@@ -82,15 +82,15 @@ class Player:
         return self
 
     def parse_player_stats(self, player_stats: dict):
-        self.name = player_stats["Name"]["value"]["str"]
-        self.online_id = str(player_stats["OnlineID"]["value"]["q_word"])
-        self.is_orange = bool(player_stats["Team"]["value"]["int"])
-        self.score = player_stats["Score"]["value"]["int"]
-        self.goals = player_stats["Goals"]["value"]["int"]
-        self.assists = player_stats["Assists"]["value"]["int"]
-        self.saves = player_stats["Saves"]["value"]["int"]
-        self.shots = player_stats["Shots"]["value"]["int"]
-        self.is_bot = bool(player_stats["bBot"]["value"]["bool"])
+        self.name = player_stats["Name"]
+        self.online_id = player_stats["OnlineID"]
+        self.is_orange = bool(player_stats["Team"])
+        self.score = player_stats["Score"]
+        self.goals = player_stats["Goals"]
+        self.assists = player_stats["Assists"]
+        self.saves = player_stats["Saves"]
+        self.shots = player_stats["Shots"]
+        self.is_bot = player_stats["bBot"]
 
         logger.debug('Created Player from stats: %s', self)
         if self.is_bot or self.online_id == '0' or self.online_id == 0:

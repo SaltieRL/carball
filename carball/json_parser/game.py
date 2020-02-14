@@ -58,24 +58,21 @@ class Game:
             self.replay = loaded_json
         logger.debug('Loaded JSON')
 
-        self.replay_data = self.replay['content']['body']['frames']
+        self.replay_data = self.replay['network_frames']['frames']
 
         # set properties
-        self.properties = self.replay['header']['body']['properties']['value']
-        self.replay_id = self.find_actual_value(self.properties['Id']['value'])
-        if 'MapName' in self.properties:
-            self.map = self.find_actual_value(self.properties['MapName']['value'])
-        else:
-            self.map = 'Unknown'
-        self.name = self.find_actual_value(self.properties.get('ReplayName', None))
-        self.match_type = self.find_actual_value(self.properties['MatchType']['value'])
-        self.team_size = self.find_actual_value(self.properties['TeamSize']['value'])
+        self.properties = self.replay['properties']
+        self.replay_id = self.properties['Id']
+        self.map = self.properties.get('MapName', 'Unknown')
+        self.name = self.properties.get('ReplayName', None)
+        self.match_type = self.properties['MatchType']
+        self.team_size = self.properties['TeamSize']
 
         if self.name is None:
             logger.warning('Replay name not found')
-        self.id = self.find_actual_value(self.properties["Id"]['value'])
+        self.id = self.properties["Id"]
 
-        date_string = self.properties['Date']['value']['str']
+        date_string = self.properties['Date']
         for date_format in DATETIME_FORMATS:
             try:
                 self.datetime = datetime.strptime(date_string, date_format)
@@ -85,7 +82,7 @@ class Game:
         else:
             logger.error('Cannot parse date: ' + date_string)
 
-        self.replay_version = self.properties.get('ReplayVersion', {}).get('value', {}).get('int', None)
+        self.replay_version = self.properties.get('ReplayVersion', None)
         logger.info(f"version: {self.replay_version}, date: {self.datetime}")
         if self.replay_version is None:
             logger.warning('Replay version not found')
@@ -109,17 +106,16 @@ class Game:
     def create_players(self) -> List[Player]:
         players = []
         try:
-            for player_stats in self.properties["PlayerStats"]["value"]["array"]:
-                player = Player().parse_player_stats(player_stats["value"])
+            for player_stats in self.properties["PlayerStats"]:
+                player = Player().parse_player_stats(player_stats)
                 players.append(player)
         except KeyError:
             pass
         return players
 
     def get_primary_player(self):
-        owner_name = self.properties.get('PlayerName')
+        owner_name = self.properties['PlayerName']
         if owner_name is not None:
-            owner_name = owner_name['value']['str']
             for player in self.players:
                 if player.name == owner_name:
                     return {'name': owner_name, 'id': player.online_id}
@@ -129,7 +125,7 @@ class Game:
         if "Goals" not in self.properties:
             return []
 
-        goals = [g['value'] for g in self.properties["Goals"]["value"]["array"]]
+        goals = self.properties["Goals"]
 
         logger.info('Found %s goals.' % len(goals))
         logger.debug('Goals: %s' % goals)
@@ -139,26 +135,6 @@ class Game:
             goal = Goal(goal_dict, self)
             goals_list.append(goal)
         return goals_list
-
-    @staticmethod
-    def find_actual_value(value_dict: dict) -> dict or int or bool or str:
-        types = ['int', 'boolean', 'string', 'byte', 'str', 'name', ('flagged_int', 'int')]
-        if value_dict is None:
-            return None
-        if 'value' in value_dict:
-            value_dict = value_dict['value']
-        for _type in types:
-            if isinstance(_type, str):
-                if _type in value_dict:
-                    return value_dict[_type]
-            else:
-                value = value_dict
-                if _type[0] in value:
-                    for type_str in _type:
-                        value = value[type_str]
-                    return value
-        else:
-            return value_dict
 
     def parse_all_data(self, all_data, clean_player_names: bool) -> None:
         """
