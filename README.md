@@ -33,8 +33,13 @@ python init.py
 ```
 git clone https://github.com/SaltieRL/carball
 cd carball/
-./_travis/install-protoc.sh
-python init.py
+chmod +x _travis/install-protoc.sh
+./_travis/install-protoc.sh 2.6.1
+mkdir -p carball/generated/binaries/.libs/
+ln -s ../../../protobuf-2.6.1/src/.libs/ carball/generated/binaries/
+pip3 install -r requirements.txt
+pip3 install -r requirements-test.txt
+python3 init.py
 ```
 
 ## Examples / Usage
