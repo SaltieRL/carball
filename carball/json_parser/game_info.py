@@ -31,11 +31,13 @@ class GameInfo:
         self.match_guid = actor_data.get('ProjectX.GRI_X:MatchGUID', '')
         self.playlist = actor_data['ProjectX.GRI_X:ReplicatedGamePlaylist']
         self.mutator_index = actor_data.get('ProjectX.GRI_X:ReplicatedGameMutatorIndex', 0)
-
-        if 'TAGame.GameEvent_Soccar_TA:SubRulesArchetype' in game_event_actor:
-            # Only used for rumble stats
-            # TODO can this contain any other mutators?
-            self.rumble_mutator = objects[game_event_actor['TAGame.GameEvent_Soccar_TA:SubRulesArchetype']]
-
+        try:
+            if 'TAGame.GameEvent_Soccar_TA:SubRulesArchetype' in game_event_actor:
+                # Only used for rumble stats
+                # TODO can this contain any other mutators?
+                self.rumble_mutator = objects[game_event_actor['TAGame.GameEvent_Soccar_TA:SubRulesArchetype']]
+        except TypeError:
+            pass
+        
         logger.info('Created game info from actor')
         return self
