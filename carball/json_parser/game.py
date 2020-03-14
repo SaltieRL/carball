@@ -114,7 +114,7 @@ class Game:
         return players
 
     def get_primary_player(self):
-        owner_name = self.properties['PlayerName']
+        owner_name = self.properties.get('PlayerName')
         if owner_name is not None:
             for player in self.players:
                 if player.name == owner_name:
@@ -190,7 +190,7 @@ class Game:
 
             found_player.parse_data(all_data['player_ball_data'][_player_actor_id])
             # camera_settings might not exist (see 0AF8AC734890E6D3995B829E474F9924)
-            found_player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}).get('cam_settings', {}))
+            found_player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}))
             found_player.get_data_from_car(all_data['car_dicts'].get(_player_actor_id, None))
 
             for team in self.teams:
@@ -222,16 +222,16 @@ class Game:
                 'frame_number': _demo_data['frame_number'],
                 'attacker': player_actor_id_player_dict[_demo_data['attacker_player_id']],
                 'victim': player_actor_id_player_dict[_demo_data['victim_player_id']],
-                'attacker_vel': (_demo_data["attacker_velocity"]["x"],
-                                 _demo_data["attacker_velocity"]["y"],
-                                 _demo_data["attacker_velocity"]["z"],),
+                'attacker_vel': (_demo_data["attack_velocity"]["x"],
+                                 _demo_data["attack_velocity"]["y"],
+                                 _demo_data["attack_velocity"]["z"],),
                 'victim_vel': (_demo_data["victim_velocity"]["x"],
                                _demo_data["victim_velocity"]["y"],
                                _demo_data["victim_velocity"]["z"],),
             }
 
             # Key created to prevent duplicate demo counts
-            key = (int(_demo_data["attacker_velocity"]["x"]) + int(_demo_data["attacker_velocity"]["y"]) + int(_demo_data["attacker_velocity"]["z"]) +
+            key = (int(_demo_data["attack_velocity"]["x"]) + int(_demo_data["attack_velocity"]["y"]) + int(_demo_data["attack_velocity"]["z"]) +
                    int(_demo_data["victim_velocity"]["x"]) + int(_demo_data["victim_velocity"]["y"]) + int(_demo_data["victim_velocity"]["z"]))
             Game.add_demo_to_map(key, demo, demo_map)
 

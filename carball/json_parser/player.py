@@ -56,13 +56,13 @@ class Player:
             self.online_id = get_online_id_for_bot(bot_map, self)
 
         else:
-            actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[0]
-            self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'][actor_type]
+            actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id'].keys())[0]
+            self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id'][actor_type]
         try:
             self.score = actor_data["TAGame.PRI_TA:MatchScore"]
         except KeyError:
             logger.warning('Score is not found for player')
-        team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]
+        team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"][1]
         if team_actor_id == -1:
             # if they leave at the end
             team_actor_id = actor_data['team']
@@ -102,9 +102,9 @@ class Player:
         self.camera_settings['height'] = camera_data.get('height', None)
         self.camera_settings['pitch'] = camera_data.get('angle', None)
         self.camera_settings['distance'] = camera_data.get('distance', None)
-        self.camera_settings['stiffness'] = camera_data.get('stiffness', None)
-        self.camera_settings['swivel_speed'] = camera_data.get('swivel_speed', None)
-        self.camera_settings['transition_speed'] = camera_data.get('transition_speed', None)
+        self.camera_settings['stiffness'] = camera_data.get('swiftness', None)
+        self.camera_settings['swivel_speed'] = camera_data.get('swivel', None)
+        self.camera_settings['transition_speed'] = camera_data.get('transition', None)
 
         for key, value in self.camera_settings.items():
             if value is None:

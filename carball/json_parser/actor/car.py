@@ -24,7 +24,7 @@ class CarHandler(BaseActorHandler):
         RBState = actor.get(REPLICATED_RB_STATE_KEY, {})
         # bDriving is missing?! TODO: Investigate bDriving in RBState
         # car_is_driving = RBState.get("rigid_body_state", {}).get("TAGame.Vehicle_TA:bDriving", False)
-        car_is_sleeping = RBState.get("rigid_body_state", {}).get('sleeping', True)
+        car_is_sleeping = RBState.get('sleeping', True)
         # only collect data if car is driving and not sleeping
         if not car_is_sleeping:
             self.parser.current_car_ids_to_collect.append(actor['Id'])
