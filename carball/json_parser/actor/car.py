@@ -30,7 +30,7 @@ class CarHandler(BaseActorHandler):
         if not car_is_sleeping:
             self.parser.current_car_ids_to_collect.append(actor['Id'])
 
-            data_dict = CarActor.get_data_dict(actor, version=self.parser.replay_version)
+            data_dict = CarActor.get_data_dict(actor)
             # save data from here
             self.parser.player_data[player_actor_id][frame_number].update(data_dict)
 

@@ -27,10 +27,10 @@ BALL_DATA_DICT_PAIRS = {
 
 class BallActor:
     @staticmethod
-    def get_data_dict(actor_data: Dict, version: int = None) -> Dict:
+    def get_data_dict(actor_data: Dict) -> Dict:
         # is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
         data_dict = get_data_dict_from_pairs(actor_data, pairs=BALL_DATA_DICT_PAIRS)
-        data_dict = standardise_data_dict(data_dict, version)
+        data_dict = standardise_data_dict(data_dict)
         return data_dict
 
 
@@ -49,10 +49,10 @@ CAR_DATA_DICT_PAIRS = {
 
 class CarActor:
     @staticmethod
-    def get_data_dict(actor_data: Dict, version: int = None) -> Dict:
+    def get_data_dict(actor_data: Dict) -> Dict:
         # is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
         data_dict = get_data_dict_from_pairs(actor_data, pairs=CAR_DATA_DICT_PAIRS)
-        data_dict = standardise_data_dict(data_dict, version)
+        data_dict = standardise_data_dict(data_dict)
         return data_dict
 
 
@@ -69,9 +69,8 @@ def get_data_dict_from_pairs(actor_data: dict, pairs: dict) -> dict:
     return data_dict
 
 
-def standardise_data_dict(data_dict: dict, version: int = None) -> dict:
-    if version is not None and version >= 7:
-        data_dict = rescale_to_uu(data_dict)
+def standardise_data_dict(data_dict: dict) -> dict:
+    data_dict = rescale_to_uu(data_dict)
     data_dict = convert_quat_to_rot(data_dict)
     data_dict.pop('quat_w')
     data_dict.pop('quat_x')
@@ -82,8 +81,8 @@ def standardise_data_dict(data_dict: dict, version: int = None) -> dict:
 
 def rescale_to_uu(data_dict: dict) -> dict:
     # handle psyonix's rounding to 2dp (and storing 1.00 as 100)
-    correction_dict = {'vel_x': 10, 'vel_y': 10, 'vel_z': 10,
-                       'ang_vel_x': 10, 'ang_vel_y': 10, 'ang_vel_z': 10}
+    correction_dict = {'vel_x': 0.1, 'vel_y': 0.1, 'vel_z': 0.1,
+                       'ang_vel_x': 0.1, 'ang_vel_y': 0.1, 'ang_vel_z': 0.1}
     # /100 pos, /10 vel and ang_vel
     for _item, _divisor in correction_dict.items():
         try:

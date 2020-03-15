@@ -21,7 +21,7 @@ class PlayerHandler(BaseActorHandler):
         if player_team is not None and player_team != -1 and player_team != 4294967295:
             player_dict['team'] = player_team
 
-        if "TAGame.PRI_TA:PartyLeader" in actor:
+        if "TAGame.PRI_TA:PartyLeader" in actor and actor["TAGame.PRI_TA:PartyLeader"] is not None:
             try:
                 actor_type = list(actor["Engine.PlayerReplicationInfo:UniqueId"]['remote_id'].keys())[0]
 
