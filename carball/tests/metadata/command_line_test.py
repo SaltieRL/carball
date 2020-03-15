@@ -1,7 +1,6 @@
 import pytest
 
 from carball.command_line import main
-from carball.rattletrap.run_rattletrap import RattleTrapException
 from carball.tests.utils import get_replay_path, get_raw_replays
 
 

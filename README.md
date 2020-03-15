@@ -123,13 +123,9 @@ optional arguments:
   --proto PROTO         The result of the analysis will be saved to this file
                         in protocol buffers format.
   --json JSON           The result of the analysis will be saved to this file
-                        in json file format. This is not the decompiled replay
-                        json from rattletrap.
+                        in json file format.
   --gzip GZIP           The pandas dataframe will be saved to this file in a
                         compressed gzip format.
-  -sd, --skip-decompile
-                        If set, carball will treat the input file as a json
-                        file that Rattletrap outputs.
   -v, --verbose         Set the logging level to INFO. To set the logging
                         level to DEBUG use -vv.
   -s, --silent          Disable logging altogether.
@@ -161,12 +157,6 @@ Linux set `python3.6` as `python`:
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
 ```
 This assumes you already have 3.6 installed.
-
-Linux Error (Potential):
-`PermissionError: [Errno 13] Permission denied: 'carball/rattletrap/rattletrap-6.2.2-linux'`
-Fix:
-`chmod +x "carball/rattletrap/rattletrap-6.2.2-linux"`
-
 
 ## Developing
 

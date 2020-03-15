@@ -1,7 +1,5 @@
 import unittest
 
-from carball.rattletrap import run_rattletrap
-
 from carball.analysis.analysis_manager import AnalysisManager
 
 from carball.tests.utils import run_analysis_test_on_replay, get_specific_replays
