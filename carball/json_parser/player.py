@@ -180,7 +180,7 @@ class Player:
                     for attribute in corresponding_item:
                         object_name = objects[attribute['object_ind']]
                         if object_name == 'TAGame.ProductAttribute_Painted_TA':
-                            if 'painted_old' in attribute['value']:
+                            if 'OldPaint' in attribute['value']:
                                 paint[item_name] = attribute['value']['OldPaint']
                             else:
                                 paint[item_name] = attribute['value']['NewPaint']

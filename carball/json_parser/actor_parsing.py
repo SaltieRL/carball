@@ -83,8 +83,7 @@ def standardise_data_dict(data_dict: dict, version: int = None) -> dict:
 
 def rescale_to_uu(data_dict: dict) -> dict:
     # handle psyonix's rounding to 2dp (and storing 1.00 as 100)
-    correction_dict = {'pos_x': 100, 'pos_y': 100, 'pos_z': 100,
-                       'vel_x': 10, 'vel_y': 10, 'vel_z': 10,
+    correction_dict = {'vel_x': 10, 'vel_y': 10, 'vel_z': 10,
                        'ang_vel_x': 10, 'ang_vel_y': 10, 'ang_vel_z': 10}
     # /100 pos, /10 vel and ang_vel
     for _item, _divisor in correction_dict.items():
