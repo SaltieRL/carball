@@ -13,7 +13,6 @@ class CarHandler(BaseActorHandler):
             return
 
         player_actor_id = actor['Engine.Pawn:PlayerReplicationInfo']
-
         # TODO this is unsigned in boxcars, remove 4294967295 when fixed
         if player_actor_id == -1 or player_actor_id == 4294967295:
             self.add_demo(actor, frame_number)
