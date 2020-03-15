@@ -12,8 +12,8 @@ class CarHandler(BaseActorHandler):
         if 'Engine.Pawn:PlayerReplicationInfo' not in actor:
             return
 
-        id_info = actor['Engine.Pawn:PlayerReplicationInfo']
-        player_actor_id = -1 if not id_info[0] else id_info[1]
+        player_actor_id = actor['Engine.Pawn:PlayerReplicationInfo']
+
         if player_actor_id == -1:
             self.add_demo(actor, frame_number)
             return

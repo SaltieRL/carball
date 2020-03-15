@@ -181,7 +181,7 @@ class FrameParser(object):
                 actor = self.actors[actor_id]
                 prop_name = self.objects[updated['object_id']]
                 # update property
-                actor[prop_name] = list(updated['attribute'].values())[0]
+                actor[prop_name] = find_actual_value(updated['attribute'])
 
             # stop data collection after goal
             try:
@@ -209,6 +209,16 @@ class FrameParser(object):
                         handler.update(self.actors[actor_id], i, time, delta)
 
             self.current_car_ids_to_collect.clear()
+
+
+def find_actual_value(attribute: dict):
+    item = list(attribute.items())[0]
+    attribute_type = item[0]
+    attribute_value = item[1]
+
+    if attribute_type == 'Flagged' or attribute_type == 'FlaggedByte':
+        return attribute_value[1]
+    return attribute_value
 
 
 OBJECT_CLASSES = {
