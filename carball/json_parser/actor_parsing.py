@@ -72,8 +72,7 @@ def get_data_dict_from_pairs(actor_data: dict, pairs: dict) -> dict:
 def standardise_data_dict(data_dict: dict, version: int = None) -> dict:
     if version is not None and version >= 7:
         data_dict = rescale_to_uu(data_dict)
-    if version is not None and version >= 7 and data_dict['quat_w'] is not None:
-        data_dict = convert_quat_to_rot(data_dict)
+    data_dict = convert_quat_to_rot(data_dict)
     data_dict.pop('quat_w')
     data_dict.pop('quat_x')
     data_dict.pop('quat_y')
