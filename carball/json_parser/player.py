@@ -124,11 +124,8 @@ class Player:
         self.get_loadout(actor_data, objects)
         self.party_leader = actor_data.get('TAGame.PRI_TA:PartyLeader', None)
         try:
-            if self.party_leader is not None and \
-                    'party_leader' in self.party_leader and \
-                    'id' in self.party_leader['party_leader']:
-                leader_actor_type = list(self.party_leader['party_leader']['id'][0].keys())[0]
-                self.party_leader = str(self.party_leader['party_leader']['id'][0][leader_actor_type])
+            if self.party_leader is not None and 'remote_id' in self.party_leader:
+                self.party_leader = str(list(self.party_leader['remote_id'].values())[0])
             else:
                 self.party_leader = None
         except KeyError:

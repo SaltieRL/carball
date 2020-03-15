@@ -27,7 +27,7 @@ class PlayerHandler(BaseActorHandler):
 
                 # handle UniqueID for plays_station and switch
                 unique_id = None
-                if actor_type == "play_station" or actor_type == "psy_net":
+                if actor_type == "PlayStation" or actor_type == "PsyNet":
                     actor_name = actor["Engine.PlayerReplicationInfo:PlayerName"]
                     for player_stat in self.parser.game.properties['PlayerStats']:
                         if actor_name == player_stat['Name']:
@@ -36,27 +36,18 @@ class PlayerHandler(BaseActorHandler):
                     unique_id = str(actor['Engine.PlayerReplicationInfo:UniqueId']['remote_id'][actor_type])
 
                 # only process if party_leader id exists
-                if "party_leader" in actor["TAGame.PRI_TA:PartyLeader"] and \
-                        "id" in actor["TAGame.PRI_TA:PartyLeader"]["party_leader"]:
-                    leader_actor_type = list(
-                        actor["TAGame.PRI_TA:PartyLeader"]["party_leader"]["id"][0].keys()
-                    )[0]
+                if "remote_id" in actor["TAGame.PRI_TA:PartyLeader"]:
+                    leader_actor_type = list(actor["TAGame.PRI_TA:PartyLeader"]["remote_id"].keys())[0]
                     leader = None
-                    if leader_actor_type == "play_station" or leader_actor_type == "psy_net":
-                        leader_name = actor[
-                            "TAGame.PRI_TA:PartyLeader"
-                        ]["party_leader"]["id"][0][leader_actor_type][0]
+                    if leader_actor_type == "PlayStation" or leader_actor_type == "PsyNet":
+                        leader_name = actor["TAGame.PRI_TA:PartyLeader"]["remote_id"][leader_actor_type]['name']
 
-                        for player_stat in self.parser.game.properties['PlayerStats']['value']["array"]:
-                            if leader_name == player_stat['value']['Name']['value']['str']:
-                                leader = str(player_stat['value']['OnlineID']['value']['q_word'])
+                        for player_stat in self.parser.game.properties['PlayerStats']:
+                            if leader_name == player_stat['Name']:
+                                leader = str(player_stat['OnlineID'])
 
                     if leader is None:  # leader is not using play_station nor switch (ie. xbox or steam)
-                        leader = str(
-                            actor[
-                                "TAGame.PRI_TA:PartyLeader"
-                            ]["party_leader"]["id"][0][leader_actor_type]
-                        )
+                        leader = str(actor["TAGame.PRI_TA:PartyLeader"]["remote_id"][leader_actor_type])
 
                     if leader in self.parser.parties:
                         if unique_id not in self.parser.parties[leader]:
