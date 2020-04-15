@@ -1,4 +1,4 @@
-numpy==1.17.0
+numpy >=1.17.0,<2.0
 protobuf==3.6.1
-pandas==0.24.2
+pandas >=0.24.2,<2.0
 xlrd==1.1.0
