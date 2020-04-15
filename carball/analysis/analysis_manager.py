@@ -272,7 +272,7 @@ class AnalysisManager:
 
         return create_name
 
-    def can_do_full_analysis(self, first_touch_frames, force_equal_teams=False) -> bool:
+    def can_do_full_analysis(self, first_touch_frames, force_equal_teams: bool = False) -> bool:
         """
         Check whether or not the replay satisfies the requirements for a full analysis.
         This includes checking:
