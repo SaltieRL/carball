@@ -33,4 +33,4 @@ def sum_deltas_by_truthy_data(data_frame: pd.DataFrame, truthy_frames: pd.Series
     """
     truthy_frames = truthy_frames.rename('truthy')
     combined_data = pd.concat([truthy_frames, data_frame['game', 'delta'].rename('delta')], axis=1)
-    return combined_data.loc[combined_data['truthy'] == True].sum().rename(columns={'delta': 'true_values'}).delta
+    return combined_data.loc[combined_data['truthy'] == True].sum().loc['delta']
