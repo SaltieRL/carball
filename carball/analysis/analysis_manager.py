@@ -266,7 +266,7 @@ class AnalysisManager:
 
         return create_name
 
-    def can_do_full_analysis(self, first_touch_frames, force_equal_teams: bool = False) -> bool:
+    def can_do_full_analysis(self, first_touch_frames) -> bool:
         """
         Check whether or not the replay satisfies the requirements for a full analysis.
         This includes checking:
@@ -293,10 +293,9 @@ class AnalysisManager:
             logger.warning("Not doing full analysis. No one touched the ball")
             return False
 
-        if force_equal_teams:
-            if any((team_size != team_sizes[0]) for team_size in team_sizes):
-                logger.warning("Not doing full analysis. Not all team sizes are equal")
-                return False
+        # if any((team_size != team_sizes[0]) for team_size in team_sizes):
+        #     logger.warning("Not doing full analysis. Not all team sizes are equal")
+        #     return False
 
         return True
 
