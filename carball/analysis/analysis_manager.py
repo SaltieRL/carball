@@ -32,14 +32,8 @@ logger = logging.getLogger(__name__)
 
 class AnalysisManager:
     """
-    DESCRIPTION
     AnalysisManager class takes an initialized Game object and converts the data into a Protobuf and a DataFrame. Then,
     that data is used to perform full analysis on the replay.
-
-    COMMON PARAMS
-    :game: The game object (instance of Game). It contains the replay metadata and processed json data.
-    :proto_game: The game's protobuf (instance of game_pb2) (refer to the comment in get_protobuf_data() for more info).
-    :data_frame: The game's pandas.DataFrame object (refer to comment in get_data_frame() for more info).
     """
 
     id_creator = None
@@ -60,12 +54,7 @@ class AnalysisManager:
         Sets basic metadata, and decides whether analysis can be performed and then passes required parameters
         to perform_full_analysis(...); After, stores the DataFrame.
 
-        :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats,
-        such as:
-            Hit pressure, which calculates how long it would've taken the nearest opponent to hit the ball,
-                i.e. did the player have time to make a better play?
-            50/50s (not implemented yet)
-            Bumps (not implemented yet)
+        :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats.
         """
 
         self.start_time()
@@ -96,14 +85,12 @@ class AnalysisManager:
 
         """
         Sets some further data and cleans the replay;
-        Then, performs the analysis, which includes:
-            creating in-game event data (boostpads, hits, carries, bumps etc.)
-            getting in-game stats (i.e. player, team, general-game and hit stats)
+        Then, performs the analysis.
 
-        :param game: The game object (instance of Game). See top of class for info.
-        :param proto_game: The game's protobuf (instance of game_pb2). See top of class for info.
+        :param game: The game object (instance of Game). It contains the replay metadata and processed json data.
+        :param proto_game: The game's protobuf (instance of game_pb2) (refer to the comment in get_protobuf_data() for more info).
+        :param data_frame: The game's pandas.DataFrame object (refer to comment in get_data_frame() for more info).
         :param player_map: A map of player name to Player protobuf.
-        :param data_frame: The game's pandas.DataFrame. See top of class for info.
         :param kickoff_frames: Contains data about the kickoffs.
         :param first_touch_frames:  Contains data for frames where touches can actually occur.
         :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats.
@@ -122,7 +109,8 @@ class AnalysisManager:
         Processes protobuf data and sets the respective object fields to correct values.
         Maps the player's specific online ID (steam unique ID) to the player object.
 
-        :params: See top of class.
+        :param game: The game object (instance of Game). It contains the replay metadata and processed json data.
+        :param proto_game: The game's protobuf (instance of game_pb2) (refer to the comment in get_protobuf_data() for more info).
         :return: A dictionary, with the player's online ID as the key, and the player object (instance of Player) as the value.
         """
         # Process the relevant protobuf data and pass it to the Game object (returned data is ignored).
@@ -150,7 +138,8 @@ class AnalysisManager:
         Calculates the game length (total time the game lasted) and sets it to the relevant metadata length field.
         Calculates the total time a player has spent in the game and sets it to the relevant player field.
 
-        :params: See top of class.
+        :param proto_game: The game's protobuf (instance of game_pb2) (refer to the comment in get_protobuf_data() for more info).
+        :param data_frame: The game's pandas.DataFrame object (refer to comment in get_data_frame() for more info).
         """
 
         protobuf_game.game_metadata.length = data_frame.game[data_frame.game.goal_number.notnull()].delta.sum()
@@ -172,7 +161,9 @@ class AnalysisManager:
         NOTE: kickoff_frames is an array of all in-game frames at each kickoff beginning.
         NOTE: first_touch_frames is an array of all in-game frames for each 'First Touch' at kickoff.
 
-        :params: See top of class.
+        :param game: The game object (instance of Game). It contains the replay metadata and processed json data.
+        :param proto_game: The game's protobuf (instance of game_pb2) (refer to the comment in get_protobuf_data() for more info).
+        :param data_frame: The game's pandas.DataFrame object (refer to comment in get_data_frame() for more info).
         :return: See notes above.
         """
 
@@ -203,8 +194,10 @@ class AnalysisManager:
         For each in-game frame after a goal has happened, calculate in-game stats
         (i.e. player, team, general-game and hit stats)
 
+        :param game: The game object (instance of Game). It contains the replay metadata and processed json data.
+        :param proto_game: The game's protobuf (instance of game_pb2) (refer to the comment in get_protobuf_data() for more info).
+        :param data_frame: The game's pandas.DataFrame object (refer to comment in get_data_frame() for more info).
         :param player_map: The dictionary with all player IDs matched to the player objects.
-        :params: See top of class.
         """
 
         goal_frames = data_frame.game.goal_number.notnull()
@@ -232,7 +225,8 @@ class AnalysisManager:
         """
         :return: The protobuf data created by the analysis
 
-        USAGE: A Protocol Buffer contains in-game metadata (e.g. events, stats)
+        USAGE: A Protocol Buffer contains in-game metadata (e.g. events, stats). Treat it as a usual Python object with
+        fields that match the API.
 
         INFO: The Protocol Buffer is a collection of data organized in a format similar to json. All relevant .proto
         files found at https://github.com/SaltieRL/carball/tree/master/api.
