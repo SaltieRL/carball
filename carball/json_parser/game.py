@@ -50,31 +50,56 @@ class Game:
         self.dropshot = None
 
     def initialize(self, file_path='', loaded_json=None, parse_replay: bool = True, clean_player_names: bool = False):
+        """
+        Initializes the Game object by processing the replay's json file, which finds and copies all relevant data.
+
+        :param file_path: The (string) path to the replay's json file.
+        :param loaded_json: The replay's json file.
+        :param parse_replay: Boolean - should the replay be parsed?
+        :param clean_player_names: Boolean - should the player names be cleared?
+        """
+
         self.file_path = file_path
-        if loaded_json is None:
-            with open(file_path, 'r') as f:
-                self.replay = json.load(f)
-        else:
-            self.replay = loaded_json
-        logger.debug('Loaded JSON')
+        self.load_json(loaded_json)
 
         self.replay_data = self.replay['content']['body']['frames']
 
-        # set properties
-        self.properties = self.replay['header']['body']['properties']['value']
-        self.replay_id = self.find_actual_value(self.properties['Id']['value'])
-        if 'MapName' in self.properties:
-            self.map = self.find_actual_value(self.properties['MapName']['value'])
+        self.set_replay_properties()
+
+        if parse_replay:
+            self.parse_replay(clean_player_names)
+
+    def load_json(self, loaded_json):
+        if loaded_json is None:
+            with open(self.file_path, 'r') as f:
+                self.replay = json.load(f)
         else:
-            self.map = 'Unknown'
-        self.name = self.find_actual_value(self.properties.get('ReplayName', None))
+            self.replay = loaded_json
+
+        logger.debug('Loaded JSON')
+
+    def set_replay_properties(self):
+        self.properties = self.replay['header']['body']['properties']['value']
+
+        self.replay_id = self.find_actual_value(self.properties['Id']['value'])
         self.match_type = self.find_actual_value(self.properties['MatchType']['value'])
         self.team_size = self.find_actual_value(self.properties['TeamSize']['value'])
 
+        self.set_replay_name()
+        self.set_replay_date()
+        self.set_replay_version()
+        self.set_replay_map()
+
+        self.players: List[Player] = self.create_players()
+        self.goals: List[Goal] = self.get_goals()
+        self.primary_player: dict = self.get_primary_player()
+
+    def set_replay_name(self):
+        self.name = self.find_actual_value(self.properties.get('ReplayName', None))
         if self.name is None:
             logger.warning('Replay name not found')
-        self.id = self.find_actual_value(self.properties["Id"]['value'])
 
+    def set_replay_date(self):
         date_string = self.properties['Date']['value']['str']
         for date_format in DATETIME_FORMATS:
             try:
@@ -85,19 +110,22 @@ class Game:
         else:
             logger.error('Cannot parse date: ' + date_string)
 
+    def set_replay_version(self):
         self.replay_version = self.properties.get('ReplayVersion', {}).get('value', {}).get('int', None)
         logger.info(f"version: {self.replay_version}, date: {self.datetime}")
         if self.replay_version is None:
             logger.warning('Replay version not found')
 
-        self.players: List[Player] = self.create_players()
-        self.goals: List[Goal] = self.get_goals()
-        self.primary_player: dict = self.get_primary_player()
+    def set_replay_map(self):
+        if 'MapName' in self.properties:
+            self.map = self.find_actual_value(self.properties['MapName']['value'])
+        else:
+            self.map = 'Unknown'
 
-        if parse_replay:
-            self.all_data = parse_frames(self)
-            self.parse_all_data(self.all_data, clean_player_names)
-            logger.info("Finished parsing %s" % self)
+    def parse_replay(self, clean_player_names):
+        self.all_data = parse_frames(self)
+        self.parse_all_data(self.all_data, clean_player_names)
+        logger.info("Finished parsing %s" % self)
 
     def __repr__(self):
         team_0_name = self.teams[0].name
@@ -126,6 +154,12 @@ class Game:
             return {'name': owner_name, 'id': None}
 
     def get_goals(self) -> List[Goal]:
+        """
+        Gets goals from replay_properties and creates respective Goal objects.
+
+        :return: List[Goal]
+        """
+
         if "Goals" not in self.properties:
             return []
 
@@ -142,11 +176,25 @@ class Game:
 
     @staticmethod
     def find_actual_value(value_dict: dict) -> dict or int or bool or str:
+        """
+        This method deals with the json file - for every dictionary passed it returns the appropriate value of the
+        "value" key.
+        See the json file (beautify it first) to get a better idea of the values being obtained.
+
+        :param value_dict: The dictionary that has needed data/value(s).
+        :return: Value or another dictionary.
+        """
+
         types = ['int', 'boolean', 'string', 'byte', 'str', 'name', ('flagged_int', 'int')]
+
+        # None -> None
         if value_dict is None:
             return None
+
+        # Narrows the scope.
         if 'value' in value_dict:
             value_dict = value_dict['value']
+
         for _type in types:
             if isinstance(_type, str):
                 if _type in value_dict:
@@ -224,7 +272,8 @@ class Game:
             if clean_player_names:
                 cleaned_player_name = re.sub(r'[^\x00-\x7f]', r'', found_player.name).strip()  # Support ASCII only
                 if cleaned_player_name != found_player.name:
-                    logger.warning(f"Cleaned player name to ASCII-only. From: {found_player.name} to: {cleaned_player_name}")
+                    logger.warning(
+                        f"Cleaned player name to ASCII-only. From: {found_player.name} to: {cleaned_player_name}")
                     found_player.name = cleaned_player_name
 
         # GOAL - add player if not found earlier (ie player just created)
@@ -255,12 +304,13 @@ class Game:
             }
 
             # Key created to prevent duplicate demo counts
-            key = (int(_demo_data["attacker_velocity"]["x"]) + int(_demo_data["attacker_velocity"]["y"]) + int(_demo_data["attacker_velocity"]["z"]) +
-                   int(_demo_data["victim_velocity"]["x"]) + int(_demo_data["victim_velocity"]["y"]) + int(_demo_data["victim_velocity"]["z"]))
+            key = (int(_demo_data["attacker_velocity"]["x"]) + int(_demo_data["attacker_velocity"]["y"]) + int(
+                _demo_data["attacker_velocity"]["z"]) +
+                   int(_demo_data["victim_velocity"]["x"]) + int(_demo_data["victim_velocity"]["y"]) + int(
+                        _demo_data["victim_velocity"]["z"]))
             Game.add_demo_to_map(key, demo, demo_map)
 
         self.demos = list(demo_map.values())
-
 
         # PARTIES
         self.parties = all_data['parties']
@@ -313,7 +363,7 @@ class Game:
             })
 
         damage_frames = set(damage_events.keys())
-        self.dropshot['tile_frames'] =\
+        self.dropshot['tile_frames'] = \
             {k: v for (k, v) in all_data['dropshot']['tile_frames'].items() if k in damage_frames}
 
         self.dropshot['ball_events'] = ball_events
