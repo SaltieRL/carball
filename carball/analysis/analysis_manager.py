@@ -49,12 +49,13 @@ class AnalysisManager:
         self.should_store_frames = False
         self.df_bytes = None
 
-    def create_analysis(self, calculate_intensive_events: bool = False):
+    def create_analysis(self, calculate_intensive_events: bool = False, clean: bool = True):
         """
         Sets basic metadata, and decides whether analysis can be performed and then passes required parameters
         to perform_full_analysis(...); After, stores the DataFrame.
 
         :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats.
+        :param clean: Indicates if useless/invalid data should be found and removed.
         """
 
         self.start_time()
@@ -69,7 +70,8 @@ class AnalysisManager:
         if self.can_do_full_analysis(first_touch_frames):
             self.perform_full_analysis(self.game, self.protobuf_game, player_map,
                                        data_frame, kickoff_frames, first_touch_frames,
-                                       calculate_intensive_events=calculate_intensive_events)
+                                       calculate_intensive_events=calculate_intensive_events,
+                                       clean=clean)
         else:
             self.log_time("Cannot perform analysis: invalid analysis.")
             self.protobuf_game.game_metadata.is_invalid_analysis = True
@@ -81,7 +83,7 @@ class AnalysisManager:
 
     def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                               data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series,
-                              calculate_intensive_events: bool = False):
+                              calculate_intensive_events: bool = False, clean: bool = True):
 
         """
         Sets some further data and cleans the replay;
@@ -94,10 +96,12 @@ class AnalysisManager:
         :param kickoff_frames: Contains data about the kickoffs.
         :param first_touch_frames:  Contains data for frames where touches can actually occur.
         :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats.
+        :param clean: Indicates if useless/invalid data should be found and removed.
         """
 
         self.get_game_time(proto_game, data_frame)
-        clean_replay(game, data_frame, proto_game, player_map)
+        if clean:
+            clean_replay(game, data_frame, proto_game, player_map)
         self.log_time("Creating events...")
         self.events_creator.create_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames,
                                           calculate_intensive_events=calculate_intensive_events)
@@ -191,13 +195,13 @@ class AnalysisManager:
     def get_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                   data_frame: pd.DataFrame):
         """
-        For each in-game frame after a goal has happened, calculate in-game stats
-        (i.e. player, team, general-game and hit stats)
+        For each in-game frame after a goal has happened, calculate in-game stats, clean_replay: bool = False
+        (i.e. player, team, gener, clean_replay: bool = Falseal-game and hit stats)
 
         :param game: The game object (instance of Game). It contains the replay metadata and processed json data.
         :param proto_game: The game's protobuf (instance of game_pb2) (refer to the comment in get_protobuf_data() for more info).
         :param data_frame: The game's pandas.DataFrame object (refer to comment in get_data_frame() for more info).
-        :param player_map: The dictionary with all player IDs matched to the player objects.
+        :param player_map: The dictionary with all player IDs matched to the player objects., clean_replay: bool = False
         """
 
         goal_frames = data_frame.game.goal_number.notnull()
