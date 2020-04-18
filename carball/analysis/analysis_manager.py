@@ -195,13 +195,13 @@ class AnalysisManager:
     def get_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                   data_frame: pd.DataFrame):
         """
-        For each in-game frame after a goal has happened, calculate in-game stats, clean_replay: bool = False
-        (i.e. player, team, gener, clean_replay: bool = Falseal-game and hit stats)
+        For each in-game frame after a goal has happened, calculate in-game stats.
+        (i.e. player, team, general-game and hit stats)
 
         :param game: The game object (instance of Game). It contains the replay metadata and processed json data.
         :param proto_game: The game's protobuf (instance of game_pb2) (refer to the comment in get_protobuf_data() for more info).
         :param data_frame: The game's pandas.DataFrame object (refer to comment in get_data_frame() for more info).
-        :param player_map: The dictionary with all player IDs matched to the player objects., clean_replay: bool = False
+        :param player_map: The dictionary with all player IDs matched to the player objects.
         """
 
         goal_frames = data_frame.game.goal_number.notnull()
