@@ -6,7 +6,7 @@ from carball.tests.utils import get_replay_path
 
 # All relevant files begin with df_ .
 
-def test_df_docs():
+def create_df_docs():
     replay_path = get_replay_path("SHORT_SAMPLE.replay")
 
     working_dir = os.path.dirname(__file__)
@@ -46,3 +46,7 @@ def test_df_docs():
             df_docs.write("\n####" + c[0])
 
         df_docs.write("\n\t" + c[1])
+
+
+if __name__ == '__main__':
+    create_df_docs()
