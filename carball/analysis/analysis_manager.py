@@ -7,6 +7,8 @@ import json
 import os
 
 from google.protobuf.json_format import _Printer
+from typing.io import IO
+
 from .utils.json_encoder import CarballJsonEncoder
 
 script_path = os.path.abspath(__file__)
@@ -82,14 +84,20 @@ class AnalysisManager:
         self._store_frames(data_frame)
 
     def write_json_out_to_file(self, file):
+        if 'b' in file.mode:
+            raise IOError("Json files can not be binary use open(path,\"w\")")
         printer = _Printer()
         js = printer._MessageToJsonObject(self.protobuf_game)
         json.dump(js, file, indent=2, cls=CarballJsonEncoder)
 
-    def write_proto_out_to_file(self, file):
+    def write_proto_out_to_file(self, file: IO):
+        if 'b' not in file.mode:
+            raise IOError("Proto files must be binary use open(path,\"wb\")")
         ProtobufManager.write_proto_out_to_file(file, self.protobuf_game)
 
     def write_pandas_out_to_file(self, file):
+        if 'b' not in file.mode:
+            raise IOError("Proto files must be binary use open(path,\"wb\")")
         if self.df_bytes is not None:
             file.write(self.df_bytes)
         elif not self.should_store_frames:
