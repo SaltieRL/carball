@@ -83,7 +83,17 @@ class AnalysisManager:
 
         self._store_frames(data_frame)
 
-    def write_json_out_to_file(self, file):
+    def write_json_out_to_file(self, file: IO):
+        """
+        Writes the json data to the specified file, as text.
+
+        NOTES:
+            The data is written as text (i.e. string), and the buffer mode must be 'w'.
+                E.g. open(file_name, 'w')
+
+        :param file: The file object (or a buffer).
+        """
+
         if 'b' in file.mode:
             raise IOError("Json files can not be binary use open(path,\"w\")")
         printer = _Printer()
@@ -91,11 +101,33 @@ class AnalysisManager:
         json.dump(js, file, indent=2, cls=CarballJsonEncoder)
 
     def write_proto_out_to_file(self, file: IO):
+        """
+        Writes the proto buffer data to the specified file, as bytes.
+
+        NOTES:
+            The data is written as bytes (i.e. in binary), and the buffer mode must be 'wb'.
+                E.g. open(file_name, 'wb')
+            The file will NOT be human-readable.
+
+        :param file: The file object (or a buffer).
+        """
+
         if 'b' not in file.mode:
             raise IOError("Proto files must be binary use open(path,\"wb\")")
         ProtobufManager.write_proto_out_to_file(file, self.protobuf_game)
 
-    def write_pandas_out_to_file(self, file):
+    def write_pandas_out_to_file(self, file: IO):
+        """
+        Writes the pandas data to the specified file, as bytes.
+
+        NOTES:
+            The data is written as bytes (i.e. in binary), and the buffer mode must be 'wb'.
+                E.g. open(file_name, 'wb')
+            The file will NOT be human-readable.
+
+        :param file: The file object (or a buffer).
+        """
+
         if 'b' not in file.mode:
             raise IOError("Proto files must be binary use open(path,\"wb\")")
         if self.df_bytes is not None:
