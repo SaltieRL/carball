@@ -43,7 +43,7 @@ class AnalysisManager:
         self.game = game
         self.protobuf_game = game_pb2.Game()
         self.protobuf_game.version = PROTOBUF_VERSION
-        self.id_creator = self.create_player_id_function(game)
+        self.id_creator = self._create_player_id_function(game)
         self.stats_manager = StatsManager()
         self.events_creator = EventsCreator(self.id_creator)
         self.should_store_frames = False
@@ -58,32 +58,89 @@ class AnalysisManager:
         :param clean: Indicates if useless/invalid data should be found and removed.
         """
 
-        self.start_time()
-        player_map = self.get_game_metadata(self.game, self.protobuf_game)
-        self.log_time("Getting in-game frame-by-frame data...")
-        data_frame = self.get_data_frames(self.game)
-        self.log_time("Getting important frames (kickoff, first-touch)...")
-        kickoff_frames, first_touch_frames = self.get_kickoff_frames(self.game, self.protobuf_game, data_frame)
-        self.log_time("Setting game kickoff frames...")
+        self._start_time()
+        player_map = self._get_game_metadata(self.game, self.protobuf_game)
+        self._log_time("Getting in-game frame-by-frame data...")
+        data_frame = self._initialize_data_frame(self.game)
+        self._log_time("Getting important frames (kickoff, first-touch)...")
+        kickoff_frames, first_touch_frames = self._get_kickoff_frames(self.game, self.protobuf_game, data_frame)
+        self._log_time("Setting game kickoff frames...")
         self.game.kickoff_frames = kickoff_frames
 
-        if self.can_do_full_analysis(first_touch_frames):
-            self.perform_full_analysis(self.game, self.protobuf_game, player_map,
-                                       data_frame, kickoff_frames, first_touch_frames,
-                                       calculate_intensive_events=calculate_intensive_events,
-                                       clean=clean)
+        if self._can_do_full_analysis(first_touch_frames):
+            self._perform_full_analysis(self.game, self.protobuf_game, player_map,
+                                        data_frame, kickoff_frames, first_touch_frames,
+                                        calculate_intensive_events=calculate_intensive_events,
+                                        clean=clean)
         else:
-            self.log_time("Cannot perform analysis: invalid analysis.")
+            self._log_time("Cannot perform analysis: invalid analysis.")
             self.protobuf_game.game_metadata.is_invalid_analysis = True
 
         # log before we add the dataframes
         # logger.debug(self.protobuf_game)
 
-        self.store_frames(data_frame)
+        self._store_frames(data_frame)
 
-    def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                              data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series,
-                              calculate_intensive_events: bool = False, clean: bool = True):
+    def write_json_out_to_file(self, file):
+        printer = _Printer()
+        js = printer._MessageToJsonObject(self.protobuf_game)
+        json.dump(js, file, indent=2, cls=CarballJsonEncoder)
+
+    def write_proto_out_to_file(self, file):
+        ProtobufManager.write_proto_out_to_file(file, self.protobuf_game)
+
+    def write_pandas_out_to_file(self, file):
+        if self.df_bytes is not None:
+            file.write(self.df_bytes)
+        elif not self.should_store_frames:
+            logger.warning("pd DataFrames are not being stored anywhere")
+
+    def get_protobuf_data(self) -> game_pb2.Game:
+        """
+        :return: The protobuf data created by the analysis
+
+        USAGE: A Protocol Buffer contains in-game metadata (e.g. events, stats). Treat it as a usual Python object with
+        fields that match the API.
+
+        INFO: The Protocol Buffer is a collection of data organized in a format similar to json. All relevant .proto
+        files found at https://github.com/SaltieRL/carball/tree/master/api.
+
+        Google's developer guide to protocol buffers may be found at https://developers.google.com/protocol-buffers/docs/overview
+        """
+        return self.protobuf_game
+
+    def get_json_data(self):
+        """
+        :return: The protobuf data created by the analysis as a json object.
+
+        see get_protobuf_data for more details.
+        The json fields are defined by https://github.com/SaltieRL/carball/tree/master/api
+        """
+        printer = _Printer()
+        js = printer._MessageToJsonObject(self.protobuf_game)
+        return js
+
+    def get_data_frame(self) -> pd.DataFrame:
+        """
+        :return: The pandas.DataFrame object.
+
+        USAGE: A DataFrame contains in-game frame-by-frame data.
+
+        INFO: The DataFrame is a collection of data organized in a format similar to csv. The 'index' column of the
+        DataFrame is the consecutive in-game frames, and all other column headings (150+) are tuples in the following
+        format:
+            (Object, Data), where the Object is either a player, the ball or the game.
+
+        All column information (and keys) may be seen by calling data_frame.info(verbose=True)
+
+        All further documentation about the DataFrame can be found at https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html
+        """
+        return self.data_frame
+
+
+    def _perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                               data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series,
+                               calculate_intensive_events: bool = False, clean: bool = True):
 
         """
         Sets some further data and cleans the replay;
@@ -99,16 +156,16 @@ class AnalysisManager:
         :param clean: Indicates if useless/invalid data should be found and removed.
         """
 
-        self.get_game_time(proto_game, data_frame)
+        self._get_game_time(proto_game, data_frame)
         if clean:
             clean_replay(game, data_frame, proto_game, player_map)
-        self.log_time("Creating events...")
+        self._log_time("Creating events...")
         self.events_creator.create_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames,
                                           calculate_intensive_events=calculate_intensive_events)
-        self.log_time("Getting stats...")
-        self.get_stats(game, proto_game, player_map, data_frame)
+        self._log_time("Getting stats...")
+        self._get_stats(game, proto_game, player_map, data_frame)
 
-    def get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
+    def _get_game_metadata(self, game: Game, proto_game: game_pb2.Game) -> Dict[str, Player]:
         """
         Processes protobuf data and sets the respective object fields to correct values.
         Maps the player's specific online ID (steam unique ID) to the player object.
@@ -137,7 +194,7 @@ class AnalysisManager:
 
         return player_map
 
-    def get_game_time(self, protobuf_game: game_pb2.Game, data_frame: pd.DataFrame):
+    def _get_game_time(self, protobuf_game: game_pb2.Game, data_frame: pd.DataFrame):
         """
         Calculates the game length (total time the game lasted) and sets it to the relevant metadata length field.
         Calculates the total time a player has spent in the game and sets it to the relevant player field.
@@ -157,7 +214,7 @@ class AnalysisManager:
 
         logger.info("Set each player's in-game times.")
 
-    def get_kickoff_frames(self, game: Game, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
+    def _get_kickoff_frames(self, game: Game, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
         """
         Firstly, fetches kickoff-related data from SaltieGame.
         Secondly, checks for edge-cases and corrects errors.
@@ -192,8 +249,8 @@ class AnalysisManager:
 
         return kickoff_frames, first_touch_frames
 
-    def get_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                  data_frame: pd.DataFrame):
+    def _get_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
+                   data_frame: pd.DataFrame):
         """
         For each in-game frame after a goal has happened, calculate in-game stats.
         (i.e. player, team, general-game and hit stats)
@@ -207,62 +264,17 @@ class AnalysisManager:
         goal_frames = data_frame.game.goal_number.notnull()
         self.stats_manager.get_stats(game, proto_game, player_map, data_frame[goal_frames])
 
-    def store_frames(self, data_frame: pd.DataFrame):
+    def _store_frames(self, data_frame: pd.DataFrame):
         self.data_frame = data_frame
         self.df_bytes = PandasManager.safe_write_pandas_to_memory(data_frame)
 
-    def write_json_out_to_file(self, file):
-        printer = _Printer()
-        js = printer._MessageToJsonObject(self.protobuf_game)
-        json.dump(js, file, indent=2, cls=CarballJsonEncoder)
-
-    def write_proto_out_to_file(self, file):
-        ProtobufManager.write_proto_out_to_file(file, self.protobuf_game)
-
-    def write_pandas_out_to_file(self, file):
-        if self.df_bytes is not None:
-            file.write(self.df_bytes)
-        elif not self.should_store_frames:
-            logger.warning("pd DataFrames are not being stored anywhere")
-
-    def get_protobuf_data(self) -> game_pb2.Game:
-        """
-        :return: The protobuf data created by the analysis
-
-        USAGE: A Protocol Buffer contains in-game metadata (e.g. events, stats). Treat it as a usual Python object with
-        fields that match the API.
-
-        INFO: The Protocol Buffer is a collection of data organized in a format similar to json. All relevant .proto
-        files found at https://github.com/SaltieRL/carball/tree/master/api.
-
-        Google's developer guide to protocol buffers may be found at https://developers.google.com/protocol-buffers/docs/overview
-        """
-        return self.protobuf_game
-
-    def get_data_frame(self) -> pd.DataFrame:
-        """
-        :return: The pandas.DataFrame object.
-
-        USAGE: A DataFrame contains in-game frame-by-frame data.
-
-        INFO: The DataFrame is a collection of data organized in a format similar to csv. The 'index' column of the
-        DataFrame is the consecutive in-game frames, and all other column headings (150+) are tuples in the following
-        format:
-            (Object, Data), where the Object is either a player, the ball or the game.
-
-        All column information (and keys) may be seen by calling data_frame.info(verbose=True)
-
-        All further documentation about the DataFrame can be found at https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html
-        """
-        return self.data_frame
-
-    def get_data_frames(self, game: Game):
+    def _initialize_data_frame(self, game: Game):
         data_frame = SaltieGame.create_data_df(game)
 
         logger.info("Assigned goal_number in .data_frame")
         return data_frame
 
-    def create_player_id_function(self, game: Game) -> Callable:
+    def _create_player_id_function(self, game: Game) -> Callable:
         name_map = {player.name: player.online_id for player in game.players}
 
         def create_name(proto_player_id, name):
@@ -270,7 +282,7 @@ class AnalysisManager:
 
         return create_name
 
-    def can_do_full_analysis(self, first_touch_frames) -> bool:
+    def _can_do_full_analysis(self, first_touch_frames) -> bool:
         """
         Check whether or not the replay satisfies the requirements for a full analysis.
         This includes checking:
@@ -303,11 +315,11 @@ class AnalysisManager:
 
         return True
 
-    def start_time(self):
+    def _start_time(self):
         self.timer = time.time()
         logger.info("starting timer")
 
-    def log_time(self, message=""):
+    def _log_time(self, message=""):
         end = time.time()
         logger.info("Time taken for %s is %s milliseconds", message, (end - self.timer) * 1000)
         self.timer = end

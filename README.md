@@ -88,6 +88,9 @@ with gzip.open(os.path.join('output.gzip'), 'wb') as fo:
 # return the proto object in python
 proto_object = analysis_manager.get_protobuf_data()
 
+# return the proto object as a json object
+json_oject = analysis_manager.get_json_data()
+
 # return the pandas data frame in python
 dataframe = analysis_manager.get_data_frame()
 ```
