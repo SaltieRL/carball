@@ -60,46 +60,27 @@ class Game:
         """
 
         self.file_path = file_path
-        self.load_json(loaded_json)
-
-        self.replay_data = self.replay['content']['body']['frames']
-
-        self.set_replay_properties()
-
-        if parse_replay:
-            self.parse_replay(clean_player_names)
-
-    def load_json(self, loaded_json):
         if loaded_json is None:
-            with open(self.file_path, 'r') as f:
+            with open(file_path, 'r') as f:
                 self.replay = json.load(f)
         else:
             self.replay = loaded_json
 
         logger.debug('Loaded JSON')
 
-    def set_replay_properties(self):
+        self.replay_data = self.replay['content']['body']['frames']
+
+        # set properties
         self.properties = self.replay['header']['body']['properties']['value']
 
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
         self.match_type = self.find_actual_value(self.properties['MatchType']['value'])
         self.team_size = self.find_actual_value(self.properties['TeamSize']['value'])
 
-        self.set_replay_name()
-        self.set_replay_date()
-        self.set_replay_version()
-        self.set_replay_map()
-
-        self.players: List[Player] = self.create_players()
-        self.goals: List[Goal] = self.get_goals()
-        self.primary_player: dict = self.get_primary_player()
-
-    def set_replay_name(self):
-        self.name = self.find_actual_value(self.properties.get('ReplayName', None))
         if self.name is None:
             logger.warning('Replay name not found')
+        self.id = self.find_actual_value(self.properties["Id"]['value'])
 
-    def set_replay_date(self):
         date_string = self.properties['Date']['value']['str']
         for date_format in DATETIME_FORMATS:
             try:
@@ -110,22 +91,19 @@ class Game:
         else:
             logger.error('Cannot parse date: ' + date_string)
 
-    def set_replay_version(self):
         self.replay_version = self.properties.get('ReplayVersion', {}).get('value', {}).get('int', None)
         logger.info(f"version: {self.replay_version}, date: {self.datetime}")
         if self.replay_version is None:
             logger.warning('Replay version not found')
 
-    def set_replay_map(self):
-        if 'MapName' in self.properties:
-            self.map = self.find_actual_value(self.properties['MapName']['value'])
-        else:
-            self.map = 'Unknown'
+        self.players: List[Player] = self.create_players()
+        self.goals: List[Goal] = self.get_goals()
+        self.primary_player: dict = self.get_primary_player()
 
-    def parse_replay(self, clean_player_names):
-        self.all_data = parse_frames(self)
-        self.parse_all_data(self.all_data, clean_player_names)
-        logger.info("Finished parsing %s" % self)
+        if parse_replay:
+            self.all_data = parse_frames(self)
+            self.parse_all_data(self.all_data, clean_player_names)
+            logger.info("Finished parsing %s" % self)
 
     def __repr__(self):
         team_0_name = self.teams[0].name

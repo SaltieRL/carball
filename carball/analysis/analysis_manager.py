@@ -137,7 +137,6 @@ class AnalysisManager:
         """
         return self.data_frame
 
-
     def _perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                                data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series,
                                calculate_intensive_events: bool = False, clean: bool = True):
