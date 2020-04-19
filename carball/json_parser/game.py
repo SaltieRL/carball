@@ -74,6 +74,11 @@ class Game:
         self.properties = self.replay['header']['body']['properties']['value']
 
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
+        if 'MapName' in self.properties:
+            self.map = self.find_actual_value(self.properties['MapName']['value'])
+        else:
+            self.map = 'Unknown'
+        self.name = self.find_actual_value(self.properties.get('ReplayName', None))
         self.match_type = self.find_actual_value(self.properties['MatchType']['value'])
         self.team_size = self.find_actual_value(self.properties['TeamSize']['value'])
 

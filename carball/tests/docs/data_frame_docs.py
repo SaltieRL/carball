@@ -11,9 +11,13 @@ def create_df_docs():
 
     working_dir = os.path.dirname(__file__)
     output_dir = os.path.join(working_dir, 'output')
+
     df_summary_path = os.path.join(working_dir, 'df_summary.md')
-    df_methods_path = os.path.join(working_dir, 'df.methods.md')
+    df_methods_path = os.path.join(working_dir, 'df_methods.md')
     df_docs_path = os.path.join(output_dir, "DATA_FRAME_INFO.md")
+
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
 
     analysis = carball.analyze_replay_file(replay_path, clean=False)
 
