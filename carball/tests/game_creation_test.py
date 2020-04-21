@@ -34,6 +34,8 @@ class Test_OverallFunctionality():
                 assert(player.stats.speed.time_at_slow_speed > 0)
                 assert(player.stats.boost.average_boost_level > 0)
                 assert(player.stats.boost.wasted_collection > -1)
+            json = analysis.get_json_data()
+            assert len(json['players']) > 0
 
         run_analysis_test_on_replay(test, cache=replay_cache)
 
