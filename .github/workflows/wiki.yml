@@ -16,8 +16,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.7' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+        architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+    - run: python carball/tests/docs/data_frame_docs.py
+        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     
     - name: wiki-page-creator-action
       uses: Decathlon/wiki-page-creator-action@v2.0.0
@@ -28,3 +33,4 @@ jobs:
         OWNER: SaltieRL
         REPO_NAME: carball
         MD_FOLDER: carball/tests/docs
+        SKIP_MD: df_methods.md, df_summary.md
