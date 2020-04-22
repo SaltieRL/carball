@@ -23,9 +23,10 @@ jobs:
         architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
 
     # setup protobuf
-    - run: chmod 777 ./_travis/install-protoc.sh
-    - name: Setup install
-      run: "./_travis/install-protoc.sh 2.6.1"
+    - name: Install Protoc
+      uses: arduino/setup-protoc@master
+      with:
+        version: '2.6.1'
 
     - name: Install dependencies
       run: |
