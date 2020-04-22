@@ -1,7 +1,7 @@
 import os
 
-import carball
-from carball.tests.utils import get_replay_path
+from ... import analyze_replay_file
+from ..utils import get_replay_path
 
 
 # All relevant files begin with df_ .
@@ -19,7 +19,7 @@ def create_df_docs():
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
-    analysis = carball.analyze_replay_file(replay_path, clean=False)
+    analysis = analyze_replay_file(replay_path, clean=False)
 
     data_frame = analysis.get_data_frame()
 
