@@ -25,3 +25,5 @@ pwd
 ls -lh
 echo "COPYING PROTOBUF TO NEW DIRECTORY"
 cp ./protobuf-${protoc_version}/src/protoc carball/generated/binaries
+cd carball/generated/binaries
+ls -lh
