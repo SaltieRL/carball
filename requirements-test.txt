@@ -1,7 +1,7 @@
 twine
-pytest>=3.7
+pytest>=5.4.1
 requests
-pytest-cov>=2.6.1
+pytest-cov>=2.8.1
 coverage
 codecov
 pep8
