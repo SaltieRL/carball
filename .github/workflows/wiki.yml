@@ -21,7 +21,12 @@ jobs:
       with:
         python-version: '3.7' # Version range or exact version of a Python version to use, using SemVer's version range syntax
         architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-    - run: python carball/tests/docs/data_frame_docs.py
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Create document
+    - run: python -m carball.tests.docs.data_frame_docs
         # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     
     - name: wiki-page-creator-action
