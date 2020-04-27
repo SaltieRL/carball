@@ -30,10 +30,9 @@ def create_rattletrap_command(replay_path: str, output_path: str,
         rattletrap_path = get_rattletrap_path()
     binaries = get_all_binaries(rattletrap_path)
 
-    if len(binaries) == 0 or not any('rattletrap' in file for file in binaries):
-        logger.warning("Need to redownload rattletrap")
-        download_rattletrap()
-        binaries = get_rattletrap_binaries(rattletrap_path)
+    logger.warning("Checking for latest rattletrap...")
+    download_rattletrap()
+    binaries = get_rattletrap_binaries(rattletrap_path)
     binary = get_binary_for_platform(pt.system(), binaries)
     if binary is None:
         logger.warning('no binary!')
