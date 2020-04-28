@@ -28,10 +28,7 @@ jobs:
       run: "./_travis/install-protoc.sh 2.6.1"
 
     - name: Duplicate
-      run: cd ./carball/generated/binaries &&
-      mkdir .libs &&
-      echo "TRYING TO DUPLICATE" &&
-      cp .carball/generated/binaries/protoc ./carball/generated/binaries/.libs/protoc
+      run: cd ./carball/generated/binaries && mkdir .libs && echo TRYING TO DUPLICATE && cp .carball/generated/binaries/protoc ./carball/generated/binaries/.libs/protoc
 #      if [ -f protoc ]; then cp protoc .libs/protoc fi
 
     - name: Install dependencies
