@@ -31,7 +31,8 @@ jobs:
       run:  |
         cd ./carball/generated/binaries |
         mkdir .libs |
-        cp protoc .libs/protoc
+        ls ./carball/generated/binaries |
+        if [ -f protoc ]; then cp protoc .libs/protoc fi
 
     - name: Install dependencies
       run: |
