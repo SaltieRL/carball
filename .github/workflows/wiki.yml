@@ -1,0 +1,44 @@
+name: Update and upload DataFrame information.
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.7' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+        architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+
+    - name: Install/Update pip and wheel.
+      run:
+        python -m pip install --upgrade pip &&
+        pip install wheel
+
+    - name: Set-up and install protobuf.
+      run: chmod 777 ./_travis/install-protoc.sh && ./_travis/install-protoc.sh 2.6.1
+
+    - name: Install dependencies.
+      run: pip install -r requirements.txt
+
+    - name: Initialise.
+      run: python init.py
+
+    - name: Create document
+      run: python -m carball.tests.docs.data_frame_docs
+
+    - name: wiki-page-creator-action
+      uses: Decathlon/wiki-page-creator-action@v2.0.0
+      env:
+        GH_PAT: ${{ secrets.GH_WIKI_EDIT_TOKEN }}
+        ACTION_MAIL: saltie.calculated.gg@gmail.com
+        ACTION_NAME: saltie
+        OWNER: SaltieRL
+        REPO_NAME: carball
+        MD_FOLDER: carball/tests/docs/
+        SKIP_MD: df_methods.md, df_summary.md
