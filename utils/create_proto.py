@@ -86,7 +86,7 @@ def create_proto_files():
         print('creating proto file', file, end='\t')
         result = call([get_proto(), '--python_out=' + proto_dir, '--proto_path=' + current_dir, file])
         if result != 0:
-            raise result
+            raise ValueError(result)
         print(result)
 
 
