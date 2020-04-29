@@ -1,4 +1,4 @@
-##Summary
+## Summary
 The DataFrame is an instance of two-dimensional, size-mutable, potentially heterogeneous tabular data. It comes as part
 of the pandas package (often imported as *pd*).
 
