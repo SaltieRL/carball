@@ -1,20 +1,13 @@
-# This is a basic workflow to help you get started with Actions
+name: Update and upload DataFrame information.
 
-name: DOC UPDATE
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   push:
     branches: [ master, dtracers-patch-2 ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v1
@@ -22,19 +15,13 @@ jobs:
         python-version: '3.7' # Version range or exact version of a Python version to use, using SemVer's version range syntax
         architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
 
-    - name: Install pip and wheel.
+    - name: Install/Update pip and wheel.
       run:
         python -m pip install --upgrade pip &&
         pip install wheel
 
-    # setup protobuf
-    - name: Set-up protobuf.
-      run: chmod 777 ./_travis/install-protoc.sh
-    - name: Setup install
-      run: "./_travis/install-protoc.sh 2.6.1"
-
-#    - name: Duplicate
-#      run: pwd && ls -lh && cd carball/generated/binaries && ls -lh && mkdir .libs && ls -lh && cp protoc .libs/protoc
+    - name: Set-up and install protobuf.
+      run: chmod 777 ./_travis/install-protoc.sh && ./_travis/install-protoc.sh 2.6.1
 
     - name: Install dependencies.
       run: pip install -r requirements.txt
@@ -44,8 +31,7 @@ jobs:
 
     - name: Create document
       run: python -m carball.tests.docs.data_frame_docs
-        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    
+
     - name: wiki-page-creator-action
       uses: Decathlon/wiki-page-creator-action@v2.0.0
       env:
@@ -55,4 +41,4 @@ jobs:
         OWNER: SaltieRL
         REPO_NAME: carball
         MD_FOLDER: carball/tests/docs
-        SKIP_MD: df_methods.md, df_summary.md
+#        SKIP_MD: df_methods.md, df_summary.md
