@@ -13,8 +13,11 @@ unzip protobuf-${protoc_version}.zip
 cd protobuf-${protoc_version}
 echo "CONFIGURING PROTOBUF"
 ./configure
-echo "COMPILING PROTOBUF"
+echo "COMPILING and INSTALLING PROTOBUF and SHARED LIBRARIES (.libs)"
 make
+make check
+sudo make install
+sudo ldconfig
 echo "GETTING PROTOBUF VERSION"
 ./src/protoc --version
 echo "CLEANING UP"
