@@ -27,8 +27,8 @@ jobs:
     - name: Setup install
       run: "./_travis/install-protoc.sh 2.6.1"
 
-    - name: Duplicate
-      run: pwd && ls -lh && cd carball/generated/binaries && ls -lh && mkdir .libs && ls -lh && cp protoc .libs/protoc
+#    - name: Duplicate
+#      run: pwd && ls -lh && cd carball/generated/binaries && ls -lh && mkdir .libs && ls -lh && cp protoc .libs/protoc
 
     - name: Install dependencies
       run:
