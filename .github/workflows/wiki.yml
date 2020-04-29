@@ -29,12 +29,11 @@ jobs:
 
     - name: Duplicate
       run: pwd && ls -lh && cd carball/generated/binaries && ls -lh && mkdir .libs && ls -lh && cp protoc .libs/protoc
-#      if [ -f protoc ]; then cp protoc .libs/protoc fi
 
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt |
+      run:
+        python -m pip install --upgrade pip &&
+        pip install -r requirements.txt &&
         python init.py
 
     - name: Create document
