@@ -2,7 +2,7 @@ name: Benchmarking
 
 on:
   push:
-    branches: [ master, benchmarking ]
+    branches: [ master, action-benchmark ]
 
 jobs:
   build:
