@@ -17,6 +17,13 @@ def test_short_sample(benchmark):
                        kwargs={"replay_path":replay_path}, rounds=50, iterations=3)
 
 
+def test_short_dropshot(benchmark):
+    replay_path = get_replay_path("DROPSHOT_PHASE2_BALL.replay")
+
+    benchmark.pedantic(analyze_replay_file,
+                       kwargs={"replay_path":replay_path}, rounds=30, iterations=3)
+
+
 def test_full_rumble(benchmark):
     replay_path = get_replay_path("RUMBLE_FULL.replay")
 
@@ -36,6 +43,3 @@ def test_oce_rlcs_intensive(benchmark):
 
     benchmark.pedantic(analyze_replay_file,
                        kwargs={"replay_path":replay_path, "calculate_intensive_events":True}, rounds=5, iterations=3)
-
-
-# TODO Add a dropshot replay (full-game).
