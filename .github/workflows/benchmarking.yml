@@ -32,15 +32,15 @@ jobs:
     - name: Prepare benchmark.
       run: |
         pip install -r requirements.txt && pip install -r requirements-test.txt
-        cd carball/tests/docs
+        cd carball/tests/benchmarking
         echo === BENCHMARK DIRECTORY ===
         ls -lh
         echo ===========================
 
     - name: Run benchmark.
       run: |
-        cd carball/tests/docs
-        pytest data_frame_docs.py
+        cd carball/tests/benchmarking
+        pytest benchmarking.py
 
 #    TO BE DONE.
 #    - name: Store benchmark result(s).
