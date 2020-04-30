@@ -49,7 +49,7 @@ def create_df_docs():
         df_docs.write("\n\t" + c[1])
 
 
-def benchmark_df_docs(benchmark):
+def test_benchmark(benchmark):
     benchmark(create_df_docs)
 
 
