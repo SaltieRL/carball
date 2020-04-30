@@ -49,5 +49,9 @@ def create_df_docs():
         df_docs.write("\n\t" + c[1])
 
 
+def benchmark_df_docs(benchmark):
+    benchmark(create_df_docs)
+
+
 if __name__ == '__main__':
     create_df_docs()
