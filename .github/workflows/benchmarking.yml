@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        benchtest: [short_sample, short_dropshot, full_rumble, oce_rlcs, oce_rlcs_intensive]
+        benchtest: [short_sample, short_dropshot, full_rumble, oce_rlcs]
 
     steps:
     - uses: actions/checkout@v2
