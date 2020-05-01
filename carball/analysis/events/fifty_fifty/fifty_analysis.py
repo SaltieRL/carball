@@ -24,9 +24,12 @@ class FiftyAnalysis:
     def determine_fifty_fifty_winner(self, fifty: FiftyFifty, next_hit_index: int):
         """Iterate all 50/50s and determine the winner of each."""
         hits = self.proto_game.game_stats.hits
-        hit = hits[next_hit_index]
-        following_hit = hits[next_hit_index+1]
-        last_hit_of_fifty = hits[next_hit_index-1]
+        try:
+            hit = hits[next_hit_index]
+            last_hit_of_fifty = hits[next_hit_index-1]
+            following_hit = hits[next_hit_index+1]
+        except IndexError:
+            return
 
         # If the last hit was a very useful hit, then it was won by the hitter.
         if last_hit_of_fifty.goal or last_hit_of_fifty.save or last_hit_of_fifty.clear or last_hit_of_fifty.assist or last_hit_of_fifty.pass_:
@@ -34,7 +37,7 @@ class FiftyAnalysis:
             return
 
         # If the next hit starts a 50/50, then this hit was a neutral 50/50.
-        if self.hits_are_consecutive(hit,following_hit):
+        if self.hits_are_consecutive(hit, following_hit):
             fifty.is_neutral = True
             return
 

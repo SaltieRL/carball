@@ -35,11 +35,17 @@ class PressureAnalysis:
             return
         opposing_team_ids = list(map(lambda x: x.id, opposing_team.player_ids))
         for player_id in opposing_team_ids:
-            ball_row = self.data_frame.ball.iloc[hit.frame_number]
+            try:
+                ball_row = self.data_frame.ball.iloc[hit.frame_number]
+            except IndexError:
+                # Couldn't find the ball data at the hit frame.
+                hit.pressure = 0
+                break
             player_name = None
             try:
                 player_name = next(filter(lambda x: x.id.id == player_id, self.proto_game.players)).name
             except StopIteration:
+                # Couldn't find the opposing player.
                 hit.pressure = 0
                 break
             player_row = self.data_frame[player_name].iloc[hit.frame_number]
