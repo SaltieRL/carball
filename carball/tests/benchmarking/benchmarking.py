@@ -38,7 +38,7 @@ def test_oce_rlcs(benchmark):
                        kwargs={"replay_path":replay_path}, rounds=10, iterations=3)
 
 
-def test_oce_rlcs_intensive(benchmark):
+def test_intensive_oce_rlcs(benchmark):
     replay_path = get_replay_path("OCE_RLCS_7_CARS.replay")
 
     benchmark.pedantic(analyze_replay_file,
