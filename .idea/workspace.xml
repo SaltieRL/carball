@@ -1,0 +1,1274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="6bcc6534-156c-44d1-a827-73095a2ff3fc" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.automerge.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.coveragerc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/benchmarking.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/wiki.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.travis.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CARBALL_VERSION" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReplayAnalysis.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ReplaySaver.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_travis/install-protoc.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_travis/send.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/appveyor.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/PROTOBUF_VERSION" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/analysis_manager.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/cleaner/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/cleaner/cleaner.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/cleaner/frame_cleaner.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/constants/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/constants/basic_math.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/constants/dropshot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/constants/field_constants.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/constants/playlist.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/boost_pad_detection/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/boost_pad_detection/pickup_analysis.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/bump_detection/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/bump_detection/bump_analysis.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/carry_detection.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/dropshot/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/dropshot/ball.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/dropshot/damage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/event_creator.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/fifty_fifty/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/fifty_fifty/fifty_analysis.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/hit_detection/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/hit_detection/base_hit.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/hit_detection/hit_analysis.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/hit_detection/hitbox/Vehicle Specifications v1.39 - Hitboxes, Handling.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/hit_detection/hitbox/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/hit_detection/hitbox/car.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/hit_detection/hitbox/hitbox.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/hit_pressure/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/hit_pressure/pressure_analysis.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/kickoff_detection/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/events/kickoff_detection/kickoff_analysis.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/metadata/ApiDemo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/metadata/ApiGame.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/metadata/ApiGoal.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/metadata/ApiMutators.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/metadata/ApiPlayer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/metadata/ApiPlayerCameraSettings.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/metadata/ApiPlayerLoadout.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/metadata/ApiTeam.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/metadata/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/saltie_game/saltie_game.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/simulator/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/simulator/ball_simulator.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/simulator/bounce.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/simulator/map_constants.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/ball_forward/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/ball_forward/distance_hit_ball_forward.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/boost/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/boost/boost.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/controls/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/controls/controls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/dribbles/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/dribbles/ball_carry.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/dropshot/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/dropshot/ball_phase_times.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/dropshot/damage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/dropshot/goals.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/kickoffs/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/kickoffs/kickoff_stat.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/possession/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/possession/ball_distances.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/possession/per_possession.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/possession/possession.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/possession/turnovers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/rumble/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/rumble/goals.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/rumble/rumble.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/stats.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/stats_list.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/stats_manager.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/tendencies/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/tendencies/averages.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/tendencies/hit_counts.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/tendencies/positional_tendencies.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/tendencies/relative_position_tendencies.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/tendencies/speed_tendencies.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/tendencies/team_tendencies.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/utils/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/stats/utils/pandas_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/utils/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/utils/json_encoder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/utils/numpy_manager.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/utils/pandas_manager.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/utils/proto_manager.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/analysis/utils/split_location.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/command_line.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/controls/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/controls/controls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/controls/rotations.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/decompile_replays.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/extras/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/extras/per_goal_analysis.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/generated/binaries/cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/generated/protoc.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/generated/tables-3.4.4-cp36-cp36m-win_amd64.whl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/ball.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/base.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/boost.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/camera.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/car.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/dropshot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/game_event.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/game_info.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/jump.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/player.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/rumble.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor/team.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/actor_parsing.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/bots.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/dropshot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/frame_parser.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/game.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/game_info.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/goal.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/player.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/base_checks/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/base_checks/base_check.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/base_checks/game_check.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/base_checks/player_check.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/checks/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/checks/ball_data_frame_check.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/checks/player_attributes_check.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/checks/player_data_frame_check.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/errors/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/errors/errors.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/sanity_check/sanity_check.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/json_parser/team.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/rattletrap/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/rattletrap/check_rattletrap_version.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/rattletrap/cloud_parser-9.0.3-linux" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/rattletrap/rattletrap_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/rattletrap/run_rattletrap.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/analysis_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/benchmarking/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/benchmarking/benchmarking.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/conftest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/docs/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/docs/data_frame_docs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/docs/df_methods.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/docs/df_summary.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/export_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/game_creation_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/metadata/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/metadata/command_line_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/metadata/error_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/metadata/leader_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/metadata/offline_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/read_pandas_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/0_JUMPS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/0_SAVES.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/100_BOOST_PAD_0_USED.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/100_BOOST_PAD_100_USED.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/100_PERCENT_KBM.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/12_AND_100_BOOST_PADS_0_USED.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/12_BOOST_PAD_0_USED.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/12_BOOST_PAD_45_USED.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_100_1_12_0_BOOST_168.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_100_1_12_0_BOOST_168_ALT.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_AERIAL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_CLEAR.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_DEMO.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_DEMO_1_63.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_DOUBLE_JUMP.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_DRIBBLE.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_EPIC_SAVE.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_JUMP.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_MIN_KBM_1_MIN_XBO_CONTROLLER.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/1_NORMAL_SAVE.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/2_CLEARS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/3_BUMPS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/3_DRIBBLE_2_FLICKS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/3_KICKOFFS_4_SHOTS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/3_STEALS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/4_BUMPS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/5_GOALS_6_KICKOFFS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/6_BIG_25_SMALL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/BALLCAM_MIXED.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/BALLCAM_OFF_ALWAYS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/BALLCAM_OFF_AT_DRIBBLE_ELSE_ON.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/BALLCAM_OFF_IN_CLOSE_AIR_ELSE_ON.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/BALLCAM_ON_ALWAYS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/BALLCAM_ON_AT_DRIBBLE_ELSE_OFF.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/BALLCAM_ON_IN_CLOSE_AIR_ELSE_OFF.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/BOTS_JOINING_AND_LEAVING.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/BOTS_NO_POSITION.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/CALCULATE_USED_BOOST_DEMO_WITH_FLIPS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/CALCULATE_USED_BOOST_WITH_DEMO.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/CARRY.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/DEFAULT_3_ON_3_AROUND_58_HITS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/DROPSHOT_DOUBLE_DAMAGE.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/DROPSHOT_GOAL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/DROPSHOT_PHASE1_BALL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/DROPSHOT_PHASE2_BALL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/DROPSHOT_SINGLE_DAMAGE.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/FAKE_BOTS_SkyBot.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/FEATHERING_34_X_100_BOOSTS_USED.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/GROUNDED_PASS_GOAL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/HIGH_AIR_PASS_GOAL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/ISSUE_PLAYER_REJOIN.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/KICKOFF_3_HITS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/KICKOFF_TEST_1.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/KICKOFF_TEST_2.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/LAST_KICKOFF_NO_TOUCH.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/MID_AIR_PASS_GOAL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/MORE_THAN_100_BOOST.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/NEGATIVE_WASTED_COLLECTION.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/NO_BOOST_PAD_0_USED.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/NO_BOOST_PAD_33_USED.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/NO_KICKOFF.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/NO_ONE_FOR_KICKOFF.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/OCE_RLCS_7_CARS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/PARTY_LEADER_SYSTEM_ID_0.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/PLAYERNAME_BALL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/PLAYERNAME_GAME.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/PLAYERNAME_TWO_PLAYERS_NAMED_SAME.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/PLAYERNAME_ZTTL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/PLAY_STATION_ONLY_PARTY.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/RL_1_66.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/RUMBLE_FREEZE_VS_SPIKE.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/RUMBLE_FULL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/RUMBLE_HOLD_TIME.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/RUMBLE_ITEM_GOALS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/RUMBLE_ITEM_KICKOFF.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/RUMBLE_PRE_ITEM_GOALS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/SHORT_SAMPLE.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/SKYBOT_DRIBBLE_INFO.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/Straight_Kickoff_Goal.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/USE_BOOST_AFTER_GOAL.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/UnicodeEncodeError.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/WASTED_BOOST_WHILE_SUPER_SONIC.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/WEIRD_KICKOFFS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/XBOX_PARTY.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/ZEROED_STATS.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/crossplatform_party.replay" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/replays/dribble_total_time.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/setup_tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/stats/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/stats/boost_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/stats/demo_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/stats/dribble_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/stats/dropshot_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/stats/fifty_fifty_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/stats/hit_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/stats/kickoff_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/stats/rumble_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/stats/team_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/tiles_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carball/tests/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/codecov.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/create_proto.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/import_fixer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/install_protobuf.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/tests/test_create_proto.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/travis_auto_fix..sh" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageViewManager">
+    <option name="myElementSize" value="279" />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="isMigrated" value="true" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.github/FUNDING.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>logg</find>
+      <find>print</find>
+      <find>boost_time =</find>
+      <find>ball_dist</find>
+      <find>orange_team_goal</find>
+      <find>player_map</find>
+      <find>jumps</find>
+      <find>comple</find>
+      <find>cloud_parser</find>
+      <find>ReplicatedPickupData</find>
+      <find>ang_vel_x</find>
+      <find>frame_possession_time_deltas</find>
+      <find>instigator_id</find>
+      <find>boost_collect</find>
+      <find>BOOST_WASTED_COLLECTION</find>
+      <find>remaining</find>
+      <find>time</find>
+      <find>steal</find>
+      <find>s</find>
+      <find>boost</find>
+      <find>distance</find>
+      <find>goal</find>
+      <find>Created Player from stats</find>
+      <find>Created Goal</find>
+      <find>Camera settings for</find>
+      <find>Loadout for</find>
+      <find>logger</find>
+      <find>Logger</find>
+      <find>goal_number</find>
+      <find>write_json_out_to_file</find>
+    </findStrings>
+    <dirStrings>
+      <dir>C:\Users\dtrac\Documents\Github\carball\carball</dir>
+      <dir>C:\Users\dtrac\Documents\Github\carball\carball\tests</dir>
+      <dir>C:\Users\dtrac\Documents\Github\carball</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/api/stats/kickoff.proto" />
+        <option value="$PROJECT_DIR$/api/stats/interview.py" />
+        <option value="$PROJECT_DIR$/interview.py" />
+        <option value="$PROJECT_DIR$/../interview/interview.py" />
+        <option value="$PROJECT_DIR$/../interview/question_1_part_1.py" />
+        <option value="$PROJECT_DIR$/.coveragerc" />
+        <option value="$PROJECT_DIR$/carball/command_line.py" />
+        <option value="$PROJECT_DIR$/carball/tests/metadata/command_line_test.py" />
+        <option value="$PROJECT_DIR$/carball/tests/setup_tests.py" />
+        <option value="$PROJECT_DIR$/carball/tests/tiles_test.py" />
+        <option value="$PROJECT_DIR$/CARBALL_VERSION" />
+        <option value="$PROJECT_DIR$/carball/analysis/stats/dropshot/damage.py" />
+        <option value="$PROJECT_DIR$/carball/rattletrap/run_rattletrap.py" />
+        <option value="$PROJECT_DIR$/carball/rattletrap/check_rattletrap_version.py" />
+        <option value="$PROJECT_DIR$/carball/rattletrap/rattletrap_utils.py" />
+        <option value="$PROJECT_DIR$/carball/analysis/events/hit_detection/base_hit.py" />
+        <option value="$PROJECT_DIR$/carball/analysis/stats/tendencies/speed_tendencies.py" />
+        <option value="$PROJECT_DIR$/carball/analysis/stats/possession/possession.py" />
+        <option value="$PROJECT_DIR$/.travis.yml" />
+        <option value="$PROJECT_DIR$/carball/json_parser/actor/boost.py" />
+        <option value="$PROJECT_DIR$/carball/json_parser/boost.py" />
+        <option value="$PROJECT_DIR$/codecov.yml" />
+        <option value="$PROJECT_DIR$/appveyor.yml" />
+        <option value="$PROJECT_DIR$/carball/tests/stats/boost_test.py" />
+        <option value="$PROJECT_DIR$/carball/json_parser/goal.py" />
+        <option value="$PROJECT_DIR$/carball/json_parser/player.py" />
+        <option value="$PROJECT_DIR$/carball/analysis/stats/possession/per_possession.py" />
+        <option value="$PROJECT_DIR$/carball/analysis/utils/logging_manager.py" />
+        <option value="$PROJECT_DIR$/carball/decompile_replays.py" />
+        <option value="$PROJECT_DIR$/carball/analysis/events/event_creator.py" />
+        <option value="$PROJECT_DIR$/carball/tests/utils.py" />
+        <option value="$PROJECT_DIR$/carball/analysis/saltie_game/saltie_game.py" />
+        <option value="$PROJECT_DIR$/carball/analysis/events/kickoff_detection/kickoff_analysis.py" />
+        <option value="$PROJECT_DIR$/carball/analysis/stats/possession/ball_distances.py" />
+        <option value="$PROJECT_DIR$/carball/tests/stats/kickoff_test.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/carball/analysis/saltie_game/metadata/ApiGame.py" />
+        <option value="$PROJECT_DIR$/requirements-test.txt" />
+        <option value="$PROJECT_DIR$/carball/json_parser/game.py" />
+        <option value="$PROJECT_DIR$/carball/extras/per_goal_analysis.py" />
+        <option value="$PROJECT_DIR$/carball/tests/analysis_test.py" />
+        <option value="$PROJECT_DIR$/carball/tests/read_pandas_test.py" />
+        <option value="$PROJECT_DIR$/carball/analysis/analysis_manager.py" />
+        <option value="$PROJECT_DIR$/carball/tests/metadata/analysis_manager_test.py" />
+        <option value="$PROJECT_DIR$/carball/tests/export_test.py" />
+        <option value="$PROJECT_DIR$/carball/tests/game_creation_test.py" />
+        <option value="$PROJECT_DIR$/carball/tests/docs/data_frame_docs.py" />
+        <option value="$PROJECT_DIR$/_travis/install-protoc.sh" />
+        <option value="$PROJECT_DIR$/.github/workflows/wiki.yml" />
+        <option value="$PROJECT_DIR$/.github/workflows/benchmarking.yml" />
+        <option value="$PROJECT_DIR$/carball/tests/benchmarking/benchmarking.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="55" />
+    <option name="width" value="1370" />
+    <option name="height" value="1087" />
+  </component>
+  <component name="ProjectId" id="1R53bfe4M5iPuDg89xpXoGMBmod" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="carball" type="b2602c69:ProjectViewProjectNode" />
+              <item name="carball" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="carball" type="b2602c69:ProjectViewProjectNode" />
+              <item name="carball" type="462c0819:PsiDirectoryNode" />
+              <item name=".github" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="carball" type="b2602c69:ProjectViewProjectNode" />
+              <item name="carball" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="carball" type="b2602c69:ProjectViewProjectNode" />
+              <item name="carball" type="462c0819:PsiDirectoryNode" />
+              <item name="dev" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="carball" type="b2602c69:ProjectViewProjectNode" />
+              <item name="carball" type="462c0819:PsiDirectoryNode" />
+              <item name="dev" type="462c0819:PsiDirectoryNode" />
+              <item name="bench" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/carball/rattletrap" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\dtrac\Documents\Github\carball\carball\rattletrap" />
+      <recent name="C:\Users\dtrac\Documents\Github\carball\carball\tests\replays" />
+      <recent name="C:\Users\dtrac\Documents\Github\carball\carball\replays" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.data_frame_docs">
+    <configuration name="analysis_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="carball" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/carball/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/carball/tests/analysis_test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="data_frame_docs" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="carball" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/carball/tests/docs" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/carball/tests/docs/data_frame_docs.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for export_test.TestExport" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="carball" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/carball/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;export_test.TestExport&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for export_test.TestExport.test_proto_export" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="carball" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/carball/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;export_test.TestExport.test_proto_export&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for game_creation_test.Test_OverallFunctionality.test_full_replays" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="carball" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/carball/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;game_creation_test.Test_OverallFunctionality.test_full_replays&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.analysis_test" />
+      <item itemvalue="Python tests.pytest for export_test.TestExport" />
+      <item itemvalue="Python tests.pytest for export_test.TestExport.test_proto_export" />
+      <item itemvalue="Python tests.pytest for game_creation_test.Test_OverallFunctionality.test_full_replays" />
+      <item itemvalue="Python.data_frame_docs" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.data_frame_docs" />
+        <item itemvalue="Python tests.pytest for game_creation_test.Test_OverallFunctionality.test_full_replays" />
+        <item itemvalue="Python tests.pytest for export_test.TestExport.test_proto_export" />
+        <item itemvalue="Python tests.pytest for export_test.TestExport" />
+        <item itemvalue="Python.analysis_test" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="pytest_for_game_creation_test_Test_OverallFunctionality - 2020.04.18 at 22h 58m 17s.xml">
+      <configuration name="pytest for game_creation_test.Test_OverallFunctionality" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_game_creation_test_Test_OverallFunctionality - 2020.04.18 at 23h 02m 12s.xml">
+      <configuration name="pytest for game_creation_test.Test_OverallFunctionality" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_game_creation_test_Test_OverallFunctionality - 2020.04.18 at 23h 03m 14s.xml">
+      <configuration name="pytest for game_creation_test.Test_OverallFunctionality" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_game_creation_test_Test_OverallFunctionality_test_replay_attrs - 2020.04.18 at 23h 04m 24s.xml">
+      <configuration name="pytest for game_creation_test.Test_OverallFunctionality.test_replay_attrs" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_in_tests - 2020.04.18 at 23h 11m 22s.xml">
+      <configuration name="pytest in tests" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_read_pandas_test_Test_Database - 2020.04.19 at 08h 57m 52s.xml">
+      <configuration name="pytest for read_pandas_test.Test_Database" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_read_pandas_test_Test_Database - 2020.04.19 at 08h 58m 14s.xml">
+      <configuration name="pytest for read_pandas_test.Test_Database" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_read_pandas_test_Test_Database - 2020.04.19 at 08h 58m 44s.xml">
+      <configuration name="pytest for read_pandas_test.Test_Database" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_export_test_TestExport - 2020.04.19 at 09h 11m 05s.xml">
+      <configuration name="pytest for export_test.TestExport" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_export_test_TestExport_test_proto_export - 2020.04.19 at 09h 12m 55s.xml">
+      <configuration name="pytest for export_test.TestExport.test_proto_export" configurationId="tests" />
+    </history-entry>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="54" y="-8" width="1874" height="1096" extended-state="6" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16593164" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Designer" order="2" />
+      <window_info id="UI Designer" order="3" />
+      <window_info id="Favorites" order="4" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49889746" weight="0.3281412" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49944875" weight="0.4049844" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49779493" weight="0.3375262" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32917964" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.19937694" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5011025" side_tool="true" weight="0.32917964" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Maven" order="4" />
+      <window_info anchor="right" id="Palette&#9;" order="5" />
+      <window_info anchor="right" id="SciView" order="6" weight="0.63120174" />
+      <window_info anchor="right" id="Coverage" order="7" side_tool="true" visible="true" weight="0.13781698" />
+    </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.29768467" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Designer" order="2" />
+      <window_info id="UI Designer" order="3" />
+      <window_info id="Favorites" order="4" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32917964" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32917964" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3997923" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32917964" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32917964" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Maven" order="4" />
+      <window_info anchor="right" id="Palette&#9;" order="5" />
+      <window_info anchor="right" id="SciView" order="6" weight="0.3296582" />
+      <window_info anchor="right" id="Coverage" order="7" side_tool="true" visible="true" weight="0.13781698" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/carball/json_parser/goal.py</url>
+          <line>24</line>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/carball/tests/analysis_test.py</url>
+          <line>61</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="tests">
+        <watch expression="boost" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/carball$kickoff_test.coverage" NAME="kickoff_test Coverage Results" MODIFIED="1570494763789" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_command_line_test_Test_Commandline_test_command_line_invalid_input.coverage" NAME="pytest for command_line_test.Test_Commandline.test_command_line_invalid_input Coverage Results" MODIFIED="1570600384517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/metadata" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_tiles_test_Test_TileCreation.coverage" NAME="pytest for tiles_test.Test_TileCreation Coverage Results" MODIFIED="1570600966105" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_carball_tests_stats_boost_test_Test_Boost_test_1_small_pad_collected.coverage" NAME="pytest for carball.tests.stats.boost_test.Test_Boost.test_1_small_pad_collected Coverage Results" MODIFIED="1576110726320" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_kickoff_test_Test_Kickoff_test_3_kickoffs.coverage" NAME="pytest for kickoff_test.Test_Kickoff.test_3_kickoffs Coverage Results" MODIFIED="1570509220277" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_boost_test_Test_Boost_test_1_small_pad_collected.coverage" NAME="pytest for boost_test.Test_Boost.test_1_small_pad_collected Coverage Results" MODIFIED="1571440728680" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_tiles_test_Test_TileCreation_test_replay_attrs.coverage" NAME="pytest for tiles_test.Test_TileCreation.test_replay_attrs Coverage Results" MODIFIED="1570600897016" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_boost_test_Test_Boost_test_boost_steals.coverage" NAME="pytest for boost_test.Test_Boost.test_boost_steals Coverage Results" MODIFIED="1573521578158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_setup_tests_Test_rattletrapSetup.coverage" NAME="pytest for setup_tests.Test_rattletrapSetup Coverage Results" MODIFIED="1570600841585" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_boost_test_Test_Boost_test_boost_steals_post_goal.coverage" NAME="pytest for boost_test.Test_Boost.test_boost_steals_post_goal Coverage Results" MODIFIED="1573530763374" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_kickoff_test_Test_Kickoff_test_no_one_for_kickoffs.coverage" NAME="pytest for kickoff_test.Test_Kickoff.test_no_one_for_kickoffs Coverage Results" MODIFIED="1576111843302" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$init.coverage" NAME="init Coverage Results" MODIFIED="1576097037900" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carball$data_frame_docs.coverage" NAME="data_frame_docs Coverage Results" MODIFIED="1587523224162" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/docs" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_command_line_test_Test_Commandline.coverage" NAME="pytest for command_line_test.Test_Commandline Coverage Results" MODIFIED="1570600601349" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/metadata" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_game_creation_test_Test_OverallFunctionality_test_full_replays.coverage" NAME="pytest for game_creation_test.Test_OverallFunctionality.test_full_replays Coverage Results" MODIFIED="1587317179240" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_read_pandas_test_Test_Database.coverage" NAME="pytest for read_pandas_test.Test_Database Coverage Results" MODIFIED="1587311899724" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_command_line_test_Test_Commandline_test_command_line_no_args.coverage" NAME="pytest for command_line_test.Test_Commandline.test_command_line_no_args Coverage Results" MODIFIED="1570600275346" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/metadata" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_kickoff_test_Test_Kickoff_test_no_one_for_weird_kickoffs.coverage" NAME="pytest for kickoff_test.Test_Kickoff.test_no_one_for_weird_kickoffs Coverage Results" MODIFIED="1576112690501" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_read_pandas_test_Test_Database_test_replay_attrs.coverage" NAME="pytest for read_pandas_test.Test_Database.test_replay_attrs Coverage Results" MODIFIED="1570600912492" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_boost_test_Test_Boost.coverage" NAME="pytest for boost_test.Test_Boost Coverage Results" MODIFIED="1572229188391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_boost_test_Test_Boost_test_boost_feathered.coverage" NAME="pytest for boost_test.Test_Boost.test_boost_feathered Coverage Results" MODIFIED="1572229474064" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_kickoff_test_Test_Kickoff_test_all_kickoffs.coverage" NAME="pytest for kickoff_test.Test_Kickoff.test_all_kickoffs Coverage Results" MODIFIED="1570509860824" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_export_test_TestExport_test_proto_export.coverage" NAME="pytest for export_test.TestExport.test_proto_export Coverage Results" MODIFIED="1587312683760" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_kickoff_test_Test_Kickoff.coverage" NAME="pytest for kickoff_test.Test_Kickoff Coverage Results" MODIFIED="1570509940606" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_boost_test_Test_Boost_test_lots_of_boost_collected.coverage" NAME="pytest for boost_test.Test_Boost.test_lots_of_boost_collected Coverage Results" MODIFIED="1571981845687" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$interview.coverage" NAME="interview Coverage Results" MODIFIED="1570378243560" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_data_frame_docs_test_df_docs.coverage" NAME="pytest for data_frame_docs.test_df_docs Coverage Results" MODIFIED="1587274799906" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/docs" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_game_creation_test_Test_OverallFunctionality.coverage" NAME="pytest for game_creation_test.Test_OverallFunctionality Coverage Results" MODIFIED="1587276173336" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests" />
+    <SUITE FILE_PATH="coverage/carball$pytest_in_tests.coverage" NAME="pytest in tests Coverage Results" MODIFIED="1587276270924" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests" />
+    <SUITE FILE_PATH="coverage/carball$analysis_test.coverage" NAME="analysis_test Coverage Results" MODIFIED="1587311994696" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_boost_test_Test_Boost_test_boost_wasted_collection.coverage" NAME="pytest for boost_test.Test_Boost.test_boost_wasted_collection Coverage Results" MODIFIED="1571296194753" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_read_pandas_test_DBTest_test_replay_attrs.coverage" NAME="pytest for read_pandas_test.DBTest.test_replay_attrs Coverage Results" MODIFIED="1570600767763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_export_test_TestExport.coverage" NAME="pytest for export_test.TestExport Coverage Results" MODIFIED="1587312643123" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_game_creation_test_Test_OverallFunctionality_test_replay_attrs.coverage" NAME="pytest for game_creation_test.Test_OverallFunctionality.test_replay_attrs Coverage Results" MODIFIED="1587276262349" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_command_line_test_Test_Commandline_test_command_line_no_output.coverage" NAME="pytest for command_line_test.Test_Commandline.test_command_line_no_output Coverage Results" MODIFIED="1570600464787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/metadata" />
+    <SUITE FILE_PATH="coverage/carball$pytest_for_kickoff_test_Test_Kickoff_test_all_kickoffs_2.coverage" NAME="pytest for kickoff_test.Test_Kickoff.test_all_kickoffs_2 Coverage Results" MODIFIED="1570509905248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/carball/tests/stats" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/.coveragerc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/events/hit_detection/base_hit.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1649">
+          <caret line="109" column="58" selection-start-line="109" selection-start-column="49" selection-end-line="109" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/utils/logging_manager.py" />
+    <entry file="file://$PROJECT_DIR$/carball/analysis/events/hit_detection/hit_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2431">
+          <caret line="154" column="28" selection-start-line="154" selection-start-column="28" selection-end-line="154" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/logging/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/carball/json_parser/player.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4165">
+          <caret line="251" column="24" selection-start-line="251" selection-start-column="24" selection-end-line="251" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/stats/possession/per_possession.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2686">
+          <caret line="170" column="15" selection-start-line="170" selection-start-column="15" selection-end-line="170" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/json_parser/goal.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/utils/proto_manager.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/rattletrap/run_rattletrap.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="918">
+          <caret line="62" selection-start-line="62" selection-end-line="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/events/event_creator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="28" column="12" selection-start-line="28" selection-start-column="12" selection-end-line="28" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/events/kickoff_detection/kickoff_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1598">
+          <caret line="106" column="52" selection-start-line="106" selection-start-column="52" selection-end-line="106" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/stats/boost_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="10" column="8" selection-start-line="10" selection-start-column="8" selection-end-line="10" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/stats/possession/ball_distances.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="16" column="17" selection-start-line="16" selection-start-column="17" selection-end-line="16" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/events/bump_detection/bump_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="10" column="8" selection-start-line="10" selection-start-column="8" selection-end-line="10" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/saltie_game/saltie_game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1309">
+          <caret line="81" selection-start-line="81" selection-end-line="81" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/stats/kickoff_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="30" selection-start-line="7" selection-start-column="30" selection-end-line="7" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/events/boost_pad_detection/pickup_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="16" selection-start-line="15" selection-start-column="16" selection-end-line="15" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/command_line.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-386">
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="64" selection-start-line="4" selection-start-column="64" selection-end-line="4" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor>
+            <caret line="90" selection-start-line="90" selection-end-line="90" />
+            <folding>
+              <element signature="e#0#14#0" expanded="true" />
+            </folding>
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/json_parser/actor/boost.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements-test.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="2" selection-start-column="2" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/json_parser/game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="71" selection-start-line="71" selection-end-line="71" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/docs/df_methods.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/docs/df_summary.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/docs/output/DATA_FRAME_INFO.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="187">
+            <caret line="11" selection-start-line="11" selection-end-line="12" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/typing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="205">
+          <caret line="1467" column="8" selection-start-line="1467" selection-start-column="8" selection-end-line="1467" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.IntelliJIdea2019.1/system/python_stubs/1690022346/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="457">
+          <caret line="352" column="4" selection-start-line="352" selection-start-column="4" selection-end-line="352" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/metadata/analysis_manager_test.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/tempfile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="519" column="4" selection-start-line="519" selection-start-column="4" selection-end-line="519" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/extras/per_goal_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="10" column="35" selection-start-line="10" selection-start-column="35" selection-end-line="10" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/analysis_manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1258">
+          <caret line="85" column="30" selection-start-line="85" selection-start-column="8" selection-end-line="85" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/analysis_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="799">
+          <caret line="60" column="26" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/metadata/command_line_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/read_pandas_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="19" column="28" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/export_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="10" selection-start-line="10" selection-end-line="15" selection-end-column="113" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/conftest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/analysis/saltie_game/metadata/ApiGame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="30" selection-start-line="30" selection-end-line="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/game_creation_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="473">
+          <caret line="37" column="43" selection-start-line="37" selection-start-column="43" selection-end-line="37" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/decompile_replays.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-113">
+          <caret line="26" column="4" selection-start-line="26" selection-start-column="4" selection-end-line="26" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/docs/data_frame_docs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="24" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_travis/send.sh">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_travis/install-protoc.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="30" column="3" selection-start-line="30" selection-start-column="3" selection-end-line="30" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.github/workflows/wiki.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="15" column="49" selection-start-line="15" selection-start-column="49" selection-end-line="15" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.github/workflows/benchmarking.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="91" selection-start-line="11" selection-start-column="73" selection-end-line="11" selection-end-column="91" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carball/tests/benchmarking/benchmarking.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="30" column="83" lean-forward="true" selection-start-line="30" selection-start-column="83" selection-end-line="30" selection-end-column="83" />
+          <folding>
+            <element signature="e#0#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="461">
+          <caret line="40" column="9" lean-forward="true" selection-start-line="40" selection-start-column="9" selection-end-line="40" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.github/FUNDING.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>carball</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
