@@ -45,7 +45,7 @@ jobs:
     - name: Store benchmark result
       uses: rhysd/github-action-benchmark@v1
       with:
-        name: Python Benchmark with pytest-benchmark
+        name: Python Benchmark
         tool: 'pytest'
         output-file-path: carball/tests/benchmarking/bench_output.json
         # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
