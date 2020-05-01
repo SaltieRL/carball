@@ -2,7 +2,7 @@ name: Benchmarking
 
 on:
   push:
-    branches: [ master, action-benchmark ]
+    branches: [ master, action-benchmark, integrate-boxcars]
 
 jobs:
   build:
