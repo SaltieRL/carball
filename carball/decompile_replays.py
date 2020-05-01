@@ -26,7 +26,8 @@ def decompile_replay(replay_path):
 def analyze_replay_file(replay_path: str, controls: ControlsCreator = None,
                         sanity_check: SanityChecker = None, analysis_per_goal=False,
                         logging_level=logging.NOTSET,
-                        calculate_intensive_events: bool = False):
+                        calculate_intensive_events: bool = False,
+                        clean: bool = True):
     """
     Decompile and analyze a replay file.
 
@@ -37,6 +38,7 @@ def analyze_replay_file(replay_path: str, controls: ControlsCreator = None,
     :param force_full_analysis: If True full analysis will be performed even if checks say it should not.
     :param logging_level: Sets the logging level globally across carball
     :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats.
+    :param clean: Indicates if useless/invalid data should be found and removed.
     :return: AnalysisManager of game with analysis.
     """
 
@@ -53,7 +55,7 @@ def analyze_replay_file(replay_path: str, controls: ControlsCreator = None,
         analysis = PerGoalAnalysis(game)
     else:
         analysis = AnalysisManager(game)
-    analysis.create_analysis(calculate_intensive_events=calculate_intensive_events)
+    analysis.create_analysis(calculate_intensive_events=calculate_intensive_events, clean=clean)
 
     if controls is not None:
         controls.get_controls(game)

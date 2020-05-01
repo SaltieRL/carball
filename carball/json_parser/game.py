@@ -50,12 +50,22 @@ class Game:
         self.dropshot = None
 
     def initialize(self, file_path='', loaded_json=None, parse_replay: bool = True, clean_player_names: bool = False):
+        """
+        Initializes the Game object by processing the replay's json file, which finds and copies all relevant data.
+
+        :param file_path: The (string) path to the replay's json file.
+        :param loaded_json: The replay's json file.
+        :param parse_replay: Boolean - should the replay be parsed?
+        :param clean_player_names: Boolean - should the player names be cleared?
+        """
+
         self.file_path = file_path
         if loaded_json is None:
             with open(file_path, 'r') as f:
                 self.replay = json.load(f)
         else:
             self.replay = loaded_json
+
         logger.debug('Loaded JSON')
 
         self.replay_data = self.replay['network_frames']['frames']
@@ -122,6 +132,12 @@ class Game:
             return {'name': owner_name, 'id': None}
 
     def get_goals(self) -> List[Goal]:
+        """
+        Gets goals from replay_properties and creates respective Goal objects.
+
+        :return: List[Goal]
+        """
+
         if "Goals" not in self.properties:
             return []
 
@@ -135,6 +151,7 @@ class Game:
             goal = Goal(goal_dict, self)
             goals_list.append(goal)
         return goals_list
+
 
     def parse_all_data(self, all_data, clean_player_names: bool) -> None:
         """
@@ -200,7 +217,8 @@ class Game:
             if clean_player_names:
                 cleaned_player_name = re.sub(r'[^\x00-\x7f]', r'', found_player.name).strip()  # Support ASCII only
                 if cleaned_player_name != found_player.name:
-                    logger.warning(f"Cleaned player name to ASCII-only. From: {found_player.name} to: {cleaned_player_name}")
+                    logger.warning(
+                        f"Cleaned player name to ASCII-only. From: {found_player.name} to: {cleaned_player_name}")
                     found_player.name = cleaned_player_name
 
         # GOAL - add player if not found earlier (ie player just created)
@@ -236,7 +254,6 @@ class Game:
             Game.add_demo_to_map(key, demo, demo_map)
 
         self.demos = list(demo_map.values())
-
 
         # PARTIES
         self.parties = all_data['parties']
@@ -289,7 +306,7 @@ class Game:
             })
 
         damage_frames = set(damage_events.keys())
-        self.dropshot['tile_frames'] =\
+        self.dropshot['tile_frames'] = \
             {k: v for (k, v) in all_data['dropshot']['tile_frames'].items() if k in damage_frames}
 
         self.dropshot['ball_events'] = ball_events

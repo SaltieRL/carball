@@ -13,3 +13,4 @@ dist/
 *ipynb*
 
 !/carball/tests/replays/
+.vscode
