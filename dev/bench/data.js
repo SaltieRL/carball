@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1588353316788,
+  "lastUpdate": 1588353320292,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks": [
@@ -236,6 +236,65 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.5018478207891238",
             "extra": "mean: 21.558297205600002 sec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dtracers@gmail.com",
+            "name": "dtracers",
+            "username": "dtracers"
+          },
+          "committer": {
+            "email": "dtracers@gmail.com",
+            "name": "dtracers",
+            "username": "dtracers"
+          },
+          "distinct": true,
+          "id": "bb898cbc84dc99828202f9c97f30eca0e4e63e76",
+          "message": "split up files to increase performance",
+          "timestamp": "2020-05-01T09:46:47-07:00",
+          "tree_id": "828397188c5a0e2da6c80d287af425b5a52e5b6a",
+          "url": "https://github.com/SaltieRL/carball/commit/bb898cbc84dc99828202f9c97f30eca0e4e63e76"
+        },
+        "date": 1588353309900,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_short_sample",
+            "value": 0.8227588370360785,
+            "unit": "iter/sec",
+            "range": "stddev: 0.004862348523333745",
+            "extra": "mean: 1.215422982999998 sec\nrounds: 10"
+          },
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_short_dropshot",
+            "value": 0.5938431451769491,
+            "unit": "iter/sec",
+            "range": "stddev: 0.006147280115411477",
+            "extra": "mean: 1.6839463554000058 sec\nrounds: 10"
+          },
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_full_rumble",
+            "value": 0.05466360739107198,
+            "unit": "iter/sec",
+            "range": "stddev: 0.1697972235090321",
+            "extra": "mean: 18.293706685800004 sec\nrounds: 10"
+          },
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_oce_rlcs",
+            "value": 0.05725443553594452,
+            "unit": "iter/sec",
+            "range": "stddev: 0.18688052384705997",
+            "extra": "mean: 17.46589570990001 sec\nrounds: 10"
+          },
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_oce_rlcs_intensive",
+            "value": 0.05034710349532626,
+            "unit": "iter/sec",
+            "range": "stddev: 0.15823778901948016",
+            "extra": "mean: 19.86211580359991 sec\nrounds: 5"
           }
         ]
       }
