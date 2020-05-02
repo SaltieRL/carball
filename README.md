@@ -38,6 +38,7 @@ python init.py
 ```
 
 ## Examples / Usage
+One of the main data structures used in carball is the pandas.DataFrame, to learn more, see [its wiki page](https://github.com/SaltieRL/carball/wiki/data_frame).
 
 Decompile and analyze a replay:
 ```Python
@@ -173,9 +174,6 @@ Fix:
 
 ## Developing
 Everyone is welcome to join the carball (and calculated.gg) project! Even if you are a beginner, this can be used as an opportunity to learn more - you just need to be willing to learn and contribute.
-
-### Use of GitHub
-All contributions end up on the carball repository, so you must have at least some understanding of GitHub to effectively contribute. The main concepts are: commits, pull requests and branches. If you are not sure whether your contribution will work, you can use a fork to create your personal copy of carball and use that for testing (this is also beneficial to reduce commit spamming).
 
 ### Learning about carball
 Currently, there is active creation of the carball wiki on GitHub - it aims to provide all relevant information about carball and development, so if you are a beginner, definitely have a look there. If you can't find information that you were looking for, your next option is the calculated.gg Discord server, where you may send a message to the #help channel.
