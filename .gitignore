@@ -16,3 +16,4 @@ protobuf-*
 carball/generated/binaries/protoc
 
 !/carball/tests/replays/
+.vscode

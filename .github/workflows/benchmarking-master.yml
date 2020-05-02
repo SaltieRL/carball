@@ -1,0 +1,65 @@
+# Uploads benchmarking data on push to master.
+
+name: Benchmarking (Master)
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        benchtest: [short_sample, short_dropshot, full_rumble, oce_rlcs, intensive_oce_rlcs]
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
+        architecture: 'x64'
+
+    - name: Install/Update pip and wheel.
+      run:
+        python -m pip install --upgrade pip &&
+        pip install wheel
+
+    - name: Set-up and install protobuf.
+      run: chmod 777 ./_travis/install-protoc.sh && ./_travis/install-protoc.sh 2.6.1
+
+    - name: Install dependencies.
+      run: pip install -r requirements.txt && pip install -r requirements-test.txt
+
+    - name: Initialise.
+      run: python init.py
+
+    - name: Prepare benchmark.
+      run: |
+        pip install -r requirements.txt && pip install -r requirements-test.txt
+        cd carball/tests/benchmarking
+        echo === BENCHMARK DIRECTORY ===
+        ls -lh
+        echo ===========================
+
+    - name: Run benchmark.
+      run: |
+        cd carball/tests/benchmarking
+        pytest benchmarking.py --benchmark-json carball_benchmarking.json -k 'test_${{matrix.benchtest}}'
+
+    # REQUIRES gh-pages BRANCH IN THE MAIN REPO (for the graphs).
+    - name: Process and store benchmark ${{matrix.benchtest}}.
+      if: contains(github.ref, 'master')
+      uses: rhysd/github-action-benchmark@v1
+      with:
+        name: Carball Benchmarks ${{matrix.benchtest}}
+        tool: 'pytest'
+        output-file-path: carball/tests/benchmarking/carball_benchmarking.json
+        benchmark-data-dir-path: dev/bench/${{matrix.benchtest}}/
+        # Use personal access token instead of GITHUB_TOKEN due to
+        # https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
+        github-token: ${{ secrets.GH_WIKI_EDIT_TOKEN }}
+        auto-push: true
+        alert-threshold: '125%' # If performance is 1.25x worse, there will be an alert
+        comment-always: false
+        comment-on-alert: false # I think benchmarking.yml takes care of this.

@@ -12,7 +12,9 @@ class PerGoalAnalysis(AnalysisManager):
         super().__init__(game)
         self.protobuf_games = []
 
-    def perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map, data_frame, kickoff_frames):
+    def _perform_full_analysis(self, game: Game, proto_game: game_pb2.Game, player_map,
+                               data_frame, kickoff_frames, first_touch_frames,
+                               calculate_intensive_events: bool = False, clean: bool = True):
         self.protobuf_games = []
         # split up frames
         total_score = proto_game.game_metadata.score.team_0_score + proto_game.game_metadata.score.team_1_score
@@ -32,7 +34,7 @@ class PerGoalAnalysis(AnalysisManager):
             new_game.players = game.players
             new_game.teams = game.teams
             new_game.frames = split_pandas
-            super().perform_full_analysis(new_game, new_proto, player_map, split_pandas, kickoff_frames)
+            super()._perform_full_analysis(new_game, new_proto, player_map, split_pandas, kickoff_frames)
             self.protobuf_games.append(new_proto)
 
     def get_protobuf_data(self) -> List[game_pb2.Game]:

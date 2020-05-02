@@ -7,11 +7,11 @@
 
 
 # carball
-Various tools for decompiling / analyzing Rocket League replays.
+Carball is an open-source project that combines multiple tools for decompiling Rocket League replays and then analysing them.
 
 ## Requirements
 
-- Python 3.6.7+ or 3.7+
+- Python 3.6.7+ (3.7 and 3.8 included)
 - Windows, Mac or Linux
 
 ## Install
@@ -43,6 +43,7 @@ python3 init.py
 ```
 
 ## Examples / Usage
+One of the main data structures used in carball is the pandas.DataFrame, to learn more, see [its wiki page](https://github.com/SaltieRL/carball/wiki/data_frame).
 
 Decompile and analyze a replay:
 ```Python
@@ -92,6 +93,9 @@ with gzip.open(os.path.join('output.gzip'), 'wb') as fo:
     
 # return the proto object in python
 proto_object = analysis_manager.get_protobuf_data()
+
+# return the proto object as a json object
+json_oject = analysis_manager.get_json_data()
 
 # return the pandas data frame in python
 dataframe = analysis_manager.get_data_frame()
@@ -174,5 +178,34 @@ Fix:
 
 
 ## Developing
+Everyone is welcome to join the carball (and calculated.gg) project! Even if you are a beginner, this can be used as an opportunity to learn more - you just need to be willing to learn and contribute.
 
-For testing you must run pytest.  For ides you can configure them to use the pytest runner.
+### Usage of GitHub
+All contributions end up on the carball repository.  If you are new to the project you are required to use your own fork for first changes. If you do not have any previous git / github experience that is completely fine - we can help with it.
+If we believe that you are comitted to working on the project and have experience in git we may give you write access so that you no longer have to use a fork. Nonetheless, please wait until your contrubtion is ready for a review to make the pull request because that will save resources for our tests and reduce spam.
+For testing you should use your own fork, but take note that some carball tests may fail on a fork
+
+### Learning about carball
+Currently, there is active creation of the carball wiki on GitHub - it aims to provide all relevant information about carball and development, so if you are a beginner, definitely have a look there. If you can't find information that you were looking for, your next option is the calculated.gg Discord server, where you may send a message to the #help channel.
+
+The carball code is also documented, although sparsely. However, you still may find information there, too.
+
+### Testing
+The main requirement is to run PyTest. If you are using an IDE that supports integrated testing (e.g. PyCharm), you should enable PyTest there. The secondary requirement (to compile the proto files) is to run the appropriate `setup` file (setup.bat for Windows, setup.sh for Linux/Mac).
+
+If you've never tested your code before, it is a good idea to learn that skill with PyTest! Have a look at their official documentation, or any other tutorials. 
+
+### carball Performance
+Carball powers calculated.gg, which analyses tens of thousands of replays per day. Therefore, performance is very important, and it is monitored and controlled using PyTest-Benchmarking, which is implemented via GitHub Actions. However, you may see your contribution's performance locally - look into PyTest-Benchmarking documentation. If your contribution is very inefficient - it will fail automatically.
+
+If you wish to see the current carball analysis performance, it is split into 5 replay categories, and can be accessed below:
+* [Short Sample](https://saltierl.github.io/carball/dev/bench/short_sample/)
+  * A very short soccar replay - for fast benchmarking.
+* [Short Dropshot](https://saltierl.github.io/carball/dev/bench/short_dropshot/)
+  * A very short dropshot replay - to test dropshot performance.
+* [Rumble](https://saltierl.github.io/carball/dev/bench/full_rumble/)
+  * A full game of rumble - to test rumble performance.
+* [RLCS](https://saltierl.github.io/carball/dev/bench/oce_rlcs/)
+  * A full soccar RLCS game.
+* [RLCS (Intensive)](https://saltierl.github.io/carball/dev/bench/oce_rlcs_intensive/)
+  * A full soccar RLCS game, but run with the intense analysis flag.
