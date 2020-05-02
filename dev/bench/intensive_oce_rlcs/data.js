@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1588441637548,
+  "lastUpdate": 1588451338030,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks intensive_oce_rlcs": [
@@ -31,6 +31,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.36586274061110863",
             "extra": "mean: 18.980454313000006 sec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "54956345+DivvyCr@users.noreply.github.com",
+            "name": "Divvy",
+            "username": "DivvyCr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7f188c8f134394063801047625db8f21fdd83833",
+          "message": "Update README.md (#243)\n\n* Update README.md\r\n\r\nExtensive development information. Benchmarking websites included!\r\n\r\n* Remove GitHub section.\r\n\r\nAlso add DataFrame link to wiki.\r\n\r\n* Small update to README.md\r\n\r\nReadded, but rephrased the GitHub section.\r\nAdded the tip to compile proto files for testing.",
+          "timestamp": "2020-05-02T13:22:05-07:00",
+          "tree_id": "e4449818026e41ccb80f9f62a048da964224b9c8",
+          "url": "https://github.com/SaltieRL/carball/commit/7f188c8f134394063801047625db8f21fdd83833"
+        },
+        "date": 1588451318837,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_intensive_oce_rlcs",
+            "value": 0.06158342967316056,
+            "unit": "iter/sec",
+            "range": "stddev: 0.19138208928114414",
+            "extra": "mean: 16.238134272599996 sec\nrounds: 5"
           }
         ]
       }
