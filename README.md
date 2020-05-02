@@ -20,28 +20,6 @@ Carball is an open-source project that combines multiple tools for decompiling R
 
 `pip install carball`
 
-#### Clone for development
-
-##### Windows
-```
-git clone https://github.com/SaltieRL/carball
-cd carball/
-python init.py
-```
-
-##### Linux
-```
-git clone https://github.com/SaltieRL/carball
-cd carball/
-chmod +x _travis/install-protoc.sh
-./_travis/install-protoc.sh 2.6.1
-mkdir -p carball/generated/binaries/.libs/
-ln -s ../../../protobuf-2.6.1/src/.libs/ carball/generated/binaries/
-pip3 install -r requirements.txt
-pip3 install -r requirements-test.txt
-python3 init.py
-```
-
 ## Examples / Usage
 One of the main data structures used in carball is the pandas.DataFrame, to learn more, see [its wiki page](https://github.com/SaltieRL/carball/wiki/data_frame).
 
@@ -180,6 +158,28 @@ Fix:
 ## Developing
 Everyone is welcome to join the carball (and calculated.gg) project! Even if you are a beginner, this can be used as an opportunity to learn more - you just need to be willing to learn and contribute.
 
+#### Clone for development
+
+##### Windows
+```
+git clone https://github.com/SaltieRL/carball
+cd carball/
+python init.py
+```
+
+##### Linux
+```
+git clone https://github.com/SaltieRL/carball
+cd carball/
+chmod +x _travis/install-protoc.sh
+./_travis/install-protoc.sh 2.6.1
+mkdir -p carball/generated/binaries/.libs/
+ln -s ../../../protobuf-2.6.1/src/.libs/ carball/generated/binaries/
+pip3 install -r requirements.txt
+pip3 install -r requirements-test.txt
+python3 init.py
+```
+
 ### Usage of GitHub
 All contributions end up on the carball repository.  If you are new to the project you are required to use your own fork for first changes. If you do not have any previous git / github experience that is completely fine - we can help with it.
 If we believe that you are comitted to working on the project and have experience in git we may give you write access so that you no longer have to use a fork. Nonetheless, please wait until your contrubtion is ready for a review to make the pull request because that will save resources for our tests and reduce spam.
@@ -207,5 +207,5 @@ If you wish to see the current carball analysis performance, it is split into 5 
   * A full game of rumble - to test rumble performance.
 * [RLCS](https://saltierl.github.io/carball/dev/bench/oce_rlcs/)
   * A full soccar RLCS game.
-* [RLCS (Intensive)](https://saltierl.github.io/carball/dev/bench/oce_rlcs_intensive/)
+* [RLCS (Intensive)](https://saltierl.github.io/carball/dev/bench/intensive_oce_rlcs/)
   * A full soccar RLCS game, but run with the intense analysis flag.
