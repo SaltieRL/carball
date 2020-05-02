@@ -11,6 +11,8 @@ rattletrap-*
 build/
 carball.egg*
 dist/
+*ipynb*
 
 !/carball/tests/replays/
 *.py___jb_tmp___
+.vscode

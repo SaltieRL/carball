@@ -39,18 +39,25 @@ class BoostStat(BaseStat):
             if 'boost_collect' not in player_data_frame:
                 logger.warning('%s did not collect any boost', player_key)
             else:
+                gains_index = player_data_frame['boost'].diff().clip(0)
+                gains_index = gains_index.loc[gains_index > 0].index.to_numpy()
+                collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] > 34]]
+                # Have to loop to fuzzy match
+                wasted_big = 0
+                for index in collect_frames.index.to_numpy():
+                    idx = gains_index[(np.abs(gains_index - index).argmin())]
+                    int_idx = player_data_frame.index.get_loc(idx)
+                    wasted_big += player_data_frame['boost'].iloc[int_idx - 1] / 256 * 100
 
-                previous_frames = player_data_frame.loc[
-                    player_data_frame.index[player_data_frame.boost_collect.fillna(False)] - 1]
-                # any boost in tank when big is collected is wasted
-                wasted_big = previous_frames.boost.sum() / 255 * 100
-
-                previous_frames = player_data_frame.loc[
-                    player_data_frame.index[~player_data_frame.boost_collect.fillna(True)] - 1]
-                # delta is the +- of a full tank of boost they would have if there was no limit on boost
-                delta = ((previous_frames.boost + 30.5) - 255)
-                # we only want when the delta > 0 since that is wasted boost
-                wasted_small = delta[delta > 0].sum() / 255 * 100
+                collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] <= 34]]
+                prior_vals = np.empty([0])
+                for index in collect_frames.index.to_numpy():
+                    idx = gains_index[(np.abs(gains_index - index).argmin())]
+                    int_idx = player_data_frame.index.get_loc(idx)
+                    val = player_data_frame['boost'].iloc[int_idx-1]
+                    prior_vals = np.append(prior_vals, val)
+                deltas = ((prior_vals + 30.6) - 255)
+                wasted_small = deltas[deltas > 0].sum() / 256 * 100
 
                 collection = self.get_player_boost_collection(player_data_frame)
                 proto_boost.wasted_collection = wasted_big + wasted_small
@@ -74,17 +81,20 @@ class BoostStat(BaseStat):
 
     @staticmethod
     def get_average_boost_level(player_dataframe: pd.DataFrame) -> np.float64:
-        return player_dataframe.boost.mean(skipna=True)
+        return player_dataframe.boost.mean(skipna=True) / 255 * 100
 
     @classmethod
     def get_num_stolen_boosts(cls, player_dataframe: pd.DataFrame, is_orange):
-        big_pads_collected = player_dataframe[player_dataframe.boost_collect == True]
-        if is_orange == 1:
-            boost_collected_in_opposing_third = big_pads_collected[cls.field_constants.get_third_0(big_pads_collected)]
+        big = cls.field_constants.get_big_pads()
+        # Get big pads below or above 0 depending on team
+        # The index of y position is 1. The index of the label is 2.
+        if is_orange:
+            opponent_pad_labels = big[big[:, 1] < 0][:, 2] #big[where[y] is < 0][labels]
         else:
-            boost_collected_in_opposing_third = big_pads_collected[cls.field_constants.get_third_2(big_pads_collected)]
-
-        return len(boost_collected_in_opposing_third.index)
+            opponent_pad_labels = big[big[:, 1] > 0][:, 2] #big[where[y] is > 0][labels]
+        # Count all the places where isin = True by summing
+        stolen = player_dataframe.boost_collect.isin(opponent_pad_labels).sum()
+        return stolen
 
     @staticmethod
     def get_player_boost_usage_max_speed(player_dataframe: pd.DataFrame) -> np.float64:
@@ -118,29 +128,13 @@ class BoostStat(BaseStat):
     @staticmethod
     def get_player_boost_collection(player_dataframe: pd.DataFrame) -> Dict[str, int]:
         try:
-            value_counts = player_dataframe.boost_collect.value_counts()
-            if len(value_counts) == 0:
-                return {}
-            if len(value_counts) == 1:
-                if True in value_counts:
-                    return {
-                        'big': int(value_counts[True])
-                    }
-                else:
-                    return {
-                        'small': int(value_counts[False])
-                    }
-            return {
-                'big': int(value_counts[True]),
-                'small': int(value_counts[False])
-            }
-        except (AttributeError, KeyError) as e:
+            big_counts = (player_dataframe['boost_collect'] > 34).sum()
+            small_counts = (player_dataframe['boost_collect'] <= 34).sum()
+            ret = {}
+            if big_counts > 0:
+                ret['big'] = big_counts
+            if small_counts > 0:
+                ret['small'] = small_counts
+        except (AttributeError, KeyError):
             return {}
-
-    @staticmethod
-    def get_player_boost_waste(usage: np.float64, collection: Dict[str, int]) -> float:
-        try:
-            total_collected = collection['big'] * 100 + collection['small'] * 12
-            return total_collected - usage
-        except KeyError:
-            return 0
+        return ret

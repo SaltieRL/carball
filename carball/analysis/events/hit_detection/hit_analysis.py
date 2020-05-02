@@ -151,8 +151,8 @@ class SaltieHit:
         if next_saltie_hit is not None:
 
             # check edge case where an own goal moves the ball to the middle
-            goals_at_hit = data_frame.game.iloc[saltie_hit.frame_number].goal_number
-            goals_at_next_hit = data_frame.game.iloc[next_saltie_hit.frame_number].goal_number
+            goals_at_hit = data_frame.game.loc[saltie_hit.frame_number].goal_number
+            goals_at_next_hit = data_frame.game.loc[next_saltie_hit.frame_number].goal_number
             if goals_at_hit != goals_at_next_hit:
                 # lol they own-goaled
                 return

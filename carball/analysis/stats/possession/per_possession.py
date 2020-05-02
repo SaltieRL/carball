@@ -49,7 +49,7 @@ class PerPossessionStat(BaseStat):
             team_possession for team_possession in _team_possessions
             if len(team_possession.hits) > 1 and team_possession.duration > 1
         ]
-        self.logger.info(f"Found {len(self.player_possessions)} player possessions and "
+        self.logger.debug(f"Found {len(self.player_possessions)} player possessions and "
                          f"{len(self.team_possessions)} team possessions.")
 
         for possessions in (self.player_possessions, self.team_possessions):
@@ -168,8 +168,11 @@ class PerPossessionStat(BaseStat):
                 # possession end frame is last frame of game
                 possession_end_frame = data_frame.index.max()
 
-            possession_times = data_frame.loc[[possession_start_frame, possession_end_frame], ('game', 'time')].values
-            possession_duration = possession_times[1] - possession_times[0]
+            try:
+                possession_times = data_frame.loc[[possession_start_frame, possession_end_frame], ('game', 'time')].values
+                possession_duration = possession_times[1] - possession_times[0]
+            except KeyError:
+                possession_duration = 0
             possession.duration = possession_duration
 
     @classmethod

@@ -122,3 +122,27 @@ class Test_Hits():
         run_analysis_test_on_replay(test, replay_list=get_raw_replays()["OCE_RLCS_7_CARS"],
                                     answers=get_specific_answers()["CLEARS"],
                                     cache=replay_cache)
+
+    def test_hit_pressure(self, replay_cache):
+        def test(analysis: AnalysisManager, answer):
+            proto_game = analysis.get_protobuf_data()
+            hits = proto_game.game_stats.hits
+            expected_pressures = [100, 100, 100, 100, 0, 93, 100, 100, 94, 0, 0,
+             95, 100, 100, 0, 0, 0, 0, 90, 0, 0, 94, 100, 100, 0, 99, 0, 0, 0,
+             0, 0, 0, 0, 0, 100, 100, 99, 100, 0, 0, 0, 0, 100, 100, 100, 0,
+             100, 0, 0, 0, 0, 100, 100, 100, 100, 0, 100, 0, 94, 0, 96, 0, 100,
+             100, 100, 0, 0, 0, 0, 0, 98, 100, 0, 0, 100, 100, 0, 100, 0, 0, 0,
+             100, 100, 0, 0, 100, 0, 94, 100, 72, 100, 100, 0, 0, 0, 100, 100,
+             100, 100, 100, 100, 0, 0, 0, 0, 0, 0, 0, 94, 0, 100, 97, 100, 100,
+             0, 100, 0, 0, 0, 0, 0, 81, 100, 97, 100, 81, 100, 0, 100, 100, 0,
+             100, 100, 100, 100, 91, 0, 0, 0, 100, 0, 96, 100, 100, 99, 0, 0, 0,
+             100, 0, 0, 0, 0, 0, 100, 0, 99, 100, 98, 0, 94, 0, 100, 0, 100,
+             100, 0, 100, 100, 100, 0, 100, 0, 100, 67, 0, 91, 100, 100, 100,
+             0, 0, 0, 0, 88, 0, 100, 0, 100, 0, 0]
+            for x in range(len(hits)):
+                assert(hits[x].pressure == expected_pressures[x])
+
+        # Skip test cache since this test is calculating intensive events.
+        run_analysis_test_on_replay(test, replay_list=get_raw_replays()["OCE_RLCS_7_CARS"],
+                            answers=get_specific_answers()["CLEARS"],
+                            calculate_intensive_events=True)

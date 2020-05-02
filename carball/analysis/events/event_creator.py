@@ -4,6 +4,9 @@ from typing import Dict, Callable
 import pandas as pd
 
 from carball.analysis.events.bump_detection.bump_analysis import BumpAnalysis
+from carball.analysis.events.boost_pad_detection.pickup_analysis import PickupAnalysis
+from carball.analysis.events.hit_pressure.pressure_analysis import PressureAnalysis
+from carball.analysis.events.fifty_fifty.fifty_analysis import FiftyAnalysis
 from carball.analysis.events.kickoff_detection.kickoff_analysis import BaseKickoff
 from carball.analysis.events.carry_detection import CarryDetection
 from carball.analysis.events.hit_detection.base_hit import BaseHit
@@ -16,7 +19,6 @@ from carball.json_parser.game import Game
 
 logger = logging.getLogger(__name__)
 
-
 class EventsCreator:
     """
         Handles the creation of all events that can then be later used for stats
@@ -26,16 +28,34 @@ class EventsCreator:
         self.id_creator = id_creator
 
     def create_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
-                      data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series):
+                      data_frame: pd.DataFrame, kickoff_frames: pd.DataFrame, first_touch_frames: pd.Series,
+                      calculate_intensive_events: bool = False):
         """
         Creates all of the event protos.
+        :param calculate_intensive_events: Indicates if expensive calculations should run to include additional stats.
         """
         goal_frames = data_frame.game.goal_number.notnull()
+        self.create_boostpad_events(proto_game, data_frame)
         self.create_hit_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_kickoff_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_ball_carries(game, proto_game, player_map, data_frame[goal_frames])
         self.create_bumps(game, proto_game, player_map, data_frame[goal_frames])
         self.create_dropshot_events(game, proto_game, player_map)
+
+        if calculate_intensive_events:
+            self.calculate_hit_pressure(game, proto_game, data_frame)
+            self.calculate_fifty_fifty(game, proto_game, data_frame)
+            # TODO (j-wass): calculate bumps
+
+    def calculate_fifty_fifty(self, game: Game, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
+        logger.info("Calculating 50/50s.")
+        fiftyAnalysis = FiftyAnalysis(game=game, proto_game=proto_game, data_frame=data_frame)
+        fiftyAnalysis.calculate_fifty_fifty_stats()
+
+    def calculate_hit_pressure(self, game: Game, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
+        logger.info("Calculating hit pressure.")
+        pressureAnalysis = PressureAnalysis(game=game, proto_game=proto_game, data_frame=data_frame)
+        pressureAnalysis.calculate_pressure_stats()
 
     def calculate_kickoff_stats(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player],
                                 data_frame, kickoff_frames, first_touch_frames):
@@ -78,3 +98,6 @@ class EventsCreator:
     def create_dropshot_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player]):
         create_dropshot_damage_events(game, proto_game)
         create_dropshot_ball_events(game, proto_game, player_map)
+
+    def create_boostpad_events(self, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
+        PickupAnalysis.add_pickups(proto_game, data_frame)

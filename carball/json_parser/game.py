@@ -50,18 +50,29 @@ class Game:
         self.dropshot = None
 
     def initialize(self, file_path='', loaded_json=None, parse_replay: bool = True, clean_player_names: bool = False):
+        """
+        Initializes the Game object by processing the replay's json file, which finds and copies all relevant data.
+
+        :param file_path: The (string) path to the replay's json file.
+        :param loaded_json: The replay's json file.
+        :param parse_replay: Boolean - should the replay be parsed?
+        :param clean_player_names: Boolean - should the player names be cleared?
+        """
+
         self.file_path = file_path
         if loaded_json is None:
             with open(file_path, 'r') as f:
                 self.replay = json.load(f)
         else:
             self.replay = loaded_json
+
         logger.debug('Loaded JSON')
 
         self.replay_data = self.replay['content']['body']['frames']
 
         # set properties
         self.properties = self.replay['header']['body']['properties']['value']
+
         self.replay_id = self.find_actual_value(self.properties['Id']['value'])
         if 'MapName' in self.properties:
             self.map = self.find_actual_value(self.properties['MapName']['value'])
@@ -126,6 +137,12 @@ class Game:
             return {'name': owner_name, 'id': None}
 
     def get_goals(self) -> List[Goal]:
+        """
+        Gets goals from replay_properties and creates respective Goal objects.
+
+        :return: List[Goal]
+        """
+
         if "Goals" not in self.properties:
             return []
 
@@ -142,11 +159,25 @@ class Game:
 
     @staticmethod
     def find_actual_value(value_dict: dict) -> dict or int or bool or str:
+        """
+        This method deals with the json file - for every dictionary passed it returns the appropriate value of the
+        "value" key.
+        See the json file (beautify it first) to get a better idea of the values being obtained.
+
+        :param value_dict: The dictionary that has needed data/value(s).
+        :return: Value or another dictionary.
+        """
+
         types = ['int', 'boolean', 'string', 'byte', 'str', 'name', ('flagged_int', 'int')]
+
+        # None -> None
         if value_dict is None:
             return None
+
+        # Narrows the scope.
         if 'value' in value_dict:
             value_dict = value_dict['value']
+
         for _type in types:
             if isinstance(_type, str):
                 if _type in value_dict:
@@ -224,7 +255,8 @@ class Game:
             if clean_player_names:
                 cleaned_player_name = re.sub(r'[^\x00-\x7f]', r'', found_player.name).strip()  # Support ASCII only
                 if cleaned_player_name != found_player.name:
-                    logger.warning(f"Cleaned player name to ASCII-only. From: {found_player.name} to: {cleaned_player_name}")
+                    logger.warning(
+                        f"Cleaned player name to ASCII-only. From: {found_player.name} to: {cleaned_player_name}")
                     found_player.name = cleaned_player_name
 
         # GOAL - add player if not found earlier (ie player just created)
@@ -255,12 +287,13 @@ class Game:
             }
 
             # Key created to prevent duplicate demo counts
-            key = (int(_demo_data["attacker_velocity"]["x"]) + int(_demo_data["attacker_velocity"]["y"]) + int(_demo_data["attacker_velocity"]["z"]) +
-                   int(_demo_data["victim_velocity"]["x"]) + int(_demo_data["victim_velocity"]["y"]) + int(_demo_data["victim_velocity"]["z"]))
+            key = (int(_demo_data["attacker_velocity"]["x"]) + int(_demo_data["attacker_velocity"]["y"]) + int(
+                _demo_data["attacker_velocity"]["z"]) +
+                   int(_demo_data["victim_velocity"]["x"]) + int(_demo_data["victim_velocity"]["y"]) + int(
+                        _demo_data["victim_velocity"]["z"]))
             Game.add_demo_to_map(key, demo, demo_map)
 
         self.demos = list(demo_map.values())
-
 
         # PARTIES
         self.parties = all_data['parties']
@@ -313,7 +346,7 @@ class Game:
             })
 
         damage_frames = set(damage_events.keys())
-        self.dropshot['tile_frames'] =\
+        self.dropshot['tile_frames'] = \
             {k: v for (k, v) in all_data['dropshot']['tile_frames'].items() if k in damage_frames}
 
         self.dropshot['ball_events'] = ball_events

@@ -47,10 +47,11 @@ def run_replay(replay_file, unit_test_func: Callable, answer=None):
     os.remove(file_path)
 
 
-def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None, cache=None):
+def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None, cache=None, calculate_intensive_events=False):
     """
     :param unit_test_func: Called with an AnalysisManager
     :param replay_list: list of replay urls
+    :param calculate_intensive_events: Indicates if the test needs the replay to be analyzed against expensive-to-calculate events.
     :return:
     """
 
@@ -59,7 +60,7 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
         if cache is not None and str(replay_file_path) in cache:
             analysis_manager = cache[str(replay_file_path)]
         else:
-            analysis_manager = analyze_replay_file(replay_file_path)
+            analysis_manager = analyze_replay_file(replay_file_path, calculate_intensive_events=calculate_intensive_events)
         if cache is not None and time.time() - start > 10:
             cache[str(replay_file_path)] = analysis_manager
         if answer is not None:
@@ -109,6 +110,7 @@ def get_raw_replays():
         "1_NORMAL_SAVE_FROM_SHOT_TOWARD_POST": ["1_NORMAL_SAVE.replay"],
 
         # Boost
+        "3_STEAL_ORANGE_0_STEAL_BLUE": ["3_STEALS.replay"],
         "12_BOOST_PAD_0_USED": ["12_BOOST_PAD_0_USED.replay"],
         "12_BOOST_PAD_45_USED": ["12_BOOST_PAD_45_USED.replay"],
         "100_BOOST_PAD_0_USED": ["100_BOOST_PAD_0_USED.replay"],
@@ -122,6 +124,7 @@ def get_raw_replays():
         "MORE_THAN_100_BOOST": ["MORE_THAN_100_BOOST.replay"],
         "USE_BOOST_AFTER_GOAL": ["USE_BOOST_AFTER_GOAL.replay"],
         "FEATHERING_34x100_BO0ST_USED": ["FEATHERING_34_X_100_BOOSTS_USED.replay"],
+        "6_BIG_25_SMALL": ["6_BIG_25_SMALL.replay"],
 
         # Kickoffs
         "STRAIGHT_KICKOFF_GOAL": ["Straight_Kickoff_Goal.replay"],
@@ -130,6 +133,8 @@ def get_raw_replays():
         "3_KICKOFFS": ["3_KICKOFFS_4_SHOTS.replay"],
         "5_DIVERSE_KICKOFFS": ["KICKOFF_TEST_1.replay"],
         "6_DIVERSE_KICKOFFS": ["KICKOFF_TEST_2.replay"],
+        "NO_ONE_FOR_KICKOFF": ["NO_ONE_FOR_KICKOFF.replay"],
+        "WEIRD_KICKOFFS": ["WEIRD_KICKOFFS.replay"],
 
         # hits
         "4_SHOTS": ["3_KICKOFFS_4_SHOTS.replay"],

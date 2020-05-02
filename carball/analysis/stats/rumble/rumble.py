@@ -52,6 +52,8 @@ def is_rumble_enabled(game: Game) -> bool:
     :param game: parsed game object
     :return: True if rumble
     """
+    if game is None or game.game_info is None:
+        return False
     return game.game_info.playlist in [RANKED_RUMBLE, UNRANKED_RUMBLE] or \
            (game.game_info.rumble_mutator is not None and
             game.game_info.rumble_mutator.startswith('Archetypes.Mutators.SubRules.ItemsMode'))

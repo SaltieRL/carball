@@ -1,0 +1,42 @@
+
+version: 0.6.{build}
+pull_requests:
+  do_not_increment_build_number: true
+
+skip_tags: true
+
+# Do not build feature branch with open Pull Requests
+skip_branch_with_pr: true
+
+
+environment:
+  PYTHON_ARCH: "64"
+
+  matrix:
+    - PYTHON: "C:\\Python37-x64"
+      PYTHON_VERSION: "3.7.4"
+
+install:
+  # Prepend newly installed Python to the PATH of this build (this cannot be
+  # done from inside the powershell script as it would require to restart
+  # the parent CMD process).
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - "SET PYTHONPATH=%PYTHON%\\Lib\\site-packages;%PYTHONPATH%"
+  - python --version
+
+  - python -m pip install --upgrade pip
+  - pip install -r requirements.txt
+  - pip install -r requirements-test.txt
+  - python init.py
+
+build: false
+
+test_script:
+  - pytest --cov=./ --ignore=protobuf-2.6.1/
+
+
+notifications:
+  - provider: GitHubPullRequest
+    on_build_success: true
+    on_build_failure: true
+    on_build_status_changed: false

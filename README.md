@@ -1,19 +1,41 @@
 [![Build Status](https://travis-ci.org/SaltieRL/carball.svg?branch=master)](https://travis-ci.org/SaltieRL/carball)
 [![PyPI version](https://badge.fury.io/py/carball.svg)](https://badge.fury.io/py/carball)
+[![codecov](https://codecov.io/gh/SaltieRL/carball/branch/master/graph/badge.svg)](https://codecov.io/gh/SaltieRL/carball)
+[![Build status](https://ci.appveyor.com/api/projects/status/jxsa56l11fxv4jn4/branch/master?svg=true)](https://ci.appveyor.com/project/SaltieRL/carball/branch/master)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/SaltieRL/carball.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SaltieRL/carball/context:python)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/SaltieRL/carball.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SaltieRL/carball/alerts/)
+
 
 # carball
 Various tools for decompiling / analyzing Rocket League replays.
 
 ## Requirements
 
-- Python 3.6+
+- Python 3.6.7+ or 3.7+
 - Windows, Mac or Linux
 
 ## Install
 
+#### Install from pip:
+
 `pip install carball`
 
-`python init.py`
+#### Clone for development
+
+##### Windows
+```
+git clone https://github.com/SaltieRL/carball
+cd carball/
+python init.py
+```
+
+##### Linux
+```
+git clone https://github.com/SaltieRL/carball
+cd carball/
+./_travis/install-protoc.sh
+python init.py
+```
 
 ## Examples / Usage
 
@@ -65,6 +87,9 @@ with gzip.open(os.path.join('output.gzip'), 'wb') as fo:
     
 # return the proto object in python
 proto_object = analysis_manager.get_protobuf_data()
+
+# return the proto object as a json object
+json_oject = analysis_manager.get_json_data()
 
 # return the pandas data frame in python
 dataframe = analysis_manager.get_data_frame()
