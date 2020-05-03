@@ -17,8 +17,7 @@ class PlayerHandler(BaseActorHandler):
         }
         # Conditionally add ['team'] key to player_dict
         player_team = actor.get("Engine.PlayerReplicationInfo:Team", None)
-        # TODO this is unsigned in boxcars, remove 4294967295 when fixed
-        if player_team is not None and player_team != -1 and player_team != 4294967295:
+        if player_team is not None and player_team != -1:
             player_dict['team'] = player_team
 
         if "TAGame.PRI_TA:PartyLeader" in actor and actor["TAGame.PRI_TA:PartyLeader"] is not None:
