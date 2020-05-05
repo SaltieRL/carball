@@ -38,9 +38,81 @@ python init.py
 ```
 
 ## Examples / Usage
-The GitHub carball wiki has a lot of useful information about using carball. Including the most useful examples to get started with carball, which can be found [here](https://github.com/SaltieRL/carball/wiki/All-Examples "Examples").
-
 One of the main data structures used in carball is the pandas.DataFrame, to learn more, see [its wiki page](https://github.com/SaltieRL/carball/wiki/data_frame "DataFrame").
+
+### Decompile a Replay
+```Python
+from carball import decompile_replay
+
+# This is the path to your replay file (.replay file extension)
+# On Windows, by default, Rocket League saves replays in C:\Users\%USER%\Documents\My Games\Rocket League\TAGame\Demos
+replay_path = 'path/to/your/replayID.replay'
+
+# This is the path where the replay's JSON file will be stored. It is recommended to use the replay ID as the file name.
+output_path = 'path/to/desired/location/replayID.json'
+
+# Returns the JSON object for the given replay.
+_json = decompile_replay(replay_path, output_path=output_path,overwrite=True)
+```
+
+### Analyse a Replay
+If you haven't manually decompiled the replay, use the following:
+```Python
+from carball import analyze_replay_file
+
+# This is the path to your replay file (.replay extension)
+# On Windows, by default, Rocket League saves replays in C:\Users\%USER%\Documents\My Games\Rocket League\TAGame\Demos
+replay_path = 'path/to/your/replayID.replay'
+
+# This is the path where the replay's JSON file will be stored. 
+output_path = 'path/to/desired/location/replayID.json'
+
+# The analyze_replay_file() method creates an instance of AnalysisManager and also runs the analysis.
+analysis_manager = analyze_replay_file(replay_path, output_path=output_path,overwrite=True)
+```
+
+If you have a decompiled replay, as a JSON file (e.g. ```_json```), use the following:
+```Python
+from carball.json_parser.game import Game
+from carball.analysis.analysis_manager import AnalysisManager
+
+# Create and intialise the Game object.
+game = Game()
+game.initialize(loaded_json=_json)
+
+# Create an AnalysisManager object and run the analysis.
+analysis_manager = AnalysisManager(game)
+analysis_manager.create_analysis()
+```
+
+### Retrieve Analysis Data
+Once you have created and ran the analysis, you can retrieve each of the data types by using the following methods:
+```Python
+# Returns the Protobuf object
+proto_object = analysis_manager.get_protobuf_data()
+
+# Returns the Protobuf object as a json object
+json_object = analysis_manager.get_json_data()
+
+# Returns the DataFrame object
+data_frame = analysis_manager.get_data_frame()
+```
+
+You may also choose to write the analysed replay data into a file, so that you don't have to wait for all of the processes to run again:
+```Python
+import os
+import gzip
+
+# Writes the Protobuf data out to the given file. The file mode is 'wb' for 'write bytes'.
+# See api/*.proto for all fields and properties.
+with open(os.path.join('output.pts'), 'wb') as file:
+    analysis_manager.write_proto_out_to_file(file)
+    
+# Writes the pandas.DataFrame data out to the given file, as a gzipped numpy array. The file mode is 'wb' for 'write bytes'.
+with gzip.open(os.path.join('output.gzip'), 'wb') as file:
+    analysis_manager.write_pandas_out_to_file(file)
+```
+
 
 ### Command Line
 
