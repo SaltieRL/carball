@@ -38,63 +38,9 @@ python init.py
 ```
 
 ## Examples / Usage
-One of the main data structures used in carball is the pandas.DataFrame, to learn more, see [its wiki page](https://github.com/SaltieRL/carball/wiki/data_frame).
+The GitHub carball wiki has a lot of useful information about using carball. Including the most useful examples to get started with carball, which can be found [here](https://github.com/SaltieRL/carball/wiki/All-Examples "Examples").
 
-Decompile and analyze a replay:
-```Python
-import carball
-
-analysis_manager = carball.analyze_replay_file('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', 
-                                      output_path='9EB5E5814D73F55B51A1BD9664D4CBF3.json', 
-                                      overwrite=True)
-proto_game = analysis_manager.get_protobuf_data()
-
-# you can see more example of using the analysis manager below
-
-```
-
-Just decompile a replay to a JSON object:
-
-```Python
-import carball
-
-_json = carball.decompile_replay('9EB5E5814D73F55B51A1BD9664D4CBF3.replay', 
-                                output_path='9EB5E5814D73F55B51A1BD9664D4CBF3.json', 
-                                overwrite=True)
-```
-
-Analyze a JSON game object:
-```Python
-import carball
-import os
-import gzip
-from carball.json_parser.game import Game
-from carball.analysis.analysis_manager import AnalysisManager
-# _json is a JSON game object (from decompile_replay)
-game = Game()
-game.initialize(loaded_json=_json)
-
-analysis_manager = AnalysisManager(game)
-analysis_manager.create_analysis()
-
-# write proto out to a file
-# read api/*.proto for info on the object properties
-with open(os.path.join('output.pts'), 'wb') as fo:
-    analysis_manager.write_proto_out_to_file(fo)
-    
-# write pandas dataframe out as a gzipped numpy array
-with gzip.open(os.path.join('output.gzip'), 'wb') as fo:
-    analysis_manager.write_pandas_out_to_file(fo)
-    
-# return the proto object in python
-proto_object = analysis_manager.get_protobuf_data()
-
-# return the proto object as a json object
-json_oject = analysis_manager.get_json_data()
-
-# return the pandas data frame in python
-dataframe = analysis_manager.get_data_frame()
-```
+One of the main data structures used in carball is the pandas.DataFrame, to learn more, see [its wiki page](https://github.com/SaltieRL/carball/wiki/data_frame "DataFrame").
 
 ### Command Line
 
