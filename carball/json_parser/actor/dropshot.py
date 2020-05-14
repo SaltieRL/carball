@@ -23,22 +23,9 @@ class PlatformHandler(BaseActorHandler):
 
         damage_state = actor['TAGame.BreakOutActor_Platform_TA:DamageState']
 
-        # unknown1: 0 - undamaged, 1 - damaged, 2 - destroyed
-        state = damage_state[0]
-
-        # unknown2: False when undamaged, True otherwise?
-
-        # unknown3: damaging player actor id
-        player_actor_id = damage_state[2]
-
-        # unknown4: (size, bias, x, y, z) properties that have a value of (0, 2, 0, 0, 0) when the tile is undamaged
-        # probably the position of the ball when the tile was damaged as tiles in the same event have the same value
-
-        # unknown5: In a single damage event only one tile has a value of True, the others are False
-        # probably the center of the damage aka the tile that was hit
-        tile_hit = damage_state[4]
-
-        # unknown6: seems to be always False
+        state = damage_state['tile_state']
+        player_actor_id = damage_state['offender']
+        tile_hit = damage_state['direct_hit']
 
         if state > self.parser.dropshot['tile_states'][tile_id]:
 

@@ -64,7 +64,7 @@ class Player:
             logger.warning('Score is not found for player')
         team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]
 
-        if team_actor_id == -1 or team_actor_id == 4294967295:
+        if team_actor_id == -1:
             # if they leave at the end
             team_actor_id = actor_data['team']
         for team in teams:

@@ -13,8 +13,7 @@ class CarHandler(BaseActorHandler):
             return
 
         player_actor_id = actor['Engine.Pawn:PlayerReplicationInfo']
-        # TODO this is unsigned in boxcars, remove 4294967295 when fixed
-        if player_actor_id == -1 or player_actor_id == 4294967295:
+        if player_actor_id == -1:
             self.add_demo(actor, frame_number)
             return
         # assign car player links
@@ -54,16 +53,12 @@ class CarHandler(BaseActorHandler):
             # add attacker and victim player ids
             attacker_car_id = demo_data['attacker_actor_id']
             victim_car_id = demo_data['victim_actor_id']
-            # TODO this is unsigned in boxcars, remove 4294967295 when fixed
-            if attacker_car_id != -1 and attacker_car_id != 4294967295 and victim_car_id != -1 and \
-                    victim_car_id != 4294967295 and attacker_car_id < 1e9 and victim_car_id < 1e9:
+            if attacker_car_id != -1 and victim_car_id != -1 and attacker_car_id < 1e9 and victim_car_id < 1e9:
                 # Filter out weird stuff where it's not a demo
                 # frame 1 of 0732D41D4AF83D610AE2A988ACBC977A (rlcs season 4 eu)
                 attacker_player_id = self.parser.car_player_ids[attacker_car_id]
                 victim_player_id = self.parser.car_player_ids[victim_car_id]
-                # TODO this is unsigned in boxcars, remove 4294967295 when fixed
-                if attacker_player_id != -1 and victim_player_id != -1 and \
-                        attacker_player_id != -4294967295 and victim_player_id != -4294967295:
+                if attacker_player_id != -1 and victim_player_id != -1:
                     demo_data['attacker_player_id'] = attacker_player_id
                     demo_data['victim_player_id'] = victim_player_id
                     # add frame_number

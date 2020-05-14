@@ -8,15 +8,13 @@ REPLICATED_PICKUP_KEY_168 = 'TAGame.VehiclePickup_TA:NewReplicatedPickupData'
 def get_boost_actor_data(actor: dict):
     if REPLICATED_PICKUP_KEY in actor:
         actor = actor[REPLICATED_PICKUP_KEY]
-        # TODO this is unsigned in boxcars, remove 4294967295 when fixed
-        if actor is not None and actor != -1 and actor != 4294967295:
+        if actor is not None and actor != -1:
             actor = actor['pickup']
             if actor is not None and 'instigator_id' in actor and actor["instigator_id"] != -1:
                 return actor
     elif REPLICATED_PICKUP_KEY_168 in actor:
         actor = actor[REPLICATED_PICKUP_KEY_168]
-        # TODO this is unsigned in boxcars, remove 4294967295 when fixed
-        if actor is not None and actor != -1 and actor != 4294967295:
+        if actor is not None and actor != -1:
             actor = actor['pickup_new']
             if actor is not None and 'instigator_id' in actor and actor["instigator_id"] != -1:
                 return actor
