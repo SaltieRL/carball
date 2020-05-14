@@ -47,7 +47,7 @@ setup(
     version=version_string,
     packages=setuptools.find_packages(),
     include_package_data=True,
-    install_requires=['pandas==0.24.2', 'protobuf==3.6.1', 'xlrd==1.1.0', 'numpy==1.17.0', 'boxcars-py==0.1.2'],
+    install_requires=['pandas==0.24.2', 'protobuf==3.6.1', 'xlrd==1.1.0', 'numpy==1.17.0', 'boxcars-py==0.1.3'],
     url='https://github.com/SaltieRL/carball',
     keywords=['rocket-league'],
     license='Apache 2.0',
