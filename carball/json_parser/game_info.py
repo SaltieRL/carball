@@ -35,7 +35,7 @@ class GameInfo:
         if 'TAGame.GameEvent_Soccar_TA:SubRulesArchetype' in game_event_actor:
             # Only used for rumble stats
             # TODO can this contain any other mutators?
-            self.rumble_mutator = objects[game_event_actor['TAGame.GameEvent_Soccar_TA:SubRulesArchetype']]
+            self.rumble_mutator = objects[game_event_actor['TAGame.GameEvent_Soccar_TA:SubRulesArchetype']['actor']]
 
         logger.info('Created game info from actor')
         return self

@@ -16,7 +16,7 @@ class PlayerHandler(BaseActorHandler):
             'name': actor["Engine.PlayerReplicationInfo:PlayerName"],
         }
         # Conditionally add ['team'] key to player_dict
-        player_team = actor.get("Engine.PlayerReplicationInfo:Team", None)
+        player_team = actor.get("Engine.PlayerReplicationInfo:Team", {}).get('actor', None)
         if player_team is not None and player_team != -1:
             player_dict['team'] = player_team
 

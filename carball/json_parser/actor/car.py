@@ -12,7 +12,7 @@ class CarHandler(BaseActorHandler):
         if 'Engine.Pawn:PlayerReplicationInfo' not in actor:
             return
 
-        player_actor_id = actor['Engine.Pawn:PlayerReplicationInfo']
+        player_actor_id = actor['Engine.Pawn:PlayerReplicationInfo']['actor']
         if player_actor_id == -1:
             self.add_demo(actor, frame_number)
             return
@@ -51,8 +51,8 @@ class CarHandler(BaseActorHandler):
         if 'TAGame.Car_TA:ReplicatedDemolish' in actor:
             demo_data = actor['TAGame.Car_TA:ReplicatedDemolish']
             # add attacker and victim player ids
-            attacker_car_id = demo_data['attacker_actor_id']
-            victim_car_id = demo_data['victim_actor_id']
+            attacker_car_id = demo_data['attacker']
+            victim_car_id = demo_data['victim']
             if attacker_car_id != -1 and victim_car_id != -1 and attacker_car_id < 1e9 and victim_car_id < 1e9:
                 # Filter out weird stuff where it's not a demo
                 # frame 1 of 0732D41D4AF83D610AE2A988ACBC977A (rlcs season 4 eu)

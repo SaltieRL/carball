@@ -62,7 +62,7 @@ class Player:
             self.score = actor_data["TAGame.PRI_TA:MatchScore"]
         except KeyError:
             logger.warning('Score is not found for player')
-        team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]
+        team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]['actor']
 
         if team_actor_id == -1:
             # if they leave at the end
