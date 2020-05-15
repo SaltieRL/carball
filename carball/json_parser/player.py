@@ -103,7 +103,7 @@ class Player:
         self.camera_settings['height'] = camera_data.get('height', None)
         self.camera_settings['pitch'] = camera_data.get('angle', None)
         self.camera_settings['distance'] = camera_data.get('distance', None)
-        self.camera_settings['stiffness'] = camera_data.get('swiftness', None)
+        self.camera_settings['stiffness'] = camera_data.get('stiffness', None)
         self.camera_settings['swivel_speed'] = camera_data.get('swivel', None)
         self.camera_settings['transition_speed'] = camera_data.get('transition', None)
 
