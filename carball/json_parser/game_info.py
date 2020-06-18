@@ -24,7 +24,7 @@ class GameInfo:
         # There is no GameServerID if you play alone
         self.server_id = ''
         if 'ProjectX.GRI_X:GameServerID' in actor_data:
-            self.server_id = str(actor_data['ProjectX.GRI_X:GameServerID']['q_word'])
+            self.server_id = actor_data['ProjectX.GRI_X:GameServerID']
         self.server_name = actor_data['Engine.GameReplicationInfo:ServerName']
         
         # A custom lobby doesn't have a MatchGUID
@@ -35,7 +35,7 @@ class GameInfo:
         if 'TAGame.GameEvent_Soccar_TA:SubRulesArchetype' in game_event_actor:
             # Only used for rumble stats
             # TODO can this contain any other mutators?
-            self.rumble_mutator = objects[game_event_actor['TAGame.GameEvent_Soccar_TA:SubRulesArchetype']]
+            self.rumble_mutator = objects[game_event_actor['TAGame.GameEvent_Soccar_TA:SubRulesArchetype']['actor']]
 
         logger.info('Created game info from actor')
         return self

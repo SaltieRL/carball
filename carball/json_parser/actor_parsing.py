@@ -2,25 +2,21 @@ import math
 from typing import Dict
 
 RBSTATE = "TAGame.RBActor_TA:ReplicatedRBState"
-rbstate = "rigid_body_state"
 
 RB_STATE_DICT_PAIRS = {
-    'pos_x': (RBSTATE, rbstate, 'location', 'x'),
-    'pos_y': (RBSTATE, rbstate, 'location', 'y'),
-    'pos_z': (RBSTATE, rbstate, 'location', 'z'),
-    'rot_x': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'x', 'value'),
-    'rot_y': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'y', 'value'),
-    'rot_z': (RBSTATE, rbstate, 'rotation', 'compressed_word_vector', 'z', 'value'),
-    'quat_w': (RBSTATE, rbstate, 'rotation', 'quaternion', 'w'),
-    'quat_x': (RBSTATE, rbstate, 'rotation', 'quaternion', 'x'),
-    'quat_y': (RBSTATE, rbstate, 'rotation', 'quaternion', 'y'),
-    'quat_z': (RBSTATE, rbstate, 'rotation', 'quaternion', 'z'),
-    'vel_x': (RBSTATE, rbstate, 'linear_velocity', 'x'),
-    'vel_y': (RBSTATE, rbstate, 'linear_velocity', 'y'),
-    'vel_z': (RBSTATE, rbstate, 'linear_velocity', 'z'),
-    'ang_vel_x': (RBSTATE, rbstate, 'angular_velocity', 'x'),
-    'ang_vel_y': (RBSTATE, rbstate, 'angular_velocity', 'y'),
-    'ang_vel_z': (RBSTATE, rbstate, 'angular_velocity', 'z'),
+    'pos_x': (RBSTATE, 'location', 'x'),
+    'pos_y': (RBSTATE, 'location', 'y'),
+    'pos_z': (RBSTATE, 'location', 'z'),
+    'quat_w': (RBSTATE, 'rotation', 'w'),
+    'quat_x': (RBSTATE, 'rotation', 'x'),
+    'quat_y': (RBSTATE, 'rotation', 'y'),
+    'quat_z': (RBSTATE, 'rotation', 'z'),
+    'vel_x': (RBSTATE, 'linear_velocity', 'x'),
+    'vel_y': (RBSTATE, 'linear_velocity', 'y'),
+    'vel_z': (RBSTATE, 'linear_velocity', 'z'),
+    'ang_vel_x': (RBSTATE, 'angular_velocity', 'x'),
+    'ang_vel_y': (RBSTATE, 'angular_velocity', 'y'),
+    'ang_vel_z': (RBSTATE, 'angular_velocity', 'z'),
 }
 
 BALL_DATA_DICT_PAIRS = {
@@ -31,10 +27,10 @@ BALL_DATA_DICT_PAIRS = {
 
 class BallActor:
     @staticmethod
-    def get_data_dict(actor_data: Dict, version: int = None) -> Dict:
+    def get_data_dict(actor_data: Dict) -> Dict:
         # is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
         data_dict = get_data_dict_from_pairs(actor_data, pairs=BALL_DATA_DICT_PAIRS)
-        data_dict = standardise_data_dict(data_dict, version)
+        data_dict = standardise_data_dict(data_dict)
         return data_dict
 
 
@@ -53,10 +49,10 @@ CAR_DATA_DICT_PAIRS = {
 
 class CarActor:
     @staticmethod
-    def get_data_dict(actor_data: Dict, version: int = None) -> Dict:
+    def get_data_dict(actor_data: Dict) -> Dict:
         # is_sleeping = actor_data.get(RBSTATE, {}).get(rbstate, {}).get('sleeping', True)
         data_dict = get_data_dict_from_pairs(actor_data, pairs=CAR_DATA_DICT_PAIRS)
-        data_dict = standardise_data_dict(data_dict, version)
+        data_dict = standardise_data_dict(data_dict)
         return data_dict
 
 
@@ -73,12 +69,9 @@ def get_data_dict_from_pairs(actor_data: dict, pairs: dict) -> dict:
     return data_dict
 
 
-def standardise_data_dict(data_dict: dict, version: int = None) -> dict:
-    if version is not None and version >= 7:
-        data_dict = rescale_to_uu(data_dict)
-    if data_dict['quat_w'] is None:
-        data_dict = convert_to_radians(data_dict)
-    if version is not None and version >= 7 and data_dict['quat_w'] is not None:
+def standardise_data_dict(data_dict: dict) -> dict:
+    data_dict = rescale_to_uu(data_dict)
+    if data_dict['quat_w'] is not None:
         data_dict = convert_quat_to_rot(data_dict)
     data_dict.pop('quat_w')
     data_dict.pop('quat_x')
@@ -89,26 +82,14 @@ def standardise_data_dict(data_dict: dict, version: int = None) -> dict:
 
 def rescale_to_uu(data_dict: dict) -> dict:
     # handle psyonix's rounding to 2dp (and storing 1.00 as 100)
-    correction_dict = {'pos_x': 100, 'pos_y': 100, 'pos_z': 100,
-                       'vel_x': 10, 'vel_y': 10, 'vel_z': 10,
-                       'ang_vel_x': 10, 'ang_vel_y': 10, 'ang_vel_z': 10}
+    correction_dict = {'vel_x': 0.1, 'vel_y': 0.1, 'vel_z': 0.1,
+                       'ang_vel_x': 0.1, 'ang_vel_y': 0.1, 'ang_vel_z': 0.1}
     # /100 pos, /10 vel and ang_vel
     for _item, _divisor in correction_dict.items():
         try:
             data_dict[_item] /= _divisor
         except TypeError:
             continue
-    return data_dict
-
-
-def convert_to_radians(data_dict: dict) -> dict:
-    # converts from int16 to radians
-    try:
-        data_dict['rot_x'] *= -2 * math.pi / 65535
-        data_dict['rot_y'] = (data_dict['rot_y'] / 65535 - 0.5) * 2 * math.pi
-        data_dict['rot_z'] *= -2 * math.pi / 65535
-    except TypeError:
-        pass
     return data_dict
 
 

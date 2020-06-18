@@ -24,7 +24,7 @@ class BallHandler(BaseActorHandler):
         if self.parser.game.ball_type is None:
             self.parser.game.ball_type = BALL_TYPES.get(actor['TypeName'], mutators.DEFAULT)
 
-        ball_data = BallActor.get_data_dict(actor, self.parser.replay_version)
+        ball_data = BallActor.get_data_dict(actor)
         self.parser.ball_data[frame_number] = ball_data
 
         if self.parser.game.ball_type == mutators.BREAKOUT:

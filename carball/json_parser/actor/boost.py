@@ -25,7 +25,7 @@ class BoostHandler(BaseActorHandler):
     type_name = 'Archetypes.CarComponents.CarComponent_Boost'
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
-        car_actor_id = actor.get('TAGame.CarComponent_TA:Vehicle', None)
+        car_actor_id = actor.get('TAGame.CarComponent_TA:Vehicle', {}).get('actor', None)
 
         if car_actor_id is None or car_actor_id not in self.parser.current_car_ids_to_collect:
             return

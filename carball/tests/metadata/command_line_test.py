@@ -1,7 +1,6 @@
 import pytest
 
 from carball.command_line import main
-from carball.rattletrap.run_rattletrap import RattleTrapException
 from carball.tests.utils import get_replay_path, get_raw_replays
 
 
@@ -12,7 +11,7 @@ class Test_Commandline():
 
     def test_command_line_invalid_input(self):
         replay_path = get_replay_path("INVALID_REPLAY")
-        with pytest.raises(RattleTrapException):
+        with pytest.raises(FileNotFoundError):
             main(program_args=["--i", replay_path, "-s", "--proto", "PATH_DOESNT_MATTER"])
 
     def test_command_line_no_output(self):
