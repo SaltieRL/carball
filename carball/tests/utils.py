@@ -1,5 +1,4 @@
 import os
-import tempfile
 import time
 from typing import Callable, Tuple, Iterable
 
@@ -38,13 +37,10 @@ def run_replay(replay_file, unit_test_func: Callable, answer=None):
     """
     file = get_replay_path(replay_file)
 
-    fd, file_path = tempfile.mkstemp()
-    os.close(fd)
     if answer is not None:
-        unit_test_func(file, file_path, answer)
+        unit_test_func(file, answer)
     else:
-        unit_test_func(file, file_path)
-    os.remove(file_path)
+        unit_test_func(file)
 
 
 def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answers=None, cache=None, calculate_intensive_events=False):
@@ -55,7 +51,7 @@ def run_analysis_test_on_replay(unit_test_func: Callable, replay_list=None, answ
     :return:
     """
 
-    def wrapper(replay_file_path, json_file_path, answer=None):
+    def wrapper(replay_file_path, answer=None):
         start = time.time()
         if cache is not None and str(replay_file_path) in cache:
             analysis_manager = cache[str(replay_file_path)]
