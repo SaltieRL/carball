@@ -10,7 +10,8 @@ export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION_VERSION=2
 # Process used from:
 # https://github.com/protocolbuffers/protobuf/tree/master/src
 apt-get install autoconf automake libtool curl make g++ unzip
-wget https://github.com/protocolbuffers/protobuf/releases/download/v${protoc_version}/protobuf-cpp-${protoc_version}.zip
+echo "Attempting download from https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-cpp-3.6.1.zip"
+wget https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-cpp-3.6.1.zip
 unzip protobuf-cpp-${protoc_version}.zip
 cd protobuf-cpp-${protoc_version}
 echo "Config"
