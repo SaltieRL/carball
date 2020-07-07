@@ -10,11 +10,13 @@ export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION_VERSION=2
 # Process used from:
 # https://github.com/protocolbuffers/protobuf/tree/master/src
 apt-get install autoconf automake libtool curl make g++ unzip
-wget https://github.com/protocolbuffers/protobuf/releases/protobuf-cpp-${protoc_version}.zip
+wget https://github.com/protocolbuffers/protobuf/releases/download/v${protoc_version}/protobuf-cpp-${protoc_version}.zip
 unzip protobuf-cpp-${protoc_version}.zip
 cd protobuf-cpp-${protoc_version}
+echo "Config"
 ./configure
 make
 make check
+echo "INSTALL and UPDATE LIBS"
 sudo make install
 sudo ldconfig
