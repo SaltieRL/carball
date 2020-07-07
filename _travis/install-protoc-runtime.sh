@@ -13,7 +13,7 @@ apt-get install autoconf automake libtool curl make g++ unzip
 echo "Attempting download from https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-cpp-3.6.1.zip"
 wget https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-cpp-3.6.1.zip
 unzip protobuf-cpp-3.6.1.zip
-cd protobuf-cpp-3.6.1
+cd protobuf-3.6.1
 echo "Config"
 ./configure
 make
