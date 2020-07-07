@@ -17,6 +17,6 @@ cd protobuf-3.6.1
 ./configure
 make
 make check
-echo "INSTALL and UPDATE LIBS"
+echo "INSTALL; UPDATE LIBS."
 sudo make install
 sudo ldconfig
