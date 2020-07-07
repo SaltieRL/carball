@@ -16,5 +16,5 @@ cd protobuf-cpp-${protoc_version}
 ./configure
 make
 make check
-make install
-ldconfig
+sudo make install
+sudo ldconfig
