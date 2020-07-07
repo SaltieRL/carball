@@ -14,7 +14,6 @@ echo "Attempting download from https://github.com/protocolbuffers/protobuf/relea
 wget https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-cpp-3.6.1.zip
 unzip protobuf-cpp-3.6.1.zip
 cd protobuf-3.6.1
-echo "Config"
 ./configure
 make
 make check
