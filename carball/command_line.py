@@ -2,8 +2,6 @@ import argparse
 import carball
 import logging
 import gzip
-from carball.json_parser.game import Game
-from carball.analysis.analysis_manager import AnalysisManager
 
 
 def main(program_args=None):
@@ -14,13 +12,10 @@ def main(program_args=None):
     parser.add_argument('--proto', type=str, required=False,
                         help='The result of the analysis will be saved to this file in protocol buffers format.')
     parser.add_argument('--json', type=str, required=False,
-                        help='The result of the analysis will be saved to this file in json file format. This is not '
-                             'the decompiled replay json from rattletrap.')
+                        help='The result of the analysis will be saved to this file in json file format.')
     parser.add_argument('--gzip', type=str, required=False,
                         help='The pandas data frame containing the replay frames will be saved to this file in a '
                              'compressed gzip format.')
-    parser.add_argument('-sd', '--skip-decompile', action='store_true', default=False,
-                        help='If set, carball will treat the input file as a json file that Rattletrap outputs.')
     parser.add_argument('-v', '--verbose', action='count', default=0,
                         help='Set the logging level to INFO. To set the logging level to DEBUG use -vv.')
     parser.add_argument('-s', '--silent', action='store_true', default=False,
@@ -47,13 +42,7 @@ def main(program_args=None):
     else:
         logging.basicConfig(handlers=[logging.StreamHandler()], level=log_level)
 
-    if args.skip_decompile:
-        game = Game()
-        game.initialize(loaded_json=args.input)
-        manager = AnalysisManager(game)
-        manager.create_analysis()
-    else:
-        manager = carball.analyze_replay_file(args.input)
+    manager = carball.analyze_replay_file(args.input)
 
     if args.proto:
         with open(args.proto, 'wb') as f:

@@ -1,7 +1,6 @@
 import logging
 from typing import TYPE_CHECKING, List
 
-import numpy as np
 import pandas as pd
 
 from carball.json_parser.bots import get_bot_map, get_online_id_for_bot
@@ -50,20 +49,21 @@ class Player:
         else:
             return '%s: %s' % (self.__class__.__name__, self.name)
 
-    def create_from_actor_data(self, actor_data: dict, teams: List['Team']):
+    def create_from_actor_data(self, actor_data: dict, teams: List['Team'], objects: List[str]):
         self.name = actor_data['name']
         if 'Engine.PlayerReplicationInfo:bBot' in actor_data and actor_data['Engine.PlayerReplicationInfo:bBot']:
             self.is_bot = True
             self.online_id = get_online_id_for_bot(bot_map, self)
 
         else:
-            actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'].keys())[0]
-            self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['unique_id']['remote_id'][actor_type]
+            actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id'].keys())[0]
+            self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id'][actor_type]
         try:
             self.score = actor_data["TAGame.PRI_TA:MatchScore"]
         except KeyError:
             logger.warning('Score is not found for player')
-        team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]
+        team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]['actor']
+
         if team_actor_id == -1:
             # if they leave at the end
             team_actor_id = actor_data['team']
@@ -76,21 +76,21 @@ class Player:
         self.assists = actor_data.get("TAGame.PRI_TA:MatchAssists", None)
         self.saves = actor_data.get("TAGame.PRI_TA:MatchSaves", None)
         self.shots = actor_data.get("TAGame.PRI_TA:MatchShots", None)
-        self.parse_actor_data(actor_data)
+        self.parse_actor_data(actor_data, objects)
 
         logger.debug('Created Player from actor_data: %s', self)
         return self
 
     def parse_player_stats(self, player_stats: dict):
-        self.name = player_stats["Name"]["value"]["str"]
-        self.online_id = str(player_stats["OnlineID"]["value"]["q_word"])
-        self.is_orange = bool(player_stats["Team"]["value"]["int"])
-        self.score = player_stats["Score"]["value"]["int"]
-        self.goals = player_stats["Goals"]["value"]["int"]
-        self.assists = player_stats["Assists"]["value"]["int"]
-        self.saves = player_stats["Saves"]["value"]["int"]
-        self.shots = player_stats["Shots"]["value"]["int"]
-        self.is_bot = bool(player_stats["bBot"]["value"]["bool"])
+        self.name = player_stats["Name"]
+        self.online_id = player_stats["OnlineID"]
+        self.is_orange = bool(player_stats["Team"])
+        self.score = player_stats["Score"]
+        self.goals = player_stats["Goals"]
+        self.assists = player_stats["Assists"]
+        self.saves = player_stats["Saves"]
+        self.shots = player_stats["Shots"]
+        self.is_bot = player_stats["bBot"]
 
         logger.debug('Created Player from stats: %s', self)
         if self.is_bot or self.online_id == '0' or self.online_id == 0:
@@ -104,30 +104,28 @@ class Player:
         self.camera_settings['pitch'] = camera_data.get('angle', None)
         self.camera_settings['distance'] = camera_data.get('distance', None)
         self.camera_settings['stiffness'] = camera_data.get('stiffness', None)
-        self.camera_settings['swivel_speed'] = camera_data.get('swivel_speed', None)
-        self.camera_settings['transition_speed'] = camera_data.get('transition_speed', None)
+        self.camera_settings['swivel_speed'] = camera_data.get('swivel', None)
+        self.camera_settings['transition_speed'] = camera_data.get('transition', None)
 
         for key, value in self.camera_settings.items():
             if value is None:
                 logger.warning('Could not find ' + key + ' in camera settings for ' + self.name)
         logger.debug('Camera settings for %s: %s', self.name, self.camera_settings)
 
-    def parse_actor_data(self, actor_data: dict):
+    def parse_actor_data(self, actor_data: dict, objects: List[str]):
         """
         Adds stuff not found in PlayerStats metadata.
         PlayerStats is a better source of truth - as actor_data might not have been updated (e.g. for last assist)
 
         :param actor_data:
+        :param objects:
         :return:
         """
-        self.get_loadout(actor_data)
+        self.get_loadout(actor_data, objects)
         self.party_leader = actor_data.get('TAGame.PRI_TA:PartyLeader', None)
         try:
-            if self.party_leader is not None and \
-                    'party_leader' in self.party_leader and \
-                    'id' in self.party_leader['party_leader']:
-                leader_actor_type = list(self.party_leader['party_leader']['id'][0].keys())[0]
-                self.party_leader = str(self.party_leader['party_leader']['id'][0][leader_actor_type])
+            if self.party_leader is not None and 'remote_id' in self.party_leader:
+                self.party_leader = str(list(self.party_leader['remote_id'].values())[0])
             else:
                 self.party_leader = None
         except KeyError:
@@ -138,12 +136,12 @@ class Player:
         self.steering_sensitivity = actor_data.get('TAGame.PRI_TA:SteeringSensitivity', None)
         return self
 
-    def get_loadout(self, actor_data: dict):
+    def get_loadout(self, actor_data: dict, objects: List[str]):
         if "TAGame.PRI_TA:ClientLoadouts" in actor_data:  # new version (2 loadouts)
-            loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]["loadouts"]
+            loadout_data = actor_data["TAGame.PRI_TA:ClientLoadouts"]
         else:
             try:
-                loadout_data = {'0': actor_data["TAGame.PRI_TA:ClientLoadout"]["loadout"]}
+                loadout_data = {'0': actor_data["TAGame.PRI_TA:ClientLoadout"]}
             except KeyError:
                 loadout_data = {'0': {}}
         for loadout_name, _loadout in loadout_data.items():
@@ -162,7 +160,7 @@ class Player:
                 'avatar_border': _loadout.get('unknown5', None)
             })
         if 'TAGame.PRI_TA:ClientLoadoutsOnline' in actor_data:
-            loadout_online = actor_data['TAGame.PRI_TA:ClientLoadoutsOnline']['loadouts_online']
+            loadout_online = actor_data['TAGame.PRI_TA:ClientLoadoutsOnline']
             # Paints
             for team in ['blue', 'orange']:
                 paint = {}
@@ -177,16 +175,17 @@ class Player:
                 ]
                 for item_name, corresponding_item in zip(items, team_loadout):  # order is based on menu
                     for attribute in corresponding_item:
-                        if attribute['object_name'] == 'TAGame.ProductAttribute_Painted_TA':
-                            if 'painted_old' in attribute['value']:
-                                paint[item_name] = attribute['value']['painted_old']['value']
+                        object_name = objects[attribute['object_ind']]
+                        if object_name == 'TAGame.ProductAttribute_Painted_TA':
+                            if 'OldPaint' in attribute['value']:
+                                paint[item_name] = attribute['value']['OldPaint']
                             else:
-                                paint[item_name] = attribute['value']['painted_new']
-                        elif attribute['object_name'] == 'TAGame.ProductAttribute_UserColor_TA':
+                                paint[item_name] = attribute['value']['NewPaint']
+                        elif object_name == 'TAGame.ProductAttribute_UserColor_TA':
                             # TODO handle 'user_color_old', looks like an ID like primary and accent colors
-                            if 'user_color_new' in attribute['value']:
+                            if 'NewColor' in attribute['value']:
                                 # rgb integer, 0xAARRGGBB, banners and avatar borders have different default values
-                                user_color[item_name] = attribute['value']['user_color_new']
+                                user_color[item_name] = attribute['value']['NewColor']
                 self.paint.append({
                     'car': paint.get('body', None),
                     'skin': paint.get('decal', None),
