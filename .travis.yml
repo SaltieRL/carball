@@ -27,8 +27,8 @@ if:
 before_install:
 - chmod 777 ./_travis/install-protoc.sh
 - "./_travis/install-protoc.sh 2.6.1"
-- chmod 777 ./_travis/install-protoc-runtime.sh
-- "./_travis/install-protoc-runtime.sh 3.6.1"
+#- chmod 777 ./_travis/install-protoc-runtime.sh
+#- "./_travis/install-protoc-runtime.sh 3.6.1"
 
 install:
 - pip install -r requirements.txt
