@@ -31,7 +31,6 @@ before_install:
 - "./_travis/install-protoc-runtime.sh 3.6.1"
 
 install:
-- pip install boxcars-py==0.1.3
 - pip install -r requirements.txt
 - pip install -r requirements-test.txt
 - python init.py
