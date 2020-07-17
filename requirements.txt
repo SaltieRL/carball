@@ -1,5 +1,5 @@
 numpy==1.18.2
-protobuf==3.6.1
+protobuf==3.6.1 --install-option="--cpp_implementation"
 pandas==1.0.3
 xlrd==1.1.0
-boxcars-py==0.1.3
+boxcars-py

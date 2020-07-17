@@ -13,4 +13,5 @@ dist/
 *ipynb*
 
 !/carball/tests/replays/
+*.py___jb_tmp___
 .vscode
