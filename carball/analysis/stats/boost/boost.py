@@ -38,9 +38,9 @@ class BoostStat(BaseStat):
             if 'boost_collect' not in player_data_frame:
                 logger.warning('%s did not collect any boost', player_key)
             else:
-                self.calculate_and_set_player_wasted_collection(player_data_frame)
-                self.count_and_set_pad_collection(player_data_frame)
-                self.count_and_set_stolen_boosts(player_data_frame, player_map[player_key].is_orange)
+                self.calculate_and_set_player_wasted_collection(player_data_frame, proto_boost)
+                self.count_and_set_pad_collection(player_data_frame, proto_boost)
+                self.count_and_set_stolen_boosts(player_data_frame, player_map[player_key].is_orange, proto_boost)
 
     @staticmethod
     def get_player_boost_usage(player_dataframe: pd.DataFrame) -> np.float64:
@@ -54,7 +54,7 @@ class BoostStat(BaseStat):
         return player_dataframe.boost.mean(skipna=True) / 255 * 100
 
     @classmethod
-    def count_and_set_stolen_boosts(cls, player_dataframe: pd.DataFrame, is_orange):
+    def count_and_set_stolen_boosts(cls, player_dataframe: pd.DataFrame, is_orange, proto_boost):
         big = cls.field_constants.get_big_pads()
         # Get big pads below or above 0 depending on team
         # The index of y position is 1. The index of the label is 2.
@@ -112,7 +112,7 @@ class BoostStat(BaseStat):
 # NEW (DivvyC)
     
     @staticmethod
-    def get_wasted_big(gains_index, player_data_frame):
+    def get_wasted_big(gains_index: np.ndarray, player_data_frame: pd.DataFrame):
         # Get all frames (by their index) where the player collected more than 34 boost.
         collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] > 34]]
                 
@@ -125,7 +125,7 @@ class BoostStat(BaseStat):
         return wasted_big
 
     @staticmethod
-    def get_wasted_small(gains_index, player_data_frame):
+    def get_wasted_small(gains_index: np.ndarray, player_data_frame: pd.DataFrame):
         # Now, get all frames (by their index) where the player collected less than 34 boost.
         collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] <= 34]]
                 
@@ -140,7 +140,7 @@ class BoostStat(BaseStat):
         return wasted_small
 
     @staticmethod
-    def get_gains_index(player_data_frame):
+    def get_gains_index(player_data_frame: pd.DataFrame):
         # Get differences in boost (on a frame-by-frame basis), and only keep entries that are >= 0.
         gains_index = player_data_frame['boost'].diff().clip(0)
         # Get all frame indexes with non-zero values (i.e. boost gain), as a numpy array.
@@ -148,24 +148,24 @@ class BoostStat(BaseStat):
         return gains_index
 
     @staticmethod
-    def calculate_and_set_player_wasted_collection(player_data_frame):
+    def calculate_and_set_player_wasted_collection(player_data_frame: pd.DataFrame, proto_boost):
         # Get gains_index, which returns a numpy array of all indexes where the player gained (collected) boost.
-        gains_index = self.get_gains_index(player_data_frame)
+        gains_index = BoostStat.get_gains_index(player_data_frame)
         
         # Get wasted_big, and set it to the appropriate API field.
-        wasted_big = self.get_wasted_big(gains_index, player_data_frame)
+        wasted_big = BoostStat.get_wasted_big(gains_index, player_data_frame)
         proto_boost.wasted_big = wasted_big
         
         # Get wasted_small, and set it to the appropriate API field.
-        wasted_small = self.get_wasted_small(gains_index, player_data_frame)
+        wasted_small = BoostStat.get_wasted_small(gains_index, player_data_frame)
         proto_boost.wasted_small = wasted_small
         
         # Add wasted_small/big to get wasted_collection, and set it to the appropriate API field.
         proto_boost.wasted_collection = wasted_big + wasted_small
 
     @staticmethod
-    def count_and_set_pad_collection(player_data_frame):
-        collection = self.get_player_boost_collection(player_data_frame)
+    def count_and_set_pad_collection(player_data_frame: pd.DataFrame, proto_boost):
+        collection = BoostStat.get_player_boost_collection(player_data_frame)
         if 'small' in collection and collection['small'] is not None:
             proto_boost.num_small_boosts = collection['small']
         if 'big' in collection and collection['big'] is not None:
