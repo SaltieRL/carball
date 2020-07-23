@@ -68,25 +68,21 @@ class Game:
 
         logger.debug('Loaded JSON')
 
-        self.replay_data = self.replay['content']['body']['frames']
+        self.replay_data = self.replay['network_frames']['frames']
 
         # set properties
-        self.properties = self.replay['header']['body']['properties']['value']
-
-        self.replay_id = self.find_actual_value(self.properties['Id']['value'])
-        if 'MapName' in self.properties:
-            self.map = self.find_actual_value(self.properties['MapName']['value'])
-        else:
-            self.map = 'Unknown'
-        self.name = self.find_actual_value(self.properties.get('ReplayName', None))
-        self.match_type = self.find_actual_value(self.properties['MatchType']['value'])
-        self.team_size = self.find_actual_value(self.properties['TeamSize']['value'])
+        self.properties = self.replay['properties']
+        self.replay_id = self.properties['Id']
+        self.map = self.properties.get('MapName', 'Unknown')
+        self.name = self.properties.get('ReplayName', None)
+        self.match_type = self.properties['MatchType']
+        self.team_size = self.properties['TeamSize']
 
         if self.name is None:
             logger.warning('Replay name not found')
-        self.id = self.find_actual_value(self.properties["Id"]['value'])
+        self.id = self.properties["Id"]
 
-        date_string = self.properties['Date']['value']['str']
+        date_string = self.properties['Date']
         for date_format in DATETIME_FORMATS:
             try:
                 self.datetime = datetime.strptime(date_string, date_format)
@@ -96,7 +92,7 @@ class Game:
         else:
             logger.error('Cannot parse date: ' + date_string)
 
-        self.replay_version = self.properties.get('ReplayVersion', {}).get('value', {}).get('int', None)
+        self.replay_version = self.properties.get('ReplayVersion', None)
         logger.info(f"version: {self.replay_version}, date: {self.datetime}")
         if self.replay_version is None:
             logger.warning('Replay version not found')
@@ -120,8 +116,8 @@ class Game:
     def create_players(self) -> List[Player]:
         players = []
         try:
-            for player_stats in self.properties["PlayerStats"]["value"]["array"]:
-                player = Player().parse_player_stats(player_stats["value"])
+            for player_stats in self.properties["PlayerStats"]:
+                player = Player().parse_player_stats(player_stats)
                 players.append(player)
         except KeyError:
             pass
@@ -130,7 +126,6 @@ class Game:
     def get_primary_player(self):
         owner_name = self.properties.get('PlayerName')
         if owner_name is not None:
-            owner_name = owner_name['value']['str']
             for player in self.players:
                 if player.name == owner_name:
                     return {'name': owner_name, 'id': player.online_id}
@@ -146,7 +141,7 @@ class Game:
         if "Goals" not in self.properties:
             return []
 
-        goals = [g['value'] for g in self.properties["Goals"]["value"]["array"]]
+        goals = self.properties["Goals"]
 
         logger.info('Found %s goals.' % len(goals))
         logger.debug('Goals: %s' % goals)
@@ -157,39 +152,6 @@ class Game:
             goals_list.append(goal)
         return goals_list
 
-    @staticmethod
-    def find_actual_value(value_dict: dict) -> dict or int or bool or str:
-        """
-        This method deals with the json file - for every dictionary passed it returns the appropriate value of the
-        "value" key.
-        See the json file (beautify it first) to get a better idea of the values being obtained.
-
-        :param value_dict: The dictionary that has needed data/value(s).
-        :return: Value or another dictionary.
-        """
-
-        types = ['int', 'boolean', 'string', 'byte', 'str', 'name', ('flagged_int', 'int')]
-
-        # None -> None
-        if value_dict is None:
-            return None
-
-        # Narrows the scope.
-        if 'value' in value_dict:
-            value_dict = value_dict['value']
-
-        for _type in types:
-            if isinstance(_type, str):
-                if _type in value_dict:
-                    return value_dict[_type]
-            else:
-                value = value_dict
-                if _type[0] in value:
-                    for type_str in _type:
-                        value = value[type_str]
-                    return value
-        else:
-            return value_dict
 
     def parse_all_data(self, all_data, clean_player_names: bool) -> None:
         """
@@ -201,7 +163,7 @@ class Game:
         # GAME INFO
         self.game_info = GameInfo().parse_game_info_actor(all_data['game_info_actor'],
                                                           all_data['soccar_game_event_actor'],
-                                                          self.replay['content']['body']['objects'])
+                                                          self.replay['objects'])
 
         # TEAMS
         self.teams = []
@@ -221,12 +183,12 @@ class Game:
                 if _player_data['name'] == player.name:
                     found_player = player
                     player_actor_id_player_dict[_player_actor_id] = found_player
-                    found_player.parse_actor_data(_player_data)  # just add extra stuff
+                    found_player.parse_actor_data(_player_data, self.replay['objects'])  # just add extra stuff
                     break
             if found_player is None:
                 # player not in endgame stats, create new player
                 try:
-                    found_player = Player().create_from_actor_data(_player_data, self.teams)
+                    found_player = Player().create_from_actor_data(_player_data, self.teams, self.replay['objects'])
                 except KeyError as e:
                     # KeyError: 'Engine.PlayerReplicationInfo:Team'
                     # in `team_actor_id = actor_data["Engine.PlayerReplicationInfo:Team"]`
@@ -245,7 +207,7 @@ class Game:
 
             found_player.parse_data(all_data['player_ball_data'][_player_actor_id])
             # camera_settings might not exist (see 0AF8AC734890E6D3995B829E474F9924)
-            found_player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}).get('cam_settings', {}))
+            found_player.get_camera_settings(all_data['cameras_data'].get(_player_actor_id, {}))
             found_player.get_data_from_car(all_data['car_dicts'].get(_player_actor_id, None))
 
             for team in self.teams:
@@ -278,19 +240,17 @@ class Game:
                 'frame_number': _demo_data['frame_number'],
                 'attacker': player_actor_id_player_dict[_demo_data['attacker_player_id']],
                 'victim': player_actor_id_player_dict[_demo_data['victim_player_id']],
-                'attacker_vel': (_demo_data["attacker_velocity"]["x"],
-                                 _demo_data["attacker_velocity"]["y"],
-                                 _demo_data["attacker_velocity"]["z"],),
+                'attacker_vel': (_demo_data["attack_velocity"]["x"],
+                                 _demo_data["attack_velocity"]["y"],
+                                 _demo_data["attack_velocity"]["z"],),
                 'victim_vel': (_demo_data["victim_velocity"]["x"],
                                _demo_data["victim_velocity"]["y"],
                                _demo_data["victim_velocity"]["z"],),
             }
 
             # Key created to prevent duplicate demo counts
-            key = (int(_demo_data["attacker_velocity"]["x"]) + int(_demo_data["attacker_velocity"]["y"]) + int(
-                _demo_data["attacker_velocity"]["z"]) +
-                   int(_demo_data["victim_velocity"]["x"]) + int(_demo_data["victim_velocity"]["y"]) + int(
-                        _demo_data["victim_velocity"]["z"]))
+            key = (int(_demo_data["attack_velocity"]["x"]) + int(_demo_data["attack_velocity"]["y"]) + int(_demo_data["attack_velocity"]["z"]) +
+                   int(_demo_data["victim_velocity"]["x"]) + int(_demo_data["victim_velocity"]["y"]) + int(_demo_data["victim_velocity"]["z"]))
             Game.add_demo_to_map(key, demo, demo_map)
 
         self.demos = list(demo_map.values())

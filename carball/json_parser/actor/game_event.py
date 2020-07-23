@@ -5,7 +5,10 @@ class GameEventHandler(BaseActorHandler):
 
     @classmethod
     def can_handle(cls, actor: dict) -> bool:
-        return actor['ClassName'].startswith('TAGame.GameEvent_Soccar_TA') or actor['ClassName'].startswith('TAGame.GameEvent_GodBall_TA')
+        if actor['ClassName'] is not None:
+            return actor['ClassName'].startswith('TAGame.GameEvent_Soccar_TA') or actor['ClassName'].startswith('TAGame.GameEvent_GodBall_TA')
+        else:
+            return False
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
         self.parser.soccar_game_event_actor = actor
