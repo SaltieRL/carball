@@ -1,6 +1,6 @@
 # Comment performance benchmarking on every push.
 
-name: Benchmarking
+name: Benchmarking.
 
 on: push
 
