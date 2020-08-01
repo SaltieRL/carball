@@ -1,6 +1,6 @@
 # Comment performance benchmarking on every push.
 
-name: Benchmarking
+name: Benchmarking.
 
 on: push
 
@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v1
       with:
-        python-version: '3.6.10'
+        python-version: '3.7'
         architecture: 'x64'
 
     - name: Install/Update pip and wheel.
