@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1592507225230,
+  "lastUpdate": 1596301094366,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks intensive_oce_rlcs": [
@@ -93,6 +93,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.09647825883678236",
             "extra": "mean: 15.469446345799998 sec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "54956345+DivvyCr@users.noreply.github.com",
+            "name": "Divvy",
+            "username": "DivvyCr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "07297fe677daa4227af8f9ffecc5b088818d5217",
+          "message": "Revert benchmarking.yml python version. (#249)\n\n* Revert benchmarking.yml python version.\r\n\r\n3.6.10 > 3.7 (Integrate Boxcars commit changed this for some reason)\r\n\r\n* Update benchmarking.yml",
+          "timestamp": "2020-08-01T10:50:37-06:00",
+          "tree_id": "93f57b62e7dd2d4a4394e491422f73f85b272208",
+          "url": "https://github.com/SaltieRL/carball/commit/07297fe677daa4227af8f9ffecc5b088818d5217"
+        },
+        "date": 1596301079406,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_intensive_oce_rlcs",
+            "value": 0.06152116311170856,
+            "unit": "iter/sec",
+            "range": "stddev: 0.20006056624924776",
+            "extra": "mean: 16.254569150199995 sec\nrounds: 5"
           }
         ]
       }
