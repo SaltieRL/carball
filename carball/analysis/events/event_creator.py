@@ -92,7 +92,7 @@ class EventsCreator:
                      data_frame: pd.DataFrame):
         logger.info("Looking for bumps.")
         bumpAnalysis = BumpAnalysis(game=game, proto_game=proto_game)
-        bumpAnalysis.get_bumps_from_game(data_frame)
+        bumpAnalysis.get_bumps_from_game(data_frame, player_map)
         logger.info("Found %s bumps.", len(proto_game.game_stats.bumps))
 
     def create_dropshot_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player]):
