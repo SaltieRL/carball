@@ -25,7 +25,7 @@ MIN_BUMP_VELOCITY = 5000
 # (could be used to discard all aerial contact as bumps, although rarely an aerial bump WAS, indeed, intended)
 AERIAL_BUMP_HEIGHT = 300
 
-# TODO Analyse the impact of bumps. (e.g. look at proximity to the ball/net)
+
 class BumpAnalysis:
     def __init__(self, game: Game, proto_game: game_pb2):
         self.proto_game = proto_game
@@ -56,10 +56,12 @@ class BumpAnalysis:
         #   Account for car hitboxes and/or rotations when calculating close proximity intervals.
         #   Do some post-bump analysis and see if car velocities aligned (i.e. analyse end of interval bump alignments)
 
-        # Get an array of player names to use for player combinations.
+        # An array of player names to get player combinations; and a dict of player names to their IDs to create bumps.
         player_names = []
+        player_name_to_id = {}
         for player in player_map.values():
             player_names.append(player.name)
+            player_name_to_id[player.name] = player.id
 
         # For each player pair combination, get possible contact distances.
         for player_pair in itertools.combinations(player_names, 2):
@@ -69,13 +71,23 @@ class BumpAnalysis:
                                                                                  str(player_pair[1]))
 
             if len(players_close_frame_idxs) > 0:
-                BumpAnalysis.analyse_bumps(data_frame, player_pair, players_close_frame_idxs)
+                likely_bumps = BumpAnalysis.filter_bumps(data_frame, player_pair, players_close_frame_idxs)
             else:
+                likely_bumps = None
                 logger.info("Players (" + player_pair[0] + " and " + player_pair[1] + ") did not get close "
                                                                                       "during the match.")
 
+            for likely_bump in likely_bumps:
+                self.add_bump(likely_bump[0], player_name_to_id[likely_bump[2]], player_name_to_id[likely_bump[1]],
+                              is_demo=False)
+
     @staticmethod
-    def analyse_bumps(data_frame, player_pair, players_close_frame_idxs):
+    def filter_bumps(data_frame, player_pair, players_close_frame_idxs):
+        """
+        Try to find 'real' bumps, and return them as a list of likely_bumps.
+        """
+        likely_bumps = []
+
         # Get all individual intervals where a player pair got close to each other.
         players_close_frame_idxs_intervals = BumpAnalysis.get_players_close_intervals(players_close_frame_idxs)
 
@@ -96,8 +108,15 @@ class BumpAnalysis:
             # Determine if the bump was above AERIAL_BUMP_HEIGHT.
             is_aerial_bump = BumpAnalysis.is_aerial_bump(data_frame, player_pair[0], player_pair[1], frame_before_bump)
 
+            if attacker is not None and victim is not None and not is_aerial_bump:
+                # SUGGESTION: Perhaps take frame in the middle of the interval?
+                high_probability_bump = (frame_before_bump, attacker, victim)
+                likely_bumps.append(high_probability_bump)
+
             # Check if interval is quite long - players may be in rule 1 :) or might be a scramble.
-            BumpAnalysis.analyse_prolonged_proximity(data_frame, interval, player_pair[0], player_pair[1])
+            # BumpAnalysis.analyse_prolonged_proximity(data_frame, interval, player_pair[0], player_pair[1])
+
+        return likely_bumps
 
     @staticmethod
     def get_player_bump_alignment(data_frame, frame_idx, p1_name, p2_name):
