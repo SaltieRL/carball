@@ -11,8 +11,8 @@ from carball.generated.api import game_pb2
 
 logger = logging.getLogger(__name__)
 
-# If you decrease this, you risk not counting bumps where one car is directly behind another (driving in the same direction).
-# If you increase this, you risk counting non-contact close proximity (e.g. one car cleanly jumped over another =/= bump).
+# Decreasing this, risks not counting bumps where one car is directly behind another (driving in the same direction).
+# Increasing this, risks counting non-contact close proximity (e.g. one car cleanly jumped over another =/= bump).
 PLAYER_CONTACT_MAX_DISTANCE = 200
 
 # Needs to be relatively high to account for two cars colliding 'diagonally': /\
@@ -26,6 +26,7 @@ MIN_BUMP_VELOCITY = 5000
 AERIAL_BUMP_HEIGHT = 300
 
 
+# TODO Post-bump analysis // Bump impact analysis.
 class BumpAnalysis:
     def __init__(self, game: Game, proto_game: game_pb2):
         self.proto_game = proto_game
@@ -37,14 +38,6 @@ class BumpAnalysis:
     def create_bumps_from_demos(self, proto_game):
         for demo in proto_game.game_metadata.demos:
             self.add_bump(demo.frame_number, demo.victim_id, demo.attacker_id, True)
-
-    def add_bump(self, frame: int, victim_id: PlayerId, attacker_id: PlayerId, is_demo: bool) -> Bump:
-        bump = self.proto_game.game_stats.bumps.add()
-        bump.frame_number = frame
-        bump.attacker_id.id = attacker_id.id
-        bump.victim_id.id = victim_id.id
-        if is_demo:
-            bump.is_demo = True
 
     def create_bumps_from_player_contact(self, data_frame, player_map):
         # NOTES:
@@ -77,7 +70,24 @@ class BumpAnalysis:
                 logger.info("Players (" + player_pair[0] + " and " + player_pair[1] + ") did not get close "
                                                                                       "during the match.")
 
-            for likely_bump in likely_bumps:
+            self.add_non_demo_bumps(likely_bumps, player_name_to_id)
+
+    def add_bump(self, frame: int, victim_id: PlayerId, attacker_id: PlayerId, is_demo: bool) -> Bump:
+        bump = self.proto_game.game_stats.bumps.add()
+        bump.frame_number = frame
+        bump.attacker_id.id = attacker_id.id
+        bump.victim_id.id = victim_id.id
+        if is_demo:
+            bump.is_demo = True
+
+    def add_non_demo_bumps(self, likely_bumps, player_name_to_id):
+        demo_frame_idxs = []
+        for demo in self.proto_game.game_metadata.demos:
+            demo_frame_idxs.append(demo.frame_number)
+
+        for likely_bump in likely_bumps:
+            likely_bump_frame_idx = likely_bump[0]
+            if not any(np.isclose(demo_frame_idxs, likely_bump_frame_idx, atol=10)):
                 self.add_bump(likely_bump[0], player_name_to_id[likely_bump[2]], player_name_to_id[likely_bump[1]],
                               is_demo=False)
 
