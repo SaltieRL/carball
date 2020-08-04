@@ -7,7 +7,10 @@ class Test_Demos:
     def test_calculate_demos_correctly(self, replay_cache):
         def test(analysis: AnalysisManager):
             proto_game = analysis.get_protobuf_data()
-            bumps = proto_game.game_stats.bumps
-            assert len(bumps) == 1
+            count_demo_bumps = 0
+            for i in proto_game.game_stats.bumps:
+                if i.is_demo:
+                    count_demo_bumps += 1
+            assert count_demo_bumps == 1
 
         run_analysis_test_on_replay(test, get_raw_replays()["1_DEMO"], cache=replay_cache)
