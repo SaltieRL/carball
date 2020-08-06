@@ -11,6 +11,6 @@ class Test_Bumps:
             for i in proto_game.game_stats.bumps:
                 if not i.is_demo:
                     count_bumps += 1
-            assert count_bumps == 4
+            assert count_bumps == 7
 
-        run_analysis_test_on_replay(test, get_raw_replays()["4_BUMPS"], cache=replay_cache)
+        run_analysis_test_on_replay(test, get_raw_replays()["7_BUMPS"], cache=replay_cache)

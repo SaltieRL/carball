@@ -108,6 +108,7 @@ def get_raw_replays():
         "1_DEMO": ["1_DEMO.replay", "1_DEMO_1_63.replay"],
         "3_BUMPS": ["3_BUMPS.replay"],
         "4_BUMPS": ["4_BUMPS.replay"],
+        "7_BUMPS": ["7_BUMPS.replay"],
 
         # Boost
         "3_STEAL_ORANGE_0_STEAL_BLUE": ["3_STEALS.replay"],
