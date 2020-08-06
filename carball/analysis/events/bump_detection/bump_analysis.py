@@ -134,8 +134,9 @@ class BumpAnalysis:
             p2_alignment_before = BumpAnalysis.get_player_bump_alignment(data_frame, frame_before_bump,
                                                                          player_pair[1], player_pair[0])
 
-            # Determine the attacker and the victim (see method for more info).
-            attacker, victim, is_bump = BumpAnalysis.determine_attacker_victim(player_pair[0], player_pair[1],
+            # Determine the attacker and the victim (see method for more info). is_ambiguous signifies whether
+            # the attacker-victim pair is clear or not.
+            attacker, victim, is_ambiguous = BumpAnalysis.determine_attacker_victim(player_pair[0], player_pair[1],
                                                                                p1_alignment_before, p2_alignment_before)
 
             # Determine if the bump was above AERIAL_BUMP_HEIGHT.
@@ -143,7 +144,7 @@ class BumpAnalysis:
 
             # Append the current bump data to likely bumps, if there is an attacker and a victim
             # and if it wasn't an aerial bump (most often it isn't intended, and there is often awkward behaviour).
-            if is_bump and not is_aerial_bump:
+            if attacker is not None and victim is not None and not is_aerial_bump:
                 likely_bump = (frame_before_bump, attacker, victim)
                 likely_bumps.append(likely_bump)
 
@@ -229,18 +230,20 @@ class BumpAnalysis:
             If both bump alignments are within 45deg of each other, both values are None (both attackers)
 
         :return: A tuple in the form (Attacker, Victim, T) or (None, None, T/F), where the last bool signifies whether
-        the bump is considered legitimate (T) or not (F).
+        the attacker/victim are ambiguous (T) or not (F).
         """
 
         if abs(p1_alignment) < MAX_BUMP_ALIGN_ANGLE or abs(p2_alignment) < MAX_BUMP_ALIGN_ANGLE:
-            if abs(p1_alignment - p2_alignment) < 45:
-                return None, None, True
-            elif p1_alignment < p2_alignment:
-                return p1_name, p2_name, True
+            # if abs(p1_alignment - p2_alignment) < 45:
+            #     # TODO Rework? This would indicate that the bump is ambiguous (no definite attacker/victim).
+            #     return p1_name, p2_name, True
+            if p1_alignment < p2_alignment:
+                return p1_name, p2_name, False
             elif p2_alignment < p1_alignment:
-                return p2_name, p1_name, True
+                return p2_name, p1_name, False
 
-        return None, None, False
+        # This is ambiguous - neither player had an attacking bump angle.
+        return None, None, True
 
     @staticmethod
     def analyse_prolonged_proximity(data_frame, interval, p1_name, p2_name):
