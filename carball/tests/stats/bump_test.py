@@ -13,4 +13,6 @@ class Test_Bumps:
                     count_bumps += 1
             assert count_bumps == 7
 
-        run_analysis_test_on_replay(test, get_raw_replays()["7_BUMPS"], cache=replay_cache)
+        # Skip test cache since this test is calculating intensive events.
+        run_analysis_test_on_replay(test, get_raw_replays()["7_BUMPS"],
+                                    calculate_intensive_events=True)

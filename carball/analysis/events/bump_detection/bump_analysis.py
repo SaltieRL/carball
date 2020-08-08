@@ -22,15 +22,13 @@ PLAYER_CONTACT_DISTANCE = 200
 # Needs to be relatively high to account for two cars colliding 'diagonally': /\
 MAX_BUMP_ALIGN_ANGLE = 60
 
-# Currently arbitrary:
-MIN_BUMP_VELOCITY = 5000
-
 # Approx. half of goal height.
 # (could be used to discard all aerial contact as bumps, although rarely an aerial bump WAS, indeed, intended)
 AERIAL_BUMP_HEIGHT = 300
 
 
 # TODO Post-bump analysis // Bump impact analysis.
+# Could also try to analyse bump severity (analyse velocities?)
 class BumpAnalysis:
     def __init__(self, game: Game, proto_game: game_pb2):
         self.proto_game = proto_game
@@ -148,7 +146,7 @@ class BumpAnalysis:
                 likely_bump = (frame_before_bump, attacker, victim)
                 likely_bumps.append(likely_bump)
 
-            # NOT YET IMPLEMENTED: Check if interval is quite long - players may be in rule 1 :) or might be a scramble.
+            # NOT YET IMPLEMENTED (see bottom of class):
             # BumpAnalysis.analyse_prolonged_proximity(data_frame, interval, player_pair[0], player_pair[1])
 
         return likely_bumps
@@ -233,7 +231,7 @@ class BumpAnalysis:
         the attacker/victim are ambiguous (T) or not (F).
         """
 
-        if abs(p1_alignment) < MAX_BUMP_ALIGN_ANGLE or abs(p2_alignment) < MAX_BUMP_ALIGN_ANGLE:
+        if BumpAnalysis.is_bump_alignment([p1_alignment, p2_alignment]):
             # if abs(p1_alignment - p2_alignment) < 45:
             #     # TODO Rework? This would indicate that the bump is ambiguous (no definite attacker/victim).
             #     return p1_name, p2_name, True
@@ -246,20 +244,10 @@ class BumpAnalysis:
         return None, None, True
 
     @staticmethod
-    def analyse_prolonged_proximity(data_frame, interval, p1_name, p2_name):
-        # TODO Redo this to do some proper analysis.
-        if len(interval) > 10:
-            print(" > Scramble between " + p1_name + " and " + p2_name)
-        # NOTE: Could try analysing immediate post-bump effects.
-        # elif len(interval) >= 5:
-        #     frame_after_bump = interval[len(interval) - 1]
-        #     p1_alignment_after = BumpAnalysis.get_player_bump_alignment(data_frame, frame_after_bump,
-        #                                                                 p1_name, p2_name)
-        #     p2_alignment_after = BumpAnalysis.get_player_bump_alignment(data_frame, frame_after_bump,
-        #                                                                 p2_name, p1_name)
-
-    @staticmethod
     def is_aerial_bump(data_frame: pd.DataFrame, p1_name: str, p2_name: str, at_frame: int):
+        """
+        Check if the contact was made mid-air.
+        """
         p1_pos_z = data_frame[p1_name].pos_z.loc[at_frame]
         p2_pos_z = data_frame[p2_name].pos_z.loc[at_frame]
         if all(x > AERIAL_BUMP_HEIGHT for x in [p1_pos_z, p2_pos_z]):
@@ -271,22 +259,17 @@ class BumpAnalysis:
 
     @staticmethod
     def is_bump_alignment(bump_angles):
-        # Check if all bump alignment angles in the first half of the interval are above MAX_BUMP_ALIGN_ANGLE.
-        if all(x > MAX_BUMP_ALIGN_ANGLE for x in bump_angles):
+        """
+        Check if all bump alignment angles in the given list are above MAX_BUMP_ALIGN_ANGLE.
+        """
+        if all(abs(x) > MAX_BUMP_ALIGN_ANGLE for x in bump_angles):
             return False
         else:
             return True
 
-    @staticmethod
-    def is_bump_velocity(data_frame: pd.DataFrame, p1_name: str, p2_name: str, at_frame: int):
-        p1_vel_mag = np.sqrt(data_frame[p1_name].vel_x.loc[at_frame] ** 2 +
-                             data_frame[p1_name].vel_y.loc[at_frame] ** 2 +
-                             data_frame[p1_name].vel_z.loc[at_frame] ** 2)
-        p2_vel_mag = np.sqrt(data_frame[p2_name].vel_x.loc[at_frame] ** 2 +
-                             data_frame[p2_name].vel_y.loc[at_frame] ** 2 +
-                             data_frame[p2_name].vel_z.loc[at_frame] ** 2)
-        # Check if initial player velocities are below MIN_BUMP_VELOCITY.
-        if all(x < MIN_BUMP_VELOCITY for x in [p1_vel_mag, p2_vel_mag]):
-            return False
-        else:
-            return True
+    # TO SATISFY CODECOV, this is commented out for now.
+    # @staticmethod
+    # def analyse_prolonged_proximity(data_frame, interval, p1_name, p2_name):
+    #     # TODO Redo this to do some proper analysis. Rule 1?
+    #     if len(interval) > 60:
+    #         print("Rule 1?")
