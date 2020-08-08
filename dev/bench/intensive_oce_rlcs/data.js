@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1596301094366,
+  "lastUpdate": 1596902177597,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks intensive_oce_rlcs": [
@@ -124,6 +124,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.20006056624924776",
             "extra": "mean: 16.254569150199995 sec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lngtrn94@gmail.com",
+            "name": "Long Tran",
+            "username": "Longi94"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aa7e6fbf0cf4a56acab8405b6c4783323e27c9d3",
+          "message": "upgrade boxcars (#251)\n\n* Update requirements.txt\r\n\r\n* Update CARBALL_VERSION\r\n\r\n* wildcard boxcars-py dependency",
+          "timestamp": "2020-08-08T08:48:58-07:00",
+          "tree_id": "3dca0b4dc620d629816aa04190e8e4286e097595",
+          "url": "https://github.com/SaltieRL/carball/commit/aa7e6fbf0cf4a56acab8405b6c4783323e27c9d3"
+        },
+        "date": 1596902159290,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_intensive_oce_rlcs",
+            "value": 0.06566197466758407,
+            "unit": "iter/sec",
+            "range": "stddev: 0.054868138147015036",
+            "extra": "mean: 15.229514571599974 sec\nrounds: 5"
           }
         ]
       }
