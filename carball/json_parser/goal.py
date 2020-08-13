@@ -13,11 +13,11 @@ class Goal:
 
     def __init__(self, goal_dict, game: 'Game'):
         # self.time = goal_dict["Time"]
-        self.player_name = goal_dict["PlayerName"]['value']['str']
-        self.player_team = goal_dict["PlayerTeam"]['value']['int']
+        self.player_name = goal_dict["PlayerName"]
+        self.player_team = goal_dict["PlayerTeam"]
 
         self.player = self.get_player(game)
-        self.frame_number = goal_dict["frame"]["value"]["int"]
+        self.frame_number = goal_dict["frame"]
         logger.debug('Created Goal: %s', self)
 
     def __repr__(self):

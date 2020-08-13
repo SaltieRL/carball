@@ -2,3 +2,4 @@ numpy==1.18.2
 protobuf==3.6.1
 pandas==1.0.3
 xlrd==1.1.0
+boxcars-py==0.1.*

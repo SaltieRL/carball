@@ -9,8 +9,8 @@ from carball import decompile_replays
 class Test_OverallFunctionality():
     def test_replay_attrs(self):
 
-        def test(replay, file_path):
-            json_object = decompile_replays.decompile_replay(replay, output_path=file_path)
+        def test(replay):
+            json_object = decompile_replays.decompile_replay(replay)
             game = Game()
             game.initialize(loaded_json=json_object)
             assert game.game_info.server_name is not None

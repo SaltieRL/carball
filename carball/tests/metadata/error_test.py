@@ -1,7 +1,5 @@
 import unittest
 
-from carball.rattletrap import run_rattletrap
-
 from carball.analysis.analysis_manager import AnalysisManager
 
 from carball.tests.utils import run_analysis_test_on_replay, get_specific_replays
@@ -17,5 +15,5 @@ class DBTest(unittest.TestCase):
 
         try:
             run_analysis_test_on_replay(test, replay_list=get_specific_replays()["BROKEN_REPLAYS"])
-        except run_rattletrap.RattleTrapException as e:
-            self.assertIsInstance(e, run_rattletrap.RattleTrapException)
+        except FileNotFoundError as e:
+            self.assertIsInstance(e, FileNotFoundError)

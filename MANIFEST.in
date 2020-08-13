@@ -1,9 +1,7 @@
 include requirements.txt
 include CARBALL_VERSION
 include init.py
-include carball/rattletrap/*
 include carball/analysis/*
 exclude carball/generated/*
-exclude carball/rattletrap/rattletrap-*
 recursive-include carball/generated/api *.py
 recursive-include carball *.xlsx

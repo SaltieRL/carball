@@ -9,7 +9,7 @@ class RumbleItemHandler(BaseActorHandler):
         return actor['TypeName'].startswith('Archetypes.SpecialPickups.SpecialPickup_')
 
     def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
-        car_actor_id = actor.get('TAGame.CarComponent_TA:Vehicle', None)
+        car_actor_id = actor.get('TAGame.CarComponent_TA:Vehicle', {}).get('actor', None)
         if car_actor_id is not None and car_actor_id in self.parser.current_car_ids_to_collect:
             player_actor_id = self.parser.car_player_ids[car_actor_id]
             item_name = actor['TypeName'] \
