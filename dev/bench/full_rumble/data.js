@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1597630236761,
+  "lastUpdate": 1597692082714,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks full_rumble": [
@@ -248,6 +248,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.12353647846496946",
             "extra": "mean: 13.792789849066663 sec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "Sciguymjm@users.noreply.github.com",
+            "name": "Matthew Mage",
+            "username": "Sciguymjm"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8e2d562ea9c94befb8ab294703a6aa23a6fbf8e0",
+          "message": "Update CARBALL_VERSION (#254)",
+          "timestamp": "2020-08-17T12:07:14-07:00",
+          "tree_id": "0e70a619766cb8315fec39d20dc42c65ba668814",
+          "url": "https://github.com/SaltieRL/carball/commit/8e2d562ea9c94befb8ab294703a6aa23a6fbf8e0"
+        },
+        "date": 1597692064542,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_full_rumble",
+            "value": 0.0733829771893266,
+            "unit": "iter/sec",
+            "range": "stddev: 0.14182928565244712",
+            "extra": "mean: 13.627138585833336 sec\nrounds: 10"
           }
         ]
       }
