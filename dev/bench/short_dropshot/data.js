@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1597349089873,
+  "lastUpdate": 1597629898747,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks short_dropshot": [
@@ -217,6 +217,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.03231555481411207",
             "extra": "mean: 1.2748647581666679 sec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lngtrn94@gmail.com",
+            "name": "Long Tran",
+            "username": "Longi94"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "becbc82440b204a0fd6d06ac455e45a37659580b",
+          "message": "Update setup.py (#252)\n\nCo-authored-by: Matthew Mage <Sciguymjm@users.noreply.github.com>",
+          "timestamp": "2020-08-16T18:57:33-07:00",
+          "tree_id": "53fa5e5bce7bcd54428a0dc2e97d8aea6f72f098",
+          "url": "https://github.com/SaltieRL/carball/commit/becbc82440b204a0fd6d06ac455e45a37659580b"
+        },
+        "date": 1597629880278,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_short_dropshot",
+            "value": 0.6647706549884503,
+            "unit": "iter/sec",
+            "range": "stddev: 0.019994923829779167",
+            "extra": "mean: 1.504278193533338 sec\nrounds: 10"
           }
         ]
       }
