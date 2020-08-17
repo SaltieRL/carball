@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1597349514257,
+  "lastUpdate": 1597630262882,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks oce_rlcs": [
@@ -224,6 +224,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.16617058088789166",
             "extra": "mean: 13.876313940466659 sec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lngtrn94@gmail.com",
+            "name": "Long Tran",
+            "username": "Longi94"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "becbc82440b204a0fd6d06ac455e45a37659580b",
+          "message": "Update setup.py (#252)\n\nCo-authored-by: Matthew Mage <Sciguymjm@users.noreply.github.com>",
+          "timestamp": "2020-08-16T18:57:33-07:00",
+          "tree_id": "53fa5e5bce7bcd54428a0dc2e97d8aea6f72f098",
+          "url": "https://github.com/SaltieRL/carball/commit/becbc82440b204a0fd6d06ac455e45a37659580b"
+        },
+        "date": 1597630245085,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_oce_rlcs",
+            "value": 0.0729573384478606,
+            "unit": "iter/sec",
+            "range": "stddev: 0.1186760137090563",
+            "extra": "mean: 13.706640363733333 sec\nrounds: 10"
           }
         ]
       }
