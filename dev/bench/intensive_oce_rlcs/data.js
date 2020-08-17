@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1597629953416,
+  "lastUpdate": 1597691806459,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks intensive_oce_rlcs": [
@@ -217,6 +217,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.14184987116176134",
             "extra": "mean: 16.971807360599996 sec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "Sciguymjm@users.noreply.github.com",
+            "name": "Matthew Mage",
+            "username": "Sciguymjm"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8e2d562ea9c94befb8ab294703a6aa23a6fbf8e0",
+          "message": "Update CARBALL_VERSION (#254)",
+          "timestamp": "2020-08-17T12:07:14-07:00",
+          "tree_id": "0e70a619766cb8315fec39d20dc42c65ba668814",
+          "url": "https://github.com/SaltieRL/carball/commit/8e2d562ea9c94befb8ab294703a6aa23a6fbf8e0"
+        },
+        "date": 1597691788105,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_intensive_oce_rlcs",
+            "value": 0.05283125589078983,
+            "unit": "iter/sec",
+            "range": "stddev: 0.9712562134850501",
+            "extra": "mean: 18.9281890642 sec\nrounds: 5"
           }
         ]
       }
