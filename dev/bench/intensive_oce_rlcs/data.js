@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1597691806459,
+  "lastUpdate": 1600218143933,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks intensive_oce_rlcs": [
@@ -248,6 +248,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.9712562134850501",
             "extra": "mean: 18.9281890642 sec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "Sciguymjm@users.noreply.github.com",
+            "name": "Matthew Mage",
+            "username": "Sciguymjm"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0432b2b04c2d12e743b2b7731960a5a796244ec7",
+          "message": "Demo counts (#255)\n\n* Add demos inflicted/taken stat\r\n\r\n* Fix error logging (why?) and online ID handling\r\n\r\n* Update CARBALL_VERSION",
+          "timestamp": "2020-09-15T17:54:36-07:00",
+          "tree_id": "29151962ae607cdd58045f1b56ce72f681536adb",
+          "url": "https://github.com/SaltieRL/carball/commit/0432b2b04c2d12e743b2b7731960a5a796244ec7"
+        },
+        "date": 1600218127486,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_intensive_oce_rlcs",
+            "value": 0.058029216323961845,
+            "unit": "iter/sec",
+            "range": "stddev: 0.267734759256831",
+            "extra": "mean: 17.232698687800006 sec\nrounds: 5"
           }
         ]
       }
