@@ -232,7 +232,7 @@ class AnalysisManager:
         for player in game.players:
             player_proto = proto_game.players.add()
             ApiPlayer.create_from_player(player_proto, player, self.id_creator)
-            player_map[str(player.online_id)] = player_proto
+            player_map[player.online_id] = player_proto
 
         return player_map
 
