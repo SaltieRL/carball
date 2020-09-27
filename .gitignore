@@ -11,6 +11,8 @@ build/
 carball.egg*
 dist/
 *ipynb*
+protobuf-*
+carball/generated/binaries/protoc
 
 !/carball/tests/replays/
 .vscode
