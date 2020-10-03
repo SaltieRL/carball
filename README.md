@@ -37,6 +37,17 @@ cd carball/
 python init.py
 ```
 
+##### Mac
+In MacOS Catalina, zsh replaced bash as the default shell, which may cause permission issues when trying to run `install-protoc.sh` in the above fashion. Simply invoking bash should resolve this issue, like so:
+```
+git clone https://github.com/SaltieRL/carball
+cd carball/
+bash ./_travis/install-protoc.sh
+python init.py
+```
+Apple's decision to replace bash as the default shell may foreshadow the removal of bash in a future version of MacOS. In such a case, Homebrew users can [install protoc](http://google.github.io/proto-lens/installing-protoc.html) by replacing `./travis/install-protoc.sh` with `brew install protobuf`.
+
+
 ## Examples / Usage
 One of the main data structures used in carball is the pandas.DataFrame, to learn more, see [its wiki page](https://github.com/SaltieRL/carball/wiki/data_frame).
 
