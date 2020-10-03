@@ -45,7 +45,7 @@ cd carball/
 bash ./_travis/install-protoc.sh
 python init.py
 ```
-Apple's decision to replace bash as the default shell may foreshadow the removal of bash in a future version of MacOS. In such a case, Homebrew users can [install protoc](http://google.github.io/proto-lens/installing-protoc.html) by replacing `./travis/install-protoc.sh` with `brew install protobuf`.
+Apple's decision to replace bash as the default shell may foreshadow the removal of bash in a future version of MacOS. In such a case, Homebrew users can [install protoc](http://google.github.io/proto-lens/installing-protoc.html) by replacing `bash ./travis/install-protoc.sh` with `brew install protobuf`.
 
 
 ## Examples / Usage
