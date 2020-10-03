@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1600846696296,
+  "lastUpdate": 1601705682741,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks full_rumble": [
@@ -341,6 +341,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.11348409365297456",
             "extra": "mean: 13.816887904733342 sec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "mitchdiedrich@gmail.com",
+            "name": "mtdiedrich",
+            "username": "mtdiedrich"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "29a4c27c50ce11175d1a8bf5410636c24be943a5",
+          "message": "Add instructions to README for resolving problems related to default shell permissions on MacOS (#258)\n\n* Add instructions to README for resolving problems related to default shell permissions on MacOS\r\n\r\n* Improve clarity",
+          "timestamp": "2020-10-02T23:04:02-07:00",
+          "tree_id": "74f00ce88de1825fe72f8bdff5505a5398dfc4b6",
+          "url": "https://github.com/SaltieRL/carball/commit/29a4c27c50ce11175d1a8bf5410636c24be943a5"
+        },
+        "date": 1601705667379,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_full_rumble",
+            "value": 0.09148565538353834,
+            "unit": "iter/sec",
+            "range": "stddev: 0.062408556983764706",
+            "extra": "mean: 10.93067536989998 sec\nrounds: 10"
           }
         ]
       }
