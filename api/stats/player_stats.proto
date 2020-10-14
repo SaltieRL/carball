@@ -76,6 +76,8 @@ message Controller {
     optional bool is_keyboard = 1;
     optional float analogue_steering_input_percent = 2;
     optional float analogue_throttle_input_percent = 3;
+    optional float time_ballcam = 4;
+    optional float time_handbrake = 5;
 }
 
 // Stats for carrying
