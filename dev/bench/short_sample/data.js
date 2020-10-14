@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1601705424681,
+  "lastUpdate": 1602648601714,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks short_sample": [
@@ -372,6 +372,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.046492523318716526",
             "extra": "mean: 1.1005499049333214 sec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "Sciguymjm@users.noreply.github.com",
+            "name": "Matthew Mage",
+            "username": "Sciguymjm"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3e66f175378f050b84bc9a3b15de0420505092a7",
+          "message": "Add ballcam/handbrake times (#259)\n\n* Add ballcam/handbrake times\r\n\r\n* Remove comments",
+          "timestamp": "2020-10-13T21:03:13-07:00",
+          "tree_id": "7ea5d0947c001205584a02288cb924d8326ab306",
+          "url": "https://github.com/SaltieRL/carball/commit/3e66f175378f050b84bc9a3b15de0420505092a7"
+        },
+        "date": 1602648582250,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_short_sample",
+            "value": 0.9068065034710597,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00924296428449896",
+            "extra": "mean: 1.1027710941333302 sec\nrounds: 10"
           }
         ]
       }
