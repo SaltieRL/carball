@@ -48,8 +48,8 @@ class ControlsStat(BaseStat):
 
     @staticmethod
     def get_ballcam_duration(data_frame: pd.DataFrame, player_dataframe: pd.DataFrame) -> np.float64:
-        return sum_deltas_by_truthy_data(data_frame, player_dataframe.ball_cam)  # 100% visible boost
+        return sum_deltas_by_truthy_data(data_frame, player_dataframe.ball_cam)
 
     @staticmethod
     def get_handbrake_duration(data_frame: pd.DataFrame, player_dataframe: pd.DataFrame) -> np.float64:
-        return sum_deltas_by_truthy_data(data_frame, player_dataframe.handbrake)  # 100% visible boost
+        return sum_deltas_by_truthy_data(data_frame, player_dataframe.handbrake)
