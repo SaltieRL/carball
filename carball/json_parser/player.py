@@ -49,6 +49,11 @@ class Player:
         else:
             return '%s: %s' % (self.__class__.__name__, self.name)
 
+    def _get_player_id(self, online_id):
+        if type(online_id) == dict:
+            return online_id['online_id']
+        return online_id
+
     def create_from_actor_data(self, actor_data: dict, teams: List['Team'], objects: List[str]):
         self.name = actor_data['name']
         if 'Engine.PlayerReplicationInfo:bBot' in actor_data and actor_data['Engine.PlayerReplicationInfo:bBot']:
@@ -57,7 +62,8 @@ class Player:
 
         else:
             actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id'].keys())[0]
-            self.online_id = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id'][actor_type]
+            self.online_id = self._get_player_id(actor_data["Engine.PlayerReplicationInfo:UniqueId"]
+                                                 ['remote_id'][actor_type])
         try:
             self.score = actor_data["TAGame.PRI_TA:MatchScore"]
         except KeyError:
