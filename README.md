@@ -77,25 +77,16 @@ _json = carball.decompile_replay('9EB5E5814D73F55B51A1BD9664D4CBF3.replay',
 Analyze a JSON game object:
 ```Python
 import carball
-import os
 import gzip
 from carball.json_parser.game import Game
 from carball.analysis.analysis_manager import AnalysisManager
+
 # _json is a JSON game object (from decompile_replay)
 game = Game()
 game.initialize(loaded_json=_json)
 
 analysis_manager = AnalysisManager(game)
 analysis_manager.create_analysis()
-
-# write proto out to a file
-# read api/*.proto for info on the object properties
-with open(os.path.join('output.pts'), 'wb') as fo:
-    analysis_manager.write_proto_out_to_file(fo)
-    
-# write pandas dataframe out as a gzipped numpy array
-with gzip.open(os.path.join('output.gzip'), 'wb') as fo:
-    analysis_manager.write_pandas_out_to_file(fo)
     
 # return the proto object in python
 proto_object = analysis_manager.get_protobuf_data()
@@ -105,6 +96,35 @@ json_oject = analysis_manager.get_json_data()
 
 # return the pandas data frame in python
 dataframe = analysis_manager.get_data_frame()
+```
+
+You may want to save carball analysis results for later use:
+
+```python
+# write proto out to a file
+# read api/*.proto for info on the object properties
+with open('output.pts', 'wb') as fo:
+    analysis_manager.write_proto_out_to_file(fo)
+    
+# write pandas dataframe out as a gzipped numpy array
+with gzip.open('output.gzip', 'wb') as fo:
+    analysis_manager.write_pandas_out_to_file(fo)
+```
+
+Read the saved analysis files:
+
+```python
+import gzip
+from carball.analysis.utils.pandas_manager import PandasManager
+from carball.analysis.utils.proto_manager import ProtobufManager
+
+# read proto from file
+with open('output.pts', 'rb') as f:
+    proto_object = ProtobufManager.read_proto_out_from_file(f)
+
+# read pandas dataframe from gzipped numpy array file
+with gzip.open('output.gzip', 'rb') as f:
+    dataframe = PandasManager.read_numpy_from_memory(f)
 ```
 
 ### Command Line
