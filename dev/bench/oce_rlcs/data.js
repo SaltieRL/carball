@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602648994032,
+  "lastUpdate": 1604607894059,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks oce_rlcs": [
@@ -410,6 +410,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.31661708474060796",
             "extra": "mean: 12.8755736599 sec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lngtrn94@gmail.com",
+            "name": "Long Tran",
+            "username": "Longi94"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f9e4854e173bb6db3e53cc93ac1daa4e58952e69",
+          "message": "Add file read examples (#261)",
+          "timestamp": "2020-11-05T12:13:07-08:00",
+          "tree_id": "781a63f00484106d1ad15912aa6eb6a803aaff3b",
+          "url": "https://github.com/SaltieRL/carball/commit/f9e4854e173bb6db3e53cc93ac1daa4e58952e69"
+        },
+        "date": 1604607878119,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_oce_rlcs",
+            "value": 0.08572467728268914,
+            "unit": "iter/sec",
+            "range": "stddev: 0.08326228524682483",
+            "extra": "mean: 11.665252430199999 sec\nrounds: 10"
           }
         ]
       }
