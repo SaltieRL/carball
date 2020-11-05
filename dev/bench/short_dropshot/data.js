@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602648629751,
+  "lastUpdate": 1604607630263,
   "repoUrl": "https://github.com/SaltieRL/carball",
   "entries": {
     "Carball Benchmarks short_dropshot": [
@@ -403,6 +403,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0052686922532796596",
             "extra": "mean: 1.441669677466668 sec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "lngtrn94@gmail.com",
+            "name": "Long Tran",
+            "username": "Longi94"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f9e4854e173bb6db3e53cc93ac1daa4e58952e69",
+          "message": "Add file read examples (#261)",
+          "timestamp": "2020-11-05T12:13:07-08:00",
+          "tree_id": "781a63f00484106d1ad15912aa6eb6a803aaff3b",
+          "url": "https://github.com/SaltieRL/carball/commit/f9e4854e173bb6db3e53cc93ac1daa4e58952e69"
+        },
+        "date": 1604607613210,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "carball/tests/benchmarking/benchmarking.py::test_short_dropshot",
+            "value": 0.6362013672342716,
+            "unit": "iter/sec",
+            "range": "stddev: 0.01820539934408579",
+            "extra": "mean: 1.571829379033329 sec\nrounds: 10"
           }
         ]
       }
