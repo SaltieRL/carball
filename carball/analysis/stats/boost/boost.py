@@ -27,50 +27,20 @@ class BoostStat(BaseStat):
             player_name = player_map[player_key].name
             player_data_frame = data_frame[player_name].copy()
             player_data_frame.loc[:, 'delta'] = data_frame['game'].delta
+            
             proto_boost.boost_usage = self.get_player_boost_usage(player_data_frame)
-
             proto_boost.wasted_usage = self.get_player_boost_usage_max_speed(player_data_frame)
-
             proto_boost.time_full_boost = self.get_time_with_max_boost(data_frame, player_data_frame)
             proto_boost.time_low_boost = self.get_time_with_low_boost(data_frame, player_data_frame)
             proto_boost.time_no_boost = self.get_time_with_zero_boost(data_frame, player_data_frame)
             proto_boost.average_boost_level = self.get_average_boost_level(player_data_frame)
-
+            
             if 'boost_collect' not in player_data_frame:
                 logger.warning('%s did not collect any boost', player_key)
             else:
-                gains_index = player_data_frame['boost'].diff().clip(0)
-                gains_index = gains_index.loc[gains_index > 0].index.to_numpy()
-                collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] > 34]]
-                # Have to loop to fuzzy match
-                wasted_big = 0
-                for index in collect_frames.index.to_numpy():
-                    idx = gains_index[(np.abs(gains_index - index).argmin())]
-                    int_idx = player_data_frame.index.get_loc(idx)
-                    wasted_big += player_data_frame['boost'].iloc[int_idx - 1] / 256 * 100
-
-                collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] <= 34]]
-                prior_vals = np.empty([0])
-                for index in collect_frames.index.to_numpy():
-                    idx = gains_index[(np.abs(gains_index - index).argmin())]
-                    int_idx = player_data_frame.index.get_loc(idx)
-                    val = player_data_frame['boost'].iloc[int_idx-1]
-                    prior_vals = np.append(prior_vals, val)
-                deltas = ((prior_vals + 30.6) - 255)
-                wasted_small = deltas[deltas > 0].sum() / 256 * 100
-
-                collection = self.get_player_boost_collection(player_data_frame)
-                proto_boost.wasted_collection = wasted_big + wasted_small
-                proto_boost.wasted_big = wasted_big
-                proto_boost.wasted_small = wasted_small
-
-                if 'small' in collection and collection['small'] is not None:
-                    proto_boost.num_small_boosts = collection['small']
-                if 'big' in collection and collection['big'] is not None:
-                    proto_boost.num_large_boosts = collection['big']
-
-                proto_boost.num_stolen_boosts = self.get_num_stolen_boosts(player_data_frame,
-                                                                           player_map[player_key].is_orange)
+                self.calculate_and_set_player_wasted_collection(player_data_frame, proto_boost)
+                self.count_and_set_pad_collection(player_data_frame, proto_boost)
+                self.count_and_set_stolen_boosts(player_data_frame, player_map[player_key].is_orange, proto_boost)
 
     @staticmethod
     def get_player_boost_usage(player_dataframe: pd.DataFrame) -> np.float64:
@@ -84,7 +54,7 @@ class BoostStat(BaseStat):
         return player_dataframe.boost.mean(skipna=True) / 255 * 100
 
     @classmethod
-    def get_num_stolen_boosts(cls, player_dataframe: pd.DataFrame, is_orange):
+    def count_and_set_stolen_boosts(cls, player_dataframe: pd.DataFrame, is_orange, proto_boost):
         big = cls.field_constants.get_big_pads()
         # Get big pads below or above 0 depending on team
         # The index of y position is 1. The index of the label is 2.
@@ -94,7 +64,7 @@ class BoostStat(BaseStat):
             opponent_pad_labels = big[big[:, 1] > 0][:, 2] #big[where[y] is > 0][labels]
         # Count all the places where isin = True by summing
         stolen = player_dataframe.boost_collect.isin(opponent_pad_labels).sum()
-        return stolen
+        proto_boost.num_stolen_boosts = stolen
 
     @staticmethod
     def get_player_boost_usage_max_speed(player_dataframe: pd.DataFrame) -> np.float64:
@@ -138,3 +108,65 @@ class BoostStat(BaseStat):
         except (AttributeError, KeyError):
             return {}
         return ret
+
+# NEW (DivvyC)
+    
+    @staticmethod
+    def get_wasted_big(gains_index: np.ndarray, player_data_frame: pd.DataFrame):
+        # Get all frames (by their index) where the player collected more than 34 boost.
+        collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] > 34]]
+                
+        # Have to loop to fuzzy match
+        wasted_big = 0
+        for index in collect_frames.index.to_numpy():
+            idx = gains_index[(np.abs(gains_index - index).argmin())]
+            int_idx = player_data_frame.index.get_loc(idx)
+            wasted_big += player_data_frame['boost'].iloc[int_idx - 1] / 256 * 100
+        return wasted_big
+
+    @staticmethod
+    def get_wasted_small(gains_index: np.ndarray, player_data_frame: pd.DataFrame):
+        # Now, get all frames (by their index) where the player collected less than 34 boost.
+        collect_frames = player_data_frame.loc[player_data_frame.index[player_data_frame['boost_collect'] <= 34]]
+                
+        prior_vals = np.empty([0])
+        for index in collect_frames.index.to_numpy():
+            idx = gains_index[(np.abs(gains_index - index).argmin())]
+            int_idx = player_data_frame.index.get_loc(idx)
+            val = player_data_frame['boost'].iloc[int_idx-1]
+            prior_vals = np.append(prior_vals, val)
+        deltas = ((prior_vals + 30.6) - 255)
+        wasted_small = deltas[deltas > 0].sum() / 256 * 100
+        return wasted_small
+
+    @staticmethod
+    def get_gains_index(player_data_frame: pd.DataFrame):
+        # Get differences in boost (on a frame-by-frame basis), and only keep entries that are >= 0.
+        gains_index = player_data_frame['boost'].diff().clip(0)
+        # Get all frame indexes with non-zero values (i.e. boost gain), as a numpy array.
+        gains_index = gains_index.loc[gains_index > 0].index.to_numpy()
+        return gains_index
+
+    @staticmethod
+    def calculate_and_set_player_wasted_collection(player_data_frame: pd.DataFrame, proto_boost):
+        # Get gains_index, which returns a numpy array of all indexes where the player gained (collected) boost.
+        gains_index = BoostStat.get_gains_index(player_data_frame)
+        
+        # Get wasted_big, and set it to the appropriate API field.
+        wasted_big = BoostStat.get_wasted_big(gains_index, player_data_frame)
+        proto_boost.wasted_big = wasted_big
+        
+        # Get wasted_small, and set it to the appropriate API field.
+        wasted_small = BoostStat.get_wasted_small(gains_index, player_data_frame)
+        proto_boost.wasted_small = wasted_small
+        
+        # Add wasted_small/big to get wasted_collection, and set it to the appropriate API field.
+        proto_boost.wasted_collection = wasted_big + wasted_small
+
+    @staticmethod
+    def count_and_set_pad_collection(player_data_frame: pd.DataFrame, proto_boost):
+        collection = BoostStat.get_player_boost_collection(player_data_frame)
+        if 'small' in collection and collection['small'] is not None:
+            proto_boost.num_small_boosts = collection['small']
+        if 'big' in collection and collection['big'] is not None:
+            proto_boost.num_large_boosts = collection['big']
