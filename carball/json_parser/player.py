@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 bot_map = get_bot_map()
 
-def _get_player_id(self, online_id):
+def _get_player_id(online_id):
     if type(online_id) == dict:
         return online_id['online_id']
     return online_id
