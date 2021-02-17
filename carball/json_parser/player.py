@@ -62,7 +62,7 @@ class Player:
 
         else:
             actor_rid_data = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id']
-            actor_rid_parts = list(actor_rid_data.keys()[0])
+            actor_rid_parts = list(actor_rid_data.keys())[0]
             actor_type = actor_rid_parts[0]
 
             self.online_id = _get_player_id(actor_rid_data[actor_type])
