@@ -11,12 +11,17 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 bot_map = get_bot_map()
 
+def _get_player_id(self, online_id):
+    if type(online_id) == dict:
+        return online_id['online_id']
+    return online_id
 
 class Player:
 
     def __init__(self):
         self.name = None
         self.online_id = None
+        self.namespaced_online_id = None
         self.team = None  # using team class. set later.
         self.is_orange = None
         self.score = None
@@ -49,11 +54,6 @@ class Player:
         else:
             return '%s: %s' % (self.__class__.__name__, self.name)
 
-    def _get_player_id(self, online_id):
-        if type(online_id) == dict:
-            return online_id['online_id']
-        return online_id
-
     def create_from_actor_data(self, actor_data: dict, teams: List['Team'], objects: List[str]):
         self.name = actor_data['name']
         if 'Engine.PlayerReplicationInfo:bBot' in actor_data and actor_data['Engine.PlayerReplicationInfo:bBot']:
@@ -61,9 +61,12 @@ class Player:
             self.online_id = get_online_id_for_bot(bot_map, self)
 
         else:
-            actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id'].keys())[0]
-            self.online_id = self._get_player_id(actor_data["Engine.PlayerReplicationInfo:UniqueId"]
-                                                 ['remote_id'][actor_type])
+            actor_rid_data = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id']
+            actor_rid_parts = list(actor_rid_data.keys()[0])
+            actor_type = actor_rid_parts[0]
+
+            self.online_id = _get_player_id(actor_rid_data[actor_type])
+            self.namespaced_online_id = '%s_%s' % (actor_type, _get_player_id(actor_rid_parts[1]))
         try:
             self.score = actor_data["TAGame.PRI_TA:MatchScore"]
         except KeyError:
