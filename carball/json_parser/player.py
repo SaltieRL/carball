@@ -61,8 +61,12 @@ class Player:
             self.online_id = get_online_id_for_bot(bot_map, self)
 
         else:
+            #actor_type = list(actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id'].keys())[0]
+            #self.online_id = self._get_player_id(actor_data["Engine.PlayerReplicationInfo:UniqueId"]
+            #                                     ['remote_id'][actor_type])
+
             actor_rid_data = actor_data["Engine.PlayerReplicationInfo:UniqueId"]['remote_id']
-            actor_rid_parts = list(actor_rid_data.keys())[0]
+            actor_rid_parts = list(actor_rid_data.items())[0]
             actor_type = actor_rid_parts[0]
 
             self.online_id = _get_player_id(actor_rid_data[actor_type])
