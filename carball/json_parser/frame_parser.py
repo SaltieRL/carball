@@ -1,4 +1,5 @@
 from .actor import *
+import json
 
 REPLICATED_RB_STATE_KEY = 'TAGame.RBActor_TA:ReplicatedRBState'
 
@@ -153,6 +154,7 @@ class FrameParser(object):
             for new_actor in frame['new_actors']:
                 actor_id = new_actor['actor_id']
                 object_name = self.objects[new_actor['object_id']]
+
                 self.actors[actor_id] = {
                     'Id': actor_id,
                     'TypeName': object_name,
@@ -207,6 +209,9 @@ class FrameParser(object):
                     # skip 0 delta frames, except for these two handlers (matches old implementation)
                     if handler_tuple[1] or delta != 0:
                         handler.update(self.actors[actor_id], i, time, delta)
+                    # if(handler.type_name == CarHandler.type_name): -cr, logs everytime a car attribute is used
+                    #    with open("walter.json", "a") as f:
+                    #        f.write(json.dumps(self.actors[actor_id]))
 
             self.current_car_ids_to_collect.clear()
 
