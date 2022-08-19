@@ -153,6 +153,7 @@ class FrameParser(object):
             for new_actor in frame['new_actors']:
                 actor_id = new_actor['actor_id']
                 object_name = self.objects[new_actor['object_id']]
+
                 self.actors[actor_id] = {
                     'Id': actor_id,
                     'TypeName': object_name,
