@@ -39,13 +39,12 @@ class EventsCreator:
         self.create_hit_events(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_kickoff_stats(game, proto_game, player_map, data_frame, kickoff_frames, first_touch_frames)
         self.calculate_ball_carries(game, proto_game, player_map, data_frame[goal_frames])
-        self.create_bumps(game, proto_game, player_map, data_frame[goal_frames])
         self.create_dropshot_events(game, proto_game, player_map)
 
         if calculate_intensive_events:
             self.calculate_hit_pressure(game, proto_game, data_frame)
             self.calculate_fifty_fifty(game, proto_game, data_frame)
-            # TODO (j-wass): calculate bumps
+            self.create_bumps(game, proto_game, player_map, data_frame)
 
     def calculate_fifty_fifty(self, game: Game, proto_game: game_pb2.Game, data_frame: pd.DataFrame):
         logger.info("Calculating 50/50s.")
@@ -92,7 +91,7 @@ class EventsCreator:
                      data_frame: pd.DataFrame):
         logger.info("Looking for bumps.")
         bumpAnalysis = BumpAnalysis(game=game, proto_game=proto_game)
-        bumpAnalysis.get_bumps_from_game(data_frame)
+        bumpAnalysis.get_bumps_from_game(data_frame, player_map)
         logger.info("Found %s bumps.", len(proto_game.game_stats.bumps))
 
     def create_dropshot_events(self, game: Game, proto_game: game_pb2.Game, player_map: Dict[str, Player]):
