@@ -42,8 +42,8 @@ class BaseKickoff:
             summed_time = smaller_data_frame['game']['delta'][frame:end_frame].sum()
             if summed_time > 0:
                 cur_kickoff.touch_time = summed_time
-            logger.error("STRAIGHT TIME " + str(time))
-            logger.error("SUM TIME" + str(summed_time))
+            logger.info("STRAIGHT TIME " + str(time))
+            logger.info("SUM TIME" + str(summed_time))
             sum_vs_adding_diff = time - summed_time
 
 

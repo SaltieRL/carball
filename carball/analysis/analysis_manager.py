@@ -1,10 +1,11 @@
 import logging
 import time
-from typing import Dict, Callable
+from typing import Dict, Callable, Union
 
 import pandas as pd
 import json
 import os
+import gzip
 
 from google.protobuf.json_format import _Printer
 from typing.io import IO
@@ -116,20 +117,22 @@ class AnalysisManager:
             raise IOError("Proto files must be binary use open(path,\"wb\")")
         ProtobufManager.write_proto_out_to_file(file, self.protobuf_game)
 
-    def write_pandas_out_to_file(self, file: IO):
+    def write_pandas_out_to_file(self, file: Union[IO, gzip.GzipFile]):
         """
-        Writes the pandas data to the specified file, as bytes.
+        Writes the pandas data to the specified file, as bytes. File may be a GzipFile object to compress the data
+        frame.
 
         NOTES:
             The data is written as bytes (i.e. in binary), and the buffer mode must be 'wb'.
-                E.g. open(file_name, 'wb')
+                E.g. gzip.open(file_name, 'wb')
             The file will NOT be human-readable.
 
         :param file: The file object (or a buffer).
         """
-
-        if 'b' not in file.mode:
-            raise IOError("Proto files must be binary use open(path,\"wb\")")
+        if isinstance(file.mode, str) and 'b' not in file.mode:
+            raise IOError("Data frame files must be binary use open(path,\"wb\")")
+        if isinstance(file.mode, int) and file.mode != gzip.WRITE:
+            raise IOError("Gzip compressed data frame files must be opened in WRITE mode.")
         if self.df_bytes is not None:
             file.write(self.df_bytes)
         elif not self.should_store_frames:
@@ -229,7 +232,7 @@ class AnalysisManager:
         for player in game.players:
             player_proto = proto_game.players.add()
             ApiPlayer.create_from_player(player_proto, player, self.id_creator)
-            player_map[str(player.online_id)] = player_proto
+            player_map[player.online_id] = player_proto
 
         return player_map
 
