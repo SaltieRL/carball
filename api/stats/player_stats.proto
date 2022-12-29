@@ -69,12 +69,15 @@ message PlayerStats {
     optional CarryDribbles ball_carries = 13;
     optional CumulativeKickoffStats kickoff_stats = 14;
     optional api.stats.DropshotStats dropshot_stats = 15;
+    optional DemoStats demo_stats = 16;
 }
 
 message Controller {
     optional bool is_keyboard = 1;
     optional float analogue_steering_input_percent = 2;
     optional float analogue_throttle_input_percent = 3;
+    optional float time_ballcam = 4;
+    optional float time_handbrake = 5;
 }
 
 // Stats for carrying
@@ -99,4 +102,9 @@ message CumulativeKickoffStats {
     optional int32 num_time_afk = 6;
     optional int32 num_time_first_touch = 7;
     optional float average_boost_used = 8; // The average amount of boost used over all kickoff events
+}
+
+message DemoStats {
+    optional int32 num_demos_inflicted = 1;
+    optional int32 num_demos_taken = 2;
 }

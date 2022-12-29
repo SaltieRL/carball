@@ -1,5 +1,6 @@
 from typing import List
 
+from carball.analysis.stats.demos.demos import DemoStat
 from carball.analysis.stats.dribbles.ball_carry import CarryStat
 from carball.analysis.stats.kickoffs.kickoff_stat import KickoffStat
 from carball.analysis.stats.possession.per_possession import PerPossessionStat
@@ -42,7 +43,8 @@ class StatsList:
                 SpeedTendencies(),
                 RumbleItemStat(),
                 KickoffStat(),
-                DropshotStats()
+                DropshotStats(),
+                DemoStat()
                 ]
 
     @staticmethod
