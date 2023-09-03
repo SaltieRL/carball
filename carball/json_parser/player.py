@@ -192,9 +192,13 @@ class Player:
                             if 'NewColor' in attribute['value']:
                                 # rgb integer, 0xAARRGGBB, banners and avatar borders have different default values
                                 user_color[item_name] = attribute['value']['NewColor']
+                for k in paint.keys():
+                    if k not in ["car", "skin", "wheels", "boost", "antenna", "topper", "trail", "goal_explosion",
+                                 "banner"]:
+                        logger.warning(f"Unknown paint key: {k}")
                 self.paint.append({
-                    'car': paint.get('body', None),
-                    'skin': paint.get('decal', None),
+                    'car': paint.get('car', None),
+                    'skin': paint.get('skin', None),
                     'wheels': paint.get('wheels', None),
                     'boost': paint.get('boost', None),
                     'antenna': paint.get('antenna', None),
